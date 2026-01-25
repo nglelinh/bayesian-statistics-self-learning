@@ -9,9 +9,9 @@ bundle install
 bundle exec jekyll serve
 ```
 
-The site will be available at `http://127.0.0.1:4000/your-repo-name/`
+The site will be available at `http://127.0.0.1:4000/bayesian-statistics-self-learning/`
 
-> **Note**: Replace `your-repo-name` with your actual repository name from `_config.yml`
+> **Note**: Replace `bayesian-statistics-self-learning` with your actual repository name from `_config.yml`
 
 ## GitHub Pages Deployment
 

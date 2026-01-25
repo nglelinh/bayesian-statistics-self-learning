@@ -1,0 +1,145 @@
+/* 
+ * Submenu styles for chapter lessons
+ * Author: Nguyen Le Linh
+ * Date: 2026-01-24
+ */
+
+/* Chapter group container */
+.sidebar-chapter-group {
+  margin-bottom: 0.5rem;
+}
+
+/* Chapter header with dropdown arrow */
+.sidebar-chapter-header {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  position: relative;
+}
+
+.sidebar-chapter-header .dropdown-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.sidebar-chapter-header.expanded .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Lessons submenu */
+.sidebar-lessons-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+  padding-left: 1rem;
+  border-left: 2px solid #e5e5e5;
+  margin-left: 0.5rem;
+}
+
+.sidebar-lessons-submenu.open {
+  max-height: 2000px; /* Large enough for all lessons */
+  opacity: 1;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Lesson items in submenu */
+.sidebar-lesson-item {
+  font-size: 0.9rem !important;
+  padding: 0.4rem 0.5rem !important;
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  color: #515151 !important;
+  transition: all 0.2s ease;
+}
+
+.sidebar-lesson-item:hover {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  padding-left: 0.8rem !important;
+}
+
+.sidebar-lesson-item.active {
+  font-weight: 600;
+  color: #268bd2 !important;
+  background-color: #e8f4f8;
+  border-radius: 4px;
+}
+
+/* Lesson badges */
+.lesson-badge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.lesson-badge.required {
+  background-color: #d73027;
+  color: white;
+}
+
+.lesson-badge.optional {
+  background-color: #4575b4;
+  color: white;
+}
+
+/* Auto-expand current chapter */
+.sidebar-chapter-header.current-chapter {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar-lessons-submenu {
+    padding-left: 0.5rem;
+  }
+  
+  .sidebar-lesson-item {
+    font-size: 0.85rem !important;
+  }
+  
+  .lesson-badge {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
+}
+
+/* Animation for smooth expand/collapse */
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 2000px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 2000px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* Hover effect for chapter header */
+.sidebar-chapter-header:hover {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}

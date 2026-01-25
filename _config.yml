@@ -2,8 +2,8 @@
 title:               "Your Course Title"
 description:         'Your Course Description'
 url:                 https://your-username.github.io
-baseurl:             '/your-repo-name'
-imgurl:              https://your-username.github.io/your-repo-name/img
+baseurl:             '/bayesian-statistics-self-learning'
+imgurl:              https://your-username.github.io/bayesian-statistics-self-learning/img
 paginate:            5
 permalink:           pretty
 
@@ -54,6 +54,19 @@ collections:
 # Custom vars
 version:             0.0.1
 markdown: kramdown
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
 
 # Analytics
 google_analytics_id: ""

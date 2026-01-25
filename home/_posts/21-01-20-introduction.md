@@ -46,7 +46,7 @@ To get the most out of this course, you should have:
 ## Support and Feedback
 
 If you have questions or feedback, please:
-- Open an issue on our [GitHub repository](https://github.com/your-username/your-repo-name)
+- Open an issue on our [GitHub repository](https://github.com/your-username/bayesian-statistics-self-learning)
 - Contact the instructor (see Authors page)
 - Join our community discussions
 

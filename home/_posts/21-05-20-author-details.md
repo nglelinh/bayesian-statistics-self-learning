@@ -65,5 +65,5 @@ This course was developed over [time period] with the goal of [course goals]. Th
 
 For questions about the course content, please contact:
 - **General inquiries**: your.email@example.com
-- **Technical issues**: Open an issue on [GitHub](https://github.com/your-username/your-repo-name)
+- **Technical issues**: Open an issue on [GitHub](https://github.com/your-username/bayesian-statistics-self-learning)
 - **Collaboration opportunities**: [Contact form or email]

@@ -6,13 +6,21 @@ layout: default
 
 {% assign full_name = page.chapter | prepend: "chapter" %}
 {% assign current_lang = page.lang | default: site.default_lang %}
-{% assign all_posts = site.categories[full_name] | sort_natural %}
-{% assign post_list = all_posts | where: "lang", current_lang %}
+{% assign all_posts = site.categories[full_name] %}
+{% if all_posts %}
+{% assign post_list = all_posts | where: "lang", current_lang | sort: "order" %}
+{% else %}
+{% assign post_list = "" | split: "" %}
+{% endif %}
 
 {% if page.chapter == "26" %}
   {% assign full_name = "reference" %}
-  {% assign all_posts = site.categories[full_name] | sort_natural %}
-  {% assign post_list = all_posts | where: "lang", current_lang %}
+  {% assign all_posts = site.categories[full_name] %}
+  {% assign post_list = all_posts | where: "lang", current_lang | sort: "order" %}
+{% endif %}
+
+{% if post_list.size == 0 %}
+  <p>No posts found for this chapter.</p>
 {% endif %}
 
 <!-- Get first post and show it -->
