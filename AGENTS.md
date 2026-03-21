@@ -125,6 +125,7 @@ bundle exec jekyll build --baseurl "/bayesian-statistics-self-learning"
 - `.cursor/rules/practice-rule.mdc`
 - `.cursor/rules/lab-rule.mdc`
 - `.cursor/rules/math-formula-rule.mdc`
+- `.cursor/rules/illustration-rule.mdc`
 - `.cursorrules`: not found
 - `.github/copilot-instructions.md`: not found
 
