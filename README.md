@@ -240,7 +240,7 @@ http://127.0.0.1:4000/bayesian-statistics-self-learning/
 
 1. Push to GitHub
 2. GitHub Actions tự động build và deploy
-3. Truy cập tại: `https://your-username.github.io/bayesian-statistics-self-learning/`
+3. Truy cập tại: `https://nglelinh.github.io/bayesian-statistics-self-learning/`
 
 ---
 

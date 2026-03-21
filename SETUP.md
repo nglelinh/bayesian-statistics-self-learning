@@ -19,9 +19,9 @@ Mở file `_config.yml` và thay đổi các thông tin sau:
 # Setup
 title:               "Bayesian statistics"          # Tên khóa học của bạn
 description:         'Your Course Description'    # Mô tả khóa học
-url:                 https://your-username.github.io
+url:                 https://nglelinh.github.io
 baseurl:             '/bayesian-statistics-self-learning'            # Tên repository của bạn
-imgurl:              https://your-username.github.io/bayesian-statistics-self-learning/img
+imgurl:              https://nglelinh.github.io/bayesian-statistics-self-learning/img
 
 # Language-specific configurations
 t:
@@ -211,4 +211,3 @@ Nếu gặp vấn đề:
 ---
 
 **Good luck with your course! 🎓**
-

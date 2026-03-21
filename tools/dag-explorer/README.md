@@ -476,7 +476,7 @@ let historyIndex = -1;
 
 ## 📧 Contact & Support
 
-**Course Website**: https://your-username.github.io/bayesian-statistics-self-learning/
+**Course Website**: https://nglelinh.github.io/bayesian-statistics-self-learning/
 
 **Issues & Bug Reports**: Please report via GitHub Issues
 

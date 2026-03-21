@@ -1,9 +1,9 @@
 # Setup
 title:               "Your Course Title"
 description:         'Your Course Description'
-url:                 https://your-username.github.io
+url:                 https://nglelinh.github.io
 baseurl:             '/bayesian-statistics-self-learning'
-imgurl:              https://your-username.github.io/bayesian-statistics-self-learning/img
+imgurl:              https://nglelinh.github.io/bayesian-statistics-self-learning/img
 paginate:            5
 permalink:           pretty
 
