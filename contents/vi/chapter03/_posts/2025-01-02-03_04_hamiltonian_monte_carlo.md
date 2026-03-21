@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Bài 3.4: Hamiltonian Monte Carlo - MCMC Hiện đại và Mạnh mẽ"
+title: "Bài 3.4: Hamiltonian Monte Carlo - Tăng Tốc MCMC với Gradient"
 chapter: '03'
 order: 4
 owner: Nguyen Le Linh
@@ -10,354 +10,229 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu sâu sắc về **Hamiltonian Monte Carlo (HMC)** - thuật toán MCMC hiện đại và hiệu quả nhất hiện nay. Bạn sẽ không chỉ biết HMC hoạt động như thế nào, mà còn hiểu được ý tưởng thiên tài đằng sau nó: thay vì bước đi ngẫu nhiên như Metropolis-Hastings, HMC sử dụng **gradient** của posterior để di chuyển một cách thông minh và hiệu quả. Bạn sẽ nhận ra tại sao HMC là lựa chọn mặc định trong các công cụ Bayesian hiện đại như Stan và PyMC.
+Sau bài này, bạn cần hiểu vì sao Hamiltonian Monte Carlo (HMC) thường hiệu quả hơn Metropolis-Hastings dạng random walk. Bạn không cần thuộc chi tiết vật lý ngay lập tức, nhưng cần nắm trực giác quan trọng: HMC dùng gradient để đi có hướng trong không gian posterior, nhờ đó khám phá nhanh hơn và đỡ mắc kẹt hơn.
 
-## Giới thiệu: Vấn đề của Random Walk
+> **Ví dụ mini.** Nếu Metropolis-Hastings giống như người bịt mắt dò từng bước ngắn trên bản đồ, thì HMC giống như người vừa nhìn được độ dốc địa hình vừa có quán tính để lướt đi. Hai người cùng tìm vùng posterior cao, nhưng cách di chuyển hoàn toàn khác nhau.
+>
+> **Câu hỏi tự kiểm tra.** Vì sao thông tin về độ dốc của log-posterior lại có thể giúp sampler hiệu quả hơn rất nhiều?
 
-Metropolis-Hastings là một thuật toán elegant và mạnh mẽ, nhưng nó có một vấn đề lớn: **random walk behavior** (hành vi bước đi ngẫu nhiên).
+## 1. Vì sao ta cần HMC?
 
-Hãy tưởng tượng bạn đang tìm kiếm một kho báu trong một căn phòng tối. Metropolis-Hastings giống như việc bạn:
-1. Đề xuất một bước đi ngẫu nhiên
-2. Nếu bước đó đưa bạn đến nơi "tốt hơn" (posterior cao hơn), bạn đi
-3. Nếu không, bạn có thể đi hoặc ở lại
+Metropolis-Hastings rất quan trọng để xây trực giác, nhưng nó có một hạn chế lớn:
 
-Vấn đề là: **bạn không sử dụng bất kỳ thông tin nào về hướng đi**. Bạn chỉ bước đi ngẫu nhiên và hy vọng may mắn. Điều này dẫn đến:
+- thường di chuyển kiểu random walk.
 
-- **Slow mixing**: Chuỗi di chuyển chậm trong không gian tham số
-- **High autocorrelation**: Các mẫu liên tiếp rất giống nhau
-- **Inefficiency**: Cần rất nhiều mẫu để có ước lượng tốt
+Điều đó có nghĩa là:
 
-Đặc biệt, khi posterior có **correlation** giữa các tham số hoặc có hình dạng phức tạp (ví dụ: hình elip dài và hẹp), random walk trở nên cực kỳ kém hiệu quả.
+- bước đi ngắn và dò dẫm,
+- dễ bị autocorrelation cao,
+- rất chậm khi posterior nhiều chiều hoặc có tương quan mạnh.
 
-**Câu hỏi tự nhiên**: Liệu chúng ta có thể làm tốt hơn? Liệu chúng ta có thể sử dụng thông tin về **hướng đi** để di chuyển thông minh hơn?
+Trong các mô hình Bayes hiện đại:
 
-Đây chính là lúc **Hamiltonian Monte Carlo** xuất hiện với một ý tưởng thiên tài: **sử dụng gradient của posterior để "lướt" qua không gian tham số một cách hiệu quả**.
+- hồi quy nhiều biến,
+- mô hình phân cấp,
+- mô hình có hàng chục hay hàng trăm tham số,
 
-## 1. Ý tưởng Cốt lõi: Từ Vật lý đến MCMC
+random walk có thể trở nên quá chậm.
 
-HMC lấy cảm hứng từ **Hamiltonian dynamics** - một nhánh của vật lý cổ điển mô tả chuyển động của các hạt. Hãy xem ý tưởng này được chuyển đổi sang MCMC như thế nào.
+HMC ra đời để giải quyết chính vấn đề đó.
 
-### 1.1. Ẩn dụ Vật lý: Quả Bóng Lăn trên Đồi
+## 2. Trực giác cốt lõi của HMC
 
-Tưởng tượng posterior như một địa hình 3D (bề mặt), nơi độ cao tại mỗi điểm tỷ lệ với posterior density. Vùng có posterior cao là "thung lũng", vùng có posterior thấp là "đồi".
+Thay vì chỉ biết “điểm hiện tại có posterior cao hay thấp”, HMC còn nhìn được:
 
-**Metropolis-Hastings**: Giống như một người đi bộ ngẫu nhiên trên địa hình này, không biết đường đi.
+- **gradient** của log-posterior,
+- tức là hướng dốc nhất để posterior tăng lên.
 
-**Hamiltonian Monte Carlo**: Giống như một quả bóng được đẩy và lăn trên địa hình. Quả bóng:
-- Có **động lượng** (momentum) - giúp nó di chuyển xa
-- Chịu ảnh hưởng của **gradient** (độ dốc) - tự động đi theo hướng posterior cao
-- **Lướt** qua không gian một cách mượt mà và hiệu quả
+Bạn có thể tưởng tượng posterior như một địa hình:
 
-### 1.2. Hamiltonian Dynamics: Toán học Đằng sau
+- vùng posterior cao là thung lũng năng lượng thấp,
+- vùng posterior thấp là các khu vực “cao năng lượng”.
 
-Trong vật lý Hamiltonian, một hệ thống được mô tả bởi:
-- **Position** (vị trí) $$\theta$$: Tham số chúng ta quan tâm
-- **Momentum** (động lượng) $$p$$: "Vận tốc" của tham số
-- **Hamiltonian** (năng lượng toàn phần) $$H(\theta, p)$$: Tổng năng lượng của hệ
+HMC đặt một “hạt” trong địa hình đó rồi cho nó:
 
-$$H(\theta, p) = U(\theta) + K(p)$$
+- một động lượng ban đầu,
+- và một lực đẩy theo gradient.
 
-Trong đó:
-- $$U(\theta) = -\log P(\theta \mid D)$$: **Potential energy** (năng lượng thế) - càng thấp khi posterior càng cao
-- $$K(p) = \frac{p^2}{2m}$$: **Kinetic energy** (động năng) - năng lượng từ chuyển động
+Hạt này không bò từng bước ngắn như MH, mà lướt qua không gian tham số theo những quỹ đạo dài và mượt hơn.
 
-**Phương trình Hamilton** mô tả cách hệ thống tiến hóa theo thời gian:
+![Random walk và HMC đi khác nhau thế nào]({{ site.baseurl }}/img/chapter_img/chapter03/random_walk_vs_hmc_directed.png)
 
-$$\frac{d\theta}{dt} = \frac{\partial H}{\partial p} = p$$
+## 3. HMC lấy ý tưởng từ vật lý như thế nào?
 
-$$\frac{dp}{dt} = -\frac{\partial H}{\partial \theta} = -\frac{\partial U}{\partial \theta} = \frac{\partial \log P(\theta \mid D)}{\partial \theta}$$
+Bạn không cần quá sợ phần này. Điều quan trọng nhất chỉ là cách đổi tên.
 
-**Ý nghĩa**: Gradient của posterior ($$\frac{\partial \log P(\theta \mid D)}{\partial \theta}$$) cho biết **hướng đi** để tăng posterior. HMC sử dụng thông tin này!
+### Position
 
-### 1.3. Tại sao Hamiltonian Dynamics Tốt cho MCMC?
-
-Hamiltonian dynamics có hai tính chất quan trọng:
-
-1. **Reversibility** (Tính khả nghịch): Nếu bạn đảo ngược momentum, hệ thống sẽ quay lại trạng thái ban đầu
-2. **Volume preservation** (Bảo toàn thể tích): Thể tích trong không gian pha không thay đổi
-
-Hai tính chất này đảm bảo rằng nếu chúng ta sử dụng Hamiltonian dynamics để propose trạng thái mới, **acceptance probability sẽ rất cao** (thường gần 100%)!
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
-import seaborn as sns
-
-# Minh họa: So sánh Random Walk vs Hamiltonian Trajectory
-np.random.seed(42)
-
-# 2D Posterior: Bivariate Normal với correlation cao
-mean = [0, 0]
-cov = [[1, 0.95], [0.95, 1]]
-posterior_2d = stats.multivariate_normal(mean, cov)
-
-def log_posterior(theta):
-    return posterior_2d.logpdf(theta)
-
-def gradient_log_posterior(theta):
-    # Gradient của log posterior cho Bivariate Normal
-    inv_cov = np.linalg.inv(cov)
-    return -inv_cov @ (theta - mean)
-
-# Metropolis-Hastings trajectory (random walk)
-def mh_trajectory(start, n_steps, step_size):
-    trajectory = [start]
-    current = start
-        for _ in range(n_steps):
-        proposed = current + np.random.normal(0, step_size, 2)
-        log_r = log_posterior(proposed) - log_posterior(current)
-        if np.log(np.random.uniform()) < log_r:
-            current = proposed
-        trajectory.append(current.copy())
-    return np.array(trajectory)
-
-# HMC-like trajectory (sử dụng gradient)
-def hmc_like_trajectory(start, n_steps, step_size):
-    trajectory = [start]
-    theta = start.copy()
-    momentum = np.random.normal(0, 1, 2)
-    
-    for _ in range(n_steps):
-        # Leapfrog step (simplified)
-        momentum = momentum + 0.5 * step_size * gradient_log_posterior(theta)
-        theta = theta + step_size * momentum
-        momentum = momentum + 0.5 * step_size * gradient_log_posterior(theta)
-        trajectory.append(theta.copy())
-    
-    return np.array(trajectory)
-
-# Generate trajectories
-start_point = np.array([-2.0, -2.0])
-mh_traj = mh_trajectory(start_point, 50, step_size=0.3)
-hmc_traj = hmc_like_trajectory(start_point, 50, step_size=0.1)
-
-# Vẽ
-fig, axes = plt.subplots(1, 2, figsize=(16, 7))
-
-# Contour của posterior
-x = np.linspace(-4, 4, 100)
-y = np.linspace(-4, 4, 100)
-X, Y = np.meshgrid(x, y)
-pos = np.dstack((X, Y))
-Z = posterior_2d.pdf(pos)
-
-for ax, traj, title, color in zip(axes, 
-                                   [mh_traj, hmc_traj],
-                                   ['Metropolis-Hastings: Random Walk', 
-                                    'Hamiltonian MC: Gradient-guided'],
-                                   ['blue', 'red']):
-    ax.contour(X, Y, Z, levels=15, colors='gray', alpha=0.4)
-    ax.plot(traj[:, 0], traj[:, 1], 'o-', color=color, linewidth=2, 
-            markersize=4, alpha=0.7)
-    ax.scatter(traj[0, 0], traj[0, 1], s=200, c='green', marker='o',
-              edgecolors='black', linewidths=2, label='Start', zorder=5)
-    ax.scatter(traj[-1, 0], traj[-1, 1], s=200, c='red', marker='*',
-              edgecolors='black', linewidths=2, label='End', zorder=5)
-    ax.set_xlabel('θ₁', fontsize=13, fontweight='bold')
-    ax.set_ylabel('θ₂', fontsize=13, fontweight='bold')
-    ax.set_title(title, fontsize=14, fontweight='bold')
-    ax.legend(fontsize=11)
-    ax.grid(alpha=0.3)
-    ax.set_xlim(-4, 4)
-    ax.set_ylim(-4, 4)
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("SO SÁNH METROPOLIS-HASTINGS VS HAMILTONIAN MC")
-print("=" * 70)
-print("\nMetropolis-Hastings (Random Walk):")
-print("  - Bước đi ngẫu nhiên, không có hướng")
-print("  - Di chuyển chậm, nhiều bước nhỏ")
-print("  - Không hiệu quả với posterior có correlation")
-print("\nHamiltonian MC (Gradient-guided):")
-print("  - Sử dụng gradient để biết hướng đi")
-print("  - Di chuyển xa và hiệu quả")
-print("  - Khám phá không gian tham số nhanh hơn nhiều")
-print("=" * 70)
-```
-
-## 2. Thuật toán HMC: Leapfrog Integration
-
-Để implement HMC, chúng ta cần một cách để mô phỏng Hamiltonian dynamics. Phương pháp phổ biến nhất là **leapfrog integrator** - một thuật toán số để giải phương trình Hamilton.
-
-### 2.1. Leapfrog Algorithm
-
-Leapfrog integrator cập nhật position và momentum theo các bước "nhảy cóc":
-
-```
-For each leapfrog step:
-    1. Half step for momentum:
-       p ← p + (ε/2) × ∇log P(θ \mid D)
-    
-    2. Full step for position:
-       θ ← θ + ε × p
-    
-    3. Half step for momentum:
-       p ← p + (ε/2) × ∇log P(θ \mid D)
-```
-
-Trong đó $$\varepsilon$$ là **step size** (kích thước bước).
-
-### 2.2. Thuật toán HMC Đầy đủ
-
-**Input**:
-- Current state: $$\theta^{(t)}$$
-- Log posterior và gradient: $$\log P(\theta \mid D)$$ và $$\nabla \log P(\theta \mid D)$$
-- Step size: $$\varepsilon$$
-- Number of leapfrog steps: $$L$$
-
-**Output**:
-- Next state: $$\theta^{(t+1)}$$
-
-**Quy trình**:
-
-```
-1. Sample momentum: p ~ N(0, I)
-
-2. Simulate Hamiltonian dynamics (L leapfrog steps):
-   For l = 1 to L:
-       Apply leapfrog step
-   
-3. Compute acceptance probability:
-   α = min(1, exp(H(θ⁽ᵗ⁾, p₀) - H(θ*, p*)))
-   
-4. Accept or reject:
-   If u ~ Uniform(0,1) < α:
-       θ⁽ᵗ⁺¹⁾ = θ*
-   Else:
-       θ⁽ᵗ⁺¹⁾ = θ⁽ᵗ⁾
-```
-
-**Lưu ý quan trọng**: Vì Hamiltonian dynamics bảo toàn năng lượng (lý tưởng), acceptance probability thường rất cao (>90%)!
-
-## 3. NUTS: No-U-Turn Sampler
-
-Một vấn đề của HMC cơ bản là phải chọn số bước leapfrog $$L$$. Quá ít: không khám phá đủ. Quá nhiều: lãng phí tính toán.
-
-**NUTS** (No-U-Turn Sampler) là một phiên bản tự động của HMC, tự động chọn $$L$$ bằng cách:
-- Tiếp tục chạy leapfrog cho đến khi trajectory bắt đầu "quay đầu" (U-turn)
-- Dừng lại ngay khi phát hiện U-turn
-
-NUTS là thuật toán mặc định trong **Stan** và **PyMC**, và nó hoạt động cực kỳ tốt trong thực tế mà không cần tuning nhiều.
-
-## 4. Ưu điểm và Nhược điểm của HMC
-
-### 4.1. Ưu điểm
-
-✅ **Hiệu quả cao**: Di chuyển xa trong không gian tham số mỗi bước  
-✅ **Low autocorrelation**: Các mẫu ít phụ thuộc nhau hơn  
-✅ **Effective sample size cao**: Cần ít mẫu hơn để có ước lượng tốt  
-✅ **Tốt với high-dimensional posterior**: Không bị curse of dimensionality như MH  
-✅ **Tốt với correlated parameters**: Gradient giúp di chuyển theo hướng đúng  
-
-### 4.2. Nhược điểm
-
-❌ **Cần gradient**: Phải tính được $$\nabla \log P(\theta \mid D)$$  
-❌ **Computational cost**: Mỗi iteration tốn nhiều tính toán hơn MH  
-❌ **Tuning**: Cần chọn step size $$\varepsilon$$ phù hợp (nhưng NUTS giải quyết vấn đề này)  
-❌ **Không phù hợp với discrete parameters**: HMC cần không gian liên tục  
-
-## 5. So sánh Tổng thể: MH vs HMC
-
-![HMC vs Metropolis-Hastings]({{ site.baseurl }}/img/chapter_img/chapter03/hmc_vs_mh.png)
-
-| Khía cạnh | Metropolis-Hastings | Hamiltonian MC |
-|-----------|---------------------|----------------|
-| **Proposal** | Random walk | Gradient-guided |
-| **Acceptance rate** | 20-50% (lý tưởng) | >90% (thường) |
-| **Autocorrelation** | Cao | Thấp |
-| **Efficiency** | Thấp (nhiều chiều) | Cao |
-| **Cần gradient** | Không | Có |
-| **Tuning** | Proposal SD | Step size, #steps |
-| **Dễ implement** | Rất dễ | Phức tạp hơn |
-| **Công cụ** | Tự code dễ | Dùng Stan/PyMC |
-
-## 6. Khi nào Dùng HMC?
-
-**Nên dùng HMC khi**:
-- Posterior có nhiều chiều (>10 tham số)
-- Các tham số có correlation
-- Cần hiệu quả cao (ít mẫu hơn)
-- Có thể tính gradient (hoặc dùng automatic differentiation)
-- Dùng công cụ như Stan, PyMC
-
-**Có thể dùng MH khi**:
-- Posterior đơn giản, ít chiều
-- Không tính được gradient
-- Cần implement nhanh, đơn giản
-- Học tập, nghiên cứu
-
-## Tóm tắt và Kết nối
-
-HMC là một bước nhảy vọt trong MCMC:
-
-- **Ý tưởng**: Sử dụng gradient để di chuyển thông minh, không phải random walk
-- **Hamiltonian dynamics**: Lấy cảm hứng từ vật lý, "lướt" qua posterior
-- **Leapfrog integrator**: Cách mô phỏng Hamiltonian dynamics
-- **NUTS**: Phiên bản tự động, không cần tuning nhiều
-- **Hiệu quả**: Cao hơn MH nhiều lần, đặc biệt với nhiều chiều
-
-HMC là lý do tại sao Bayesian statistics trở nên khả thi cho các mô hình phức tạp trong thực tế. Trong bài tiếp theo, chúng ta sẽ học cách **chẩn đoán** chất lượng mẫu MCMC và đảm bảo kết quả đáng tin cậy.
-
-## Bài tập
-
-**Bài tập 1: Hiểu Gradient**
-Cho posterior: $$\log P(\theta \mid D) = -(\theta - 5)^2$$
-(a) Tính gradient: $$\nabla \log P(\theta \mid D)$$
-(b) Tại $$\theta = 3$$, gradient chỉ hướng nào? Giải thích.
-(c) Tại $$\theta = 7$$, gradient chỉ hướng nào?
-(d) Tại $$\theta = 5$$, gradient bằng bao nhiêu? Tại sao?
-
-**Bài tập 2: So sánh Trajectories**
-(a) Vẽ posterior 2D với correlation cao.
-(b) Mô phỏng MH trajectory với 100 bước.
-(c) Mô phỏng HMC-like trajectory (sử dụng gradient).
-(d) So sánh: trajectory nào khám phá posterior tốt hơn?
-
-**Bài tập 3: Acceptance Rate**
-(a) Tại sao HMC có acceptance rate cao (>90%)?
-(b) Điều gì xảy ra nếu step size quá lớn?
-(c) NUTS giải quyết vấn đề gì của HMC cơ bản?
-
-**Bài tập 4: Ưu nhược điểm**
-Cho các tình huống sau, bạn sẽ chọn MH hay HMC? Giải thích.
-(a) Posterior 1D đơn giản, Beta(5,2)
-(b) Posterior 50D, các tham số có correlation
-(c) Posterior có discrete parameters
-(d) Cần kết quả nhanh, không quan tâm hiệu quả
-
-**Bài tập 5: Suy ngẫm**
-Viết một đoạn văn ngắn (200-300 từ):
-(a) Tại sao HMC là "game changer" cho Bayesian statistics?
-(b) Ẩn dụ vật lý (quả bóng lăn) giúp hiểu HMC như thế nào?
-(c) Trong tương lai, bạn nghĩ MCMC sẽ phát triển theo hướng nào?
-
-## Tài liệu Tham khảo
-
-### Primary References:
-
-**Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013).** *Bayesian Data Analysis* (3rd Edition). CRC Press.
-- Chapter 12: Computationally efficient Markov chain simulation
-
-**Kruschke, J. K. (2015).** *Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan* (2nd Edition). Academic Press.
-- Chapter 14: Stan
-
-### Supplementary Reading:
-
-**Neal, R. M. (2011).** *MCMC using Hamiltonian dynamics*. Handbook of Markov Chain Monte Carlo, 2(11), 2.
-- Bài báo kinh điển về HMC
-
-**Hoffman, M. D., & Gelman, A. (2014).** *The No-U-Turn sampler: adaptively setting path lengths in Hamiltonian Monte Carlo*. Journal of Machine Learning Research, 15(1), 1593-1623.
-- Bài báo giới thiệu NUTS
-
-**Betancourt, M. (2017).** *A Conceptual Introduction to Hamiltonian Monte Carlo*. arXiv preprint arXiv:1701.02434.
-- Giới thiệu conceptual xuất sắc về HMC
+Đây là tham số $$\theta$$ mà ta muốn lấy mẫu.
+
+### Momentum
+
+Đây là một biến phụ thêm $$p$$, đóng vai trò như “động lượng” để giúp chuỗi không đi giật cục.
+
+### Hamiltonian
+
+Đây là tổng của:
+
+- năng lượng thế: liên quan tới posterior,
+- động năng: liên quan tới momentum.
+
+Về trực giác, HMC biến bài toán lấy mẫu thành bài toán:
+
+- cho một vật chuyển động trong một trường lực được tạo bởi posterior.
+
+Nghe vật lý, nhưng mục tiêu cuối cùng vẫn là lấy mẫu Bayes.
+
+## 4. Gradient giúp gì cho ta?
+
+Gradient cho biết:
+
+- đi về phía nào thì posterior tăng nhanh,
+- đi về phía nào thì posterior giảm.
+
+Thông tin này cực kỳ quý vì nó giúp sampler:
+
+- tránh đi lang thang vô hướng,
+- bám tốt hơn theo hình dạng posterior,
+- đặc biệt hiệu quả khi posterior có hình cong, dài hoặc tương quan mạnh.
+
+![HMC so với MH trong posterior tương quan mạnh]({{ site.baseurl }}/img/chapter_img/chapter03/hmc_vs_mh.png)
+
+## 5. Một cách hình dung rất thực tế
+
+Hãy nghĩ tới hai cách khám phá một thành phố lạ.
+
+### Metropolis-Hastings
+
+- đi bộ từng bước ngắn,
+- rẽ trái rẽ phải gần như ngẫu nhiên,
+- nên rất lâu mới hiểu được cấu trúc toàn thành phố.
+
+### HMC
+
+- đi bằng xe đạp trên bản đồ có chỉ dẫn độ dốc,
+- có quán tính nên không phải dừng ở mỗi bước,
+- và biết nên lao về hướng nào hiệu quả hơn.
+
+Đó là khác biệt về hiệu suất.
+
+## 6. Leapfrog: HMC mô phỏng chuyển động như thế nào?
+
+Để dùng ý tưởng vật lý vào máy tính, HMC mô phỏng chuyển động bằng một thủ tục số học gọi là **leapfrog integrator**.
+
+Bạn không cần nhớ toàn bộ công thức, chỉ cần hiểu:
+
+- momentum được cập nhật một phần,
+- position được cập nhật,
+- rồi momentum lại được cập nhật tiếp.
+
+Vòng lặp này tạo ra một quỹ đạo tương đối ổn định trong không gian tham số.
+
+Lý do leapfrog được ưa chuộng là vì nó:
+
+- khá bền về mặt số học,
+- gần như bảo toàn năng lượng,
+- và dẫn tới acceptance rate cao hơn nhiều so với MH.
+
+## 7. Vì sao HMC thường chấp nhận proposal tốt hơn?
+
+Trong MH random walk, proposal thường “vô hướng”, nên rất dễ rơi vào vùng posterior thấp và bị từ chối.
+
+Trong HMC:
+
+- proposal được sinh ra theo quỹ đạo dùng gradient,
+- nên nó thường bám vào các vùng posterior hợp lý hơn,
+- nhờ đó tỉ lệ chấp nhận thường cao.
+
+Hệ quả:
+
+- ít bước bị lãng phí,
+- ít đứng yên,
+- hiệu quả thống kê tốt hơn.
+
+## 8. HMC đặc biệt mạnh khi posterior nhiều chiều
+
+Ở không gian ít chiều, MH có thể vẫn tạm ổn. Nhưng khi số tham số tăng:
+
+- posterior thường có tương quan,
+- các vùng khối lượng cao có hình rất dài, rất cong,
+- random walk trở nên cực kỳ kém hiệu quả.
+
+HMC lại rất hợp với các hình dạng đó vì:
+
+- gradient dẫn đường,
+- quán tính giúp đi xa hơn,
+- và quỹ đạo dài giúp giảm random walk behavior.
+
+Đây là lý do HMC trở thành nền tảng của các công cụ hiện đại như Stan và PyMC.
+
+## 9. HMC không phải phép màu
+
+HMC mạnh, nhưng không phải vô địch trong mọi hoàn cảnh.
+
+Nó cần:
+
+- posterior đủ trơn để tính gradient,
+- mô hình viết đúng,
+- tuning step size hợp lý,
+- warm-up đủ để thích nghi.
+
+Nếu posterior rất gồ ghề, rời rạc hoặc có cấu trúc không khả vi, HMC có thể không còn là lựa chọn tốt nhất.
+
+## 10. NUTS: vì sao ta thường không chạy HMC “tay”?
+
+HMC cơ bản cần người dùng chọn:
+
+- step size bao nhiêu,
+- số leapfrog steps bao nhiêu.
+
+Chọn không khéo thì:
+
+- đi quá ít  $$\rightarrow$$ chưa tận dụng được lợi thế,
+- đi quá nhiều  $$\rightarrow$$ tốn tính toán không cần thiết.
+
+NUTS (No-U-Turn Sampler) ra đời để tự động hóa phần này:
+
+- nó tự điều chỉnh đường đi,
+- dừng khi bắt đầu quay đầu vô ích,
+- và thường là thứ bạn dùng trong PyMC chứ không phải HMC “thuần” bằng tay.
+
+## 11. Tại sao người học vẫn cần hiểu HMC?
+
+Vì nếu chỉ dùng PyMC như black box, bạn sẽ khó hiểu:
+
+- vì sao sampler này tốt,
+- vì sao gradient lại quan trọng,
+- vì sao tuning/warm-up cần thiết,
+- và vì sao mô hình có thể chạy chậm hoặc báo divergence.
+
+Hiểu HMC giúp bạn:
+
+- hiểu tinh thần của NUTS,
+- hiểu vì sao sampler hiện đại mạnh,
+- và đọc diagnostics sau này tốt hơn nhiều.
+
+> **3 ý cần nhớ.**
+> 1. HMC dùng gradient để di chuyển có hướng trong không gian posterior, thay vì random walk mù mờ như MH.
+> 2. Nhờ có quán tính và thông tin độ dốc, HMC thường khám phá posterior nhanh hơn và ít autocorrelation hơn.
+> 3. Trong thực hành, bạn thường dùng NUTS thay vì HMC thủ công, nhưng trực giác của HMC vẫn rất quan trọng để hiểu sampler hiện đại.
+
+## Câu hỏi tự luyện
+
+1. Vì sao MH dạng random walk thường kém hiệu quả trong posterior nhiều chiều?
+2. Gradient cho HMC biết điều gì mà MH không có?
+3. Hãy giải thích bằng lời vì sao HMC thường có acceptance rate tốt hơn.
+4. Vì sao NUTS lại phổ biến hơn HMC thủ công trong các thư viện hiện đại?
+
+## Tài liệu tham khảo
+
+- Neal, R. M. (2011). MCMC using Hamiltonian dynamics.
+- Betancourt, M. A Conceptual Introduction to Hamiltonian Monte Carlo.
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 11.
 
 ---
 
-*Bài học tiếp theo: [3.5 MCMC Diagnostics - Kiểm tra Chất lượng Mẫu](/vi/chapter03/mcmc-diagnostics/)*
+*Bài học tiếp theo: [3.5 MCMC Diagnostics - Đảm bảo Chất lượng Mẫu](/vi/chapter03/mcmc-diagnostics/)*

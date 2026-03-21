@@ -36,11 +36,11 @@ Việc định nghĩa biến cố như tập hợp con của không gian mẫu c
 
 ## Định nghĩa Xác suất: Từ Tần suất đến Niềm tin
 
-**Có nhiều cách để hiểu xác suất là gì**, và cách chúng ta hiểu nó sẽ ảnh hưởng sâu sắc đến cách chúng ta sử dụng nó. Trong khóa học này, chúng ta sẽ chủ yếu làm việc với quan điểm Bayesian về xác suất, nhưng trước tiên hãy xem xét **quan điểm tần suất (frequentist)** truyền thống để hiểu sự khác biệt.
+**Có nhiều cách để hiểu xác suất là gì**, và cách chúng ta hiểu nó sẽ ảnh hưởng sâu sắc đến cách chúng ta sử dụng nó. Trong khóa học này, chúng ta sẽ chủ yếu làm việc với **quan điểm Bayesian về xác suất**, nhưng trước tiên hãy xem xét **quan điểm tần suất (frequentist)** truyền thống để hiểu sự khác biệt.
 
 Theo quan điểm tần suất, xác suất của một biến cố được định nghĩa là tần suất tương đối mà biến cố đó xảy ra khi chúng ta lặp lại thí nghiệm vô số lần. Nếu chúng ta toss một đồng xu công bằng nhiều lần, tỷ lệ lần ra Sấp sẽ tiến gần đến $$0.5$$ khi số lần toss tăng lên. **Đây là một định nghĩa khách quan và dễ hiểu, nhưng nó có một hạn chế quan trọng: nó chỉ có ý nghĩa cho các sự kiện có thể lặp lại nhiều lần. Chúng ta không thể nói về "xác suất mưa ngày mai" hoặc "xác suất một giả thuyết khoa học là đúng" theo nghĩa tần suất, vì những sự kiện này không thể lặp lại trong điều kiện giống hệt nhau.**
 
-Quan điểm Bayesian về xác suất rộng hơn và linh hoạt hơn. Trong quan điểm này, xác suất là một thước đo **mức độ tin tưởng** (degree of belief) hoặc **độ hợp lý** (plausibility) của một mệnh đề, dựa trên thông tin hiện có. Xác suất $$0$$ có nghĩa là chúng ta hoàn toàn chắc chắn rằng mệnh đề là sai, xác suất $$1$$ có nghĩa là chúng ta hoàn toàn chắc chắn rằng nó đúng, và các giá trị ở giữa thể hiện các mức độ không chắc chắn khác nhau. Quan trọng là, **xác suất Bayesian có thể thay đổi khi chúng ta thu thập thêm thông tin, và đây chính là cơ sở của suy diễn Bayesian.**
+**Quan điểm Bayesian về xác suất** rộng hơn và linh hoạt hơn. Trong quan điểm này, xác suất là một thước đo **mức độ tin tưởng** (degree of belief) hoặc **độ hợp lý** (plausibility) của một mệnh đề, dựa trên thông tin hiện có. Xác suất $$0$$ có nghĩa là chúng ta hoàn toàn chắc chắn rằng mệnh đề là sai, xác suất $$1$$ có nghĩa là chúng ta hoàn toàn chắc chắn rằng nó đúng, và các giá trị ở giữa thể hiện các mức độ không chắc chắn khác nhau. Quan trọng là, **xác suất Bayesian có thể thay đổi khi chúng ta thu thập thêm thông tin, và đây chính là cơ sở của suy diễn Bayesian.**
 
 Dù chúng ta hiểu xác suất theo cách nào, nó phải tuân theo một số quy tắc toán học cơ bản để đảm bảo tính nhất quán. Những quy tắc này, được gọi là các tiên đề xác suất (probability axioms), là nền tảng của toàn bộ lý thuyết xác suất.
 
@@ -99,6 +99,47 @@ $$P(A \cap B) = P(A) \cdot P(B)$$
 Độc lập là một giả định mạnh và thường không đúng trong thực tế, nhưng nó đơn giản hóa đáng kể các tính toán xác suất và là nền tảng của nhiều mô hình thống kê. Ví dụ, khi chúng ta toss một đồng xu nhiều lần, chúng ta thường giả định rằng các lần toss là độc lập với nhau, nghĩa là kết quả của lần toss này không ảnh hưởng đến xác suất của các lần toss tiếp theo.
 
 Tuy nhiên, trong nhiều tình huống thực tế, các biến cố không độc lập. Nếu chúng ta rút hai lá bài từ một bộ bài mà không hoàn lại, kết quả của lần rút thứ hai phụ thuộc vào lần rút thứ nhất. Nếu chúng ta quan sát nhiệt độ trong hai ngày liên tiếp, chúng có xu hướng tương quan với nhau. Việc nhận biết và mô hình hóa các phụ thuộc này là một phần quan trọng của phân tích dữ liệu Bayesian.
+
+## Độc lập có điều kiện: Khi biết biến ẩn thì phụ thuộc biến mất
+
+Có một tình huống tinh tế hơn độc lập thông thường: hai biến cố có thể **không độc lập khi nhìn toàn cục**, nhưng lại trở nên độc lập nếu ta biết thêm một biến ẩn $$C$$.
+
+Ta nói $$A$$ và $$B$$ **độc lập có điều kiện theo $$C$$** nếu:
+
+$$
+P(A \cap B \mid C) = P(A \mid C)P(B \mid C).
+$$
+
+Trực giác là thế này:
+
+- khi chưa biết $$C$$, ta đang trộn nhiều cơ chế sinh dữ liệu khác nhau với nhau,
+- khi đã biết $$C$$, ta biết rõ mình đang ở cơ chế nào,
+- và trong từng cơ chế riêng lẻ, $$A$$ và $$B$$ có thể không còn ảnh hưởng lẫn nhau nữa.
+
+Ví dụ, giả sử ta chọn ngẫu nhiên một trong hai đồng xu:
+
+- đồng xu 1 là công bằng,
+- đồng xu 2 luôn ra ngửa.
+
+Sau đó ta tung đồng xu đã chọn hai lần. Gọi:
+
+- $$C$$ là biến cố “đã chọn đồng xu 1”,
+- $$A$$ là biến cố “lần tung thứ nhất ra ngửa”,
+- $$B$$ là biến cố “lần tung thứ hai ra ngửa”.
+
+Nếu **biết trước đã chọn đồng xu nào**, hai lần tung là độc lập có điều kiện:
+
+- dưới đồng xu công bằng, mỗi lần tung là độc lập với xác suất ngửa bằng $$1/2$$,
+- dưới đồng xu luôn ngửa, mỗi lần tung vẫn độc lập theo nghĩa cả hai đều chắc chắn ra ngửa.
+
+Nhưng nếu **không biết** đã chọn đồng xu nào, thì $$A$$ và $$B$$ không còn độc lập theo nghĩa thông thường nữa. Lý do là kết quả của lần tung đầu hé lộ thông tin về việc ta đang cầm loại đồng xu nào, và thông tin đó làm thay đổi niềm tin về lần tung thứ hai.
+
+Đây là một ý rất quan trọng trong Bayes:
+
+- phụ thuộc không phải lúc nào cũng đến từ việc các biến “tác động trực tiếp” lên nhau,
+- đôi khi nó đến từ việc ta chưa biết một biến ẩn đang chi phối cả hai.
+
+Khi học lên các mô hình hỗn hợp, mô hình phân cấp hay đồ thị nhân quả, bạn sẽ gặp lại ý tưởng này rất nhiều.
 
 ## Quy tắc Xác suất Toàn phần: Chia để Tính
 

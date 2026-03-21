@@ -35,76 +35,13 @@ $$
 
 ![Logistic Regression Basics]({{ site.baseurl }}/img/chapter_img/chapter06/logistic_regression_basics.png)
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-
-# Generate binary data
-np.random.seed(42)
-n = 200
-x = np.random.uniform(-3, 3, n)
-
-# True probability (logistic function)
-p_true = 1 / (1 + np.exp(-(1 + 0.8*x)))
-y = np.random.binomial(1, p_true)
-
-# Try linear regression
-lr = LinearRegression().fit(x.reshape(-1, 1), y)
-x_line = np.linspace(-4, 4, 100)
-y_pred_linear = lr.predict(x_line.reshape(-1, 1))
-
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Linear regression (WRONG!)
-axes[0].scatter(x, y, alpha=0.4, s=50, edgecolors='black', label='Data')
-axes[0].plot(x_line, y_pred_linear, 'r-', linewidth=3, label='Linear Regression')
-axes[0].axhline(0, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].axhline(1, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].fill_between(x_line, -0.5, 0, alpha=0.2, color='red', label='Invalid (<0)')
-axes[0].fill_between(x_line, 1, 1.5, alpha=0.2, color='red', label='Invalid (>1)')
-axes[0].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('y', fontsize=12, fontweight='bold')
-axes[0].set_title('LINEAR REGRESSION (WRONG!)\n' +
-                 'Predictions outside [0,1]!',
-                 fontsize=14, fontweight='bold', color='red')
-axes[0].set_ylim(-0.5, 1.5)
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3)
-
-# Logistic regression (CORRECT!)
-p_logistic = 1 / (1 + np.exp(-(lr.intercept_ + lr.coef_[0]*x_line)))
-axes[1].scatter(x, y, alpha=0.4, s=50, edgecolors='black', label='Data')
-axes[1].plot(x_line, p_logistic, 'b-', linewidth=3, label='Logistic Regression')
-axes[1].axhline(0, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].axhline(1, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('P(y=1)', fontsize=12, fontweight='bold')
-axes[1].set_title('LOGISTIC REGRESSION (CORRECT!)\n' +
-                 'Predictions always in [0,1]',
-                 fontsize=14, fontweight='bold', color='green')
-axes[1].set_ylim(-0.1, 1.1)
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("LINEAR vs LOGISTIC REGRESSION")
-print("=" * 70)
-print("\nLinear Regression:")
-print(f"  Min prediction: {y_pred_linear.min():.2f} (< 0!)")
-print(f"  Max prediction: {y_pred_linear.max():.2f} (> 1!)")
-print("  → Invalid probabilities!")
-
-print("\nLogistic Regression:")
-print(f"  Min prediction: {p_logistic.min():.3f}")
-print(f"  Max prediction: {p_logistic.max():.3f}")
-print("  → Always in [0, 1] ✓")
-print("=" * 70)
-```
+**Vấn đề của linear regression cho binary data:**
+- **Linear regression** dự đoán giá trị bất kỳ (-∞ đến +∞)
+- **Binary outcomes** yêu cầu probability trong [0, 1]
+- Hình minh họa:
+  - Panel trái: Linear regression cho predictions ngoài [0,1] (invalid!)
+  - Panel phải: Logistic regression đảm bảo predictions luôn trong [0,1]
+- **Giải pháp**: Sử dụng **logistic function** để transform linear predictor thành probability
 
 ## 2. Logistic Regression: Generative Model
 
@@ -130,52 +67,20 @@ $$
 2. **Transform to probability**: $$p = \text{logistic}(\eta)$$
 3. **Generate outcome**: $$y \sim \text{Bernoulli}(p)$$
 
-```python
-# Visualize logistic function
-x_vals = np.linspace(-6, 6, 200)
-p_vals = 1 / (1 + np.exp(-x_vals))
+![Logistic Function Parameters](../../../img/chapter_img/chapter06/logistic_function_parameters.png)
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
-# Logistic function
-axes[0].plot(x_vals, p_vals, 'b-', linewidth=3)
-axes[0].axhline(0.5, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].axvline(0, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].set_xlabel('η = α + βx', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('p = P(y=1)', fontsize=12, fontweight='bold')
-axes[0].set_title('LOGISTIC FUNCTION\n' +
-                 'p = 1/(1+e⁻ᶯ)',
-                 fontsize=14, fontweight='bold')
-axes[0].grid(alpha=0.3)
-axes[0].text(0, 0.5, '  η=0 → p=0.5', fontsize=11, ha='left', va='bottom')
-
-# Effect of α (intercept)
-for alpha in [-2, 0, 2]:
-    p = 1 / (1 + np.exp(-(alpha + x_vals)))
-    axes[1].plot(x_vals, p, linewidth=2, label=f'α = {alpha}')
-axes[1].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('P(y=1)', fontsize=12, fontweight='bold')
-axes[1].set_title('EFFECT OF α (Intercept)\n' +
-                 'Shifts curve left/right',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
-
-# Effect of β (slope)
-for beta in [0.5, 1, 2]:
-    p = 1 / (1 + np.exp(-(beta * x_vals)))
-    axes[2].plot(x_vals, p, linewidth=2, label=f'β = {beta}')
-axes[2].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[2].set_ylabel('P(y=1)', fontsize=12, fontweight='bold')
-axes[2].set_title('EFFECT OF β (Slope)\n' +
-                 'Steeper = stronger effect',
-                 fontsize=14, fontweight='bold')
-axes[2].legend(fontsize=11)
-axes[2].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-```
+**Logistic function và parameter effects:**
+- **Panel trái**: Hàm logistic cơ bản $$p = \frac{1}{1 + e^{-\eta}}$$
+  - Khi $$\eta = 0$$ → $$p = 0.5$$ (điểm uốn)
+  - Hàm có dạng chữ S, tiệm cận đến 0 và 1
+- **Panel giữa**: Effect của $$\alpha$$ (intercept)
+  - $$\alpha < 0$$: Curve dịch sang phải (baseline probability thấp)
+  - $$\alpha > 0$$: Curve dịch sang trái (baseline probability cao)
+  - $$\alpha$$ controls vị trí của điểm uốn
+- **Panel phải**: Effect của $$\beta$$ (slope)
+  - $$\beta$$ nhỏ → curve thoải (weak effect)
+  - $$\beta$$ lớn → curve dốc (strong effect)
+  - $$\beta$$ controls độ mạnh của relationship
 
 ## 3. Bayesian Logistic Regression trong PyMC
 
@@ -249,48 +154,19 @@ plt.show()
 - p = 0.8 → odds = 4 (4 times more likely to be 1 than 0)
 - p = 0.2 → odds = 0.25 (4 times more likely to be 0 than 1)
 
-```python
-# Visualize odds vs probability
-p_range = np.linspace(0.01, 0.99, 100)
-odds_range = p_range / (1 - p_range)
+![Odds vs Probability](../../../img/chapter_img/chapter06/odds_probability_relationship.png)
 
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Probability to Odds
-axes[0].plot(p_range, odds_range, 'b-', linewidth=3)
-axes[0].axhline(1, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].axvline(0.5, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].set_xlabel('Probability (p)', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Odds', fontsize=12, fontweight='bold')
-axes[0].set_title('PROBABILITY → ODDS\n' +
-                 'odds = p/(1-p)',
-                 fontsize=14, fontweight='bold')
-axes[0].grid(alpha=0.3)
-axes[0].set_ylim(0, 10)
-
-# Key points
-key_probs = [0.2, 0.5, 0.8]
-for p_val in key_probs:
-    odds_val = p_val / (1 - p_val)
-    axes[0].scatter([p_val], [odds_val], s=150, zorder=5, edgecolors='black')
-    axes[0].text(p_val, odds_val + 0.5, f'p={p_val:.1f}\nodds={odds_val:.2f}',
-                ha='center', fontsize=10, bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
-
-# Log-odds
-log_odds_range = np.log(odds_range)
-axes[1].plot(p_range, log_odds_range, 'g-', linewidth=3)
-axes[1].axhline(0, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].axvline(0.5, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].set_xlabel('Probability (p)', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Log-Odds', fontsize=12, fontweight='bold')
-axes[1].set_title('PROBABILITY → LOG-ODDS\n' +
-                 'log-odds = log(p/(1-p)) = α + βx',
-                 fontsize=14, fontweight='bold')
-axes[1].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-```
+**Relationship giữa probability, odds, và log-odds:**
+- **Panel trái**: Probability → Odds transformation
+  - p = 0.2 → odds = 0.25 (4:1 against)
+  - p = 0.5 → odds = 1.0 (even odds, breakpoint)
+  - p = 0.8 → odds = 4.0 (4:1 favor)
+  - Odds nhỏ hơn 1 = less likely, lớn hơn 1 = more likely
+- **Panel phải**: Probability → Log-Odds (logit)
+  - p = 0.5 → log-odds = 0 (symmetric point)
+  - p < 0.5 → log-odds < 0 (negative)
+  - p > 0.5 → log-odds > 0 (positive)
+  - Log-odds scale là linear trong logistic regression: $$\text{logit}(p) = \alpha + \beta x$$
 
 ### 4.2. Interpreting β
 

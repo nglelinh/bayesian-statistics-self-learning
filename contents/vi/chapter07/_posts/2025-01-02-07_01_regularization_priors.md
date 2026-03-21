@@ -27,81 +27,23 @@ Sau khi hoàn thành bài học này, bạn sẽ hiểu về **regularization** 
 
 ## 1. Demonstrating Overfitting
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression, Ridge
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.model_selection import train_test_split
+![Overfitting Demonstration](../../../img/chapter_img/chapter07/overfitting_demonstration.png)
 
-# Generate data
-np.random.seed(42)
-n = 25
-x = np.random.uniform(0, 10, n)
-y_true = 2 + 0.5*x + np.random.normal(0, 2, n)
+**Overfitting demonstration với polynomial regression:**
+- **Degree 1** (top-left): UNDERFIT - Too simple
+  - High training error, high test error
+  - Model quá đơn giản, không capture được pattern
+- **Degree 3** (top-right): GOOD FIT - Just right
+  - Low training error, low test error
+  - Balance giữa bias và variance
+- **Degree 10** (bottom-left): OVERFIT - Too complex
+  - Very low training error, HIGH test error
+  - Bắt đầu memorize noise trong training data
+- **Degree 15** (bottom-right): SEVERE OVERFIT
+  - Perfect training fit, terrible test performance
+  - Model hoàn toàn mất khả năng generalize
 
-# Split train/test
-x_train, x_test, y_train, y_test = train_test_split(
-    x, y_true, test_size=0.3, random_state=42
-)
-
-# Fit models with different polynomial degrees
-degrees = [1, 3, 10, 15]
-x_plot = np.linspace(0, 10, 200)
-
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-axes = axes.ravel()
-
-for idx, degree in enumerate(degrees):
-    # Transform
-    poly = PolynomialFeatures(degree=degree)
-    X_train_poly = poly.fit_transform(x_train.reshape(-1, 1))
-    X_test_poly = poly.transform(x_test.reshape(-1, 1))
-    X_plot_poly = poly.transform(x_plot.reshape(-1, 1))
-    
-    # Fit
-    lr = LinearRegression().fit(X_train_poly, y_train)
-    
-    # Predict
-    y_pred_train = lr.predict(X_train_poly)
-    y_pred_test = lr.predict(X_test_poly)
-    y_plot = lr.predict(X_plot_poly)
-    
-    # Compute errors
-    train_rmse = np.sqrt(np.mean((y_train - y_pred_train)**2))
-    test_rmse = np.sqrt(np.mean((y_test - y_pred_test)**2))
-    
-    # Plot
-    axes[idx].scatter(x_train, y_train, s=80, alpha=0.7, label='Train',
-                     edgecolors='black', zorder=3)
-    axes[idx].scatter(x_test, y_test, s=80, alpha=0.7, label='Test',
-                     edgecolors='black', zorder=3)
-    axes[idx].plot(x_plot, y_plot, 'r-', linewidth=3, label='Fit', zorder=2)
-    
-    # Title with error
-    color = 'green' if degree <= 3 else 'red'
-    axes[idx].set_title(f'Degree = {degree}\n' +
-                       f'Train RMSE = {train_rmse:.2f}, Test RMSE = {test_rmse:.2f}',
-                       fontsize=13, fontweight='bold', color=color)
-    axes[idx].set_xlabel('x', fontsize=11, fontweight='bold')
-    axes[idx].set_ylabel('y', fontsize=11, fontweight='bold')
-    axes[idx].legend(fontsize=10)
-    axes[idx].grid(alpha=0.3)
-    axes[idx].set_ylim(-5, 15)
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("OVERFITTING DEMONSTRATION")
-print("=" * 70)
-print("\nObservations:")
-print("  • Low degree: High train & test error (UNDERFIT)")
-print("  • Medium degree: Low train & test error (GOOD FIT)")
-print("  • High degree: Low train, HIGH test error (OVERFIT)")
-print("\n→ Overfitting = model memorizes training data!")
-print("=" * 70)
-```
+**Key insight**: Test error tăng cao khi model quá phức tạp → cần regularization!
 
 ## 2. Regularization: The Solution
 
@@ -137,78 +79,23 @@ $$
 \beta_j \sim \text{Laplace}(0, b)
 $$
 
-```python
-# Visualize priors
-from scipy import stats
+![Regularization Priors](../../../img/chapter_img/chapter07/regularization_priors.png)
 
-beta_vals = np.linspace(-3, 3, 200)
-
-# Normal (Ridge)
-normal_prior = stats.norm.pdf(beta_vals, 0, 1)
-
-# Laplace (Lasso)
-laplace_prior = stats.laplace.pdf(beta_vals, 0, 0.7)
-
-# Uniform (no regularization)
-uniform_prior = np.ones_like(beta_vals) * 0.3
-
-# Visualize
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
-# Normal prior (Ridge)
-axes[0].plot(beta_vals, normal_prior, 'b-', linewidth=3)
-axes[0].fill_between(beta_vals, normal_prior, alpha=0.3)
-axes[0].set_xlabel('β', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[0].set_title('NORMAL PRIOR\n(Ridge / L2 Regularization)\n' +
-                 'β ~ Normal(0, σ²)',
-                 fontsize=14, fontweight='bold')
-axes[0].grid(alpha=0.3)
-axes[0].text(0, max(normal_prior)*0.5, 'Prefers small β\nGaussian tails',
-            ha='center', fontsize=11,
-            bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
-
-# Laplace prior (Lasso)
-axes[1].plot(beta_vals, laplace_prior, 'g-', linewidth=3)
-axes[1].fill_between(beta_vals, laplace_prior, alpha=0.3, color='green')
-axes[1].set_xlabel('β', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[1].set_title('LAPLACE PRIOR\n(Lasso / L1 Regularization)\n' +
-                 'β ~ Laplace(0, b)',
-                 fontsize=14, fontweight='bold')
-axes[1].grid(alpha=0.3)
-axes[1].text(0, max(laplace_prior)*0.5, 'Prefers β = 0\nSparse solutions',
-            ha='center', fontsize=11,
-            bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.8))
-
-# Comparison
-axes[2].plot(beta_vals, normal_prior, 'b-', linewidth=3, label='Normal (Ridge)')
-axes[2].plot(beta_vals, laplace_prior, 'g-', linewidth=3, label='Laplace (Lasso)')
-axes[2].plot(beta_vals, uniform_prior, 'r--', linewidth=2, label='Uniform (No reg.)')
-axes[2].set_xlabel('β', fontsize=12, fontweight='bold')
-axes[2].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[2].set_title('COMPARISON\nDifferent Regularization Priors',
-                 fontsize=14, fontweight='bold')
-axes[2].legend(fontsize=11)
-axes[2].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
-print("\n" + "=" * 70)
-print("REGULARIZATION PRIORS")
-print("=" * 70)
-print("\nRidge (L2) = Normal prior:")
-print("  • Shrinks all coefficients toward 0")
-print("  • Keeps all predictors")
-print("  • Good for correlated predictors")
-
-print("\nLasso (L1) = Laplace prior:")
-print("  • Sets some coefficients EXACTLY to 0")
-print("  • Automatic feature selection")
-print("  • Sparse solutions")
-print("=" * 70)
-```
+**Regularization priors comparison:**
+- **Normal prior (Ridge/L2)** - Panel trái:
+  - Gaussian distribution centered at 0
+  - Smooth tails → coefficients shrink towards 0 but rarely exactly 0
+  - Good for when many predictors có small effects
+- **Laplace prior (Lasso/L1)** - Panel giữa:
+  - Sharp peak at 0, heavier tails
+  - Promotes **sparsity**: nhiều coefficients = exactly 0
+  - Good for **feature selection** (automatic variable selection)
+- **Comparison** - Panel phải:
+  - Laplace có sharper peak → stronger sparsity
+  - Normal smoother → shrinkage without exact zeros
+  - Uniform (flat) = no regularization → overfitting risk
+  
+**Key insight**: Priors encode regularization preferences!
 
 ## 3. Bayesian Regularization trong PyMC
 

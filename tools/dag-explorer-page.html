@@ -1,0 +1,56 @@
+---
+layout: default
+lang: vi
+title: "Interactive DAG Explorer"
+---
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive DAG Explorer - Bayesian Statistics Course</title>
+    
+    <!-- Dagitty Library -->
+    <script src="https://cdn.jsdelivr.net/npm/dagitty@3.1.0/dagitty.min.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+        }
+        
+        .tool-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+        }
+        
+        .tool-header h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+        
+        .tool-header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="tool-header">
+        <h1>🎯 Interactive DAG Explorer</h1>
+        <p>Công cụ Tương tác để Học Causal Inference | <a href="{{ site.baseurl }}/contents/vi/chapter05/" style="color: #fff; text-decoration: underline;">← Quay lại Chương 5</a></p>
+    </div>
+    
+    <iframe src="{{ site.baseurl }}/tools/dag-explorer/standalone.html" title="Interactive DAG Explorer"></iframe>
+</body>
+</html>

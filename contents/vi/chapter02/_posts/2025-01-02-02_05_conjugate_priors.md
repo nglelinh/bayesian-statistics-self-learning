@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Bài 2.5: Conjugate Priors - Prior Liên hợp"
+title: "Bài 2.5: Prior liên hợp và đại số của cập nhật Bayes"
 chapter: '02'
 order: 5
 owner: Nguyen Le Linh
@@ -10,771 +10,405 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu
+## Mục tiêu học tập
 
-Bài học này giải thích **conjugate priors** - các prior đặc biệt làm cho posterior có cùng dạng với prior, cho phép tính toán giải tích thay vì phải dùng phương pháp số.
+Sau bài này, bạn nên hiểu prior liên hợp không phải là “mẹo học thuộc”, mà là những cặp prior-likelihood khiến việc cập nhật Bayes trở nên rất gọn. Bạn cũng nên nhìn được ý nghĩa thực tế của các cặp liên hợp phổ biến, biết khi nào chúng cực kỳ tiện, và khi nào ta nên bỏ chúng để dùng phương pháp tính toán tổng quát hơn.
 
-## 1. Conjugate Prior là gì?
+> **Ví dụ mini.** Nếu prior cho tỷ lệ đậu là Beta$$(2,2)$$ và dữ liệu mới là 7 sinh viên đậu trên 10 em, posterior trở thành Beta$$(9,5)$$. Ta không phải tìm một họ phân phối mới, chỉ cần cập nhật tham số.
+>
+> **Câu hỏi tự kiểm tra.** Điều gì làm cho một prior được gọi là “liên hợp” với likelihood?
 
-### 1.1. Định nghĩa
+## Mở đầu: vì sao có những bài Bayes giải tay rất đẹp?
 
-**Conjugate prior** là prior mà khi kết hợp với likelihood cụ thể, cho ra posterior **cùng họ phân phối** với prior.
+Trong các bài trước, ta đã học rằng:
 
-$$\text{Prior: } p(\theta) \in \mathcal{F}$$
-$$\text{Likelihood: } p(D \mid \theta)$$
-$$\text{Posterior: } p(\theta \mid D) \in \mathcal{F}$$
+$$
+P(\theta \mid D) \propto P(D \mid \theta)P(\theta).
+$$
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
-import seaborn as sns
+Về mặt ý tưởng, công thức này rất đơn giản. Nhưng khi bắt tay vào tính thật, ta thường gặp một vấn đề: posterior phải được chuẩn hóa, và bước chuẩn hóa đó có thể rất khó.
 
-# Minh họa: Beta-Binomial conjugacy
-fig, axes = plt.subplots(2, 3, figsize=(18, 12))
+Thế nhưng có một số bài toán rất “ngoan”. Khi ta nhân prior với likelihood, posterior vẫn rơi vào **cùng một họ phân phối** như prior. Những trường hợp đẹp này được gọi là **prior liên hợp**.
 
-theta = np.linspace(0, 1, 1000)
+![Giới thiệu về các cặp liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_intro.png)
 
-# Ví dụ 1: Ít dữ liệu
-prior1 = stats.beta(2, 2)
-n1, k1 = 5, 3
-posterior1 = stats.beta(2 + k1, 2 + n1 - k1)
+## 1. Prior liên hợp là gì?
 
-axes[0, 0].plot(theta, prior1.pdf(theta), linewidth=2, label='Prior: Beta(2, 2)', linestyle='--')
-axes[0, 0].plot(theta, posterior1.pdf(theta), linewidth=3, label=f'Posterior: Beta({2+k1}, {2+n1-k1})')
-axes[0, 0].set_xlabel('θ', fontsize=11)
-axes[0, 0].set_ylabel('Mật độ', fontsize=11)
-axes[0, 0].set_title(f'Ít dữ liệu: {k1}/{n1}\nPrior và Posterior CÙNG HỌ (Beta)', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].legend(fontsize=10)
-axes[0, 0].grid(alpha=0.3)
-
-# Ví dụ 2: Nhiều dữ liệu
-n2, k2 = 50, 35
-posterior2 = stats.beta(2 + k2, 2 + n2 - k2)
-
-axes[0, 1].plot(theta, prior1.pdf(theta), linewidth=2, label='Prior: Beta(2, 2)', linestyle='--', alpha=0.5)
-axes[0, 1].plot(theta, posterior2.pdf(theta), linewidth=3, label=f'Posterior: Beta({2+k2}, {2+n2-k2})')
-axes[0, 1].set_xlabel('θ', fontsize=11)
-axes[0, 1].set_ylabel('Mật độ', fontsize=11)
-axes[0, 1].set_title(f'Nhiều dữ liệu: {k2}/{n2}\nVẫn CÙNG HỌ (Beta)', 
-                    fontsize=12, fontweight='bold')
-axes[0, 1].legend(fontsize=10)
-axes[0, 1].grid(alpha=0.3)
-
-# Ví dụ 3: Rất nhiều dữ liệu
-n3, k3 = 500, 350
-posterior3 = stats.beta(2 + k3, 2 + n3 - k3)
-
-axes[0, 2].plot(theta, prior1.pdf(theta), linewidth=2, label='Prior: Beta(2, 2)', linestyle='--', alpha=0.3)
-axes[0, 2].plot(theta, posterior3.pdf(theta), linewidth=3, label=f'Posterior: Beta({2+k3}, {2+n3-k3})')
-axes[0, 2].set_xlabel('θ', fontsize=11)
-axes[0, 2].set_ylabel('Mật độ', fontsize=11)
-axes[0, 2].set_title(f'RẤT nhiều dữ liệu: {k3}/{n3}\nVẫn CÙNG HỌ (Beta)', 
-                    fontsize=12, fontweight='bold')
-axes[0, 2].legend(fontsize=10)
-axes[0, 2].grid(alpha=0.3)
-
-# Giải thích
-axes[1, 0].axis('off')
-explanation = """
-╔═══════════════════════════════════════════════════════════╗
-║              CONJUGATE PRIOR                              ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                           ║
-║  Định nghĩa:                                              ║
-║    Prior và Posterior CÙNG HỌ phân phối                   ║
-║                                                           ║
-║  Ví dụ: Beta-Binomial                                     ║
-║    Prior: Beta(α, β)                                      ║
-║    Likelihood: Binomial(n, θ)                             ║
-║    Posterior: Beta(α+k, β+n-k)                            ║
-║                                                           ║
-║  Lợi ích:                                                 ║
-║    ✓ Tính toán GIẢI TÍCH                                  ║
-║    ✓ Không cần MCMC                                       ║
-║    ✓ Nhanh, chính xác                                     ║
-║    ✓ Dễ cập nhật tuần tự                                  ║
-║                                                           ║
-║  Hạn chế:                                                 ║
-║    • Chỉ có một số cặp conjugate                          ║
-║    • Có thể không linh hoạt                               ║
-║    • Model phức tạp → không conjugate                     ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-"""
-
-axes[1, 0].text(0.5, 0.5, explanation, fontsize=9, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
-
-# Công thức cập nhật
-axes[1, 1].axis('off')
-formula = """
-    CÔNG THỨC CẬP NHẬT
-    
-    Prior:
-      Beta(α, β)
-    
-    Dữ liệu:
-      k thành công trong n thử
-    
-    Posterior:
-      Beta(α + k, β + n - k)
-    
-    ─────────────────────────────
-    
-    Diễn giải:
-      α: "số thành công giả"
-      β: "số thất bại giả"
-      
-      α + k: thành công thực + giả
-      β + (n-k): thất bại thực + giả
-    
-    ─────────────────────────────
-    
-    Ví dụ:
-      Prior: Beta(2, 2)
-        → 2 thành công, 2 thất bại
-      Data: 35/50
-        → 35 thành công, 15 thất bại
-      Posterior: Beta(37, 17)
-        → 37 thành công, 17 thất bại
-"""
-
-axes[1, 1].text(0.5, 0.5, formula, fontsize=10, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
-
-# Tham số hiệu dụng
-axes[1, 2].axis('off')
-effective = f"""
-THAM SỐ HIỆU DỤNG
-
-Prior: Beta(α, β)
-  n_eff = α + β
-  "Kích thước mẫu hiệu dụng"
+Ta nói prior $$p(\theta)$$ là liên hợp với likelihood $$p(y \mid \theta)$$ nếu posterior $$p(\theta \mid y)$$ thuộc cùng họ với prior.
 
 Ví dụ:
-  Beta(2, 2): n_eff = 4
-  Beta(10, 10): n_eff = 20
-  Beta(100, 100): n_eff = 200
-
-→ n_eff càng lớn
-  → Prior càng mạnh
-  → Cần nhiều dữ liệu để vượt qua
-
-Dữ liệu: n = {n2}
-Prior: n_eff = 4
-→ Dữ liệu mạnh hơn nhiều!
-
-Posterior:
-  Mean = (α+k)/(α+β+n)
-       = {posterior2.mean():.3f}
-  ≈ k/n = {k2/n2:.3f}
-"""
-
-axes[1, 2].text(0.5, 0.5, effective, fontsize=10, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-```
-
-![Conjugate Prior: Beta-Binomial]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_prior_beta_binomial.png)
-
-```python
-print("=== CONJUGATE PRIOR: BETA-BINOMIAL ===")
-print(f"\nPrior: Beta(2, 2)")
-print(f"  n_eff = {2 + 2}")
-print(f"\nVí dụ 1: {k1}/{n1}")
-print(f"  Posterior: Beta({2+k1}, {2+n1-k1})")
-print(f"  Mean: {posterior1.mean():.3f}")
-print(f"\nVí dụ 2: {k2}/{n2}")
-print(f"  Posterior: Beta({2+k2}, {2+n2-k2})")
-print(f"  Mean: {posterior2.mean():.3f}")
-print(f"\nVí dụ 3: {k3}/{n3}")
-print(f"  Posterior: Beta({2+k3}, {2+n3-k3})")
-print(f"  Mean: {posterior3.mean():.3f}")
-```
-
-## 2. Các Cặp Conjugate Phổ biến
-
-### 2.1. Bảng Tổng hợp
-
-```python
-# Bảng conjugate priors
-fig, ax = plt.subplots(figsize=(14, 10))
-ax.axis('off')
-
-conjugate_table = """
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                    CÁC CẶP CONJUGATE PRIOR PHỔ BIẾN                        ║
-╠═══════════════════════════════════════════════════════════════════════════╣
-║                                                                           ║
-║  1. BETA - BINOMIAL                                                        ║
-║     Tham số: θ ∈ [0, 1] (xác suất)                                        ║
-║     Prior: Beta(α, β)                                                     ║
-║     Likelihood: Binomial(n, θ)                                            ║
-║     Posterior: Beta(α + k, β + n - k)                                     ║
-║     Ứng dụng: Tỷ lệ, xác suất, A/B testing                                ║
-║                                                                           ║
-║  2. NORMAL - NORMAL (σ² biết)                                             ║
-║     Tham số: μ ∈ ℝ (mean)                                                 ║
-║     Prior: Normal(μ₀, σ₀²)                                                ║
-║     Likelihood: Normal(μ, σ²)                                             ║
-║     Posterior: Normal(μ₁, σ₁²)                                            ║
-║       μ₁ = (μ₀/σ₀² + Σxᵢ/σ²) / (1/σ₀² + n/σ²)                            ║
-║       1/σ₁² = 1/σ₀² + n/σ²                                                ║
-║     Ứng dụng: Chiều cao, cân nặng, nhiệt độ                               ║
-║                                                                           ║
-║  3. GAMMA - POISSON                                                        ║
-║     Tham số: λ > 0 (rate)                                                 ║
-║     Prior: Gamma(α, β)                                                    ║
-║     Likelihood: Poisson(λ)                                                ║
-║     Posterior: Gamma(α + Σxᵢ, β + n)                                      ║
-║     Ứng dụng: Số sự kiện, số lỗi, traffic                                 ║
-║                                                                           ║
-║  4. GAMMA - EXPONENTIAL                                                    ║
-║     Tham số: λ > 0 (rate)                                                 ║
-║     Prior: Gamma(α, β)                                                    ║
-║     Likelihood: Exponential(λ)                                            ║
-║     Posterior: Gamma(α + n, β + Σxᵢ)                                      ║
-║     Ứng dụng: Thời gian chờ, lifetime                                     ║
-║                                                                           ║
-║  5. INVERSE-GAMMA - NORMAL (μ biết)                                        ║
-║     Tham số: σ² > 0 (variance)                                            ║
-║     Prior: Inverse-Gamma(α, β)                                            ║
-║     Likelihood: Normal(μ, σ²)                                             ║
-║     Posterior: Inverse-Gamma(α + n/2, β + Σ(xᵢ-μ)²/2)                     ║
-║     Ứng dụng: Ước lượng variance                                          ║
-║                                                                           ║
-║  6. DIRICHLET - MULTINOMIAL                                                ║
-║     Tham số: (θ₁, ..., θₖ) (probabilities)                                ║
-║     Prior: Dirichlet(α₁, ..., αₖ)                                         ║
-║     Likelihood: Multinomial(n, θ)                                         ║
-║     Posterior: Dirichlet(α₁+n₁, ..., αₖ+nₖ)                               ║
-║     Ứng dụng: Phân loại nhiều lớp, topic modeling                         ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-"""
-
-ax.text(0.5, 0.5, conjugate_table, fontsize=9, family='monospace',
-       ha='center', va='center',
-       bbox=dict(boxstyle='round', facecolor='lightcyan', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-```
-
-### 2.2. Ví dụ: Normal-Normal
-
-```python
-# Ví dụ chi tiết: Normal-Normal conjugacy
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-# Giả sử: Đo chiều cao, σ = 10 cm (biết)
-sigma = 10
-true_mu = 170
-
-# Prior: Normal(165, 15²)
-mu0, sigma0 = 165, 15
-prior_normal = stats.norm(mu0, sigma0)
-
-# Dữ liệu
-np.random.seed(42)
-n = 20
-data = np.random.normal(true_mu, sigma, n)
-sample_mean = data.mean()
-
-# Posterior: Normal(μ₁, σ₁²)
-# Precision (inverse variance)
-precision0 = 1 / sigma0**2
-precision_likelihood = n / sigma**2
-precision1 = precision0 + precision_likelihood
-sigma1 = np.sqrt(1 / precision1)
-
-mu1 = (mu0 * precision0 + sample_mean * n / sigma**2) / precision1
-posterior_normal = stats.norm(mu1, sigma1)
-
-# Vẽ
-mu_grid = np.linspace(150, 190, 1000)
-
-axes[0, 0].plot(mu_grid, prior_normal.pdf(mu_grid), linewidth=2, 
-               label=f'Prior: N({mu0}, {sigma0}²)', linestyle='--')
-axes[0, 0].plot(mu_grid, posterior_normal.pdf(mu_grid), linewidth=3, 
-               label=f'Posterior: N({mu1:.1f}, {sigma1:.1f}²)')
-axes[0, 0].axvline(sample_mean, color='red', linestyle=':', linewidth=2, 
-                  label=f'Sample mean = {sample_mean:.1f}')
-axes[0, 0].axvline(true_mu, color='green', linestyle=':', linewidth=2, 
-                  label=f'True μ = {true_mu}', alpha=0.5)
-axes[0, 0].set_xlabel('μ (chiều cao, cm)', fontsize=11)
-axes[0, 0].set_ylabel('Mật độ', fontsize=11)
-axes[0, 0].set_title(f'Normal-Normal Conjugacy\nn = {n}, σ = {sigma} (biết)', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].legend(fontsize=9)
-axes[0, 0].grid(alpha=0.3)
-
-# Công thức
-axes[0, 1].axis('off')
-formula_normal = f"""
-NORMAL-NORMAL CONJUGACY
-
-Prior:
-  μ ~ Normal({mu0}, {sigma0}²)
-  Precision: 1/σ₀² = {precision0:.6f}
-
-Likelihood:
-  xᵢ ~ Normal(μ, {sigma}²)
-  n = {n}
-  x̄ = {sample_mean:.2f}
-  Precision: n/σ² = {precision_likelihood:.6f}
-
-Posterior:
-  μ ~ Normal({mu1:.2f}, {sigma1:.2f}²)
-  
-  Precision: 1/σ₁² = 1/σ₀² + n/σ²
-           = {precision0:.6f} + {precision_likelihood:.6f}
-           = {precision1:.6f}
-  
-  σ₁ = √(1/{precision1:.6f}) = {sigma1:.2f}
-  
-  μ₁ = (μ₀/σ₀² + nx̄/σ²) / (1/σ₀² + n/σ²)
-     = {mu1:.2f}
-
-→ Posterior là TRUNG BÌNH CÓ TRỌNG SỐ
-  của prior mean và sample mean!
-"""
-
-axes[0, 1].text(0.5, 0.5, formula_normal, fontsize=9, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
-
-# Ảnh hưởng của n
-axes[1, 0].plot(mu_grid, prior_normal.pdf(mu_grid), linewidth=2, 
-               label='Prior', linestyle='--', alpha=0.5)
-
-for n_sim in [5, 20, 50, 100]:
-    data_sim = np.random.normal(true_mu, sigma, n_sim)
-    sample_mean_sim = data_sim.mean()
-    
-    precision_sim = precision0 + n_sim / sigma**2
-    sigma_sim = np.sqrt(1 / precision_sim)
-    mu_sim = (mu0 * precision0 + sample_mean_sim * n_sim / sigma**2) / precision_sim
-    
-    post_sim = stats.norm(mu_sim, sigma_sim)
-    axes[1, 0].plot(mu_grid, post_sim.pdf(mu_grid), linewidth=2, 
-                   label=f'n={n_sim}: μ={mu_sim:.1f}, σ={sigma_sim:.1f}')
-
-axes[1, 0].axvline(true_mu, color='green', linestyle=':', linewidth=2, 
-                  label=f'True μ = {true_mu}', alpha=0.5)
-axes[1, 0].set_xlabel('μ', fontsize=11)
-axes[1, 0].set_ylabel('Mật độ', fontsize=11)
-axes[1, 0].set_title('Ảnh hưởng của Kích thước Mẫu\nPosterior hội tụ về true μ', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].legend(fontsize=9)
-axes[1, 0].grid(alpha=0.3)
-
-# Trọng số
-n_range = np.arange(1, 101)
-weight_prior = precision0 / (precision0 + n_range / sigma**2)
-weight_data = (n_range / sigma**2) / (precision0 + n_range / sigma**2)
-
-axes[1, 1].plot(n_range, weight_prior, linewidth=2, label='Trọng số Prior')
-axes[1, 1].plot(n_range, weight_data, linewidth=2, label='Trọng số Data')
-axes[1, 1].set_xlabel('Kích thước mẫu (n)', fontsize=11)
-axes[1, 1].set_ylabel('Trọng số', fontsize=11)
-axes[1, 1].set_title('Trọng số Prior vs Data\nData càng nhiều → trọng số càng lớn', 
-                    fontsize=12, fontweight='bold')
-axes[1, 1].legend(fontsize=10)
-axes[1, 1].grid(alpha=0.3)
-axes[1, 1].set_ylim(0, 1)
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== NORMAL-NORMAL CONJUGACY ===")
-print(f"\nPrior: N({mu0}, {sigma0}²)")
-print(f"Data: n={n}, x̄={sample_mean:.2f}, σ={sigma}")
-print(f"Posterior: N({mu1:.2f}, {sigma1:.2f}²)")
-print(f"\nTrọng số:")
-print(f"  Prior: {weight_prior[n-1]:.3f}")
-print(f"  Data: {weight_data[n-1]:.3f}")
-print(f"\nPosterior mean = {weight_prior[n-1]:.3f} × {mu0} + {weight_data[n-1]:.3f} × {sample_mean:.2f}")
-print(f"                = {mu1:.2f}")
-```
-
-### 2.3. Ví dụ: Gamma-Poisson
-
-```python
-# Ví dụ: Gamma-Poisson conjugacy
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-# Giả sử: Số lỗi trong code
-# Prior: Gamma(2, 1) → E[λ] = 2 lỗi/1000 dòng
-alpha_prior, beta_prior = 2, 1
-prior_gamma = stats.gamma(alpha_prior, scale=1/beta_prior)
-
-# Dữ liệu: Quan sát 10 files, tổng 25 lỗi
-n_files = 10
-total_errors = 25
-
-# Posterior: Gamma(α + Σxᵢ, β + n)
-alpha_post = alpha_prior + total_errors
-beta_post = beta_prior + n_files
-posterior_gamma = stats.gamma(alpha_post, scale=1/beta_post)
-
-# Vẽ
-lambda_grid = np.linspace(0, 8, 1000)
-
-axes[0, 0].plot(lambda_grid, prior_gamma.pdf(lambda_grid), linewidth=2, 
-               label=f'Prior: Gamma({alpha_prior}, {beta_prior})', linestyle='--')
-axes[0, 0].plot(lambda_grid, posterior_gamma.pdf(lambda_grid), linewidth=3, 
-               label=f'Posterior: Gamma({alpha_post}, {beta_post})')
-axes[0, 0].axvline(total_errors/n_files, color='red', linestyle=':', linewidth=2, 
-                  label=f'MLE = {total_errors/n_files:.2f}')
-axes[0, 0].set_xlabel('λ (lỗi/file)', fontsize=11)
-axes[0, 0].set_ylabel('Mật độ', fontsize=11)
-axes[0, 0].set_title(f'Gamma-Poisson Conjugacy\n{total_errors} lỗi trong {n_files} files', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].legend(fontsize=10)
-axes[0, 0].grid(alpha=0.3)
-
-# Công thức
-axes[0, 1].axis('off')
-formula_gamma = f"""
-GAMMA-POISSON CONJUGACY
-
-Prior:
-  λ ~ Gamma({alpha_prior}, {beta_prior})
-  E[λ] = α/β = {alpha_prior/beta_prior:.2f}
-  Var[λ] = α/β² = {alpha_prior/beta_prior**2:.2f}
-
-Likelihood:
-  xᵢ ~ Poisson(λ)
-  n = {n_files} files
-  Σxᵢ = {total_errors} lỗi
-
-Posterior:
-  λ ~ Gamma(α + Σxᵢ, β + n)
-    = Gamma({alpha_post}, {beta_post})
-  
-  E[λ] = {alpha_post}/{beta_post} = {alpha_post/beta_post:.2f}
-  Var[λ] = {alpha_post}/{beta_post**2} = {alpha_post/beta_post**2:.2f}
-
-95% CI: [{posterior_gamma.ppf(0.025):.2f}, 
-         {posterior_gamma.ppf(0.975):.2f}]
-
-→ Kỳ vọng ~{alpha_post/beta_post:.1f} lỗi/file
-"""
-
-axes[0, 1].text(0.5, 0.5, formula_gamma, fontsize=10, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.8))
-
-# Posterior Predictive: Số lỗi trong file mới
-# Negative Binomial
-from scipy.special import comb, gamma as gamma_func
-
-def negative_binomial_pmf(k, r, p):
-    """Negative Binomial PMF"""
-    return comb(k + r - 1, k) * (1 - p)**r * p**k
-
-# Posterior predictive cho Gamma-Poisson là Negative Binomial
-# với r = α_post, p = 1/(1 + β_post)
-r = alpha_post
-p = 1 / (1 + beta_post)
-
-k_range = np.arange(0, 15)
-ppd = [negative_binomial_pmf(k, r, p) for k in k_range]
-
-axes[1, 0].bar(k_range, ppd, alpha=0.7, edgecolor='black')
-axes[1, 0].axvline(alpha_post/beta_post, color='red', linestyle='--', linewidth=2,
-                  label=f'E[k] = {alpha_post/beta_post:.2f}')
-axes[1, 0].set_xlabel('k (số lỗi trong file MỚI)', fontsize=11)
-axes[1, 0].set_ylabel('Xác suất', fontsize=11)
-axes[1, 0].set_title('Posterior Predictive\nDự đoán số lỗi trong file mới', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].legend(fontsize=10)
-axes[1, 0].grid(alpha=0.3, axis='y')
-
-# Giải thích
-axes[1, 1].axis('off')
-interpretation = """
-╔═══════════════════════════════════════════════════════════╗
-║           DIỄN GIẢI                                       ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                           ║
-║  Prior:                                                   ║
-║    Tin là ~2 lỗi/file                                     ║
-║    Không chắc lắm (variance lớn)                          ║
-║                                                           ║
-║  Data:                                                    ║
-║    25 lỗi trong 10 files                                  ║
-║    → ~2.5 lỗi/file                                        ║
-║                                                           ║
-║  Posterior:                                               ║
-║    E[λ] = 2.45 lỗi/file                                   ║
-║    → Giữa prior (2) và data (2.5)                         ║
-║    → Chắc chắn hơn (variance nhỏ hơn)                     ║
-║                                                           ║
-║  Dự đoán file mới:                                        ║
-║    Kỳ vọng ~2.45 lỗi                                      ║
-║    Nhưng có thể 0-10 lỗi                                  ║
-║    → Kết hợp uncertainty về λ                             ║
-║      và randomness của Poisson                            ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-"""
-
-axes[1, 1].text(0.5, 0.5, interpretation, fontsize=9, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== GAMMA-POISSON CONJUGACY ===")
-print(f"\nPrior: Gamma({alpha_prior}, {beta_prior})")
-print(f"  E[λ] = {alpha_prior/beta_prior:.2f}")
-print(f"\nData: {total_errors} lỗi trong {n_files} files")
-print(f"  Sample mean = {total_errors/n_files:.2f}")
-print(f"\nPosterior: Gamma({alpha_post}, {beta_post})")
-print(f"  E[λ] = {alpha_post/beta_post:.2f}")
-print(f"  95% CI = [{posterior_gamma.ppf(0.025):.2f}, {posterior_gamma.ppf(0.975):.2f}]")
-```
-
-## 3. Khi nào KHÔNG dùng Conjugate Prior?
-
-### 3.1. Hạn chế
-
-```python
-# Minh họa: Khi conjugate prior không phù hợp
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-theta = np.linspace(0, 1, 1000)
-
-# Tình huống: Biết chắc θ ∈ [0.2, 0.4]
-# Beta conjugate không thể biểu diễn tốt
-
-# Thử Beta(20, 30) - gần nhất
-beta_conjugate = stats.beta(20, 30)
-
-# Prior lý tưởng: Uniform trên [0.2, 0.4]
-def ideal_prior(theta):
-    return np.where((theta >= 0.2) & (theta <= 0.4), 1/0.2, 0)
-
-axes[0, 0].plot(theta, beta_conjugate.pdf(theta), linewidth=2, 
-               label='Beta(20, 30) - Conjugate')
-axes[0, 0].plot(theta, ideal_prior(theta), linewidth=2, 
-               label='Uniform[0.2, 0.4] - Lý tưởng', linestyle='--')
-axes[0, 0].set_xlabel('θ', fontsize=11)
-axes[0, 0].set_ylabel('Mật độ', fontsize=11)
-axes[0, 0].set_title('Prior Conjugate vs Lý tưởng\nConjugate KHÔNG thể biểu diễn tốt!', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].legend(fontsize=10)
-axes[0, 0].grid(alpha=0.3)
-axes[0, 0].set_ylim(0, 10)
-
-# Giải thích
-axes[0, 1].axis('off')
-explanation1 = """
-╔═══════════════════════════════════════════════════════════╗
-║         KHI NÀO KHÔNG DÙNG CONJUGATE?                     ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                           ║
-║  1. Prior phức tạp                                        ║
-║     • Multimodal                                          ║
-║     • Truncated                                           ║
-║     • Mixture                                             ║
-║     → Conjugate không biểu diễn được                      ║
-║                                                           ║
-║  2. Likelihood phức tạp                                   ║
-║     • Không có conjugate                                  ║
-║     • Ví dụ: Logistic regression                          ║
-║              Neural networks                              ║
-║                                                           ║
-║  3. Model phức tạp                                        ║
-║     • Hierarchical                                        ║
-║     • Nhiều tham số phụ thuộc                             ║
-║     → Không có conjugate đơn giản                         ║
-║                                                           ║
-║  GIẢI PHÁP:                                               ║
-║    → Dùng MCMC (sẽ học ở bài sau)                         ║
-║    → Grid approximation                                   ║
-║    → Variational inference                                ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-"""
-
-axes[0, 1].text(0.5, 0.5, explanation1, fontsize=9, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='#ffcccc', alpha=0.8))
-
-# Ví dụ: Mixture prior
-# Prior: 50% tin θ~0.3, 50% tin θ~0.7
-mixture_prior = 0.5 * stats.beta(30, 70).pdf(theta) + 0.5 * stats.beta(70, 30).pdf(theta)
-
-axes[1, 0].plot(theta, mixture_prior, linewidth=3, label='Mixture Prior (lý tưởng)')
-axes[1, 0].plot(theta, stats.beta(50, 50).pdf(theta), linewidth=2, 
-               label='Beta(50, 50) - Conjugate', linestyle='--', alpha=0.7)
-axes[1, 0].set_xlabel('θ', fontsize=11)
-axes[1, 0].set_ylabel('Mật độ', fontsize=11)
-axes[1, 0].set_title('Mixture Prior\nConjugate KHÔNG thể biểu diễn bimodal!', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].legend(fontsize=10)
-axes[1, 0].grid(alpha=0.3)
-
-# Decision tree
-axes[1, 1].axis('off')
-decision = """
-    NÊN DÙNG CONJUGATE PRIOR?
-    
-    ┌─────────────────────────┐
-    │ Prior đơn giản?         │
-    │ (unimodal, standard)    │
-    └────────┬────────────────┘
-             │
-        ┌────┴────┐
-        │         │
-       YES       NO → MCMC
-        │
-    ┌───┴────────────────────┐
-    │ Likelihood đơn giản?   │
-    │ (có conjugate?)        │
-    └────────┬───────────────┘
-             │
-        ┌────┴────┐
-        │         │
-       YES       NO → MCMC
-        │
-    ┌───┴────────────────────┐
-    │ Model đơn giản?        │
-    │ (ít tham số)           │
-    └────────┬───────────────┘
-             │
-        ┌────┴────┐
-        │         │
-       YES       NO → MCMC
-        │
-        ▼
-    ✓ DÙNG CONJUGATE!
-      • Nhanh
-      • Chính xác
-      • Dễ hiểu
-"""
-
-axes[1, 1].text(0.5, 0.5, decision, fontsize=10, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightcyan', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-```
-
-![Tổng hợp các Conjugate Families]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_families.png)
+
+- prior Beta  $$\rightarrow$$ posterior vẫn là Beta,
+- prior Gamma  $$\rightarrow$$ posterior vẫn là Gamma,
+- prior Normal  $$\rightarrow$$ posterior vẫn là Normal.
+
+Ý nghĩa của việc này là:
+
+- ta không phải tạo ra một họ phân phối mới hoàn toàn sau cập nhật,
+- chỉ cần cập nhật vài tham số,
+- nên công thức posterior thường viết được rất gọn.
+
+## 2. Trực giác: vì sao liên hợp xuất hiện?
+
+Liên hợp xuất hiện khi prior và likelihood có “cùng chất liệu đại số”.
+
+Ví dụ:
+
+- likelihood Binomial tạo ra các lũy thừa của $$\theta$$ và $$1-\theta$$,
+- prior Beta cũng được xây từ các lũy thừa của $$\theta$$ và $$1-\theta$$.
+
+Khi nhân hai biểu thức này, ta không đổi dạng hàm. Ta chỉ cộng các số mũ. Đó chính là lý do posterior vẫn là Beta.
+
+Nói ngắn gọn:
+
+**Conjugacy là sự ăn khớp giữa hình dạng của prior và hình dạng của likelihood.**
+
+![Vì sao conjugacy tiện lợi]({{ site.baseurl }}/img/chapter_img/chapter02/why_conjugacy_convenient.png)
+
+## 3. Beta-Binomial: ví dụ quan trọng nhất để bắt đầu
+
+### 3.1. Câu chuyện thực tế
+
+Một giáo viên muốn suy luận tỷ lệ sinh viên qua môn $$\theta$$. Có 40 sinh viên và 31 em qua môn.
+
+Nếu mỗi sinh viên được xem như một phép thử thành công-thất bại độc lập, ta dùng:
+
+$$
+Y \mid \theta \sim \text{Binomial}(n,\theta).
+$$
+
+Giả sử prior là:
+
+$$
+\theta \sim \text{Beta}(\alpha,\beta).
+$$
+
+Khi đó posterior là:
+
+$$
+\theta \mid y \sim \text{Beta}(\alpha + y,\beta + n - y).
+$$
+
+### 3.2. Ý nghĩa trực giác
+
+Nếu prior là Beta$$(2,2)$$ và dữ liệu là 31/40, posterior thành Beta$$(33,11)$$.
+
+Đọc bằng lời:
+
+- prior như đang mang sẵn vài “lần thành công giả tưởng” và “lần thất bại giả tưởng”,
+- dữ liệu thật được cộng tiếp vào,
+- posterior là tổng hợp của cả hai.
+
+![Minh họa Beta-Binomial conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/beta_binomial_conjugacy_visual.png)
+
+### 3.3. Ví dụ đời thường khác
+
+Beta-Binomial cực kỳ tự nhiên cho các bài toán:
+
+- tỷ lệ khách mua hàng,
+- tỷ lệ học viên hoàn thành khóa học,
+- tỷ lệ bệnh nhân đáp ứng điều trị,
+- tỷ lệ email được mở,
+- tỷ lệ sản phẩm lỗi trong kiểm định chất lượng.
+
+Nếu dữ liệu là “đếm số thành công trong tổng số lần thử”, hãy nghĩ tới Binomial. Và nếu tham số là một xác suất, prior Beta là lựa chọn rất tự nhiên.
+
+## 4. Beta-Geometric: khi dữ liệu là số lần chờ đến thành công đầu tiên
+
+### 4.1. Câu chuyện thực tế
+
+Giả sử Nam đi thi chứng chỉ tiếng Anh cho tới khi đậu. Ta muốn suy luận xác suất đậu ở mỗi lần thi là $$\theta$$. Nếu Nam đậu đúng ở lần thứ ba, dữ liệu không phải là “3 lần thi có 1 lần đậu” theo nghĩa Binomial, mà là:
+
+- trượt ở lần 1,
+- trượt ở lần 2,
+- đậu ở lần 3.
+
+Đó là một kiểu dữ liệu có **thứ tự thời gian** rất rõ.
+
+Nếu mô hình là Geometric theo quy ước “đếm số lần thử cho đến thành công đầu tiên”, ta có:
+
+$$
+Y \mid \theta \sim \text{Geometric}(\theta),
+$$
+
+với likelihood:
+
+$$
+P(Y=y \mid \theta) = \theta(1-\theta)^{y-1}.
+$$
+
+Nếu prior vẫn là:
+
+$$
+\theta \sim \text{Beta}(\alpha,\beta),
+$$
+
+thì posterior trở thành:
+
+$$
+\theta \mid y \sim \text{Beta}(\alpha + 1,\beta + y - 1).
+$$
+
+### 4.2. Vì sao vẫn liên hợp?
+
+Điểm mấu chốt là likelihood Geometric vẫn tạo ra đúng hai “chất liệu đại số” quen thuộc:
+
+$$
+\theta^1(1-\theta)^{y-1}.
+$$
+
+Khi nhân với prior Beta:
+
+$$
+\theta^{\alpha-1}(1-\theta)^{\beta-1},
+$$
+
+ta chỉ cộng số mũ của $$\theta$$ và $$1-\theta$$. Vì thế, posterior vẫn ở trong họ Beta.
+
+### 4.3. Cách đọc trực giác
+
+Nếu dữ liệu là “đậu ở lần thứ ba”, posterior được cập nhật như sau:
+
+- có thêm một lần thành công thực,
+- có thêm hai lần thất bại thực.
+
+Đó là lý do Beta-Geometric rất hợp với các bài kiểu:
+
+- thi cho tới khi đậu,
+- chờ đến khi có khách mua đầu tiên,
+- số lần thử cho đến khi hệ thống chạy thành công lần đầu.
+
+## 5. Gamma-Poisson: khi dữ liệu là số đếm theo thời gian
+
+### 4.1. Câu chuyện thực tế
+
+Một tổng đài muốn suy luận số cuộc gọi trung bình mỗi giờ $$\lambda$$. Trong 8 giờ gần nhất, số cuộc gọi lần lượt là:
+
+$$
+7, 9, 8, 6, 10, 8, 11, 7.
+$$
+
+Nếu số cuộc gọi theo giờ được mô hình bằng Poisson:
+
+$$
+Y_i \mid \lambda \sim \text{Poisson}(\lambda),
+$$
+
+và prior là:
+
+$$
+\lambda \sim \text{Gamma}(\alpha,\beta),
+$$
+
+thì posterior là:
+
+$$
+\lambda \mid y_{1:n} \sim \text{Gamma}\left(\alpha + \sum_i y_i,\beta + n\right)
+$$
+
+theo tham số hóa shape-rate.
+
+### 4.2. Cách đọc
+
+Gamma-Poisson tiện ở chỗ:
+
+- số đếm quan sát được cộng vào tham số shape,
+- số khoảng thời gian quan sát được cộng vào rate.
+
+Điều này rất hợp với trực giác:
+
+- càng quan sát lâu, ta càng có nhiều thông tin,
+- càng thấy nhiều sự kiện, niềm tin về cường độ trung bình càng dịch lên.
+
+![Minh họa Gamma-Poisson conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/gamma_poisson_conjugacy_detailed.png)
+
+### 4.3. Các bối cảnh rất hợp
+
+- số lỗi hệ thống mỗi ngày,
+- số bệnh nhân nhập viện mỗi ca trực,
+- số đơn hàng mỗi giờ,
+- số sinh viên nghỉ học mỗi tuần,
+- số sự cố an ninh mạng mỗi tháng.
+
+## 6. Normal-Normal: khi dữ liệu liên tục dao động quanh một trung bình
+
+### 5.1. Câu chuyện thực tế
+
+Bạn muốn suy luận chiều cao trung bình $$\mu$$ của một nhóm sinh viên. Giả sử độ lệch chuẩn quan sát $$\sigma$$ đã biết, và dữ liệu được mô hình:
+
+$$
+Y_i \mid \mu \sim \mathcal{N}(\mu,\sigma^2).
+$$
+
+Nếu prior cho $$\mu$$ cũng là Normal:
+
+$$
+\mu \sim \mathcal{N}(\mu_0,\tau_0^2),
+$$
+
+thì posterior cho $$\mu$$ vẫn là Normal.
+
+### 5.2. Ý nghĩa trực giác
+
+Posterior mean là một dạng **trung bình có trọng số** giữa:
+
+- prior mean,
+- và trung bình mẫu.
+
+Trọng số nào mạnh hơn tùy vào:
+
+- prior có hẹp hay không,
+- dữ liệu có nhiều hay không,
+- độ nhiễu quan sát có lớn hay không.
+
+![Minh họa Normal-Normal conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/normal_normal_conjugacy_detailed.png)
+
+### 5.3. Những bối cảnh gần gũi
+
+- trung bình chiều cao,
+- điểm trung bình một lớp,
+- thời gian xử lý trung bình của một tác vụ,
+- sai số cảm biến quanh một giá trị thật.
+
+## 7. Cập nhật tuần tự cực kỳ đẹp trong mô hình liên hợp
+
+Đây là một lợi ích lớn của conjugacy.
+
+Giả sử bạn theo dõi tỷ lệ khách nhấp quảng cáo theo từng ngày. Mỗi ngày một ít dữ liệu mới tới. Với Beta-Binomial, bạn không cần giải lại bài toán từ đầu. Chỉ cần:
+
+- lấy posterior hôm qua,
+- dùng nó làm prior cho hôm nay,
+- cập nhật thêm số lượt thành công và thất bại mới.
+
+Điều tương tự đúng với Gamma-Poisson.
+
+![Cập nhật tuần tự với prior liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/sequential_updating_story.png)
+
+Trong các hệ thống giám sát vận hành hoặc dashboard theo thời gian thực, đây là ưu điểm rất trực quan.
+
+## 8. Vì sao nên học conjugacy dù sau này dùng MCMC?
+
+Có ba lý do rất đáng học.
+
+### 7.1. Nó cho trực giác cực tốt
+
+Conjugacy cho bạn nhìn thẳng vào cách prior và dữ liệu tương tác.
+
+### 7.2. Nó cho lời giải kiểm chứng
+
+Khi bạn học grid approximation hay MCMC, các mô hình liên hợp là nơi rất tốt để kiểm tra xem code có đang cho kết quả hợp lý không.
+
+### 7.3. Nó vẫn hữu ích trong các bài toán nhỏ
+
+Với mô hình đơn giản, conjugacy cho lời giải:
+
+- nhanh,
+- rõ,
+- dễ giải thích,
+- và thường đủ tốt cho giảng dạy hoặc bài toán một tham số.
+
+![Conjugacy so với các phương pháp tính toán khác]({{ site.baseurl }}/img/chapter_img/chapter02/conjugacy_vs_mcmc.png)
+
+## 9. Nhưng conjugacy không phải lúc nào cũng là lựa chọn tốt nhất
+
+Đây là điểm rất quan trọng.
+
+Ta không nên chọn prior chỉ vì nó liên hợp nếu:
+
+- nó mô tả kiến thức thực tế quá kém,
+- nó làm ta bỏ qua cấu trúc quan trọng của bài toán,
+- hoặc bài toán đã đủ phức tạp để cần mô hình linh hoạt hơn.
+
+Ví dụ:
+
+- prior thực tế có thể là mixture hai đỉnh,
+- tham số có thể bị ràng buộc phức tạp,
+- mô hình có nhiều tầng hoặc nhiều tham số liên kết với nhau.
+
+Một điểm dễ bị bỏ qua là **support của tham số cũng quan trọng**. Có những trường hợp phần đại số trông có vẻ quen, nhưng posterior lại không còn rơi gọn vào một họ chuẩn quen thuộc trên đúng miền giá trị đang xét.
+
+Ví dụ, nếu tham số $$\theta$$ bị ràng buộc trong đoạn $$[0,1]$$ nhưng likelihood lại đến từ mô hình Poisson, ta có thể thu được một mật độ không chuẩn hóa kiểu:
+
+$$
+\theta^{y+1}e^{-\theta}, \qquad 0 \le \theta \le 1.
+$$
+
+Biểu thức này vẫn hoàn toàn hợp lệ để suy luận Bayes, nhưng nó không còn là một ví dụ liên hợp “đẹp” như Beta-Binomial hay Gamma-Poisson nữa. Bài học ở đây là:
+
+- conjugacy phụ thuộc vào cả hình dạng đại số,
+- và vào việc posterior có còn nằm gọn trong một họ quen thuộc trên đúng support hay không.
+
+![Giới hạn của prior liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_prior_limitations.png)
+
+Lúc đó, ta chuyển sang:
+
+- grid approximation cho bài rất nhỏ,
+- MCMC cho các mô hình tổng quát hơn.
+
+## 10. Khi nào nên nghĩ tới cặp liên hợp nào?
+
+![Bảng các cặp liên hợp phổ biến]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_table.png)
+
+Bạn có thể nhớ theo câu chuyện dữ liệu:
+
+- xác suất thành công  $$\rightarrow$$ Beta prior + Binomial likelihood,
+- số lần chờ đến thành công đầu tiên  $$\rightarrow$$ Beta prior + Geometric likelihood,
+- tốc độ đếm sự kiện  $$\rightarrow$$ Gamma prior + Poisson likelihood,
+- trung bình của dữ liệu liên tục  $$\rightarrow$$ Normal prior + Normal likelihood.
+
+Nhớ theo **bối cảnh dữ liệu** thường dễ hơn nhớ theo bảng công thức khô.
+
+## 11. Những nhầm lẫn phổ biến
+
+### 10.1. “Conjugate prior là prior tốt nhất”
+
+Không. Nó chỉ là prior thuận tiện về mặt tính toán.
+
+### 10.2. “Học thuộc công thức là đủ”
+
+Không. Nếu không hiểu câu chuyện sinh dữ liệu và ý nghĩa tham số, bạn sẽ rất dễ lắp sai mô hình.
+
+### 10.3. “Thời đại MCMC rồi thì conjugacy vô dụng”
+
+Không. Nó vẫn là nền tảng trực giác và là bộ ví dụ chuẩn để học Bayesian updating.
 
 ## Tóm tắt
 
-```python
-# Infographic tóm tắt
-fig = plt.figure(figsize=(14, 10))
-ax = fig.add_subplot(111)
-ax.axis('off')
+**Prior liên hợp là những prior khiến posterior vẫn nằm trong cùng họ phân phối sau khi cập nhật.**
 
-summary = """
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                   CONJUGATE PRIORS - TÓM TẮT                               ║
-╠═══════════════════════════════════════════════════════════════════════════╣
-║                                                                           ║
-║  1. ĐỊNH NGHĨA                                                             ║
-║     Prior và Posterior CÙNG HỌ phân phối                                  ║
-║     → Tính toán GIẢI TÍCH, không cần MCMC                                 ║
-║                                                                           ║
-║  2. CÁC CẶP PHỔ BIẾN                                                       ║
-║     • Beta - Binomial: Xác suất, tỷ lệ                                    ║
-║     • Normal - Normal: Mean (σ² biết)                                     ║
-║     • Gamma - Poisson: Count data                                         ║
-║     • Gamma - Exponential: Thời gian                                      ║
-║     • Inverse-Gamma - Normal: Variance (μ biết)                           ║
-║     • Dirichlet - Multinomial: Nhiều lớp                                  ║
-║                                                                           ║
-║  3. LỢI ÍCH                                                                ║
-║     ✓ Tính toán nhanh, chính xác                                          ║
-║     ✓ Dễ cập nhật tuần tự                                                 ║
-║     ✓ Diễn giải rõ ràng                                                   ║
-║     ✓ Không cần MCMC                                                      ║
-║                                                                           ║
-║  4. HẠN CHẾ                                                                ║
-║     • Chỉ có một số cặp conjugate                                         ║
-║     • Prior phức tạp → không biểu diễn được                               ║
-║     • Model phức tạp → không có conjugate                                 ║
-║                                                                           ║
-║  5. KHI NÀO DÙNG?                                                          ║
-║     ✓ Model đơn giản                                                      ║
-║     ✓ Prior standard                                                      ║
-║     ✓ Cần tính nhanh                                                      ║
-║     ✓ Giảng dạy, minh họa                                                 ║
-║                                                                           ║
-║  6. KHI NÀO KHÔNG DÙNG?                                                    ║
-║     → Model phức tạp → MCMC                                               ║
-║     → Prior phức tạp → MCMC                                               ║
-║     → Likelihood không standard → MCMC                                    ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-"""
+Điều đó làm cho Bayes trở nên:
 
-ax.text(0.5, 0.5, summary, fontsize=10, family='monospace',
-       ha='center', va='center',
-       bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.3))
+- tính tay được,
+- diễn giải dễ,
+- cập nhật tuần tự gọn,
+- và rất phù hợp cho việc xây trực giác.
 
-plt.tight_layout()
-plt.show()
-```
+Ba cặp bạn nên nhớ đầu tiên là:
 
-## Bài tập
+- Beta-Binomial,
+- Gamma-Poisson,
+- Normal-Normal.
 
-1. **Beta-Binomial**: Bắt đầu với prior Beta(5, 5). Quan sát 30 lần tung, thấy 18 ngửa. Tính posterior và 95% credible interval.
+Nhưng hãy luôn nhớ: **thuận tiện tính toán không tự động đồng nghĩa với mô hình hóa tốt nhất**.
 
-2. **Normal-Normal**: Prior N(100, 20²), dữ liệu: n=15, x̄=110, σ=10 (biết). Tính posterior mean và variance.
+> **3 ý cần nhớ.**
+> 1. Conjugacy xảy ra khi prior và likelihood “ăn khớp” về đại số nên posterior vẫn ở cùng họ phân phối.
+> 2. Các cặp liên hợp giúp việc cập nhật Bayes nhanh, gọn và rất tốt cho việc xây trực giác.
+> 3. Prior liên hợp là lựa chọn tiện lợi, nhưng không nên ép dùng nếu nó mô tả kiến thức thực tế quá kém.
 
-3. **Gamma-Poisson**: Prior Gamma(3, 2), quan sát [2, 5, 3, 4, 6] sự kiện. Tính posterior và dự đoán số sự kiện tiếp theo.
+## Câu hỏi tự luyện
 
-4. **Cập nhật tuần tự**: Với Beta(2, 2), cập nhật tuần tự với dữ liệu: ngày 1 (5/10), ngày 2 (7/10), ngày 3 (6/10). Vẽ posterior sau mỗi ngày.
-
-5. **So sánh**: Khi nào nên dùng conjugate prior? Khi nào nên dùng MCMC? Cho ví dụ cụ thể.
+1. Hãy nêu một ví dụ thực tế phù hợp với Beta-Binomial.
+2. Vì sao Gamma-Poisson hợp tự nhiên với dữ liệu đếm theo thời gian?
+3. Trong Normal-Normal, điều gì quyết định posterior mean gần prior mean hay gần trung bình mẫu hơn?
+4. Khi nào bạn sẽ không muốn chọn prior liên hợp dù biết nó rất tiện?
 
 ## Tài liệu tham khảo
 
-1. **McElreath, R. (2020).** *Statistical Rethinking* (2nd Ed.). Chapter 2.
-2. **Gelman, A., et al. (2013).** *Bayesian Data Analysis* (3rd Ed.). Chapter 2.
-3. **Murphy, K. P. (2012).** *Machine Learning: A Probabilistic Perspective*. Chapter 3.
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 2.
+- Kruschke, J. *Doing Bayesian Data Analysis* (2nd ed.), Chapter 6-7.
+- McElreath, R. *Statistical Rethinking* (2nd ed.), Chapter 2-3.
 
 ---
 
-## Tài liệu tham khảo
-
-### Primary:
-- **McElreath, R. (2020).** *Statistical Rethinking* (2nd Ed.)
-  - Chapter 2-3: Bayesian updating, conjugate families
-  - Focus on: Beta-Binomial conjugacy, analytical posteriors
-
-### Secondary:
-
-#### Gelman et al. - Bayesian Data Analysis (3rd Edition):
-- **Chapter 2.4**: Binomial model (Beta prior)
-- **Chapter 2.5**: Poisson model (Gamma prior)
-- **Chapter 2.6**: Normal model with known variance
-- Focus on: Conjugate prior families, analytical solutions
-
-#### Kruschke - Doing Bayesian Data Analysis (2015):
-- **Chapter 6**: Inferring a Binomial Probability via Exact Mathematical Analysis
-- Focus on: Beta-Binomial model, conjugate updating, sequential updating
-
-**Lưu ý**: Gelman/Kruschke sử dụng R/Stan, nhưng conjugate prior concepts hoàn toàn tương đương với Python/SciPy implementation.
-
----
-
-*Bài học tiếp theo: [2.6 Grid Approximation - Phương pháp Lưới](/vi/chapter02/grid-approximation/)*
-
+*Bài học tiếp theo: [2.6 Grid Approximation - Xấp xỉ Lưới](/vi/chapter02/grid-approximation/)*

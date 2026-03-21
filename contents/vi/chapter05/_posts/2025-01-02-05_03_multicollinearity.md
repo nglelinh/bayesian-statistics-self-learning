@@ -10,293 +10,240 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **multicollinearity** - vấn đề khi predictors correlate cao với nhau. Bạn sẽ học cách nhận biết multicollinearity, hiểu tại sao nó là vấn đề, và biết cách xử lý. Quan trọng hơn, bạn sẽ hiểu rằng multicollinearity không phải lúc nào cũng là "bad" - nó phụ thuộc vào mục tiêu phân tích.
+Sau bài này, bạn cần hiểu multicollinearity là gì, tại sao nó làm cho việc diễn giải coefficients trở nên khó khăn, và khi nào nó thực sự đáng lo. Bạn cũng cần phân biệt rõ hai mục tiêu khác nhau của hồi quy: **prediction** và **interpretation**.
 
-## Giới thiệu: Vấn đề của Predictors Tương quan
-
-Trong multiple regression, chúng ta giả định mỗi predictor đóng góp **độc lập** vào outcome. Nhưng điều gì xảy ra khi hai predictors **correlate cao** với nhau?
-
-**Ví dụ**: Dự đoán cân nặng từ:
-- Chiều cao (cm)
-- Chiều cao (inches)
-
-Rõ ràng hai predictors này **hoàn toàn tương quan** (r ≈ 1). Làm sao model có thể tách biệt effect của mỗi cái?
-
-**Câu trả lời**: Không thể! Đây là **multicollinearity**.
+> **Ví dụ mini.** Bạn dự đoán giá nhà bằng diện tích và số phòng ngủ. Hai biến này thường đi cùng nhau: nhà rộng hơn thường cũng có nhiều phòng hơn. Khi đó mô hình có thể dự đoán giá khá tốt, nhưng lại lúng túng khi phải trả lời chính xác "giữ mọi thứ khác cố định thì thêm một phòng ngủ làm giá tăng bao nhiêu?".
+>
+> **Câu hỏi tự kiểm tra.** Nếu hai predictors gần như đo cùng một thứ, mô hình sẽ gặp khó khăn gì khi tách riêng ảnh hưởng của từng biến?
 
 ## 1. Multicollinearity là gì?
 
-![Multicollinearity Effects]({{ site.baseurl }}/img/chapter_img/chapter05/multicollinearity_effects.png)
+Multicollinearity xảy ra khi hai hoặc nhiều predictors trong cùng một mô hình có tương quan cao với nhau.
 
-### 1.1. Định nghĩa
+Nói đơn giản:
 
-**Multicollinearity** xảy ra khi:
-- Hai hoặc nhiều predictors **correlate cao** với nhau
-- Một predictor có thể được dự đoán tốt từ các predictors khác
+- chúng di chuyển cùng nhau,
+- chúng mang thông tin trùng lặp đáng kể,
+- nên mô hình khó biết nên "ghi công" cho biến nào.
 
-**Hậu quả**:
-- Coefficients có **high uncertainty** (wide credible intervals)
-- Coefficients có thể có **unexpected signs**
-- Model predictions vẫn tốt, nhưng interpretation khó
+Ví dụ:
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pymc as pm
-import arviz as az
-from scipy import stats
+- chiều cao tính bằng cm và chiều cao tính bằng inch,
+- diện tích nhà và số phòng ngủ trong một khu chung cư có thiết kế khá giống nhau,
+- số giờ học và số bài tập đã hoàn thành trong một lớp học kỷ luật cao.
 
-# Demonstrate multicollinearity
-np.random.seed(42)
-n = 100
+Vấn đề không phải là dữ liệu sai. Vấn đề là các predictors quá giống nhau về mặt thông tin.
 
-# Generate correlated predictors
-x1 = np.random.normal(0, 1, n)
-x2 = 0.95 * x1 + np.random.normal(0, 0.1, n)  # High correlation with x1
+![Multicollinearity demo]({{ site.baseurl }}/img/chapter_img/chapter05/multicollinearity_demo.png)
 
-# Outcome depends on both
-y = 2 + 3*x1 + 2*x2 + np.random.normal(0, 1, n)
+Hình trên cho thấy tình huống rất điển hình: cả hai predictors đều liên quan đến outcome, nhưng chúng cũng quá giống nhau nên mô hình khó tách biệt ai đóng góp bao nhiêu.
 
-# Visualize correlation
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+## 2. Tại sao multicollinearity làm hệ số trở nên khó đọc?
 
-# 1. x1 vs x2 (high correlation)
-axes[0].scatter(x1, x2, s=50, alpha=0.6, edgecolors='black')
-corr = np.corrcoef(x1, x2)[0, 1]
-axes[0].set_xlabel('x₁', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('x₂', fontsize=12, fontweight='bold')
-axes[0].set_title(f'Predictors Correlation\nr = {corr:.3f} (HIGH!)',
-                 fontsize=14, fontweight='bold', color='red')
-axes[0].grid(alpha=0.3)
+Hãy quay lại nguyên tắc của multiple regression:
 
-# 2. Both predict y well individually
-axes[1].scatter(x1, y, s=50, alpha=0.6, label='x₁ vs y', edgecolors='black')
-axes[1].scatter(x2, y, s=50, alpha=0.6, label='x₂ vs y', edgecolors='black')
-axes[1].set_xlabel('Predictor', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('y', fontsize=12, fontweight='bold')
-axes[1].set_title('Both Predictors Correlate with y\n' +
-                 'Hard to separate their effects!',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
+> mỗi hệ số được hiểu là ảnh hưởng của một biến khi giữ các biến khác cố định.
 
-# 3. Problem illustration
-axes[2].axis('off')
-problem = """
-╔═══════════════════════════════════════════════╗
-║        MULTICOLLINEARITY PROBLEM              ║
-╠═══════════════════════════════════════════════╣
-║                                               ║
-║  Khi x₁ và x₂ correlate cao:                  ║
-║                                               ║
-║  Vấn đề:                                      ║
-║    • Không thể tách biệt effects              ║
-║    • Coefficients có high uncertainty         ║
-║    • Interpretation khó khăn                  ║
-║                                               ║
-║  Tại sao?                                     ║
-║    Khi x₁ tăng, x₂ cũng tăng                  ║
-║    → Effect của x₁ hay x₂?                    ║
-║    → Model không biết!                        ║
-║                                               ║
-║  Lưu ý:                                       ║
-║    • Predictions vẫn tốt                      ║
-║    • Chỉ interpretation bị ảnh hưởng          ║
-║                                               ║
-╚═══════════════════════════════════════════════╝
-"""
-axes[2].text(0.5, 0.5, problem, fontsize=10, family='monospace',
-            ha='center', va='center',
-            bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.9))
+Vấn đề là nếu hai biến thường luôn cùng tăng cùng giảm, điều kiện "giữ biến kia cố định" trở nên khá xa lạ với dữ liệu thật.
 
-plt.tight_layout()
-plt.show()
+### Ví dụ: diện tích và số phòng ngủ
 
-print("=" * 70)
-print("MULTICOLLINEARITY EXAMPLE")
-print("=" * 70)
-print(f"\nCorrelation between x₁ and x₂: r = {corr:.3f}")
-print(f"True coefficients: β₁ = 3, β₂ = 2")
-print("\n→ Let's see what happens when we fit the model...")
-print("=" * 70)
-```
+Trong thực tế:
 
-### 1.2. Fit Model với Multicollinearity
+- căn nhà diện tích lớn thường có nhiều phòng ngủ hơn,
+- căn nhỏ thường có ít phòng ngủ hơn.
 
-```python
-# Fit Bayesian regression
-with pm.Model() as model_collinear:
-    # Priors
-    alpha = pm.Normal('alpha', 0, 5)
-    beta1 = pm.Normal('beta1', 0, 5)
-    beta2 = pm.Normal('beta2', 0, 5)
-    sigma = pm.HalfNormal('sigma', 2)
-    
-    # Linear model
-    mu = alpha + beta1*x1 + beta2*x2
-    
-    # Likelihood
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y)
-    
-    # Sample
-    trace = pm.sample(2000, tune=1000, chains=4, random_seed=42,
-                     return_inferencedata=True)
+Nếu hỏi:
 
-# Summary
-print("\n" + "=" * 70)
-print("POSTERIOR WITH MULTICOLLINEARITY")
-print("=" * 70)
-summary = az.summary(trace, var_names=['beta1', 'beta2'])
-print(summary)
-print("=" * 70)
+> giữa hai căn có cùng diện tích nhưng khác 1 phòng ngủ thì giá chênh bao nhiêu?
 
-# Extract posteriors
-beta1_samples = trace.posterior['beta1'].values.flatten()
-beta2_samples = trace.posterior['beta2'].values.flatten()
+đó là một câu hỏi hợp lý. Nhưng nếu dữ liệu của bạn hiếm khi có những cặp nhà như vậy, mô hình sẽ không có nhiều thông tin để trả lời chắc chắn.
 
-# Visualize
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+Kết quả thường là:
 
-# Beta1 posterior
-axes[0].hist(beta1_samples, bins=50, density=True, alpha=0.7,
-            color='skyblue', edgecolor='black')
-axes[0].axvline(beta1_samples.mean(), color='red', linewidth=2,
-               label=f'Mean = {beta1_samples.mean():.2f}')
-axes[0].axvline(3, color='green', linestyle='--', linewidth=2,
-               label='True = 3')
-axes[0].set_xlabel('β₁', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[0].set_title(f'Posterior: β₁\nSD = {beta1_samples.std():.2f} (HIGH!)',
-                 fontsize=14, fontweight='bold')
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3, axis='y')
+- credible interval của các hệ số rộng hơn,
+- dấu của hệ số có thể đổi chiều bất ngờ,
+- các hệ số rất nhạy với việc thêm bớt vài quan sát.
 
-# Beta2 posterior
-axes[1].hist(beta2_samples, bins=50, density=True, alpha=0.7,
-            color='lightgreen', edgecolor='black')
-axes[1].axvline(beta2_samples.mean(), color='red', linewidth=2,
-               label=f'Mean = {beta2_samples.mean():.2f}')
-axes[1].axvline(2, color='green', linestyle='--', linewidth=2,
-               label='True = 2')
-axes[1].set_xlabel('β₂', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[1].set_title(f'Posterior: β₂\nSD = {beta2_samples.std():.2f} (HIGH!)',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3, axis='y')
+![Multicollinearity effects]({{ site.baseurl }}/img/chapter_img/chapter05/multicollinearity_effects.png)
 
-# Joint posterior (negative correlation!)
-axes[2].scatter(beta1_samples, beta2_samples, s=1, alpha=0.3)
-axes[2].axvline(3, color='green', linestyle='--', linewidth=2)
-axes[2].axhline(2, color='green', linestyle='--', linewidth=2)
-axes[2].set_xlabel('β₁', fontsize=12, fontweight='bold')
-axes[2].set_ylabel('β₂', fontsize=12, fontweight='bold')
-axes[2].set_title('Joint Posterior\nNegative correlation!',
-                 fontsize=14, fontweight='bold')
-axes[2].grid(alpha=0.3)
+## 3. Dấu hiệu nhận biết trong thực tế
 
-plt.tight_layout()
-plt.show()
+Khi làm việc với dữ liệu, bạn có thể nghi ngờ multicollinearity nếu thấy:
 
-print("\nOBSERVATIONS:")
-print("-" * 70)
-print("1. Wide posteriors (high uncertainty)")
-print("2. Means may not match true values")
-print("3. β₁ and β₂ negatively correlated in posterior")
-print("   → When β₁ high, β₂ low (and vice versa)")
-print("   → Many combinations give same predictions!")
-print("-" * 70)
-```
+- predictors có tương quan rất cao trên scatter plot hoặc correlation matrix,
+- hệ số của từng biến "nhảy loạn" khi thêm một predictor mới,
+- interval của coefficients rộng dù mô hình tổng thể vẫn fit khá ổn,
+- dấu của hệ số trái với trực giác chuyên môn.
 
-## 2. Tại sao Multicollinearity là Vấn đề?
+Ví dụ:
 
-### 2.1. High Uncertainty
+- trong mô hình dự đoán doanh thu, ngân sách quảng cáo cho Facebook và Instagram rất giống nhau vì công ty thường tăng giảm chúng cùng lúc,
+- hậu quả là mô hình khó nói kênh nào hiệu quả hơn, dù tổng ngân sách quảng cáo nhìn chung vẫn dự đoán doanh thu tốt.
 
-Khi predictors correlate cao, model không thể tách biệt effects → **wide credible intervals**.
+## 4. Multicollinearity có phải lúc nào cũng xấu không?
 
-### 2.2. Unstable Estimates
+Không.
 
-Coefficients có thể thay đổi nhiều với small changes in data.
+Đây là điểm rất quan trọng.
 
-### 2.3. Interpretation Khó
+### 4.1. Nếu mục tiêu là prediction
 
-"Effect của x₁ holding x₂ constant" không có ý nghĩa khi x₁ và x₂ luôn thay đổi cùng nhau.
+Nhiều khi multicollinearity không quá đáng sợ.
 
-## 3. Giải pháp
+Vì:
 
-### 3.1. Option 1: Remove One Predictor
+- model vẫn có thể dự đoán outcome tốt,
+- tổng thông tin từ nhóm predictors đó vẫn hữu ích,
+- điều bạn cần chỉ là dự báo chính xác chứ không phải giải thích từng coefficient.
 
-Nếu hai predictors measure cùng một concept → giữ một, bỏ một.
+Ví dụ:
 
-### 3.2. Option 2: Combine Predictors
+- mô hình dự đoán nguy cơ tín dụng có thể dùng nhiều chỉ số tài chính khá giống nhau mà vẫn cho dự báo chấp nhận được.
 
-Tạo composite variable (e.g., average, PCA).
+### 4.2. Nếu mục tiêu là interpretation
 
-### 3.3. Option 3: Regularization Priors
+Multicollinearity trở thành vấn đề lớn hơn nhiều.
 
-Sử dụng priors mạnh hơn để "shrink" coefficients (Chapter 07).
+Lúc này bạn quan tâm:
 
-### 3.4. Option 4: Accept It!
+- biến nào thực sự quan trọng,
+- cường độ ảnh hưởng riêng của từng biến là bao nhiêu,
+- dấu và độ lớn của coefficients có ổn định không.
 
-Nếu mục tiêu là **prediction**, multicollinearity không phải vấn đề lớn.
+Nếu predictors chồng lấn quá nhiều, việc diễn giải sẽ yếu đi rõ rệt.
 
-```python
-# Compare: With vs Without one predictor
-# Model without x2
-with pm.Model() as model_no_collinear:
-    alpha = pm.Normal('alpha', 0, 5)
-    beta1 = pm.Normal('beta1', 0, 5)
-    sigma = pm.HalfNormal('sigma', 2)
-    
-    mu = alpha + beta1*x1
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y)
-    
-    trace_no = pm.sample(1000, tune=500, chains=2, random_seed=42,
-                        return_inferencedata=True, progressbar=False)
+## 5. Một ví dụ đời thường: lương và học vấn
 
-beta1_no = trace_no.posterior['beta1'].values.flatten()
+Giả sử bạn muốn giải thích lương bằng:
 
-print("\n" + "=" * 70)
-print("COMPARISON")
-print("=" * 70)
-print(f"\nWith both x₁ and x₂ (multicollinearity):")
-print(f"  β₁: {beta1_samples.mean():.2f} ± {beta1_samples.std():.2f}")
-print(f"  (Wide uncertainty)")
+- số năm đi học,
+- bằng cấp cao nhất,
+- kỹ năng chuyên môn được kiểm tra.
 
-print(f"\nWith only x₁ (no multicollinearity):")
-print(f"  β₁: {beta1_no.mean():.2f} ± {beta1_no.std():.2f}")
-print(f"  (Narrow uncertainty)")
+Ba biến này liên quan khá mạnh với nhau.
 
-print(f"\n→ Removing correlated predictor reduces uncertainty!")
-print("=" * 70)
-```
+Điều có thể xảy ra:
 
-## Tóm tắt
+- mô hình tổng thể dự đoán lương tương đối tốt,
+- nhưng rất khó nói chính xác riêng bằng cấp đóng góp bao nhiêu nếu kỹ năng và số năm đi học cũng tăng theo.
 
-Multicollinearity xảy ra khi predictors correlate cao:
+Khi đó, câu trả lời thành thật hơn sẽ là:
 
-- **Vấn đề**: Wide credible intervals, interpretation khó
-- **Không phải vấn đề**: Predictions vẫn tốt
-- **Giải pháp**: Remove predictor, combine, regularization, hoặc accept it
+> Bộ biến về nền tảng học thuật và chuyên môn liên quan mạnh đến lương, nhưng dữ liệu hiện tại không đủ tách bạch rõ đóng góp riêng của từng thành phần.
 
-**Key insight**: Multicollinearity chỉ là vấn đề nếu mục tiêu là **interpretation**. Nếu chỉ cần **prediction**, không sao!
+Đây là kiểu diễn giải trưởng thành hơn là cố ép mỗi coefficient thành một "sự thật chắc chắn".
 
-Bài tiếp theo: **Interaction Effects** - khi effects phụ thuộc nhau.
+## 6. Vì sao posterior của các hệ số thường dính chặt với nhau?
 
-## Bài tập
+Trong bối cảnh Bayes, multicollinearity thường lộ ra ở joint posterior của coefficients:
 
-**Bài tập 1**: Generate data với perfect multicollinearity (r=1). Fit model và observe posteriors.
+- khi một hệ số tăng,
+- hệ số kia có xu hướng giảm,
+- vì nhiều tổ hợp khác nhau có thể tạo ra dự đoán gần giống nhau.
 
-**Bài tập 2**: So sánh uncertainty với r = 0.3, 0.6, 0.9. Khi nào multicollinearity trở thành vấn đề?
+Ta có thể hình dung model đang nói:
 
-**Bài tập 3**: Prediction accuracy với và không có multicollinearity. Có khác biệt không?
+> Tôi biết tổng đóng góp của nhóm biến này khá quan trọng, nhưng tôi chưa thật sự chắc nên chia công cho từng biến ra sao.
 
-## Tài liệu Tham khảo
+Đây là lý do ta hay thấy posterior của các hệ số kéo dài theo một hướng chéo thay vì tròn gọn.
 
-**Gelman, A., et al. (2020).** *Regression and Other Stories*. Cambridge University Press.
-- Chapter 11: Assumptions, diagnostics, and model evaluation
+## 7. Nên xử lý multicollinearity như thế nào?
+
+Không có một đáp án duy nhất cho mọi trường hợp. Ta chọn cách xử lý theo mục tiêu phân tích.
+
+### 7.1. Giữ một biến đại diện
+
+Nếu hai biến gần như đo cùng một thứ, đôi khi cách đơn giản nhất là chỉ giữ một biến.
+
+Ví dụ:
+
+- giữ diện tích, bỏ số phòng ngủ nếu trong bộ dữ liệu hiện tại chúng gần như lặp lại cùng thông tin.
+
+### 7.2. Gộp thành chỉ số tổng hợp
+
+Nếu nhiều biến cùng mô tả một khái niệm, ta có thể tạo composite score.
+
+Ví dụ:
+
+- nhiều biến về điều kiện kinh tế hộ gia đình có thể gộp thành một chỉ số kinh tế xã hội.
+
+### 7.3. Thu thập dữ liệu đa dạng hơn
+
+Đây là cách rất hiệu quả nhưng hay bị quên.
+
+Nếu dữ liệu chỉ đến từ một bối cảnh quá đồng nhất, predictors sẽ dễ đi cùng nhau. Mở rộng phạm vi dữ liệu có thể giúp tách bạch tín hiệu tốt hơn.
+
+### 7.4. Dùng prior có tính regularization
+
+Trong Bayes, prior hợp lý có thể giúp ổn định ước lượng khi dữ liệu không đủ mạnh để tách riêng từng hiệu ứng. Các chương sau sẽ quay lại kỹ hơn với regularization.
+
+### 7.5. Chấp nhận giới hạn diễn giải
+
+Đôi khi điều đúng nhất là thừa nhận:
+
+> dữ liệu này phù hợp cho prediction hơn là để diễn giải riêng từng coefficient.
+
+Đó không phải thất bại. Đó là một kết luận khoa học trung thực.
+
+## 8. Một checklist rất thực dụng
+
+Khi nghi ngờ multicollinearity, bạn có thể tự hỏi:
+
+1. Mục tiêu của tôi là prediction hay interpretation?
+2. Predictors nào đang trùng lặp thông tin?
+3. Nếu bỏ bớt một biến, năng lực dự đoán giảm nhiều không?
+4. Nếu giữ cả hai, tôi có còn diễn giải hệ số một cách tự tin không?
+5. Liệu có nên gộp chúng thành một khái niệm rộng hơn?
+
+## 9. Điều người học hay hiểu sai
+
+### Hiểu sai 1: "Hệ số bị lệch dấu thì mô hình chắc chắn sai"
+
+Chưa chắc. Có thể mô hình đang cố chia công giữa các predictors quá giống nhau.
+
+### Hiểu sai 2: "Tương quan giữa predictors là cấm kỵ"
+
+Không đúng. Dữ liệu đời thật rất thường có predictors tương quan. Điều quan trọng là hiểu hệ quả của chuyện đó.
+
+### Hiểu sai 3: "Cứ thêm biến là tốt"
+
+Nếu biến mới chỉ lặp lại thông tin cũ, bạn có thể làm mô hình khó diễn giải hơn mà không thu thêm được nhiều giá trị.
+
+## 10. Kết nối sang interaction effects
+
+Multicollinearity hỏi:
+
+> các predictors có quá giống nhau không?
+
+Interaction effects ở bài tiếp theo hỏi:
+
+> ảnh hưởng của một predictor có thay đổi theo predictor khác không?
+
+Một bên là vấn đề **trùng lặp thông tin**, một bên là vấn đề **phụ thuộc lẫn nhau về hiệu ứng**. Phân biệt được hai chuyện này sẽ giúp bạn đọc multiple regression chính xác hơn nhiều.
+
+> **3 ý cần nhớ.**
+>
+> Multicollinearity xảy ra khi predictors mang thông tin quá giống nhau, khiến mô hình khó tách riêng ảnh hưởng của từng biến.
+>
+> Đây là vấn đề đặc biệt nghiêm trọng khi mục tiêu là diễn giải coefficients, nhưng có thể ít nghiêm trọng hơn nếu mục tiêu chỉ là prediction.
+>
+> Cách xử lý phụ thuộc vào mục tiêu: bỏ bớt biến, gộp biến, dùng prior ổn định hơn, thu thập dữ liệu đa dạng hơn hoặc chấp nhận giới hạn diễn giải.
+
+## Câu hỏi tự luyện
+
+1. Vì sao diện tích và số phòng ngủ dễ tạo ra multicollinearity?
+2. Hãy nêu một ví dụ trong công việc của bạn mà prediction vẫn ổn dù coefficients khó diễn giải.
+3. Nếu hai biến gần như trùng lặp thông tin, bạn sẽ cân nhắc giữ một biến hay gộp hai biến? Vì sao?
+4. Trong nghiên cứu lương, vì sao học vấn và kỹ năng chuyên môn có thể gây khó khăn cho việc diễn giải riêng từng hệ số?
+
+## Tài liệu tham khảo
+
+**Gelman, A., Hill, J., & Vehtari, A. (2020).** *Regression and Other Stories*. Cambridge University Press.
+
+**McElreath, R. (2020).** *Statistical Rethinking* (2nd Edition). CRC Press.
 
 ---
 

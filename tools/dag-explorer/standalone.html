@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive DAG Explorer - Bayesian Statistics Course</title>
+    
+    <!-- Dagitty Library -->
+    <script src="https://cdn.jsdelivr.net/npm/dagitty@3.1.0/dagitty.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 0;
+            min-height: 700px;
+        }
+        
+        /* Left Sidebar - Tools */
+        .sidebar-left {
+            background: #f8f9fa;
+            padding: 25px;
+            border-right: 2px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-left h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .tool-section {
+            margin-bottom: 25px;
+        }
+        
+        .tool-section h3 {
+            font-size: 1em;
+            margin-bottom: 12px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        /* Center - Canvas */
+        .canvas-area {
+            position: relative;
+            background: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .canvas-toolbar {
+            background: #f0f0f0;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .canvas-toolbar button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-toolbar button:hover {
+            transform: translateY(-1px);
+        }
+        
+        #dag-canvas {
+            flex: 1;
+            min-height: 600px;
+            background: white;
+            position: relative;
+            cursor: crosshair;
+        }
+        
+        /* Right Sidebar - Analysis */
+        .sidebar-right {
+            background: #f8f9fa;
+            padding: 25px;
+            border-left: 2px solid #e0e0e0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-right h2 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .analysis-section {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .analysis-section h3 {
+            font-size: 1em;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .analysis-result {
+            background: #f0f7ff;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .result-success {
+            border-left-color: #51cf66;
+            background: #f0fff4;
+        }
+        
+        .result-warning {
+            border-left-color: #ffd43b;
+            background: #fffbf0;
+        }
+        
+        .result-error {
+            border-left-color: #ff6b6b;
+            background: #fff0f0;
+        }
+        
+        .node-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 4px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .badge-exposure {
+            background: #ffc9c9;
+            color: #c92a2a;
+        }
+        
+        .badge-outcome {
+            background: #b2f2bb;
+            color: #2f9e44;
+        }
+        
+        .badge-confounder {
+            background: #d0ebff;
+            color: #1971c2;
+        }
+        
+        .badge-collider {
+            background: #f3d9fa;
+            color: #862e9c;
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #e0e0e0;
+            color: #666;
+        }
+        
+        /* Instructions overlay */
+        .instructions-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .instructions-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .instructions-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .instructions-content ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .close-instructions {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .close-instructions:hover {
+            background: #5568d3;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* SVG Canvas Styles */
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .node {
+            cursor: move;
+        }
+        
+        .node circle {
+            fill: #667eea;
+            stroke: #5568d3;
+            stroke-width: 2px;
+        }
+        
+        .node.exposure circle {
+            fill: #ff6b6b;
+            stroke: #ff5252;
+        }
+        
+        .node.outcome circle {
+            fill: #51cf66;
+            stroke: #40c057;
+        }
+        
+        .node text {
+            fill: white;
+            font-weight: 600;
+            text-anchor: middle;
+            font-size: 14px;
+            pointer-events: none;
+        }
+        
+        .edge {
+            fill: none;
+            stroke: #333;
+            stroke-width: 2px;
+            marker-end: url(#arrowhead);
+        }
+        
+        .edge.backdoor {
+            stroke: #ff6b6b;
+            stroke-width: 3px;
+            stroke-dasharray: 5,5;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-left,
+            .sidebar-right {
+                border: none;
+                border-bottom: 2px solid #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Instructions Overlay -->
+    <div id="instructionsOverlay" class="instructions-overlay">
+        <div class="instructions-content">
+            <h2>📘 Hướng dẫn Sử dụng Interactive DAG Explorer</h2>
+            
+            <h3>🎯 Mục đích</h3>
+            <p>Công cụ này giúp bạn:</p>
+            <ul>
+                <li>Vẽ DAG (Directed Acyclic Graph) trực quan</li>
+                <li>Xác định adjustment sets tự động</li>
+                <li>Phát hiện backdoor paths</li>
+                <li>Hiểu confounding, mediation, và collider bias</li>
+            </ul>
+            
+            <h3>🖱️ Cách sử dụng</h3>
+            <ul>
+                <li><strong>Thêm node:</strong> Nhập tên và click "Add Node"</li>
+                <li><strong>Thêm edge:</strong> Chọn "From" và "To", click "Add Edge"</li>
+                <li><strong>Di chuyển node:</strong> Kéo thả (drag & drop) node trên canvas</li>
+                <li><strong>Xóa node:</strong> Right-click vào node hoặc chọn node và nhấn Delete/Backspace</li>
+                <li><strong>Xóa edge:</strong> Click vào edge (mũi tên)</li>
+                <li><strong>Undo/Redo:</strong> Ctrl+Z / Ctrl+Y hoặc dùng buttons</li>
+                <li><strong>Chọn Treatment/Outcome:</strong> Dùng dropdowns bên phải để phân tích causal</li>
+                <li><strong>Load ví dụ:</strong> Click "Example DAGs" để xem mẫu</li>
+            </ul>
+            
+            <h3>📊 Ví dụ DAG có sẵn</h3>
+            <ul>
+                <li><strong>Fork:</strong> Z → X, Z → Y (Z is confounder)</li>
+                <li><strong>Chain:</strong> X → M → Y (M is mediator)</li>
+                <li><strong>Collider:</strong> X → C ← Y (C is collider)</li>
+                <li><strong>Simpson's Paradox:</strong> Confounding example</li>
+            </ul>
+            
+            <button class="close-instructions" onclick="closeInstructions()">Bắt đầu →</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Interactive DAG Explorer</h1>
+            <p>Công cụ Tương tác để Học Causal Inference - Bayesian Statistics Course</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Sidebar: Tools -->
+            <div class="sidebar-left">
+                <h2>🛠️ Công cụ</h2>
+                
+                <!-- Add Node -->
+                <div class="tool-section">
+                    <h3>Thêm Node (Biến)</h3>
+                    <div class="input-group">
+                        <label>Tên Node:</label>
+                        <input type="text" id="nodeNameInput" placeholder="Ví dụ: Age, Income" />
+                    </div>
+                    <button class="btn btn-primary" onclick="addNode()">➕ Add Node</button>
+                </div>
+                
+                <!-- Add Edge -->
+                <div class="tool-section">
+                    <h3>Thêm Edge (Mũi tên)</h3>
+                    <div class="input-group">
+                        <label>From:</label>
+                        <select id="edgeFromSelect">
+                            <option value="">-- Chọn node --</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>To:</label>
+                        <select id="edgeToSelect">
+                            <option value="">-- Chọn node --</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="addEdge()">➡️ Add Edge</button>
+                </div>
+                
+                <!-- Load Examples -->
+                <div class="tool-section">
+                    <h3>Ví dụ DAG</h3>
+                    <button class="btn btn-secondary" onclick="loadExample('fork')">Fork (Confounder)</button>
+                    <button class="btn btn-secondary" onclick="loadExample('chain')">Chain (Mediator)</button>
+                    <button class="btn btn-secondary" onclick="loadExample('collider')">Collider</button>
+                    <button class="btn btn-secondary" onclick="loadExample('simpson')">Simpson's Paradox</button>
+                    <button class="btn btn-secondary" onclick="loadExample('complex')">Complex Example</button>
+                </div>
+                
+                <!-- Clear -->
+                <div class="tool-section">
+                    <button class="btn btn-secondary" onclick="undo()" title="Ctrl+Z">↶ Undo</button>
+                    <button class="btn btn-secondary" onclick="redo()" title="Ctrl+Y">↷ Redo</button>
+                    <button class="btn btn-secondary" onclick="autoLayout()" title="Auto arrange nodes">📐 Auto Layout</button>
+                </div>
+                
+                <div class="tool-section">
+                    <button class="btn btn-danger" onclick="clearCanvas()">🗑️ Clear Canvas</button>
+                    <button class="btn btn-secondary" onclick="showInstructions()">❓ Instructions</button>
+                </div>
+            </div>
+            
+            <!-- Center: Canvas -->
+            <div class="canvas-area">
+                <div class="canvas-toolbar">
+                    <span style="font-weight: 600; margin-right: auto;">DAG Canvas</span>
+                    <button onclick="exportPNG()" style="background: #51cf66; color: white;">💾 Export PNG</button>
+                    <button onclick="exportCode()" style="background: #667eea; color: white;">📝 Export Code</button>
+                </div>
+                <div id="dag-canvas"></div>
+            </div>
+            
+            <!-- Right Sidebar: Analysis -->
+            <div class="sidebar-right">
+                <h2>📊 Phân tích Causal</h2>
+                
+                <!-- Select Treatment and Outcome -->
+                <div class="analysis-section">
+                    <h3>Chọn Treatment & Outcome</h3>
+                    <div class="input-group">
+                        <label>Treatment (X):</label>
+                        <select id="treatmentSelect" onchange="analyzeDAG()">
+                            <option value="">-- Chọn treatment --</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Outcome (Y):</label>
+                        <select id="outcomeSelect" onchange="analyzeDAG()">
+                            <option value="">-- Chọn outcome --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Adjustment Sets -->
+                <div class="analysis-section">
+                    <h3>Minimal Adjustment Set</h3>
+                    <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                        Variables cần control để ước lượng causal effect đúng:
+                    </p>
+                    <div id="adjustmentSetResult" class="analysis-result">
+                        <em>Chọn treatment và outcome để xem adjustment sets</em>
+                    </div>
+                </div>
+                
+                <!-- Backdoor Paths -->
+                <div class="analysis-section">
+                    <h3>Backdoor Paths</h3>
+                    <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                        Non-causal paths từ X đến Y:
+                    </p>
+                    <div id="backdoorPathsResult" class="analysis-result">
+                        <em>Chưa có phân tích</em>
+                    </div>
+                </div>
+                
+                <!-- Node Roles -->
+                <div class="analysis-section">
+                    <h3>Node Roles</h3>
+                    <div id="nodeRolesResult" class="analysis-result">
+                        <em>Chưa có phân tích</em>
+                    </div>
+                </div>
+                
+                <!-- DAG Properties -->
+                <div class="analysis-section">
+                    <h3>DAG Properties</h3>
+                    <div id="dagPropertiesResult" class="analysis-result">
+                        <span style="font-weight: 600;">Nodes:</span> <span id="nodeCount">0</span><br>
+                        <span style="font-weight: 600;">Edges:</span> <span id="edgeCount">0</span><br>
+                        <span style="font-weight: 600;">Is Acyclic:</span> <span id="isAcyclic">Yes</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Bayesian Statistics Self-Learning Course</strong> | Interactive DAG Explorer v1.0</p>
+            <p style="margin-top: 8px; font-size: 0.9em;">
+                Built with ❤️ for teaching causal inference | 
+                <a href="https://github.com/yourusername/bayesian-statistics-self-learning" style="color: #667eea;">View on GitHub</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Global state
+        let nodes = [];
+        let edges = [];
+        let selectedTreatment = null;
+        let selectedOutcome = null;
+        let svg = null;
+        let nodeRadius = 30;
+        let history = [];
+        let historyIndex = -1;
+        let selectedNode = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initCanvas();
+            updateUI();
+            saveState(); // Initialize history
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    if (e.key === 'z') {
+                        e.preventDefault();
+                        undo();
+                    } else if (e.key === 'y') {
+                        e.preventDefault();
+                        redo();
+                    }
+                }
+                if (e.key === 'Delete' || e.key === 'Backspace') {
+                    if (selectedNode) {
+                        e.preventDefault();
+                        deleteNode(selectedNode);
+                    }
+                }
+            });
+        });
+        
+        function initCanvas() {
+            const canvasDiv = document.getElementById('dag-canvas');
+            const width = canvasDiv.clientWidth;
+            const height = canvasDiv.clientHeight;
+            
+            // Create SVG
+            svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            
+            // Add arrow marker
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            marker.setAttribute('id', 'arrowhead');
+            marker.setAttribute('markerWidth', '10');
+            marker.setAttribute('markerHeight', '10');
+            marker.setAttribute('refX', '8');
+            marker.setAttribute('refY', '3');
+            marker.setAttribute('orient', 'auto');
+            
+            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygon.setAttribute('points', '0 0, 10 3, 0 6');
+            polygon.setAttribute('fill', '#333');
+            
+            marker.appendChild(polygon);
+            defs.appendChild(marker);
+            svg.appendChild(defs);
+            
+            canvasDiv.appendChild(svg);
+            
+            // Click to add node at position
+            svg.addEventListener('click', function(e) {
+                const rect = svg.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                // Could implement click-to-add-node here
+            });
+        }
+        
+        function addNode() {
+            const nameInput = document.getElementById('nodeNameInput');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Vui lòng nhập tên node!');
+                return;
+            }
+            
+            if (nodes.find(n => n.name === name)) {
+                alert('Node này đã tồn tại!');
+                return;
+            }
+            
+            // Random position
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            const x = 100 + Math.random() * (width - 200);
+            const y = 100 + Math.random() * (height - 200);
+            
+            nodes.push({ name, x, y });
+            nameInput.value = '';
+            
+            saveState();
+            updateUI();
+            renderDAG();
+        }
+        
+        function addEdge() {
+            const fromSelect = document.getElementById('edgeFromSelect');
+            const toSelect = document.getElementById('edgeToSelect');
+            
+            const from = fromSelect.value;
+            const to = toSelect.value;
+            
+            if (!from || !to) {
+                alert('Vui lòng chọn cả From và To!');
+                return;
+            }
+            
+            if (from === to) {
+                alert('Không thể tạo edge từ node đến chính nó!');
+                return;
+            }
+            
+            if (edges.find(e => e.from === from && e.to === to)) {
+                alert('Edge này đã tồn tại!');
+                return;
+            }
+            
+            edges.push({ from, to });
+            
+            // Check for cycles
+            if (hasCycle()) {
+                alert('⚠️ Cảnh báo: DAG có cycle! Hãy xóa edge này để giữ tính acyclic.');
+            }
+            
+            saveState();
+            updateUI();
+            renderDAG();
+            analyzeDAG();
+        }
+        
+        function renderDAG() {
+            // Clear previous rendering
+            while (svg.firstChild && svg.firstChild.nodeName !== 'defs') {
+                svg.removeChild(svg.firstChild);
+            }
+            
+            // Render edges
+            edges.forEach(edge => {
+                const fromNode = nodes.find(n => n.name === edge.from);
+                const toNode = nodes.find(n => n.name === edge.to);
+                
+                if (fromNode && toNode) {
+                    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                    g.setAttribute('class', 'edge-group');
+                    g.style.cursor = 'pointer';
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    
+                    // Calculate arrow endpoint (stop at circle edge)
+                    const dx = toNode.x - fromNode.x;
+                    const dy = toNode.y - fromNode.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const ratio = (dist - nodeRadius) / dist;
+                    
+                    line.setAttribute('x1', fromNode.x);
+                    line.setAttribute('y1', fromNode.y);
+                    line.setAttribute('x2', fromNode.x + dx * ratio);
+                    line.setAttribute('y2', fromNode.y + dy * ratio);
+                    line.setAttribute('class', 'edge');
+                    
+                    // Add click to delete edge
+                    g.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (confirm(`Xóa edge: ${edge.from} → ${edge.to}?`)) {
+                            deleteEdge(edge.from, edge.to);
+                        }
+                    });
+                    
+                    g.addEventListener('mouseover', function() {
+                        line.setAttribute('stroke', '#e74c3c');
+                        line.setAttribute('stroke-width', '3');
+                    });
+                    
+                    g.addEventListener('mouseout', function() {
+                        line.setAttribute('stroke', '#333');
+                        line.setAttribute('stroke-width', '2');
+                    });
+                    
+                    g.appendChild(line);
+                    svg.appendChild(g);
+                }
+            });
+            
+            // Render nodes
+            nodes.forEach(node => {
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.setAttribute('class', 'node');
+                
+                // Determine node class
+                let nodeClass = '';
+                if (node.name === selectedTreatment) {
+                    g.classList.add('exposure');
+                    nodeClass = 'exposure';
+                } else if (node.name === selectedOutcome) {
+                    g.classList.add('outcome');
+                    nodeClass = 'outcome';
+                } else if (node.name === selectedNode) {
+                    nodeClass = 'selected';
+                }
+                
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', node.x);
+                circle.setAttribute('cy', node.y);
+                circle.setAttribute('r', nodeRadius);
+                
+                if (nodeClass === 'selected') {
+                    circle.setAttribute('stroke', '#e74c3c');
+                    circle.setAttribute('stroke-width', '4');
+                }
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', node.x);
+                text.setAttribute('y', node.y + 5);
+                text.textContent = node.name;
+                
+                g.appendChild(circle);
+                g.appendChild(text);
+                
+                // Make draggable and selectable
+                let isDragging = false;
+                let dragStarted = false;
+                
+                g.addEventListener('mousedown', function(e) {
+                    isDragging = true;
+                    dragStarted = false;
+                    selectedNode = node.name;
+                    e.stopPropagation();
+                });
+                
+                svg.addEventListener('mousemove', function(e) {
+                    if (isDragging) {
+                        dragStarted = true;
+                        const rect = svg.getBoundingClientRect();
+                        node.x = e.clientX - rect.left;
+                        node.y = e.clientY - rect.top;
+                        renderDAG();
+                    }
+                });
+                
+                svg.addEventListener('mouseup', function() {
+                    if (isDragging && dragStarted) {
+                        saveState(); // Save state after dragging
+                    }
+                    isDragging = false;
+                });
+                
+                // Right-click to delete node
+                g.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    deleteNode(node.name);
+                });
+                
+                svg.appendChild(g);
+            });
+            
+            updateDAGProperties();
+        }
+        
+        function updateUI() {
+            // Update dropdowns
+            const selects = ['edgeFromSelect', 'edgeToSelect', 'treatmentSelect', 'outcomeSelect'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                const currentValue = select.value;
+                
+                select.innerHTML = '<option value="">-- Chọn node --</option>';
+                nodes.forEach(node => {
+                    const option = document.createElement('option');
+                    option.value = node.name;
+                    option.textContent = node.name;
+                    select.appendChild(option);
+                });
+                
+                select.value = currentValue;
+            });
+        }
+        
+        function analyzeDAG() {
+            const treatment = document.getElementById('treatmentSelect').value;
+            const outcome = document.getElementById('outcomeSelect').value;
+            
+            selectedTreatment = treatment;
+            selectedOutcome = outcome;
+            
+            if (!treatment || !outcome) {
+                document.getElementById('adjustmentSetResult').innerHTML = '<em>Chọn treatment và outcome để phân tích</em>';
+                document.getElementById('backdoorPathsResult').innerHTML = '<em>Chưa có phân tích</em>';
+                document.getElementById('nodeRolesResult').innerHTML = '<em>Chưa có phân tích</em>';
+                renderDAG();
+                return;
+            }
+            
+            // Improved adjustment set computation
+            const adjustmentResult = computeAdjustmentSet(treatment, outcome);
+            const backdoorPaths = findBackdoorPaths(treatment, outcome);
+            const roles = identifyNodeRoles(treatment, outcome);
+            
+            // Display adjustment sets with explanation
+            let adjustmentHTML = `<p style="font-size: 0.85em; color: #666; margin-bottom: 10px;">${adjustmentResult.explanation}</p>`;
+            
+            if (adjustmentResult.minimal.length === 0 && backdoorPaths.length === 0) {
+                adjustmentHTML += '<div style="padding: 10px; background: #d4edda; border-radius: 5px; color: #155724;">';
+                adjustmentHTML += '✓ <strong>Không cần adjustment!</strong><br>Không có backdoor paths.</div>';
+            } else if (adjustmentResult.minimal.length === 0) {
+                adjustmentHTML += '<div style="padding: 10px; background: #f8d7da; border-radius: 5px; color: #721c24;">';
+                adjustmentHTML += '⚠️ <strong>Không tìm thấy valid adjustment set</strong><br>Có thể cần intervention.</div>';
+            } else {
+                adjustmentHTML += '<div style="margin-bottom: 10px;"><strong>Minimal Adjustment Set:</strong><br>';
+                adjustmentHTML += `<span style="background: #667eea; color: white; padding: 5px 10px; border-radius: 5px; display: inline-block; margin-top: 5px;">`;
+                adjustmentHTML += `{${adjustmentResult.minimal.join(', ')}}`;
+                adjustmentHTML += '</span></div>';
+                
+                if (adjustmentResult.allSets.length > 1) {
+                    adjustmentHTML += '<div style="font-size: 0.85em; margin-top: 10px;"><strong>Các valid sets khác:</strong><br>';
+                    adjustmentResult.allSets.slice(1).forEach(set => {
+                        adjustmentHTML += `<span class="node-badge" style="margin: 2px;">{${set.length === 0 ? '∅' : set.join(', ')}}</span>`;
+                    });
+                    adjustmentHTML += '</div>';
+                }
+            }
+            
+            document.getElementById('adjustmentSetResult').innerHTML = adjustmentHTML;
+            
+            document.getElementById('backdoorPathsResult').innerHTML = 
+                backdoorPaths.length > 0
+                ? backdoorPaths.map(path => `• ${path}`).join('<br>')
+                : '<em>No backdoor paths found</em>';
+            
+            // Node roles
+            let rolesHTML = '';
+            if (roles.confounders.length > 0) {
+                rolesHTML += '<div><strong>Confounders:</strong> ';
+                roles.confounders.forEach(n => {
+                    rolesHTML += `<span class="node-badge badge-confounder">${n}</span>`;
+                });
+                rolesHTML += '</div>';
+            }
+            if (roles.mediators.length > 0) {
+                rolesHTML += '<div style="margin-top: 8px;"><strong>Mediators:</strong> ';
+                roles.mediators.forEach(n => {
+                    rolesHTML += `<span class="node-badge">${n}</span>`;
+                });
+                rolesHTML += '</div>';
+            }
+            if (roles.colliders.length > 0) {
+                rolesHTML += '<div style="margin-top: 8px;"><strong>Colliders:</strong> ';
+                roles.colliders.forEach(n => {
+                    rolesHTML += `<span class="node-badge badge-collider">${n}</span>`;
+                });
+                rolesHTML += '</div>';
+            }
+            
+            document.getElementById('nodeRolesResult').innerHTML = rolesHTML || '<em>No special roles identified</em>';
+            
+            renderDAG();
+        }
+        
+        function computeAdjustmentSet(treatment, outcome) {
+            // Improved backdoor criterion implementation
+            const backdoorPaths = findBackdoorPaths(treatment, outcome);
+            if (backdoorPaths.length === 0) {
+                return { minimal: [], allSets: [[]], explanation: 'Không có backdoor path nào. Không cần adjustment set!' };
+            }
+            
+            // Find all candidate adjustment sets
+            const allCandidates = findAllAdjustmentSets(treatment, outcome, backdoorPaths);
+            
+            if (allCandidates.length === 0) {
+                return { 
+                    minimal: [], 
+                    allSets: [], 
+                    explanation: '⚠️ Không tìm thấy adjustment set hợp lệ! Có thể cần intervention.' 
+                };
+            }
+            
+            // Find minimal set (smallest size)
+            const minimal = allCandidates.reduce((min, curr) => 
+                curr.length < min.length ? curr : min
+            );
+            
+            return { 
+                minimal, 
+                allSets: allCandidates.slice(0, 5), // Show up to 5 valid sets
+                explanation: `Tìm thấy ${allCandidates.length} adjustment set(s) hợp lệ.`
+            };
+        }
+        
+        function findAllAdjustmentSets(treatment, outcome, backdoorPaths) {
+            // Get all non-descendant nodes (cannot condition on descendants of treatment)
+            const descendants = findDescendants(treatment);
+            const candidates = nodes
+                .map(n => n.name)
+                .filter(n => n !== treatment && n !== outcome && !descendants.has(n));
+            
+            // Test all possible subsets (exponential, but manageable for small graphs)
+            const validSets = [];
+            const maxSubsets = Math.pow(2, Math.min(candidates.length, 10)); // Limit to 10 nodes
+            
+            for (let i = 0; i < maxSubsets; i++) {
+                const subset = [];
+                for (let j = 0; j < candidates.length && j < 10; j++) {
+                    if (i & (1 << j)) {
+                        subset.push(candidates[j]);
+                    }
+                }
+                
+                // Check if this subset blocks all backdoor paths
+                if (blocksAllBackdoorPaths(backdoorPaths, subset, treatment, outcome)) {
+                    validSets.push(subset);
+                }
+            }
+            
+            return validSets.sort((a, b) => a.length - b.length);
+        }
+        
+        function blocksAllBackdoorPaths(paths, conditionSet, treatment, outcome) {
+            return paths.every(path => {
+                const pathNodes = path.split(' → ');
+                return isPathBlocked(pathNodes, conditionSet, treatment, outcome);
+            });
+        }
+        
+        function isPathBlocked(pathNodes, conditionSet, treatment, outcome) {
+            // A path is blocked if any non-collider on the path is in condition set
+            // OR if a collider is NOT in condition set (and no descendants)
+            
+            for (let i = 1; i < pathNodes.length - 1; i++) {
+                const node = pathNodes[i];
+                const isCollider = isNodeCollider(pathNodes[i-1], node, pathNodes[i+1]);
+                
+                if (isCollider) {
+                    // Collider blocks path UNLESS we condition on it or its descendants
+                    const colliderDescendants = findDescendants(node);
+                    const conditionedOnColliderPath = conditionSet.includes(node) || 
+                        conditionSet.some(c => colliderDescendants.has(c));
+                    
+                    if (!conditionedOnColliderPath) {
+                        return true; // Path is blocked
+                    }
+                } else {
+                    // Non-collider: blocks path if we condition on it
+                    if (conditionSet.includes(node)) {
+                        return true; // Path is blocked
+                    }
+                }
+            }
+            
+            return false; // Path is not blocked
+        }
+        
+        function isNodeCollider(prev, node, next) {
+            // Check if both prev → node and next → node exist
+            const hasPrevEdge = edges.some(e => e.from === prev && e.to === node);
+            const hasNextEdge = edges.some(e => e.from === next && e.to === node);
+            return hasPrevEdge && hasNextEdge;
+        }
+        
+        function findDescendants(nodeName) {
+            const descendants = new Set();
+            
+            function dfs(node) {
+                const children = edges.filter(e => e.from === node).map(e => e.to);
+                children.forEach(child => {
+                    if (!descendants.has(child)) {
+                        descendants.add(child);
+                        dfs(child);
+                    }
+                });
+            }
+            
+            dfs(nodeName);
+            return descendants;
+        }
+        
+        function findBackdoorPaths(treatment, outcome) {
+            // Find all paths from treatment to outcome that start with an incoming arrow to treatment
+            const paths = [];
+            const maxPathLength = 10;
+            
+            function explore(current, target, path, direction, depth) {
+                if (depth > maxPathLength) return;
+                
+                // Found a backdoor path
+                if (current === target && path.length > 2 && direction === 'backward-start') {
+                    paths.push(path.join(' → '));
+                    return;
+                }
+                
+                // Explore incoming edges (going backward)
+                edges.forEach(edge => {
+                    if (edge.to === current && !path.includes(edge.from)) {
+                        const newDirection = (current === treatment) ? 'backward-start' : direction;
+                        
+                        // Only continue if this is a valid backdoor path
+                        if (current === treatment || direction === 'backward-start') {
+                            explore(edge.from, target, [...path, edge.from], newDirection, depth + 1);
+                        }
+                    }
+                });
+                
+                // After going backward, can also go forward along the path
+                if (direction === 'backward-start' && current !== treatment) {
+                    edges.forEach(edge => {
+                        if (edge.from === current && !path.includes(edge.to)) {
+                            explore(edge.to, target, [...path, edge.to], direction, depth + 1);
+                        }
+                    });
+                }
+            }
+            
+            // Start from treatment node
+            explore(treatment, outcome, [treatment], 'start', 0);
+            
+            // Remove duplicates
+            return [...new Set(paths)];
+        }
+        
+        function identifyNodeRoles(treatment, outcome) {
+            const roles = {
+                confounders: [],
+                mediators: [],
+                colliders: []
+            };
+            
+            nodes.forEach(node => {
+                if (node.name === treatment || node.name === outcome) return;
+                
+                const hasIncoming = edges.filter(e => e.to === node.name).length;
+                const hasOutgoing = edges.filter(e => e.from === node.name).length;
+                
+                // Check if confounder (points to both treatment and outcome)
+                const pointsToTreatment = edges.some(e => e.from === node.name && e.to === treatment);
+                const pointsToOutcome = edges.some(e => e.from === node.name && e.to === outcome);
+                
+                if (pointsToTreatment && pointsToOutcome) {
+                    roles.confounders.push(node.name);
+                }
+                
+                // Check if mediator (on direct path from treatment to outcome)
+                const fromTreatment = edges.some(e => e.from === treatment && e.to === node.name);
+                const toOutcome = edges.some(e => e.from === node.name && e.to === outcome);
+                
+                if (fromTreatment && toOutcome) {
+                    roles.mediators.push(node.name);
+                }
+                
+                // Check if collider (has incoming from multiple sources)
+                if (hasIncoming >= 2) {
+                    roles.colliders.push(node.name);
+                }
+            });
+            
+            return roles;
+        }
+        
+        function updateDAGProperties() {
+            document.getElementById('nodeCount').textContent = nodes.length;
+            document.getElementById('edgeCount').textContent = edges.length;
+            document.getElementById('isAcyclic').textContent = hasCycle() ? 'No ⚠️' : 'Yes ✓';
+        }
+        
+        // State management for undo/redo
+        function saveState() {
+            // Remove any future states if we're not at the end
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+            
+            // Save current state
+            history.push({
+                nodes: JSON.parse(JSON.stringify(nodes)),
+                edges: JSON.parse(JSON.stringify(edges))
+            });
+            historyIndex++;
+            
+            // Limit history to 50 states
+            if (history.length > 50) {
+                history.shift();
+                historyIndex--;
+            }
+        }
+        
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                restoreState(history[historyIndex]);
+            }
+        }
+        
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                restoreState(history[historyIndex]);
+            }
+        }
+        
+        function restoreState(state) {
+            nodes = JSON.parse(JSON.stringify(state.nodes));
+            edges = JSON.parse(JSON.stringify(state.edges));
+            selectedNode = null;
+            updateUI();
+            renderDAG();
+            analyzeDAG();
+        }
+        
+        // Cycle detection
+        function hasCycle() {
+            const visited = new Set();
+            const recStack = new Set();
+            
+            function dfs(node) {
+                visited.add(node);
+                recStack.add(node);
+                
+                const outgoing = edges.filter(e => e.from === node);
+                for (let edge of outgoing) {
+                    if (!visited.has(edge.to)) {
+                        if (dfs(edge.to)) return true;
+                    } else if (recStack.has(edge.to)) {
+                        return true;
+                    }
+                }
+                
+                recStack.delete(node);
+                return false;
+            }
+            
+            for (let node of nodes) {
+                if (!visited.has(node.name)) {
+                    if (dfs(node.name)) return true;
+                }
+            }
+            return false;
+        }
+        
+        // Node and edge deletion
+        function deleteNode(nodeName) {
+            if (!confirm(`Xóa node "${nodeName}" và tất cả edges liên quan?`)) return;
+            
+            nodes = nodes.filter(n => n.name !== nodeName);
+            edges = edges.filter(e => e.from !== nodeName && e.to !== nodeName);
+            selectedNode = null;
+            
+            saveState();
+            updateUI();
+            renderDAG();
+            analyzeDAG();
+        }
+        
+        function deleteEdge(from, to) {
+            edges = edges.filter(e => !(e.from === from && e.to === to));
+            
+            saveState();
+            updateUI();
+            renderDAG();
+            analyzeDAG();
+        }
+        
+        // Auto layout using simple force-directed algorithm
+        function autoLayout() {
+            if (nodes.length === 0) return;
+            
+            const width = svg.clientWidth || 800;
+            const height = svg.clientHeight || 600;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            // Hierarchical layout based on DAG structure
+            // Find root nodes (no incoming edges)
+            const inDegree = new Map();
+            nodes.forEach(n => inDegree.set(n.name, 0));
+            edges.forEach(e => inDegree.set(e.to, (inDegree.get(e.to) || 0) + 1));
+            
+            const levels = [];
+            const visited = new Set();
+            const nodeLevel = new Map();
+            
+            // BFS to assign levels
+            function assignLevels() {
+                const queue = [];
+                
+                // Start with root nodes (in-degree 0)
+                nodes.forEach(n => {
+                    if (inDegree.get(n.name) === 0) {
+                        queue.push(n.name);
+                        nodeLevel.set(n.name, 0);
+                    }
+                });
+                
+                while (queue.length > 0) {
+                    const node = queue.shift();
+                    const level = nodeLevel.get(node);
+                    
+                    // Add to levels array
+                    if (!levels[level]) levels[level] = [];
+                    levels[level].push(node);
+                    
+                    // Process children
+                    edges.forEach(e => {
+                        if (e.from === node) {
+                            const childLevel = nodeLevel.get(e.to);
+                            if (childLevel === undefined || childLevel <= level) {
+                                nodeLevel.set(e.to, level + 1);
+                                if (!visited.has(e.to)) {
+                                    queue.push(e.to);
+                                    visited.add(e.to);
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                // Handle nodes not reached (disconnected components)
+                nodes.forEach(n => {
+                    if (!nodeLevel.has(n.name)) {
+                        const lastLevel = levels.length;
+                        if (!levels[lastLevel]) levels[lastLevel] = [];
+                        levels[lastLevel].push(n.name);
+                        nodeLevel.set(n.name, lastLevel);
+                    }
+                });
+            }
+            
+            assignLevels();
+            
+            // Position nodes
+            const verticalSpacing = Math.min(150, (height - 100) / Math.max(levels.length, 1));
+            
+            levels.forEach((levelNodes, levelIndex) => {
+                const y = 80 + levelIndex * verticalSpacing;
+                const horizontalSpacing = Math.min(200, (width - 100) / Math.max(levelNodes.length, 1));
+                const startX = (width - (levelNodes.length - 1) * horizontalSpacing) / 2;
+                
+                levelNodes.forEach((nodeName, index) => {
+                    const node = nodes.find(n => n.name === nodeName);
+                    if (node) {
+                        node.x = startX + index * horizontalSpacing;
+                        node.y = y;
+                    }
+                });
+            });
+            
+            saveState();
+            renderDAG();
+        }
+        
+        function clearCanvas() {
+            if (confirm('Bạn có chắc muốn xóa toàn bộ DAG?')) {
+                nodes = [];
+                edges = [];
+                selectedTreatment = null;
+                selectedOutcome = null;
+                selectedNode = null;
+                saveState();
+                updateUI();
+                renderDAG();
+                analyzeDAG();
+            }
+        }
+        
+        function loadExample(type) {
+            // Don't confirm, just load
+            nodes = [];
+            edges = [];
+            selectedTreatment = null;
+            selectedOutcome = null;
+            selectedNode = null;
+            
+            switch(type) {
+                case 'fork':
+                    nodes = [
+                        { name: 'Z', x: 300, y: 100 },
+                        { name: 'X', x: 150, y: 250 },
+                        { name: 'Y', x: 450, y: 250 }
+                    ];
+                    edges = [
+                        { from: 'Z', to: 'X' },
+                        { from: 'Z', to: 'Y' }
+                    ];
+                    break;
+                    
+                case 'chain':
+                    nodes = [
+                        { name: 'X', x: 100, y: 200 },
+                        { name: 'M', x: 300, y: 200 },
+                        { name: 'Y', x: 500, y: 200 }
+                    ];
+                    edges = [
+                        { from: 'X', to: 'M' },
+                        { from: 'M', to: 'Y' }
+                    ];
+                    break;
+                    
+                case 'collider':
+                    nodes = [
+                        { name: 'X', x: 150, y: 100 },
+                        { name: 'Y', x: 450, y: 100 },
+                        { name: 'C', x: 300, y: 300 }
+                    ];
+                    edges = [
+                        { from: 'X', to: 'C' },
+                        { from: 'Y', to: 'C' }
+                    ];
+                    break;
+                    
+                case 'simpson':
+                    nodes = [
+                        { name: 'U', x: 300, y: 80 },
+                        { name: 'T', x: 150, y: 220 },
+                        { name: 'Y', x: 450, y: 220 }
+                    ];
+                    edges = [
+                        { from: 'U', to: 'T' },
+                        { from: 'U', to: 'Y' },
+                        { from: 'T', to: 'Y' }
+                    ];
+                    break;
+                    
+                case 'complex':
+                    nodes = [
+                        { name: 'U', x: 200, y: 80 },
+                        { name: 'V', x: 400, y: 80 },
+                        { name: 'X', x: 150, y: 250 },
+                        { name: 'M', x: 300, y: 250 },
+                        { name: 'Y', x: 450, y: 250 },
+                        { name: 'Z', x: 300, y: 400 }
+                    ];
+                    edges = [
+                        { from: 'U', to: 'X' },
+                        { from: 'U', to: 'Y' },
+                        { from: 'V', to: 'M' },
+                        { from: 'V', to: 'Y' },
+                        { from: 'X', to: 'M' },
+                        { from: 'M', to: 'Y' },
+                        { from: 'Y', to: 'Z' }
+                    ];
+                    break;
+            }
+            
+            saveState();
+            updateUI();
+            renderDAG();
+        }
+        
+        function exportPNG() {
+            // Simple implementation - would need proper SVG to PNG conversion
+            alert('Export PNG: Sử dụng screenshot tool hoặc implement html2canvas library');
+        }
+        
+        function exportCode() {
+            if (nodes.length === 0) {
+                alert('DAG trống! Hãy thêm nodes và edges trước.');
+                return;
+            }
+            
+            // Generate PyMC code
+            let code = '# PyMC Model from DAG\\n';
+            code += 'import pymc as pm\\n';
+            code += 'import numpy as np\\n\\n';
+            code += 'with pm.Model() as model:\\n';
+            
+            nodes.forEach(node => {
+                code += `    ${node.name} = pm.Normal('${node.name}', mu=0, sigma=1)\\n`;
+            });
+            
+            code += '\\n    # Add relationships based on edges\\n';
+            edges.forEach(edge => {
+                code += `    # ${edge.from} -> ${edge.to}\\n`;
+            });
+            
+            // Show in popup
+            const popup = window.open('', 'Export Code', 'width=600,height=400');
+            popup.document.write(`
+                <html>
+                <head>
+                    <title>Exported Code</title>
+                    <style>
+                        body { font-family: monospace; padding: 20px; }
+                        pre { background: #f5f5f5; padding: 15px; border-radius: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Exported PyMC Code</h2>
+                    <pre>${code}</pre>
+                    <button onclick="window.close()">Close</button>
+                </body>
+                </html>
+            `);
+        }
+        
+        function closeInstructions() {
+            document.getElementById('instructionsOverlay').classList.add('hidden');
+        }
+        
+        function showInstructions() {
+            document.getElementById('instructionsOverlay').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

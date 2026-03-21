@@ -10,676 +10,326 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu
-
-Bài học này giới thiệu **grid approximation** - phương pháp đơn giản nhất để tính posterior khi không có conjugate prior hoặc công thức giải tích. Đây là nền tảng để hiểu các phương pháp phức tạp hơn như MCMC.
-
-## 1. Grid Approximation là gì?
-
-![Grid Approximation - Phương pháp Xấp xỉ Grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation.png)
-
-### 1.1. Ý tưởng Cơ bản
-
-**Grid Approximation** chia không gian tham số thành **lưới** các điểm rời rạc, tính posterior tại mỗi điểm.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import stats
-import seaborn as sns
-
-# Minh họa: Grid approximation cơ bản
-fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-
-# Dữ liệu: 6 ngửa trong 9 lần tung
-n, k = 9, 6
-
-# Prior: Beta(1, 1) = Uniform
-def prior(theta):
-    return stats.beta(1, 1).pdf(theta)
-
-# Likelihood: Binomial
-def likelihood(theta, k, n):
-    return stats.binom.pmf(k, n, theta)
-
-# Grid với độ phân giải khác nhau
-grid_sizes = [5, 20, 100]
-
-for idx, grid_size in enumerate(grid_sizes):
-    ax = axes[0, idx]
-    
-    # Tạo grid
-    theta_grid = np.linspace(0, 1, grid_size)
-    
-    # Tính prior, likelihood, posterior tại mỗi điểm
-    prior_vals = np.array([prior(theta) for theta in theta_grid])
-    likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-    
-    # Posterior (chưa chuẩn hóa)
-    posterior_unnorm = prior_vals * likelihood_vals
-    
-    # Chuẩn hóa (tích phân bằng tổng)
-    posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-    
-    # Vẽ
-    ax.bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.7, 
-          edgecolor='black', linewidth=1)
-    ax.set_xlabel('θ', fontsize=11)
-    ax.set_ylabel('P(θ \mid data)', fontsize=11)
-    ax.set_title(f'Grid size = {grid_size}\n{"Thô" if grid_size == 5 else "Trung bình" if grid_size == 20 else "Mịn"}', 
-                fontsize=12, fontweight='bold')
-    ax.grid(alpha=0.3, axis='y')
-    ax.set_xlim(0, 1)
-
-# So sánh với posterior chính xác
-theta_fine = np.linspace(0, 1, 1000)
-posterior_exact = stats.beta(1 + k, 1 + n - k).pdf(theta_fine)
-
-for idx, grid_size in enumerate(grid_sizes):
-    ax = axes[1, idx]
-    
-    # Grid approximation
-    theta_grid = np.linspace(0, 1, grid_size)
-    prior_vals = np.array([prior(theta) for theta in theta_grid])
-    likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-    posterior_unnorm = prior_vals * likelihood_vals
-    posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-    
-    # Vẽ cả hai
-    ax.plot(theta_fine, posterior_exact, linewidth=3, color='red', 
-           label='Chính xác (Beta)', alpha=0.7)
-    ax.bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.5, 
-          edgecolor='black', linewidth=1, label=f'Grid ({grid_size} điểm)')
-    ax.set_xlabel('θ', fontsize=11)
-    ax.set_ylabel('P(θ \mid data)', fontsize=11)
-    ax.set_title(f'So sánh: Grid vs Chính xác\nGrid size = {grid_size}', 
-                fontsize=12, fontweight='bold')
-    ax.legend(fontsize=9)
-    ax.grid(alpha=0.3, axis='y')
-    ax.set_xlim(0, 1)
-
-plt.tight_layout()
-plt.show()
-
-print("=== GRID APPROXIMATION ===")
-print(f"\nDữ liệu: {k}/{n} ngửa")
-print(f"\nPosterior chính xác: Beta({1+k}, {1+n-k})")
-print(f"  Mean: {stats.beta(1+k, 1+n-k).mean():.4f}")
-print(f"\nGrid approximation:")
-for grid_size in grid_sizes:
-    theta_grid = np.linspace(0, 1, grid_size)
-    prior_vals = np.array([prior(theta) for theta in theta_grid])
-    likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-    posterior_unnorm = prior_vals * likelihood_vals
-    posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-    mean_grid = np.sum(theta_grid * posterior_vals)
-    print(f"  Grid {grid_size:3d}: Mean = {mean_grid:.4f}")
-```
-
-![Grid Approximation Concept](https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Riemann_sum_convergence.png/800px-Riemann_sum_convergence.png)
-*Nguồn: Wikipedia - Riemann Sum (ý tưởng tương tự)*
-
-### 1.2. Thuật toán Grid Approximation
-
-```python
-# Thuật toán chi tiết
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-# Dữ liệu
-n, k = 9, 6
-grid_size = 50
-theta_grid = np.linspace(0, 1, grid_size)
-
-# Bước 1: Prior
-prior_vals = np.array([prior(theta) for theta in theta_grid])
-axes[0, 0].bar(theta_grid, prior_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='black', color='blue')
-axes[0, 0].set_xlabel('θ', fontsize=11)
-axes[0, 0].set_ylabel('P(θ)', fontsize=11)
-axes[0, 0].set_title('Bước 1: Tính Prior tại mỗi điểm grid', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].grid(alpha=0.3, axis='y')
-
-# Bước 2: Likelihood
-likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-axes[0, 1].bar(theta_grid, likelihood_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='black', color='green')
-axes[0, 1].set_xlabel('θ', fontsize=11)
-axes[0, 1].set_ylabel('L(θ \mid data)', fontsize=11)
-axes[0, 1].set_title(f'Bước 2: Tính Likelihood\nData: {k}/{n}', 
-                    fontsize=12, fontweight='bold')
-axes[0, 1].grid(alpha=0.3, axis='y')
-
-# Bước 3: Nhân
-posterior_unnorm = prior_vals * likelihood_vals
-axes[1, 0].bar(theta_grid, posterior_unnorm, width=1/grid_size, alpha=0.7, 
-              edgecolor='black', color='orange')
-axes[1, 0].set_xlabel('θ', fontsize=11)
-axes[1, 0].set_ylabel('Prior × Likelihood', fontsize=11)
-axes[1, 0].set_title('Bước 3: Nhân Prior × Likelihood\n(Chưa chuẩn hóa)', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].grid(alpha=0.3, axis='y')
-
-# Bước 4: Chuẩn hóa
-posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-axes[1, 1].bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='black', color='red')
-axes[1, 1].set_xlabel('θ', fontsize=11)
-axes[1, 1].set_ylabel('P(θ \mid data)', fontsize=11)
-axes[1, 1].set_title(f'Bước 4: Chuẩn hóa\nΣ P(θ \mid data) = {np.sum(posterior_vals):.4f}', 
-                    fontsize=12, fontweight='bold')
-axes[1, 1].grid(alpha=0.3, axis='y')
-
-plt.tight_layout()
-plt.show()
-
-# Code minh họa
-print("\n=== THUẬT TOÁN GRID APPROXIMATION ===")
-print("""
-# Bước 1: Định nghĩa grid
-theta_grid = np.linspace(0, 1, grid_size)
-
-# Bước 2: Tính prior tại mỗi điểm
-prior_vals = [prior(theta) for theta in theta_grid]
-
-# Bước 3: Tính likelihood tại mỗi điểm
-likelihood_vals = [likelihood(theta, data) for theta in theta_grid]
-
-# Bước 4: Nhân prior × likelihood
-posterior_unnorm = prior_vals * likelihood_vals
-
-# Bước 5: Chuẩn hóa (tổng = 1)
-posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-""")
-```
-
-## 2. Sử dụng Grid Approximation
-
-### 2.1. Tính các Thống kê
-
-```python
-# Tính các thống kê từ grid approximation
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-# Grid approximation
-grid_size = 1000
-theta_grid = np.linspace(0, 1, grid_size)
-prior_vals = np.array([prior(theta) for theta in theta_grid])
-likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-posterior_unnorm = prior_vals * likelihood_vals
-posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-
-# 1. Mean, Median, Mode
-mean_post = np.sum(theta_grid * posterior_vals)
-median_post = theta_grid[np.argmin(np.abs(np.cumsum(posterior_vals) - 0.5))]
-mode_post = theta_grid[np.argmax(posterior_vals)]
-
-axes[0, 0].bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='none', color='blue')
-axes[0, 0].axvline(mean_post, color='red', linestyle='--', linewidth=2, 
-                  label=f'Mean = {mean_post:.3f}')
-axes[0, 0].axvline(median_post, color='green', linestyle='--', linewidth=2, 
-                  label=f'Median = {median_post:.3f}')
-axes[0, 0].axvline(mode_post, color='orange', linestyle='--', linewidth=2, 
-                  label=f'Mode = {mode_post:.3f}')
-axes[0, 0].set_xlabel('θ', fontsize=11)
-axes[0, 0].set_ylabel('P(θ \mid data)', fontsize=11)
-axes[0, 0].set_title('Posterior: Mean, Median, Mode', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].legend(fontsize=10)
-axes[0, 0].grid(alpha=0.3, axis='y')
-
-# 2. Credible Interval
-cumsum_post = np.cumsum(posterior_vals)
-ci_lower_idx = np.argmin(np.abs(cumsum_post - 0.025))
-ci_upper_idx = np.argmin(np.abs(cumsum_post - 0.975))
-ci_lower = theta_grid[ci_lower_idx]
-ci_upper = theta_grid[ci_upper_idx]
-
-axes[0, 1].bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='none', color='blue')
-axes[0, 1].bar(theta_grid[(theta_grid >= ci_lower) & (theta_grid <= ci_upper)], 
-              posterior_vals[(theta_grid >= ci_lower) & (theta_grid <= ci_upper)],
-              width=1/grid_size, alpha=0.7, edgecolor='none', color='yellow')
-axes[0, 1].axvline(ci_lower, color='red', linestyle='--', linewidth=2)
-axes[0, 1].axvline(ci_upper, color='red', linestyle='--', linewidth=2)
-axes[0, 1].set_xlabel('θ', fontsize=11)
-axes[0, 1].set_ylabel('P(θ \mid data)', fontsize=11)
-axes[0, 1].set_title(f'95% Credible Interval\n[{ci_lower:.3f}, {ci_upper:.3f}]', 
-                    fontsize=12, fontweight='bold')
-axes[0, 1].grid(alpha=0.3, axis='y')
-
-# 3. Xác suất của một khoảng
-prob_interval = np.sum(posterior_vals[(theta_grid >= 0.5) & (theta_grid <= 0.8)])
-
-axes[1, 0].bar(theta_grid, posterior_vals, width=1/grid_size, alpha=0.7, 
-              edgecolor='none', color='blue')
-axes[1, 0].bar(theta_grid[(theta_grid >= 0.5) & (theta_grid <= 0.8)], 
-              posterior_vals[(theta_grid >= 0.5) & (theta_grid <= 0.8)],
-              width=1/grid_size, alpha=0.7, edgecolor='none', color='green')
-axes[1, 0].set_xlabel('θ', fontsize=11)
-axes[1, 0].set_ylabel('P(θ \mid data)', fontsize=11)
-axes[1, 0].set_title(f'P(0.5 ≤ θ ≤ 0.8 \mid data) = {prob_interval:.3f}', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].grid(alpha=0.3, axis='y')
-
-# 4. Sampling từ posterior
-n_samples = 10000
-samples = np.random.choice(theta_grid, size=n_samples, p=posterior_vals)
-
-axes[1, 1].hist(samples, bins=50, density=True, alpha=0.7, 
-               edgecolor='black', label='Samples')
-axes[1, 1].plot(theta_grid, posterior_vals * grid_size, linewidth=2, 
-               color='red', label='True posterior')
-axes[1, 1].set_xlabel('θ', fontsize=11)
-axes[1, 1].set_ylabel('Mật độ', fontsize=11)
-axes[1, 1].set_title(f'Sampling từ Posterior\n(n = {n_samples:,})', 
-                    fontsize=12, fontweight='bold')
-axes[1, 1].legend(fontsize=10)
-axes[1, 1].grid(alpha=0.3, axis='y')
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== THỐNG KÊ TỪ GRID APPROXIMATION ===")
-print(f"\nDữ liệu: {k}/{n}")
-print(f"Grid size: {grid_size}")
-print(f"\nPosterior:")
-print(f"  Mean: {mean_post:.4f}")
-print(f"  Median: {median_post:.4f}")
-print(f"  Mode: {mode_post:.4f}")
-print(f"  95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
-print(f"\nXác suất:")
-print(f"  P(0.5 ≤ θ ≤ 0.8 \mid data) = {prob_interval:.4f}")
-print(f"\nSamples:")
-print(f"  Mean: {samples.mean():.4f}")
-print(f"  SD: {samples.std():.4f}")
-```
-
-### 2.2. Posterior Predictive
-
-```python
-# Posterior Predictive từ grid approximation
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Dự đoán: Số ngửa trong 10 lần tung mới
-n_new = 10
-k_new_range = np.arange(0, n_new + 1)
-
-# Posterior predictive: P(k_new \mid data) = Σ P(k_new \mid θ) P(θ \mid data)
-ppd = np.zeros(len(k_new_range))
-for i, k_new in enumerate(k_new_range):
-    # Tại mỗi k_new, tính tổng trên tất cả θ
-    for j, theta in enumerate(theta_grid):
-        ppd[i] += stats.binom.pmf(k_new, n_new, theta) * posterior_vals[j]
-
-# Vẽ
-axes[0].bar(k_new_range, ppd, alpha=0.7, edgecolor='black')
-axes[0].axvline(ppd @ k_new_range, color='red', linestyle='--', linewidth=2,
-               label=f'E[k] = {ppd @ k_new_range:.2f}')
-axes[0].set_xlabel(f'k (số ngửa trong {n_new} lần tung MỚI)', fontsize=11)
-axes[0].set_ylabel('P(k \mid data)', fontsize=11)
-axes[0].set_title(f'Posterior Predictive Distribution\nDự đoán dữ liệu mới', 
-                 fontsize=12, fontweight='bold')
-axes[0].legend(fontsize=10)
-axes[0].grid(alpha=0.3, axis='y')
-
-# So sánh với công thức Beta-Binomial
-from scipy.special import comb, beta as beta_func
-
-def beta_binomial_pmf(k, n, alpha, beta_param):
-    return (comb(n, k) * 
-            beta_func(k + alpha, n - k + beta_param) / 
-            beta_func(alpha, beta_param))
-
-alpha_post, beta_post = 1 + k, 1 + n - k
-ppd_exact = [beta_binomial_pmf(k_new, n_new, alpha_post, beta_post) 
-             for k_new in k_new_range]
-
-axes[1].bar(k_new_range, ppd, alpha=0.7, edgecolor='black', label='Grid approx')
-axes[1].plot(k_new_range, ppd_exact, 'ro-', markersize=8, linewidth=2, 
-            label='Chính xác (Beta-Binomial)')
-axes[1].set_xlabel(f'k (số ngửa trong {n_new} lần tung)', fontsize=11)
-axes[1].set_ylabel('P(k \mid data)', fontsize=11)
-axes[1].set_title('So sánh: Grid Approx vs Chính xác\nRất gần nhau!', 
-                 fontsize=12, fontweight='bold')
-axes[1].legend(fontsize=10)
-axes[1].grid(alpha=0.3, axis='y')
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== POSTERIOR PREDICTIVE ===")
-print(f"\nDự đoán {n_new} lần tung mới:")
-print(f"  E[k] (grid): {ppd @ k_new_range:.2f}")
-print(f"  E[k] (exact): {np.array(ppd_exact) @ k_new_range:.2f}")
-print(f"\nSai số: {abs((ppd @ k_new_range) - (np.array(ppd_exact) @ k_new_range)):.4f}")
-```
-
-## 3. Ưu và Nhược điểm
-
-### 3.1. So sánh với các Phương pháp khác
-
-```python
-# So sánh các phương pháp
-fig, ax = plt.subplots(figsize=(14, 10))
-ax.axis('off')
-
-comparison = """
-╔═══════════════════════════════════════════════════════════════════════════╗
-║              SO SÁNH CÁC PHƯƠNG PHÁP TÍNH POSTERIOR                        ║
-╠═══════════════════════════════════════════════════════════════════════════╣
-║                                                                           ║
-║  1. CONJUGATE PRIOR (Giải tích)                                            ║
-║     ✓ Chính xác 100%                                                      ║
-║     ✓ Nhanh nhất                                                          ║
-║     ✓ Dễ hiểu                                                             ║
-║     ✗ Chỉ có một số trường hợp                                            ║
-║     ✗ Không linh hoạt                                                     ║
-║                                                                           ║
-║  2. GRID APPROXIMATION                                                     ║
-║     ✓ Đơn giản, dễ hiểu                                                   ║
-║     ✓ Linh hoạt (bất kỳ prior/likelihood)                                 ║
-║     ✓ Chính xác với grid đủ mịn                                           ║
-║     ✗ Chậm với nhiều tham số                                              ║
-║     ✗ Curse of dimensionality                                             ║
-║     → Chỉ dùng cho 1-2 tham số                                            ║
-║                                                                           ║
-║  3. MCMC (Markov Chain Monte Carlo)                                        ║
-║     ✓ Mạnh nhất                                                           ║
-║     ✓ Hoạt động với nhiều tham số                                         ║
-║     ✓ Linh hoạt                                                           ║
-║     ✗ Phức tạp                                                            ║
-║     ✗ Cần kiểm tra convergence                                            ║
-║     → Phương pháp chuẩn cho model phức tạp                                ║
-║                                                                           ║
-║  4. VARIATIONAL INFERENCE                                                  ║
-║     ✓ Nhanh hơn MCMC                                                      ║
-║     ✓ Scalable                                                            ║
-║     ✗ Xấp xỉ (có thể sai)                                                 ║
-║     ✗ Khó implement                                                       ║
-║     → Dùng cho big data                                                   ║
-║                                                                           ║
-║  KHI NÀO DÙNG GÌ?                                                          ║
-║    • 1 tham số, học tập → Grid Approximation                              ║
-║    • Có conjugate → Conjugate Prior                                       ║
-║    • Model phức tạp → MCMC                                                ║
-║    • Big data → Variational Inference                                     ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-"""
-
-ax.text(0.5, 0.5, comparison, fontsize=9, family='monospace',
-       ha='center', va='center',
-       bbox=dict(boxstyle='round', facecolor='lightcyan', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-```
-
-### 3.2. Curse of Dimensionality
-
-```python
-# Minh họa: Curse of dimensionality
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Số điểm cần thiết theo số chiều
-dims = np.arange(1, 11)
-points_per_dim = 100
-total_points = points_per_dim ** dims
-
-axes[0].semilogy(dims, total_points, 'o-', linewidth=2, markersize=8)
-axes[0].set_xlabel('Số tham số', fontsize=11)
-axes[0].set_ylabel('Số điểm grid (log scale)', fontsize=11)
-axes[0].set_title('Curse of Dimensionality\nSố điểm tăng MŨ theo số tham số!', 
-                 fontsize=12, fontweight='bold')
-axes[0].grid(alpha=0.3)
-
-# Annotations
-for i, (dim, points) in enumerate(zip(dims[:5], total_points[:5])):
-    axes[0].annotate(f'{points:,}', 
-                    xy=(dim, points), xytext=(dim+0.3, points*2),
-                    fontsize=9, ha='left')
-
-# Bảng
-axes[1].axis('off')
-table_data = """
-╔═══════════════════════════════════════════════════════════╗
-║        CURSE OF DIMENSIONALITY                            ║
-╠═══════════════════════════════════════════════════════════╣
-║                                                           ║
-║  Giả sử: 100 điểm mỗi chiều                               ║
-║                                                           ║
-║  1 tham số:  100¹ = 100 điểm                              ║
-║    → Dễ dàng!                                             ║
-║                                                           ║
-║  2 tham số:  100² = 10,000 điểm                           ║
-║    → Vẫn OK                                               ║
-║                                                           ║
-║  3 tham số:  100³ = 1,000,000 điểm                        ║
-║    → Bắt đầu chậm                                         ║
-║                                                           ║
-║  4 tham số:  100⁴ = 100,000,000 điểm                      ║
-║    → RẤT chậm!                                            ║
-║                                                           ║
-║  5 tham số:  100⁵ = 10,000,000,000 điểm                   ║
-║    → KHÔNG khả thi!                                       ║
-║                                                           ║
-║  ──────────────────────────────────────────────────────  ║
-║                                                           ║
-║  KẾT LUẬN:                                                ║
-║    Grid Approximation CHỈ dùng cho:                       ║
-║      • 1 tham số: Tốt                                     ║
-║      • 2 tham số: OK                                      ║
-║      • 3+ tham số: KHÔNG khả thi                          ║
-║                                                           ║
-║    → Cần MCMC cho model phức tạp!                         ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-"""
-
-axes[1].text(0.5, 0.5, table_data, fontsize=9, family='monospace',
-            ha='center', va='center',
-            bbox=dict(boxstyle='round', facecolor='#ffcccc', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== CURSE OF DIMENSIONALITY ===")
-print(f"\n100 điểm mỗi chiều:")
-for dim in range(1, 6):
-    points = 100 ** dim
-    print(f"  {dim} tham số: {points:,} điểm")
-```
-
-## 4. Ví dụ Thực hành
-
-### 4.1. Ví dụ: Prior Không Conjugate
-
-```python
-# Ví dụ: Prior mixture (không conjugate)
-fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-
-# Dữ liệu
-n, k = 20, 12
-
-# Prior: Mixture của 2 Beta
-# 60% tin θ ~ 0.3, 40% tin θ ~ 0.7
-def prior_mixture(theta):
-    return 0.6 * stats.beta(30, 70).pdf(theta) + 0.4 * stats.beta(70, 30).pdf(theta)
-
-# Grid approximation
-grid_size = 1000
-theta_grid = np.linspace(0, 1, grid_size)
-
-prior_vals = np.array([prior_mixture(theta) for theta in theta_grid])
-likelihood_vals = np.array([likelihood(theta, k, n) for theta in theta_grid])
-posterior_unnorm = prior_vals * likelihood_vals
-posterior_vals = posterior_unnorm / np.sum(posterior_unnorm)
-
-# 1. Prior
-axes[0, 0].plot(theta_grid, prior_vals, linewidth=2, color='blue')
-axes[0, 0].fill_between(theta_grid, prior_vals, alpha=0.3, color='blue')
-axes[0, 0].set_xlabel('θ', fontsize=11)
-axes[0, 0].set_ylabel('Mật độ', fontsize=11)
-axes[0, 0].set_title('Prior: Mixture (Bimodal)\nKHÔNG conjugate!', 
-                    fontsize=12, fontweight='bold')
-axes[0, 0].grid(alpha=0.3)
-
-# 2. Likelihood
-axes[0, 1].plot(theta_grid, likelihood_vals, linewidth=2, color='green')
-axes[0, 1].fill_between(theta_grid, likelihood_vals, alpha=0.3, color='green')
-axes[0, 1].axvline(k/n, color='red', linestyle='--', linewidth=2, label=f'MLE={k/n:.2f}')
-axes[0, 1].set_xlabel('θ', fontsize=11)
-axes[0, 1].set_ylabel('L(θ \mid data)', fontsize=11)
-axes[0, 1].set_title(f'Likelihood: {k}/{n} ngửa', 
-                    fontsize=12, fontweight='bold')
-axes[0, 1].legend(fontsize=10)
-axes[0, 1].grid(alpha=0.3)
-
-# 3. Posterior
-axes[1, 0].plot(theta_grid, posterior_vals, linewidth=3, color='red')
-axes[1, 0].fill_between(theta_grid, posterior_vals, alpha=0.3, color='red')
-
-mean_post = np.sum(theta_grid * posterior_vals)
-ci_lower = theta_grid[np.argmin(np.abs(np.cumsum(posterior_vals) - 0.025))]
-ci_upper = theta_grid[np.argmin(np.abs(np.cumsum(posterior_vals) - 0.975))]
-
-axes[1, 0].axvline(mean_post, color='darkred', linestyle='--', linewidth=2,
-                  label=f'Mean={mean_post:.3f}')
-axes[1, 0].set_xlabel('θ', fontsize=11)
-axes[1, 0].set_ylabel('P(θ \mid data)', fontsize=11)
-axes[1, 0].set_title(f'Posterior\nMean={mean_post:.3f}, 95% CI=[{ci_lower:.3f}, {ci_upper:.3f}]', 
-                    fontsize=12, fontweight='bold')
-axes[1, 0].legend(fontsize=10)
-axes[1, 0].grid(alpha=0.3)
-
-# 4. So sánh tất cả
-axes[1, 1].plot(theta_grid, prior_vals/max(prior_vals), linewidth=2, 
-               label='Prior (scaled)', linestyle='--', alpha=0.7)
-axes[1, 1].plot(theta_grid, likelihood_vals/max(likelihood_vals), linewidth=2, 
-               label='Likelihood (scaled)', alpha=0.7)
-axes[1, 1].plot(theta_grid, posterior_vals/max(posterior_vals), linewidth=3, 
-               label='Posterior (scaled)', alpha=0.7)
-axes[1, 1].axvline(k/n, color='red', linestyle=':', linewidth=2, alpha=0.5)
-axes[1, 1].set_xlabel('θ', fontsize=11)
-axes[1, 1].set_ylabel('Giá trị (scaled)', fontsize=11)
-axes[1, 1].set_title('So sánh: Prior, Likelihood, Posterior', 
-                    fontsize=12, fontweight='bold')
-axes[1, 1].legend(fontsize=10)
-axes[1, 1].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
-print("\n=== PRIOR MIXTURE (KHÔNG CONJUGATE) ===")
-print(f"\nPrior: 60% × Beta(30,70) + 40% × Beta(70,30)")
-print(f"  → Bimodal, không conjugate")
-print(f"\nDữ liệu: {k}/{n}")
-print(f"\nPosterior (từ grid approximation):")
-print(f"  Mean: {mean_post:.4f}")
-print(f"  95% CI: [{ci_lower:.4f}, {ci_upper:.4f}]")
-print(f"\n→ Grid approximation cho phép dùng BẤT KỲ prior nào!")
-```
+## Mục tiêu học tập
+
+Sau bài này, bạn nên hiểu grid approximation như cây cầu đi từ Bayes giải tay sang Bayes tính toán. Bạn cần nắm ý tưởng rời rạc hóa không gian tham số, biết tự tính posterior trên một lưới đơn giản, biết đọc kết quả của grid, và hiểu vì sao phương pháp này rất hay cho học tập nhưng nhanh chóng gặp giới hạn khi số tham số tăng.
+
+> **Ví dụ mini.** Bạn muốn suy luận $$\theta$$ sau khi thấy 6 mặt ngửa trong 9 lần tung, nhưng thay vì làm trên cả đoạn $$[0,1]$$, bạn chỉ xét 5 giá trị ứng viên như $$0, 0.25, 0.5, 0.75, 1$$. Đó chính là tinh thần của grid approximation.
+>
+> **Câu hỏi tự kiểm tra.** Nếu tăng số điểm grid từ 5 lên 100 hay 1000, bạn mong điều gì sẽ thay đổi ở posterior xấp xỉ?
+
+## Mở đầu: nếu posterior không giải tay được thì sao?
+
+Trong bài conjugacy, mọi thứ rất đẹp vì posterior vẫn nằm trong cùng họ phân phối với prior. Nhưng thực tế không phải lúc nào prior cũng “ngoan” như vậy.
+
+Ví dụ:
+
+- prior có thể là hỗn hợp hai niềm tin khác nhau,
+- likelihood có thể không ăn khớp với prior theo dạng giải tích,
+- hoặc ta chỉ đơn giản muốn một cách tính trực quan để nhìn thấy Bayes hoạt động.
+
+Lúc đó, grid approximation là cách đơn giản nhất để bắt đầu.
+
+![Giới thiệu trực quan về grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation_intro.png)
+
+## 1. Ý tưởng cốt lõi: thay đường liên tục bằng một tập điểm
+
+Giả sử tham số $$\theta$$ nằm trong đoạn $$[0,1]$$. Thay vì xét mọi giá trị liên tục có thể có của $$\theta$$, ta chọn một số điểm trên đoạn này:
+
+$$
+\theta_1,\theta_2,\dots,\theta_G.
+$$
+
+Ở mỗi điểm, ta tính:
+
+- prior,
+- likelihood,
+- posterior chưa chuẩn hóa.
+
+Cuối cùng, ta chuẩn hóa các trọng số này để thu được một posterior rời rạc trên lưới.
+
+Nói bằng lời:
+
+**grid approximation biến một bài toán liên tục thành một bài toán “chấm điểm” trên nhiều điểm ứng viên.**
+
+## 2. Ví dụ tay rất nhỏ: 6 ngửa trong 9 lần tung
+
+Giả sử:
+
+- prior đều trên $$[0,1]$$,
+- dữ liệu là 6 ngửa trong 9 lần tung,
+- ta dùng grid 5 điểm:
+
+$$
+\theta \in \{0,\ 0.25,\ 0.5,\ 0.75,\ 1\}.
+$$
+
+Likelihood tỉ lệ với:
+
+$$
+\theta^6(1-\theta)^3.
+$$
+
+Ta tính ở từng điểm:
+
+| $$\theta$$ | prior | likelihood chưa chuẩn hóa | posterior chưa chuẩn hóa |
+| --- | --- | --- | --- |
+| 0.00 | 1 | 0.000000 | 0.000000 |
+| 0.25 | 1 | 0.000103 | 0.000103 |
+| 0.50 | 1 | 0.001953 | 0.001953 |
+| 0.75 | 1 | 0.002781 | 0.002781 |
+| 1.00 | 1 | 0.000000 | 0.000000 |
+
+Rồi chuẩn hóa bằng cách chia cho tổng.
+
+Kết quả cho thấy:
+
+- vùng quanh $$0.75$$ được dữ liệu ủng hộ mạnh nhất trên grid này,
+- vùng quanh $$0.25$$ yếu hơn hẳn,
+- hai đầu $$0$$ và $$1$$ gần như không được dữ liệu ủng hộ.
+
+Ví dụ này cực kỳ quan trọng vì nó cho ta thấy Bayes không bắt buộc phải bắt đầu bằng tích phân phức tạp. Ta có thể hiểu nó như một quy trình chấm điểm và chuẩn hóa.
+
+## 3. Thuật toán grid approximation
+
+![Các bước của thuật toán grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_algorithm_steps.png)
+
+Quy trình chuẩn có thể viết thành 5 bước.
+
+### Bước 1. Tạo lưới tham số
+
+Ví dụ:
+
+$$
+\theta_{\text{grid}} = \text{linspace}(0,1,G).
+$$
+
+### Bước 2. Tính prior tại từng điểm
+
+Mỗi điểm trên lưới nhận một trọng số prior.
+
+### Bước 3. Tính likelihood tại từng điểm
+
+Với cùng dữ liệu quan sát, ta xem điểm nào giải thích dữ liệu tốt hơn.
+
+### Bước 4. Nhân prior với likelihood
+
+Đó là posterior chưa chuẩn hóa:
+
+$$
+p(\theta_i \mid D) \propto p(D \mid \theta_i)p(\theta_i).
+$$
+
+### Bước 5. Chuẩn hóa
+
+Chia cho tổng toàn bộ trọng số để thu được posterior rời rạc hợp lệ.
+
+## 4. Grid mịn hơn thì tốt hơn, nhưng cũng tốn hơn
+
+Một lưới 5 điểm giúp ta hiểu ý tưởng. Nhưng để xấp xỉ tốt hơn, ta thường cần lưới mịn hơn:
+
+- 20 điểm,
+- 100 điểm,
+- 1000 điểm.
+
+![So sánh grid với các độ mịn khác nhau]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation_basics.png)
+
+Khi grid mịn hơn:
+
+- posterior rời rạc nhìn giống posterior liên tục hơn,
+- các thống kê như mean hay credible interval chính xác hơn.
+
+![Ảnh hưởng của kích thước grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_size_comparison.png)
+
+Đây là một trade-off rất đơn giản:
+
+- grid thô  $$\rightarrow$$ nhanh nhưng xấp xỉ thô,
+- grid mịn  $$\rightarrow$$ chính xác hơn nhưng tốn tính toán hơn.
+
+## 5. Một ví dụ thực tế: prior không liên hợp
+
+Giả sử nhóm phân tích có hai niềm tin cạnh tranh về tỷ lệ khách quay lại:
+
+- giả thuyết 1: tỷ lệ thường quanh $$0.3$$,
+- giả thuyết 2: tỷ lệ thường quanh $$0.7$$.
+
+Ta có thể biểu diễn prior như một mixture hai đỉnh. Khi đó posterior thường không còn công thức đóng đẹp như Beta-Binomial nữa. Nhưng grid approximation vẫn xử lý được rất tự nhiên:
+
+1. tính giá trị prior mixture ở từng điểm,
+2. tính likelihood dữ liệu ở từng điểm,
+3. chuẩn hóa để ra posterior.
+
+![Ví dụ grid với prior mixture]({{ site.baseurl }}/img/chapter_img/chapter02/grid_mixture_prior_example.png)
+
+Đây là lý do grid approximation rất mạnh về mặt trực giác:
+
+- nó không yêu cầu prior phải liên hợp,
+- chỉ cần bạn tính được prior và likelihood trên lưới.
+
+## 6. Từ posterior trên grid, ta làm được gì?
+
+Rất nhiều thứ.
+
+### 6.1. Tính posterior mean
+
+Ta lấy trung bình có trọng số:
+
+$$
+E[\theta \mid D] \approx \sum_i \theta_i p(\theta_i \mid D).
+$$
+
+### 6.2. Tính xác suất của một khoảng
+
+Ví dụ:
+
+$$
+P(0.5 \le \theta \le 0.8 \mid D)
+$$
+
+chỉ là tổng các trọng số posterior của những điểm nằm trong khoảng đó.
+
+### 6.3. Tính credible interval
+
+Ta cộng dồn xác suất posterior trên grid để lấy các quantile mong muốn.
+
+### 6.4. Lấy mẫu từ posterior
+
+Ta có thể lấy mẫu các điểm grid theo trọng số posterior rồi dùng chúng cho các bước tiếp theo.
+
+![Tính các thống kê từ posterior trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_statistics_computation.png)
+
+Grid approximation rất hay ở chỗ tất cả các khái niệm Bayes trở nên hữu hình bằng các phép cộng và nhân đơn giản.
+
+## 7. Posterior predictive với grid
+
+Một khi đã có posterior trên grid, ta có thể dự đoán dữ liệu mới.
+
+Ví dụ:
+
+- hiện tại đã có posterior về xác suất khách mua hàng,
+- ta muốn dự đoán số đơn hàng trong 50 khách tiếp theo.
+
+Ta chỉ cần trung bình hóa phân phối dự đoán điều kiện theo từng điểm trên grid:
+
+$$
+P(y_{\text{new}} \mid D) = \sum_i P(y_{\text{new}} \mid \theta_i)p(\theta_i \mid D).
+$$
+
+![Posterior predictive từ grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_posterior_predictive.png)
+
+Đây là bước rất quan trọng vì nó nối posterior của tham số với những dự báo thực tế mà người dùng cuối quan tâm.
+
+## 8. Khi nào grid approximation đặc biệt hữu ích?
+
+### 8.1. Khi học Bayes lần đầu
+
+Grid là cách tốt nhất để thấy thật rõ:
+
+- prior,
+- likelihood,
+- posterior,
+- chuẩn hóa,
+- và dự đoán.
+
+### 8.2. Khi bài toán chỉ có 1 tham số
+
+Lúc này grid thường rất ổn:
+
+- dễ hiểu,
+- dễ code,
+- dễ vẽ.
+
+### 8.3. Khi muốn kiểm tra một mô hình nhỏ
+
+Ngay cả khi sau này bạn dùng MCMC, grid vẫn có thể là điểm tham chiếu tốt cho các ví dụ một tham số.
+
+![Khi nào nên dùng grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/when_to_use_grid.png)
+
+## 9. Điểm yếu lớn nhất: curse of dimensionality
+
+Vấn đề xuất hiện khi số tham số tăng.
+
+Nếu mỗi tham số dùng 100 điểm grid:
+
+- 1 tham số  $$\rightarrow$$ 100 điểm,
+- 2 tham số  $$\rightarrow$$ 10,000 điểm,
+- 3 tham số  $$\rightarrow$$ 1,000,000 điểm,
+- 4 tham số  $$\rightarrow$$ 100,000,000 điểm.
+
+![Curse of dimensionality]({{ site.baseurl }}/img/chapter_img/chapter02/curse_of_dimensionality.png)
+
+Đó là lý do grid approximation:
+
+- rất tuyệt cho bài 1 tham số,
+- còn chấp nhận được cho bài 2 tham số nhỏ,
+- nhưng nhanh chóng trở nên không khả thi với mô hình thực tế nhiều tham số.
+
+## 10. Grid approximation nằm ở đâu trong bức tranh lớn?
+
+Ta có thể xem các phương pháp tính posterior theo một trục phát triển:
+
+- conjugate prior: nhanh và chính xác nếu bài toán đủ “ngoan”,
+- grid approximation: trực quan, linh hoạt, tốt cho mô hình nhỏ,
+- MCMC: tổng quát hơn, dùng cho mô hình phức tạp nhiều tham số.
+
+![Từ grid đến MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/grid_to_mcmc_bridge.png)
+
+Grid chính là cây cầu giúp ta hiểu vì sao sau này cần các phương pháp lấy mẫu.
+
+## 11. Những nhầm lẫn phổ biến
+
+### 11.1. “Grid approximation luôn chính xác”
+
+Không. Nó là xấp xỉ. Độ chính xác phụ thuộc vào:
+
+- độ mịn của grid,
+- miền grid có phủ đủ vùng posterior hay không,
+- và số tham số của bài toán.
+
+### 11.2. “Chỉ cần tăng grid là xong”
+
+Không. Với nhiều tham số, số điểm tăng theo cấp số mũ nên chi phí bùng nổ rất nhanh.
+
+### 11.3. “Grid là đồ chơi, không đáng học”
+
+Ngược lại. Grid là cách rất tốt để xây trực giác Bayes, hiểu posterior được hình thành thế nào, và chuẩn bị cho MCMC.
 
 ## Tóm tắt
 
-```python
-# Infographic tóm tắt
-fig = plt.figure(figsize=(14, 10))
-ax = fig.add_subplot(111)
-ax.axis('off')
+**Grid approximation là cách xấp xỉ posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm.**
 
-summary = """
-╔═══════════════════════════════════════════════════════════════════════════╗
-║                  GRID APPROXIMATION - TÓM TẮT                              ║
-╠═══════════════════════════════════════════════════════════════════════════╣
-║                                                                           ║
-║  1. Ý TƯỞNG                                                                ║
-║     Chia không gian tham số thành lưới, tính posterior tại mỗi điểm       ║
-║                                                                           ║
-║  2. THUẬT TOÁN                                                             ║
-║     ① Tạo grid: θ₁, θ₂, ..., θₙ                                           ║
-║     ② Tính prior: p(θᵢ)                                                   ║
-║     ③ Tính likelihood: p(D \mid θᵢ)                                          ║
-║     ④ Nhân: p(θᵢ \mid D) ∝ p(D \mid θᵢ) p(θᵢ)                                   ║
-║     ⑤ Chuẩn hóa: Σ p(θᵢ \mid D) = 1                                          ║
-║                                                                           ║
-║  3. ƯU ĐIỂM                                                                ║
-║     ✓ Đơn giản, dễ hiểu                                                   ║
-║     ✓ Linh hoạt (bất kỳ prior/likelihood)                                 ║
-║     ✓ Chính xác với grid đủ mịn                                           ║
-║     ✓ Dễ tính thống kê (mean, CI, etc.)                                   ║
-║     ✓ Dễ sample từ posterior                                              ║
-║                                                                           ║
-║  4. NHƯỢC ĐIỂM                                                             ║
-║     ✗ Curse of dimensionality                                             ║
-║     ✗ Chỉ dùng cho 1-2 tham số                                            ║
-║     ✗ Chậm với grid lớn                                                   ║
-║                                                                           ║
-║  5. KHI NÀO DÙNG?                                                          ║
-║     ✓ Học tập, minh họa                                                   ║
-║     ✓ 1 tham số                                                           ║
-║     ✓ Prior không conjugate                                               ║
-║     ✓ Kiểm tra kết quả MCMC                                               ║
-║                                                                           ║
-║  6. KHI NÀO KHÔNG DÙNG?                                                    ║
-║     ✗ 3+ tham số → MCMC                                                   ║
-║     ✗ Cần tốc độ → Conjugate (nếu có)                                     ║
-║     ✗ Production → MCMC hoặc Variational                                  ║
-║                                                                           ║
-╚═══════════════════════════════════════════════════════════════════════════╝
-"""
+Ưu điểm:
 
-ax.text(0.5, 0.5, summary, fontsize=10, family='monospace',
-       ha='center', va='center',
-       bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.3))
+- rất trực quan,
+- dễ triển khai,
+- không cần prior liên hợp,
+- tốt cho các bài toán nhỏ.
 
-plt.tight_layout()
-plt.show()
-```
+Hạn chế:
 
-## Bài tập
+- chỉ phù hợp cho rất ít tham số,
+- càng nhiều tham số càng nhanh chóng không khả thi.
 
-1. **Cơ bản**: Dùng grid approximation (100 điểm) để tính posterior với prior Beta(3, 3) và dữ liệu 15/25. So sánh với công thức conjugate.
+Nếu conjugacy dạy ta Bayes giải tay, thì grid approximation dạy ta Bayes tính toán.
 
-2. **Prior mixture**: Dùng prior = 0.5 × Beta(10, 30) + 0.5 × Beta(30, 10) với dữ liệu 20/40. Tính posterior mean và 95% CI.
+> **3 ý cần nhớ.**
+> 1. Grid approximation biến posterior liên tục thành một bài toán rời rạc gồm nhiều điểm ứng viên.
+> 2. Phương pháp này rất trực quan và mạnh cho bài toán nhỏ, nhất là khi prior không liên hợp.
+> 3. Điểm yếu cốt lõi của grid là curse of dimensionality, nên nó chỉ phù hợp cho rất ít tham số.
 
-3. **Độ phân giải**: So sánh grid approximation với grid size = 10, 50, 100, 500, 1000. Vẽ biểu đồ sai số so với conjugate.
+## Câu hỏi tự luyện
 
-4. **Posterior predictive**: Từ posterior ở bài 1, tính posterior predictive cho 20 lần tung mới.
-
-5. **2D grid**: (Thách thức) Implement grid approximation 2D cho model Normal với cả μ và σ² chưa biết. Dùng grid 50×50.
+1. Hãy giải thích bằng lời tại sao grid 5 điểm chỉ cho một xấp xỉ thô.
+2. Với bài toán một tham số, vì sao grid approximation là công cụ học rất tốt?
+3. Tại sao grid approximation gặp khó khăn nghiêm trọng ở 4 hay 5 tham số?
+4. Hãy nêu một ví dụ prior không liên hợp mà grid xử lý dễ hơn giải tích.
 
 ## Tài liệu tham khảo
 
-1. **McElreath, R. (2020).** *Statistical Rethinking* (2nd Ed.). Chapter 2-3.
-2. **Kruschke, J. (2014).** *Doing Bayesian Data Analysis*. Chapter 6.
-3. **Gelman, A., et al. (2013).** *Bayesian Data Analysis* (3rd Ed.). Chapter 3.
-
----
-
-## Tài liệu tham khảo
-
-### Primary:
-- **McElreath, R. (2020).** *Statistical Rethinking* (2nd Ed.)
-  - Chapter 2: Small Worlds and Large Worlds (grid approximation)
-  - Focus on: Computational posterior approximation, discrete grids
-
-### Secondary:
-
-#### Gelman et al. - Bayesian Data Analysis (3rd Edition):
-- **Chapter 3.7**: Numerical integration
-- **Appendix C**: Computation in R and Stan
-- Focus on: Numerical methods for posterior computation
-
-#### Kruschke - Doing Bayesian Data Analysis (2015):
-- **Chapter 6**: Grid approximation for simple models
-- Focus on: Discrete approximation, computational methods
-
-**Lưu ý**: Gelman/Kruschke sử dụng R/Stan, nhưng grid approximation concepts hoàn toàn tương đương với Python/NumPy implementation.
+- McElreath, R. *Statistical Rethinking* (2nd ed.), Chapter 2-3.
+- Kruschke, J. *Doing Bayesian Data Analysis* (2nd ed.), Chapter 6.
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 3.
 
 ---
 
 *Kết thúc Chapter 02. Bài học tiếp theo: [Chapter 03 - Sampling, Monte Carlo, và MCMC](/vi/chapter03/)*
-

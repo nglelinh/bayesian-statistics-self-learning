@@ -10,392 +10,266 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **interaction effects** - một trong những concepts quan trọng nhất trong modeling. Bạn sẽ học khi nào cần interactions, cách model chúng trong PyMC, và cách interpret results. Đây là bước quan trọng để hiểu rằng thế giới thực hiếm khi "additive" - effects thường phụ thuộc vào context.
+Sau bài này, bạn cần hiểu interaction effect là gì và vì sao nhiều hiện tượng thực tế không thể được mô tả bằng mô hình cộng đơn giản. Bạn cũng cần biết cách đọc interaction theo kiểu "ảnh hưởng của một biến thay đổi theo bối cảnh của biến khác" thay vì cố ép mọi coefficient thành các hiệu ứng cố định.
 
-## Giới thiệu: Thế giới Không Phải Lúc nào cũng Additive
+> **Ví dụ mini.** Một chương trình luyện thi có thể giúp học sinh khá tiến bộ rất nhanh, nhưng với học sinh mất gốc thì hiệu quả lại nhỏ hơn nếu chưa có học liệu bổ trợ. Khi đó ảnh hưởng của số giờ học không cố định cho mọi người, mà phụ thuộc vào trình độ đầu vào.
+>
+> **Câu hỏi tự kiểm tra.** Nếu hiệu quả của một predictor thay đổi theo mức của predictor khác, mô hình cộng đơn giản sẽ bỏ sót điều gì?
 
-Trong các bài trước, chúng ta giả định:
+## 1. Thế giới thật hiếm khi chỉ là "cộng lại"
+
+Trong hồi quy cộng đơn giản, ta viết:
 
 $$
 y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \epsilon
 $$
 
-Điều này có nghĩa: **Effect của $$x_1$$ không phụ thuộc vào $$x_2$$** (và ngược lại).
+Mô hình này nói rằng:
 
-Nhưng trong thực tế:
-- Effect của **exercise** lên **weight loss** phụ thuộc vào **diet**
-- Effect của **study time** lên **test score** phụ thuộc vào **prior knowledge**
-- Effect của **marketing** lên **sales** phụ thuộc vào **product quality**
+- ảnh hưởng của $$x_1$$ là như nhau ở mọi mức của $$x_2$$,
+- và ảnh hưởng của $$x_2$$ cũng là như nhau ở mọi mức của $$x_1$$.
 
-Đây là **interaction effects**.
+Nhưng trong thực tế, rất nhiều hiện tượng không vận hành như vậy.
 
-## 1. Additive vs Interactive Models
+Ví dụ:
 
-![Interaction Effects]({{ site.baseurl }}/img/chapter_img/chapter05/interaction_effects.png)
+- hiệu quả của quảng cáo phụ thuộc vào chất lượng sản phẩm,
+- tác động của chế độ ăn phụ thuộc vào mức độ vận động,
+- ảnh hưởng của số giờ học phụ thuộc vào nền tảng kiến thức,
+- tác động của thuốc phụ thuộc vào độ tuổi hoặc tình trạng bệnh nền.
 
-### 1.1. Visualization
+Khi đó ta cần interaction.
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
+## 2. Interaction effect là gì?
 
-# Generate data
-np.random.seed(42)
-n = 100
+Interaction xảy ra khi ảnh hưởng của một predictor lên outcome **thay đổi theo giá trị của predictor khác**.
 
-# Continuous predictor
-x1 = np.random.uniform(0, 10, n)
-# Binary predictor (e.g., treatment vs control)
-x2 = np.random.binomial(1, 0.5, n)
+Một mô hình có interaction giữa $$x_1$$ và $$x_2$$ thường viết:
 
-# ADDITIVE: y = 2 + 0.5*x1 + 3*x2
-y_additive = 2 + 0.5*x1 + 3*x2 + np.random.normal(0, 1, n)
-
-# INTERACTIVE: y = 2 + 0.5*x1 + 3*x2 + 0.8*(x1*x2)
-y_interactive = 2 + 0.5*x1 + 3*x2 + 0.8*(x1*x2) + np.random.normal(0, 1, n)
-
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Additive model
-mask0 = x2 == 0
-mask1 = x2 == 1
-
-axes[0].scatter(x1[mask0], y_additive[mask0], s=60, alpha=0.6, 
-               label='x₂ = 0 (Control)', edgecolors='black')
-axes[0].scatter(x1[mask1], y_additive[mask1], s=60, alpha=0.6, 
-               label='x₂ = 1 (Treatment)', edgecolors='black')
-
-# Fit lines
-lr0 = LinearRegression().fit(x1[mask0].reshape(-1, 1), y_additive[mask0])
-lr1 = LinearRegression().fit(x1[mask1].reshape(-1, 1), y_additive[mask1])
-
-x_line = np.linspace(0, 10, 100)
-axes[0].plot(x_line, lr0.predict(x_line.reshape(-1, 1)),
-            'b-', linewidth=3, label=f'Slope₀ = {lr0.coef_[0]:.2f}')
-axes[0].plot(x_line, lr1.predict(x_line.reshape(-1, 1)),
-            'orange', linewidth=3, label=f'Slope₁ = {lr1.coef_[0]:.2f}')
-
-axes[0].set_xlabel('x₁', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('y', fontsize=12, fontweight='bold')
-axes[0].set_title('ADDITIVE MODEL\n' +
-                 'y = α + β₁x₁ + β₂x₂\n' +
-                 'Parallel lines (same slopes!)',
-                 fontsize=14, fontweight='bold', color='blue')
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3)
-
-# Interactive model
-axes[1].scatter(x1[mask0], y_interactive[mask0], s=60, alpha=0.6,
-               label='x₂ = 0 (Control)', edgecolors='black')
-axes[1].scatter(x1[mask1], y_interactive[mask1], s=60, alpha=0.6,
-               label='x₂ = 1 (Treatment)', edgecolors='black')
-
-lr0_int = LinearRegression().fit(x1[mask0].reshape(-1, 1), y_interactive[mask0])
-lr1_int = LinearRegression().fit(x1[mask1].reshape(-1, 1), y_interactive[mask1])
-
-axes[1].plot(x_line, lr0_int.predict(x_line.reshape(-1, 1)),
-            'b-', linewidth=3, label=f'Slope₀ = {lr0_int.coef_[0]:.2f}')
-axes[1].plot(x_line, lr1_int.predict(x_line.reshape(-1, 1)),
-            'orange', linewidth=3, label=f'Slope₁ = {lr1_int.coef_[0]:.2f}')
-
-axes[1].set_xlabel('x₁', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('y', fontsize=12, fontweight='bold')
-axes[1].set_title('INTERACTIVE MODEL\n' +
-                 'y = α + β₁x₁ + β₂x₂ + β₃(x₁×x₂)\n' +
-                 'Different slopes!',
-                 fontsize=14, fontweight='bold', color='red')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("ADDITIVE vs INTERACTIVE")
-print("=" * 70)
-print("\nADDITIVE MODEL:")
-print(f"  Control slope: {lr0.coef_[0]:.2f}")
-print(f"  Treatment slope: {lr1.coef_[0]:.2f}")
-print("  → Same slopes (parallel lines)")
-print("  → Effect of x₁ same for both groups")
-
-print("\nINTERACTIVE MODEL:")
-print(f"  Control slope: {lr0_int.coef_[0]:.2f}")
-print(f"  Treatment slope: {lr1_int.coef_[0]:.2f}")
-print("  → Different slopes!")
-print("  → Effect of x₁ depends on x₂")
-print("=" * 70)
-```
-
-### 1.2. Mathematical Form
-
-**Additive**:
 $$
-y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \epsilon
+y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 (x_1 x_2) + \epsilon
 $$
 
-**Interactive**:
-$$
-y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 (x_1 \times x_2) + \epsilon
-$$
+Thành phần mới $$\beta_3 (x_1 x_2)$$ là interaction term.
 
-**Interpretation của $$\beta_3$$**:
-- $$\beta_3$$ = change in slope of $$x_1$$ khi $$x_2$$ tăng 1 đơn vị
-- Hoặc: change in slope of $$x_2$$ khi $$x_1$$ tăng 1 đơn vị
-- **Symmetric**: interaction giữa $$x_1$$ và $$x_2$$ = interaction giữa $$x_2$$ và $$x_1$$
+Nếu $$\beta_3$$ khác 0 một cách đáng kể, điều đó gợi ý rằng:
 
-## 2. Bayesian Interaction Model trong PyMC
+- slope của $$x_1$$ thay đổi khi $$x_2$$ thay đổi,
+- hoặc nhìn ngược lại, slope của $$x_2$$ thay đổi khi $$x_1$$ thay đổi.
 
-```python
-import pymc as pm
-import arviz as az
+![Interaction effects]({{ site.baseurl }}/img/chapter_img/chapter05/interaction_effects.png)
 
-# Standardize predictors
-x1_z = (x1 - x1.mean()) / x1.std()
-x2_z = x2  # Binary, no need to standardize
-y_z = (y_interactive - y_interactive.mean()) / y_interactive.std()
+## 3. Nhìn bằng hình sẽ dễ hiểu hơn nhìn bằng công thức
 
-# Interaction term
-interaction = x1_z * x2_z
+![Interaction demo]({{ site.baseurl }}/img/chapter_img/chapter05/interaction_demo.png)
 
-# Fit model
-with pm.Model() as model_interaction:
-    # Priors
-    alpha = pm.Normal('alpha', 0, 1)
-    beta1 = pm.Normal('beta1', 0, 1)  # Main effect of x1
-    beta2 = pm.Normal('beta2', 0, 1)  # Main effect of x2
-    beta3 = pm.Normal('beta3', 0, 1)  # Interaction effect
-    sigma = pm.HalfNormal('sigma', 1)
-    
-    # Linear model with interaction
-    mu = alpha + beta1*x1_z + beta2*x2_z + beta3*interaction
-    
-    # Likelihood
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y_z)
-    
-    # Sample
-    trace = pm.sample(2000, tune=1000, chains=4, random_seed=42,
-                         return_inferencedata=True)
+Hãy so sánh hai tình huống:
 
-# Summary
-print("\n" + "=" * 70)
-print("POSTERIOR SUMMARY")
-print("=" * 70)
-summary = az.summary(trace, var_names=['alpha', 'beta1', 'beta2', 'beta3'])
-print(summary)
-print("=" * 70)
+### Mô hình additive
 
-# Visualize posteriors
-az.plot_posterior(trace, var_names=['beta1', 'beta2', 'beta3'],
-                 figsize=(16, 5))
-plt.suptitle('Posterior Distributions', fontsize=14, fontweight='bold', y=1.02)
-plt.tight_layout()
-plt.show()
+Các đường gần như song song.
 
-# Extract
-beta3_samples = trace.posterior['beta3'].values.flatten()
+Điều đó có nghĩa:
 
-print("\nINTERACTION EFFECT (β₃):")
-print(f"  Mean: {beta3_samples.mean():.3f}")
-print(f"  95% CI: [{np.percentile(beta3_samples, 2.5):.3f}, " +
-      f"{np.percentile(beta3_samples, 97.5):.3f}]")
+- khác nhóm thì mức nền có thể khác,
+- nhưng tác động của $$x_1$$ lên $$y$$ gần như giống nhau giữa các nhóm.
 
-if np.percentile(beta3_samples, 2.5) > 0:
-    print("  → Significant positive interaction!")
-    print("  → Effect of x₁ stronger when x₂ = 1")
-elif np.percentile(beta3_samples, 97.5) < 0:
-    print("  → Significant negative interaction!")
-    print("  → Effect of x₁ weaker when x₂ = 1")
-else:
-    print("  → No clear interaction (CI includes 0)")
-```
+### Mô hình có interaction
 
-## 3. Interpretation: Conditional Effects
+Các đường có slope khác nhau rõ rệt.
 
-Với interaction, effect của $$x_1$$ phụ thuộc vào $$x_2$$:
+Điều đó có nghĩa:
+
+- cùng tăng một đơn vị $$x_1$$,
+- nhưng outcome tăng mạnh hay yếu còn tùy vào mức của $$x_2$$.
+
+Đây chính là trực giác cốt lõi của interaction.
+
+## 4. Ví dụ thực tế để thấy interaction rõ hơn
+
+### Ví dụ 1: thời gian học và trình độ đầu vào
+
+Outcome là điểm cuối kỳ.
+
+Predictors:
+
+- số giờ học mỗi tuần,
+- trình độ đầu vào.
+
+Nếu học sinh đã có nền tảng tốt, thêm 1 giờ học có thể giúp tăng điểm khá rõ. Nhưng với học sinh mất gốc, thêm 1 giờ học chưa chắc tạo khác biệt lớn nếu các lỗ hổng kiến thức cơ bản chưa được lấp.
+
+Khi đó:
+
+- ảnh hưởng của giờ học phụ thuộc vào trình độ đầu vào,
+- nên interaction là hợp lý.
+
+### Ví dụ 2: quảng cáo và chất lượng sản phẩm
+
+Quảng cáo có thể hiệu quả hơn nhiều khi sản phẩm vốn đã tốt. Nếu sản phẩm kém, tăng quảng cáo có thể chỉ giúp người ta biết đến sản phẩm nhanh hơn chứ không giúp chuyển đổi bền vững.
+
+Tức là:
+
+- effect của ngân sách quảng cáo phụ thuộc vào chất lượng sản phẩm.
+
+### Ví dụ 3: điều trị và mức độ bệnh
+
+Một phác đồ có thể rất hiệu quả với ca nhẹ nhưng ít hiệu quả hơn với ca rất nặng, hoặc ngược lại. Khi đó effect của treatment thay đổi theo severity.
+
+## 5. Cách đọc interaction cho đúng
+
+Sai lầm phổ biến nhất là cố đọc $$\beta_1$$ như một hiệu ứng chung cố định, dù mô hình đã có interaction.
+
+Khi có interaction:
 
 $$
 \frac{\partial y}{\partial x_1} = \beta_1 + \beta_3 x_2
 $$
 
-**Khi $$x_2 = 0$$** (control):
+Điều này nói rằng ảnh hưởng của $$x_1$$ **không phải một con số duy nhất** nữa. Nó phụ thuộc vào $$x_2$$.
+
+### Ví dụ với biến nhị phân
+
+Nếu $$x_2$$ là biến nhóm với:
+
+- $$x_2 = 0$$: nhóm đối chứng,
+- $$x_2 = 1$$: nhóm can thiệp,
+
+thì:
+
+- ở nhóm đối chứng, effect của $$x_1$$ là $$\beta_1$$,
+- ở nhóm can thiệp, effect của $$x_1$$ là $$\beta_1 + \beta_3$$.
+
+Nghĩa là interaction cho ta biết mức độ mà intervention làm mạnh hơn hoặc yếu đi ảnh hưởng của $$x_1$$.
+
+![Conditional effects]({{ site.baseurl }}/img/chapter_img/chapter05/conditional_effects.png)
+
+## 6. Interaction không chỉ dành cho biến nhị phân
+
+Interaction cũng rất thường gặp giữa hai biến liên tục.
+
+Ví dụ:
+
+- nhiệt độ và độ ẩm cùng ảnh hưởng đến mức tiêu thụ điện,
+- thu nhập và tuổi cùng ảnh hưởng đến hành vi chi tiêu,
+- thời gian học và chất lượng giấc ngủ cùng ảnh hưởng đến điểm thi.
+
+![Continuous interaction]({{ site.baseurl }}/img/chapter_img/chapter05/continuous_interaction.png)
+
+Trong trường hợp continuous x continuous, hình ảnh như contour plot hoặc surface plot thường trực quan hơn bảng hệ số rất nhiều. Vì thế, interaction là một chủ đề mà **visualization gần như bắt buộc**.
+
+## 7. Khi nào nên nghĩ đến interaction?
+
+### 7.1. Khi lý thuyết chuyên môn gợi ý
+
+Nếu hiểu biết ngành nói rằng effect thay đổi theo bối cảnh, interaction nên được xem xét.
+
+Ví dụ:
+
+- thuốc và tuổi,
+- đào tạo và trình độ nền,
+- giá và phân khúc khách hàng.
+
+### 7.2. Khi đồ thị gợi ý các slope khác nhau
+
+Nếu bạn vẽ dữ liệu theo nhóm và thấy các đường không song song, đó là tín hiệu rất rõ.
+
+### 7.3. Khi mô hình cộng đơn giản để lại residual có cấu trúc
+
+Một số pattern residual có thể cho thấy model đang bỏ sót sự phụ thuộc giữa các predictors.
+
+## 8. Điều người mới học hay hiểu nhầm
+
+### Hiểu nhầm 1: "Main effect không còn ý nghĩa nữa"
+
+Không hẳn. Main effect vẫn có nghĩa, nhưng nghĩa của nó phụ thuộc vào cách bạn mã hóa và center variables.
+
+Ví dụ:
+
+- nếu biến liên tục được center quanh giá trị trung bình,
+- thì main effect thường là ảnh hưởng của predictor tại mức trung bình của biến kia.
+
+Đây là lý do việc standardize hoặc center predictors thường rất hữu ích trước khi diễn giải interaction.
+
+### Hiểu nhầm 2: "Có interaction thì phải bỏ main effects"
+
+Thông thường không nên làm vậy. Interaction thường đi cùng main effects để mô hình còn giữ được ý nghĩa diễn giải cơ bản.
+
+### Hiểu nhầm 3: "Chỉ cần nhìn vào p-value hay interval của interaction là đủ"
+
+Chưa đủ. Với interaction, hình vẽ và conditional effects quan trọng ngang hoặc hơn con số tóm tắt.
+
+## 9. Một ví dụ gần gũi: tập luyện và chế độ ăn
+
+Giả sử outcome là số kg giảm trong 8 tuần.
+
+Predictors:
+
+- số buổi tập mỗi tuần,
+- mức độ tuân thủ chế độ ăn.
+
+Nếu ăn uống rất kém, tăng thêm 1 buổi tập có thể chỉ cải thiện nhỏ. Nhưng nếu chế độ ăn được giữ tốt, cùng 1 buổi tập thêm đó có thể tạo khác biệt lớn hơn.
+
+Đây là kiểu tình huống mà mô hình cộng:
+
 $$
-\frac{\partial y}{\partial x_1} = \beta_1
+\text{Giảm cân} = \alpha + \beta_1 \cdot \text{Tập luyện} + \beta_2 \cdot \text{Chế độ ăn} + \epsilon
 $$
 
-**Khi $$x_2 = 1$$** (treatment):
-$$
-\frac{\partial y}{\partial x_1} = \beta_1 + \beta_3
-$$
+có thể bỏ sót một phần quan trọng của câu chuyện.
 
-```python
-# Compute conditional effects
-beta1_samples = trace.posterior['beta1'].values.flatten()
-beta3_samples = trace.posterior['beta3'].values.flatten()
-
-# Effect of x1 when x2=0
-effect_x2_0 = beta1_samples
-
-# Effect of x1 when x2=1
-effect_x2_1 = beta1_samples + beta3_samples
-
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Conditional effects
-axes[0].hist(effect_x2_0, bins=50, density=True, alpha=0.7,
-            label='x₂ = 0 (Control)', edgecolor='black')
-axes[0].hist(effect_x2_1, bins=50, density=True, alpha=0.7,
-            label='x₂ = 1 (Treatment)', edgecolor='black')
-axes[0].axvline(effect_x2_0.mean(), color='blue', linewidth=2, linestyle='--')
-axes[0].axvline(effect_x2_1.mean(), color='orange', linewidth=2, linestyle='--')
-axes[0].set_xlabel('Effect of x₁ on y', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[0].set_title('CONDITIONAL EFFECTS\n' +
-                 f'Control: {effect_x2_0.mean():.2f}\n' +
-                 f'Treatment: {effect_x2_1.mean():.2f}',
-                 fontsize=14, fontweight='bold')
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3, axis='y')
-
-# Difference
-difference = effect_x2_1 - effect_x2_0  # This equals beta3!
-axes[1].hist(difference, bins=50, density=True, alpha=0.7,
-            color='green', edgecolor='black')
-axes[1].axvline(difference.mean(), color='red', linewidth=3,
-               label=f'Mean = {difference.mean():.2f}')
-axes[1].axvline(0, color='black', linestyle='--', linewidth=2)
-axes[1].set_xlabel('Difference in Effects', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[1].set_title('INTERACTION = DIFFERENCE\n' +
-                 'β₃ = Effect(x₂=1) - Effect(x₂=0)',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3, axis='y')
-
-plt.tight_layout()
-plt.show()
-
-print("\n" + "=" * 70)
-print("CONDITIONAL EFFECTS")
-print("=" * 70)
-print(f"\nEffect of x₁ when x₂ = 0: {effect_x2_0.mean():.3f}")
-print(f"Effect of x₁ when x₂ = 1: {effect_x2_1.mean():.3f}")
-print(f"Difference (β₃): {difference.mean():.3f}")
-print("=" * 70)
-```
-
-## 4. Khi nào Cần Interactions?
-
-### 4.1. Theory-Driven
-
-Nếu theory gợi ý effects phụ thuộc nhau → include interaction.
-
-### 4.2. Exploratory
-
-Plot data by groups. Nếu slopes khác nhau → có thể cần interaction.
-
-### 4.3. Model Comparison
-
-So sánh model với và không có interaction (Chapter 06: Model Comparison).
-
-## 5. Continuous × Continuous Interactions
-
-Interactions không chỉ với binary variables:
+Mô hình có interaction sẽ hợp lý hơn:
 
 $$
-y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 (x_1 \times x_2) + \epsilon
+\text{Giảm cân} = \alpha + \beta_1 \cdot \text{Tập luyện} + \beta_2 \cdot \text{Chế độ ăn} + \beta_3 \cdot (\text{Tập luyện} \times \text{Chế độ ăn}) + \epsilon
 $$
 
-**Interpretation phức tạp hơn** → visualize!
+## 10. Cách báo cáo interaction cho người không chuyên
 
-```python
-# Example: Continuous × Continuous
-np.random.seed(42)
-n = 200
+Đừng bắt đầu bằng:
 
-x1_cont = np.random.uniform(0, 10, n)
-x2_cont = np.random.uniform(0, 10, n)
-y_cont = 2 + 0.5*x1_cont + 0.3*x2_cont + 0.1*(x1_cont*x2_cont) + np.random.normal(0, 2, n)
+> interaction coefficient bằng 0.63.
 
-# Visualize with 3D plot
-from mpl_toolkits.mplot3d import Axes3D
+Hãy bắt đầu bằng ngôn ngữ tình huống:
 
-fig = plt.figure(figsize=(14, 6))
+> Tác động của giờ học không giống nhau cho mọi học sinh. Ở nhóm có nền tảng tốt, thêm thời gian học đi kèm mức tăng điểm mạnh hơn rõ rệt so với nhóm nền tảng yếu.
 
-# 3D scatter
-ax1 = fig.add_subplot(121, projection='3d')
-ax1.scatter(x1_cont, x2_cont, y_cont, c=y_cont, cmap='viridis', s=30, alpha=0.6)
-ax1.set_xlabel('x₁', fontsize=11, fontweight='bold')
-ax1.set_ylabel('x₂', fontsize=11, fontweight='bold')
-ax1.set_zlabel('y', fontsize=11, fontweight='bold')
-ax1.set_title('Continuous × Continuous Interaction\n' +
-             'y = α + β₁x₁ + β₂x₂ + β₃(x₁×x₂)',
-             fontsize=13, fontweight='bold')
+Sau đó mới đưa ra con số nếu cần.
 
-# Contour plot
-ax2 = fig.add_subplot(122)
-contour = ax2.tricontourf(x1_cont, x2_cont, y_cont, levels=15, cmap='viridis')
-ax2.set_xlabel('x₁', fontsize=11, fontweight='bold')
-ax2.set_ylabel('x₂', fontsize=11, fontweight='bold')
-ax2.set_title('Contour Plot\nEffect depends on both x₁ and x₂',
-             fontsize=13, fontweight='bold')
-plt.colorbar(contour, ax=ax2, label='y')
+Kiểu diễn giải này giúp người đọc hiểu bản chất hiện tượng trước, rồi mới xem phần định lượng.
 
-plt.tight_layout()
-plt.show()
-```
+## 11. Chapter 5 khép lại ở đây
 
-## Tóm tắt và Kết nối
+Đến cuối chapter này, bạn đã có một bộ công cụ rất quan trọng để đọc hồi quy cho đúng:
 
-Interaction effects xảy ra khi effect của một predictor phụ thuộc vào predictor khác:
+- nhiều predictors cùng lúc,
+- confounding và causal structure,
+- multicollinearity,
+- interaction effects.
 
-- **Model**: $$y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 (x_1 \times x_2) + \epsilon$$
-- **Interpretation**: $$\beta_3$$ = change in slope
-- **Conditional effects**: Effect phụ thuộc vào context
-- **Visualization**: Essential cho interpretation!
+Đây là lúc hồi quy thôi không còn là "vẽ một đường thẳng", mà trở thành một cách suy nghĩ về cơ chế tạo dữ liệu.
 
-**Key insight**: Thế giới thực hiếm khi additive. Always consider interactions khi có theoretical reasons!
+> **3 ý cần nhớ.**
+>
+> Interaction xảy ra khi ảnh hưởng của một predictor thay đổi theo mức của predictor khác, nên không thể luôn diễn giải hiệu ứng như một con số cố định cho mọi trường hợp.
+>
+> Khi mô hình có interaction, cách đọc tốt nhất là đọc theo conditional effects và dùng hình minh họa thay vì chỉ nhìn bảng coefficients.
+>
+> Interaction rất thường gặp trong đời sống thật vì hiệu quả của can thiệp, hành vi hay điều kiện hiếm khi giống nhau trong mọi bối cảnh.
 
-**Chapter 05 Complete!** Chúng ta đã học:
-- Multiple predictors (5.1)
-- Confounding & DAGs (5.2)
-- Multicollinearity (5.3)
-- Interactions (5.4)
+## Câu hỏi tự luyện
 
-Bài tiếp theo: **Chapter 06 - Model Comparison** 🚀
+1. Hãy nêu một ví dụ trong đời sống mà ảnh hưởng của một biến phụ thuộc rõ vào một biến khác.
+2. Vì sao các đường không song song trên biểu đồ nhóm là dấu hiệu có thể có interaction?
+3. Trong ví dụ giờ học và trình độ đầu vào, interaction giúp mô tả điều gì mà mô hình additive bỏ sót?
+4. Nếu biến liên tục không được center, việc diễn giải main effects trong mô hình interaction có thể khó ở điểm nào?
 
-## Bài tập
-
-**Bài tập 1: Detect Interaction**
-Generate data với và không có interaction. Visualize và identify which is which.
-
-**Bài tập 2: Fit và Interpret**
-Fit interaction model. Compute conditional effects cho different values of $$x_2$$.
-
-**Bài tập 3: Continuous × Continuous**
-Fit model với continuous × continuous interaction. Visualize với contour plot.
-
-**Bài tập 4: Real Example**
-Scenario: Effect of study time on test score, với prior knowledge.
-(a) Argue why interaction makes sense
-(b) Fit model
-(c) Interpret results
-
-**Bài tập 5: Model Comparison**
-Compare additive vs interactive model. Which fits better? (Hint: use posterior predictive checks)
-
-## Tài liệu Tham khảo
+## Tài liệu tham khảo
 
 **Gelman, A., & Hill, J. (2006).** *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press.
-- Chapter 4: Linear regression - interactions
 
 **McElreath, R. (2020).** *Statistical Rethinking* (2nd Edition). CRC Press.
-- Chapter 8: Conditional Manatees
 
 ---
 

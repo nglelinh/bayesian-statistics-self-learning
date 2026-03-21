@@ -10,147 +10,210 @@ categories:
 lesson_type: required
 ---
 
-## Chào mừng đến với Bayesian Statistics!
+## Chào mừng đến với Bayesian Statistics
 
-Chào mừng bạn đến với khóa học **Phân tích Dữ liệu Bayes (Bayesian Data Analysis – 2101595)**. Đây là một hành trình khám phá cách tiếp cận hiện đại và mạnh mẽ nhất trong thống kê và khoa học dữ liệu – **Bayesian Statistics**.
+Khóa học này được xây dựng cho một mục tiêu rất rõ: giúp bạn học cách **nghĩ bằng xác suất**, thay vì chỉ nhớ các công thức thống kê. Trong thực tế, chúng ta liên tục phải trả lời những câu hỏi như:
 
-Khác với thống kê truyền thống (frequentist statistics) mà bạn có thể đã học, phương pháp Bayes không chỉ là một tập hợp các công thức tính toán, mà là một **triết lý hoàn chỉnh** về cách chúng ta học hỏi từ dữ liệu, cập nhật niềm tin, và đưa ra quyết định dưới sự không chắc chắn.
+- Một giả thuyết có đáng tin không?
+- Dữ liệu mới có làm thay đổi niềm tin cũ không?
+- Nếu phải ra quyết định ngay hôm nay, rủi ro sai là bao nhiêu?
 
----
+Bayesian statistics mạnh ở đúng những câu hỏi như vậy. Nó không chỉ cho bạn một “kết quả kiểm định”, mà cho bạn một cách suy nghĩ thống nhất về **niềm tin, dữ liệu, bất định và quyết định**.
 
-## 🎯 Mục tiêu Khóa học
+> **Ví dụ mini.** Khi nghe dự báo “70% khả năng mưa”, bạn không cần lặp lại ngày mai vô hạn lần để hiểu ý nghĩa của nó. Bạn chỉ cần biết mức độ tin tưởng hiện tại để quyết định có mang ô hay không.
+>
+> **Câu hỏi tự kiểm tra.** Theo bạn, vì sao kiểu suy nghĩ “cập nhật niềm tin khi có thêm thông tin” lại gần với đời sống thực hơn nhiều công thức thống kê rời rạc?
 
-Sau khi hoàn thành khóa học này, bạn sẽ có khả năng:
+![Bayesian reasoning trong đời sống hằng ngày]({{ site.baseurl }}/img/chapter_img/chapter01/bayesian_daily_life.png)
 
-### 1. **Tư duy Bayesian**
-- Hiểu sâu sắc triết lý Bayesian về xác suất như "mức độ tin tưởng" (plausibility)
-- Phê phán những hạn chế của p-values và hypothesis testing truyền thống
-- Áp dụng Bayesian reasoning vào các vấn đề thực tế
+## Khóa học này sẽ giúp bạn học điều gì?
 
-### 2. **Xây dựng Mô hình**
-- Xây dựng probabilistic models như **data-generating processes**
-- Hiểu vai trò của likelihood, prior, và posterior trong suy diễn Bayesian
-- Chọn priors phù hợp và kiểm tra tính nhạy cảm (sensitivity)
+Nếu học tốt khóa này, bạn sẽ không chỉ biết “Bayes theorem là gì”, mà còn biết cách dùng tư duy Bayes trong các bài toán thật.
 
-### 3. **Tính toán Bayesian**
-- Thành thạo MCMC (Markov Chain Monte Carlo) sampling
-- Sử dụng PyMC để implement Bayesian models
-- Chẩn đoán và đánh giá convergence của MCMC chains
+### 1. Hiểu xác suất như một ngôn ngữ của mức độ tin tưởng
 
-### 4. **Mô hình Nâng cao**
-- Áp dụng Bayesian linear regression và GLM (Generalized Linear Models)
-- Xây dựng hierarchical/multilevel models
-- Sử dụng Gaussian Processes và mixture models cho các vấn đề phức tạp
+Bạn sẽ thấy vì sao trong Bayes:
 
-### 5. **Model Checking & Decision Making**
-- Kiểm tra mô hình với posterior predictive checks
-- So sánh models với information criteria (WAIC, LOO)
-- Áp dụng Bayesian decision analysis cho ra quyết định tối ưu
+- xác suất không chỉ là tần suất dài hạn,
+- mà còn là cách mô tả mức độ hợp lý của một giả thuyết,
+- đặc biệt khi ta không chắc chắn.
 
-### 6. **Thực hành Chuyên nghiệp**
-- Báo cáo kết quả Bayesian một cách rõ ràng và chính xác
-- Thực hiện complete Bayesian workflow từ đầu đến cuối
-- Áp dụng vào các bài toán thực tế trong nghiên cứu và công nghiệp
+### 2. Hiểu cách xây mô hình sinh dữ liệu
 
----
+Một mô hình Bayes tốt không bắt đầu từ code. Nó bắt đầu từ câu hỏi:
 
-## 📖 Tài liệu Tham khảo
+- dữ liệu được sinh ra như thế nào,
+- tham số nào chưa biết,
+- và prior nào phản ánh điều ta biết từ trước.
 
-Khóa học này kết hợp **dual references framework** - lấy điểm mạnh từ nhiều nguồn:
+### 3. Hiểu cách cập nhật niềm tin bằng dữ liệu
 
-### Primary Reference (Implementation):
+Đây là trái tim của cả khóa học:
+
+- prior là điều ta tin ban đầu,
+- likelihood là phần dữ liệu lên tiếng,
+- posterior là niềm tin đã cập nhật.
+
+![Cỗ máy Bayes: từ prior đến posterior]({{ site.baseurl }}/img/chapter_img/chapter01/bayes_machine.png)
+
+### 4. Biết dùng công cụ hiện đại để làm suy luận Bayes
+
+Sau phần nền tảng, khóa học sẽ đi vào:
+
+- grid approximation,
+- Monte Carlo và MCMC,
+- PyMC để triển khai mô hình thật,
+- chẩn đoán mô hình và kiểm tra dự báo.
+
+### 5. Biết diễn giải kết quả một cách trung thực
+
+Bạn sẽ học cách trả lời những câu hỏi mà người làm nghiên cứu, kinh doanh hay kỹ thuật thật sự quan tâm:
+
+- xác suất tham số lớn hơn 0 là bao nhiêu,
+- vùng giá trị hợp lý nhất là gì,
+- dự báo tương lai bất định ra sao,
+- và mô hình có đang bỏ sót điều gì không.
+
+## Vì sao nên học Bayes ngay từ đầu?
+
+Nhiều người đến với Bayes sau khi đã học thống kê tần suất và cảm thấy có gì đó “khó nuốt” ở p-values, confidence intervals hay kiểm định giả thuyết. Điều đó rất bình thường.
+
+Bayes hấp dẫn vì ba lý do lớn.
+
+### 1. Nó gần với trực giác học từ thông tin mới
+
+Trong đời sống, ta vẫn suy nghĩ rất Bayesian:
+
+- nghe dự báo thời tiết rồi cập nhật kế hoạch,
+- thấy xét nghiệm y khoa rồi cập nhật chẩn đoán,
+- xem vài lượt mua hàng đầu tiên rồi cập nhật niềm tin về nhu cầu thị trường.
+
+Ta gần như không suy nghĩ theo kiểu:
+
+- “Tôi bác bỏ giả thuyết ở mức ý nghĩa 5%”.
+
+### 2. Nó trung thực hơn về bất định
+
+Bayes không chỉ trả lời “ước lượng là bao nhiêu”, mà còn cho biết:
+
+- ta chắc đến đâu,
+- giá trị nào còn có khả năng,
+- và nếu dự đoán tương lai thì vùng rủi ro là gì.
+
+### 3. Nó rất hợp với data science hiện đại
+
+Bayes đặc biệt mạnh trong các bối cảnh như:
+
+- dữ liệu ít nhưng cần quyết định nhanh,
+- mô hình phân cấp,
+- dự báo và recommendation,
+- phân tích y khoa,
+- A/B testing,
+- machine learning có quantification of uncertainty.
+
+## Lộ trình của Chapter 1
+
+Chapter 1 không dạy bạn công thức nặng. Nó làm một việc quan trọng hơn: **đổi cách nhìn**.
+
+### Bài 1.1
+
+Ta bắt đầu từ một câu hỏi lớn: vì sao khoa học hiện đại lại gặp khủng hoảng tái lập, và p-values có vai trò gì trong chuyện đó?
+
+### Bài 1.2
+
+Ta quay về nền tảng triết học: xác suất thực ra là gì? Tần suất dài hạn hay độ hợp lý của niềm tin?
+
+### Bài 1.3
+
+Ta học định lý Bayes như một quy tắc cập nhật niềm tin khi có thêm bằng chứng.
+
+### Bài 1.4
+
+Ta đặt Bayes và Frequentist cạnh nhau để xem mỗi bên đang trả lời câu hỏi gì, mạnh ở đâu, và giới hạn ở đâu.
+
+## Cách học khóa này để hiệu quả hơn
+
+Nếu bạn muốn học nhanh mà vẫn chắc, hãy giữ ba thói quen sau.
+
+### 1. Luôn hỏi “bài toán thật ở đây là gì?”
+
+Trước mọi công thức, hãy hỏi:
+
+- tham số chưa biết là gì,
+- dữ liệu đến từ đâu,
+- và quyết định cuối cùng là gì.
+
+### 2. Ưu tiên trực giác trước kỹ thuật
+
+Nếu bạn hiểu:
+
+- prior là gì,
+- likelihood nói gì,
+- posterior dùng để làm gì,
+
+thì phần tính toán sau này sẽ nhẹ hơn rất nhiều.
+
+### 3. Đừng cố học Bayes như học thuộc lòng
+
+Bayes không hiệu quả nếu chỉ học theo kiểu:
+
+- công thức nào đi với công thức nào.
+
+Nó hiệu quả khi bạn nhìn thấy một workflow thống nhất:
+
+- đặt câu hỏi,
+- mô hình hóa,
+- cập nhật,
+- kiểm tra,
+- và ra quyết định.
+
+## Tài liệu nên tham khảo trong suốt khóa học
+
+### Tài liệu chính
 
 **Richard McElreath (2020)** - *Statistical Rethinking* (2nd Edition)
-- Triết lý modeling rõ ràng, dễ hiểu
-- Intuitive explanations
-- Video lectures miễn phí: [YouTube Playlist](https://www.youtube.com/playlist?list=PLDcUM9US4XdM9_N6XUUFrhghGJ4K25bFc)
 
-### Secondary References (Theory):
+Điểm mạnh:
+
+- cực kỳ tốt về trực giác mô hình hóa,
+- cách giải thích gần với người mới học,
+- kết nối tốt giữa lý thuyết và mô hình thực hành.
+
+### Tài liệu bổ sung
 
 **Andrew Gelman et al. (2013)** - *Bayesian Data Analysis* (3rd Edition)
-- Nền tảng toán học vững chắc
-- Comprehensive coverage
-- Official syllabus reference
+
+Điểm mạnh:
+
+- nền tảng vững,
+- bao quát rộng,
+- rất phù hợp khi bạn muốn đi sâu hơn sau khi đã có trực giác.
 
 **John K. Kruschke (2014)** - *Doing Bayesian Data Analysis*
-- Pedagogical approach xuất sắc
-- Visual explanations
-- Beginner-friendly
 
-### Additional Resources:
+Điểm mạnh:
 
-- **Gelman & Hill (2006)**: *Data Analysis Using Regression and Multilevel/Hierarchical Models*
-- **Rasmussen & Williams (2006)**: *Gaussian Processes for Machine Learning*
-- **PyMC Documentation**: https://www.pymc.io/
-- **ArviZ Documentation**: https://python.arviz.org/
+- cực kỳ sư phạm,
+- nhiều ví dụ minh họa,
+- rất tốt cho việc kết nối khái niệm với diễn giải.
 
----
+## Bạn không cần giỏi toán mới học được Bayes
 
-## 🚀 Tại sao Học Bayesian Statistics?
+Bạn cần đủ kiên nhẫn để chấp nhận rằng:
 
-Nếu bạn đã quen với thống kê tần suất - với p-values, confidence intervals, và hypothesis testing - bạn có thể tự hỏi: tại sao phải học một cách tiếp cận hoàn toàn khác? Có năm lý do chính.
+- bất định là thứ phải được mô hình hóa,
+- dữ liệu không tự nói nếu không có mô hình,
+- và việc cập nhật niềm tin một cách nhất quán là cốt lõi của suy luận.
 
-### 1. Trực Quan và Tự Nhiên
+Nếu giữ được tinh thần đó, Bayes sẽ không còn là một chương thống kê khó, mà trở thành một cách tư duy rất tự nhiên.
 
-Bayesian phản ánh cách chúng ta tự nhiên suy nghĩ. Khi bạn học được thông tin mới, bạn cập nhật niềm tin của mình - bạn không "bác bỏ" hay "không bác bỏ" một giả thuyết dựa trên một con số như 0.05. 
+> **3 ý cần nhớ.**
+> 1. Khóa học này không chỉ dạy công thức Bayes mà dạy cả một cách suy nghĩ về học từ dữ liệu.
+> 2. Bayesian statistics mạnh ở chỗ kết nối mô hình, bất định và ra quyết định trong cùng một workflow.
+> 3. Để học tốt khóa này, bạn nên luôn ưu tiên trực giác mô hình hóa trước rồi mới đến kỹ thuật tính toán.
 
-Ví dụ: Bạn nghĩ một đồng xu cân bằng. Tung 10 lần được 8 mặt ngửa. Bạn sẽ nghĩ "có lẽ đồng xu hơi lệch", không phải "bác bỏ giả thuyết đồng xu cân bằng ở mức ý nghĩa 5%". Bayesian làm chính xác điều đó - cập nhật niềm tin dựa trên dữ liệu.
+## Đi tiếp từ đây
 
-Hơn nữa, khi nói "95% credible interval là [0.6, 0.8]", điều này có nghĩa đơn giản là: có 95% khả năng tham số nằm trong khoảng đó. Rất dễ hiểu, không cần diễn giải phức tạp.
+Bài tiếp theo là [1.1 Replication Crisis & P-values](/vi/chapter01/replication-crisis-pvalues/). Đây là nơi Chapter 1 bắt đầu đặt câu hỏi: nếu cách suy luận thống kê truyền thống có quá nhiều giới hạn, ta có lựa chọn nào tốt hơn không?
 
-### 2. Linh Hoạt
-
-Bayesian cho phép bạn xây dựng model phức tạp phù hợp với thực tế:
-
-- **Tích hợp kiến thức sẵn có**: Nếu bạn biết trước một tham số phải dương, bạn có thể nói điều đó trực tiếp trong model
-- **Xử lý missing data**: Không cần kỹ thuật phức tạp - model tự học các giá trị thiếu
-- **Hierarchical models**: Khi dữ liệu có cấu trúc nhóm (học sinh trong lớp, bệnh nhân trong bệnh viện), Bayesian xử lý rất tốt
-
-### 3. Trung Thực về Sự Không Chắc Chắn
-
-Thay vì cho một con số ("trung bình là 5.2"), Bayesian cho bạn cả một phân phối xác suất về tham số. Điều này cho phép trả lời:
-
-- "Xác suất hiệu ứng lớn hơn 0.5 là bao nhiêu?" → 78%
-- "Khoảng nào chứa 95% khả năng?" → [0.4, 0.7]
-- "Nếu quyết định dựa trên con số này, rủi ro sai là bao nhiêu?" → Tính được
-
-Không chắc chắn được lan truyền tự nhiên qua model. Nếu không chắc về A, và A ảnh hưởng đến B, thì không chắc chắn về B cũng tự động được tính.
-
-### 4. Được Dùng Rộng Rãi trong Thực Tế
-
-Bayesian không chỉ là lý thuyết - nó được dùng thật:
-
-- **Google, Netflix**: Tối ưu hóa search, gợi ý phim
-- **Ngân hàng, tài chính**: Đo rủi ro, quản lý danh mục đầu tư
-- **Y tế**: Thử nghiệm lâm sàng (FDA chấp nhận), y học cá nhân hóa
-- **AI/Machine Learning**: Neural networks với uncertainty, tự động tune parameters
-
-Nếu bạn làm data science, machine learning, hay nghiên cứu, biết Bayesian là một lợi thế lớn.
-
-### 5. Đang Trở Thành Chuẩn Mực
-
-Trong nhiều lĩnh vực, Bayesian đang thay thế p-values:
-
-- Các tạp chí khoa học khuyến khích dùng Bayesian thay vì chỉ p-values
-- American Statistical Association cảnh báo về lạm dụng p-values, đề xuất Bayesian
-- Causal inference (trả lời "X gây ra Y?") dùng Bayesian là chuẩn
-- Nhiều công ty tech yêu cầu Bayesian trong job requirements
-
-**Tóm lại**: Học Bayesian không phải học thêm một công cụ - nó là học một cách tư duy mới về dữ liệu và sự không chắc chắn, một cách tư duy đang ngày càng trở thành thiết yếu.
-
----
-
-## 🚀 Bắt đầu Ngay!
-
-**Bài học tiếp theo**: [1.1 Replication Crisis & P-values](/vi/chapter01/replication-crisis-pvalues/)
-
-Hoặc nếu bạn cần ôn lại kiến thức nền tảng:  
-**Prerequisites**: [Chapter 00: Prerequisites](/vi/chapter00/)
-
----
-
-**Chúc bạn học tốt và enjoy the journey! 🎉**
-
-*"In God we trust, all others must bring data."* - W. Edwards Deming  
-*"But with Bayesian statistics, we update our trust based on the data!"* - Modern statistician
-
+Nếu cần ôn lại nền tảng trước khi vào chương, bạn có thể xem [Chapter 00: Prerequisites](/vi/chapter00/).

@@ -10,361 +10,258 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu cách mở rộng Bayesian linear regression từ **một predictor** sang **nhiều predictors**. Bạn sẽ học được ý nghĩa của coefficients trong multiple regression - chúng khác với simple regression như thế nào và tại sao. Quan trọng hơn, bạn sẽ hiểu rằng mỗi coefficient đo lường effect của một predictor **khi giữ các predictors khác cố định** - một khái niệm cốt lõi trong causal inference.
+Sau bài này, bạn cần hiểu vì sao nhiều bài toán thực tế không thể dùng chỉ một predictor. Bạn cũng cần nắm ý nghĩa quan trọng nhất của multiple regression: mỗi hệ số cho biết ảnh hưởng của một biến khi các biến còn lại được giữ cố định. Đây là nền tảng để đọc đúng kết quả hồi quy ở các bài sau.
 
-## Giới thiệu: Thế giới Thực Có Nhiều Factors
+> **Ví dụ mini.** Một công ty muốn dự đoán lương của nhân viên. Nếu chỉ nhìn số năm kinh nghiệm, ta sẽ bỏ sót bằng cấp, vị trí công việc và khu vực sống. Multiple regression cho phép đưa nhiều yếu tố vào cùng lúc để bức tranh công bằng và sát thực tế hơn.
+>
+> **Câu hỏi tự kiểm tra.** Nếu hai người có cùng số năm kinh nghiệm nhưng học vấn khác nhau, một mô hình chỉ có một predictor có mô tả được khác biệt lương giữa họ không?
 
-Trong Chapter 04, chúng ta học về simple linear regression:
+## 1. Vì sao một predictor thường là chưa đủ?
 
-$$y = \alpha + \beta x + \epsilon$$
+Trong Chapter 4, ta học mô hình hồi quy tuyến tính đơn:
 
-Nhưng trong thực tế, outcomes thường phụ thuộc vào **nhiều factors**, không chỉ một:
+$$
+y = \alpha + \beta x + \epsilon
+$$
 
-- **Cân nặng** phụ thuộc vào: Chiều cao, Tuổi, Giới tính, Hoạt động thể chất, ...
-- **Thu nhập** phụ thuộc vào: Học vấn, Kinh nghiệm, Ngành nghề, Khu vực, ...
-- **Điểm thi** phụ thuộc vào: Số giờ học, IQ, Động lực, Chất lượng giảng dạy, ...
+Mô hình này rất hữu ích để học trực giác, nhưng thế giới thật hiếm khi đơn giản như vậy.
 
-**Multiple regression** cho phép chúng ta model nhiều predictors cùng lúc:
+Ví dụ:
 
-$$y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_k x_k + \epsilon$$
+- **Điểm thi** không chỉ phụ thuộc vào số giờ học, mà còn phụ thuộc vào nền tảng kiến thức, chất lượng giấc ngủ và độ khó đề.
+- **Giá nhà** không chỉ phụ thuộc vào diện tích, mà còn phụ thuộc vào vị trí, tuổi căn nhà, số phòng ngủ và hạ tầng xung quanh.
+- **Cân nặng** không chỉ liên quan đến chiều cao, mà còn liên quan đến tuổi, giới tính, mức độ vận động và chế độ ăn.
 
-Nhưng điều này không chỉ đơn giản là "thêm variables". Ý nghĩa của coefficients thay đổi hoàn toàn!
+Nếu ta cố ép một bài toán nhiều nguyên nhân thành mô hình một biến, ta dễ mắc hai lỗi:
 
-## 1. Ý nghĩa của Coefficients: "Holding Others Constant"
+- bỏ sót thông tin quan trọng,
+- giải thích sai ý nghĩa của hệ số.
 
-![Multiple Predictors Visualization]({{ site.baseurl }}/img/chapter_img/chapter05/multiple_predictors_visualization.png)
+Multiple regression ra đời để xử lý chính tình huống này.
 
-### 1.1. Simple vs Multiple Regression
+## 2. Mô hình nhiều predictors trông như thế nào?
 
-Hãy xem một ví dụ cụ thể:
+Mô hình tổng quát là:
 
-**Bài toán**: Dự đoán **cân nặng** từ **chiều cao** và **tuổi**.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pymc as pm
-import arviz as az
-from scipy import stats
-import seaborn as sns
-
-# Generate synthetic data
-np.random.seed(42)
-n = 100
-
-# True parameters
-true_alpha = 50  # kg
-true_beta_height = 0.5  # kg/cm
-true_beta_age = 0.3  # kg/year
-true_sigma = 3  # kg
-
-# Predictors
-height = np.random.uniform(150, 190, n)  # cm
-age = np.random.uniform(20, 60, n)  # years
-
-# Outcome
-weight = (true_alpha + 
-          true_beta_height * height + 
-          true_beta_age * age + 
-          np.random.normal(0, true_sigma, n))
-
-# Visualize
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
-# 1. Weight vs Height (ignoring age)
-axes[0].scatter(height, weight, s=50, alpha=0.6, c=age, cmap='viridis',
-               edgecolors='black')
-axes[0].set_xlabel('Height (cm)', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Weight (kg)', fontsize=12, fontweight='bold')
-axes[0].set_title('Weight vs Height\n(Color = Age)',
-                 fontsize=14, fontweight='bold')
-axes[0].grid(alpha=0.3)
-cbar = plt.colorbar(axes[0].collections[0], ax=axes[0])
-cbar.set_label('Age (years)', fontsize=11)
-
-# 2. Weight vs Age (ignoring height)
-axes[1].scatter(age, weight, s=50, alpha=0.6, c=height, cmap='plasma',
-               edgecolors='black')
-axes[1].set_xlabel('Age (years)', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Weight (kg)', fontsize=12, fontweight='bold')
-axes[1].set_title('Weight vs Age\n(Color = Height)',
-                 fontsize=14, fontweight='bold')
-axes[1].grid(alpha=0.3)
-cbar = plt.colorbar(axes[1].collections[0], ax=axes[1])
-cbar.set_label('Height (cm)', fontsize=11)
-
-# 3. 3D visualization
-from mpl_toolkits.mplot3d import Axes3D
-ax3d = fig.add_subplot(133, projection='3d')
-ax3d.scatter(height, age, weight, s=30, alpha=0.6, edgecolors='black')
-ax3d.set_xlabel('Height (cm)', fontsize=11, fontweight='bold')
-ax3d.set_ylabel('Age (years)', fontsize=11, fontweight='bold')
-ax3d.set_zlabel('Weight (kg)', fontsize=11, fontweight='bold')
-ax3d.set_title('3D: Weight vs Height & Age',
-              fontsize=14, fontweight='bold')
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("DATA GENERATION")
-print("=" * 70)
-print(f"\nTrue Model:")
-print(f"  Weight = {true_alpha} + {true_beta_height}·Height + {true_beta_age}·Age + ε")
-print(f"  σ = {true_sigma} kg")
-print(f"\nInterpretation:")
-print(f"  - Mỗi cm chiều cao tăng → +{true_beta_height} kg (holding age constant)")
-print(f"  - Mỗi năm tuổi tăng → +{true_beta_age} kg (holding height constant)")
-print("=" * 70)
-```
-
-### 1.2. "Holding Others Constant" - Ý nghĩa Quan trọng
-
-Trong **multiple regression**:
-
-$$\beta_1$$ = Effect của $$x_1$$ trên $$y$$, **giữ $$x_2, x_3, \ldots$$ cố định**
-
-Đây là khác biệt quan trọng với simple regression:
-- **Simple**: $$\beta$$ = tổng effect (bao gồm cả indirect effects qua other variables)
-- **Multiple**: $$\beta_1$$ = direct effect (controlling for other variables)
-
-## 2. Bayesian Multiple Regression với PyMC
-
-### 2.1. Model Specification
-
-```python
-# Standardize data (remember Chapter 04!)
-height_mean, height_std = height.mean(), height.std()
-age_mean, age_std = age.mean(), age.std()
-weight_mean, weight_std = weight.mean(), weight.std()
-
-height_z = (height - height_mean) / height_std
-age_z = (age - age_mean) / age_std
-weight_z = (weight - weight_mean) / weight_std
-
-# Bayesian Multiple Regression
-with pm.Model() as multiple_regression:
-    # Priors (weakly informative)
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
-    beta_height = pm.Normal('beta_height', mu=0, sigma=1)
-    beta_age = pm.Normal('beta_age', mu=0, sigma=1)
-    sigma = pm.HalfNormal('sigma', sigma=1)
-    
-    # Linear model with MULTIPLE predictors
-    mu = alpha + beta_height * height_z + beta_age * age_z
-    
-    # Likelihood
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=weight_z)
-    
-    # Sample
-    trace = pm.sample(2000, tune=1000, chains=4, random_seed=42,
-                     return_inferencedata=True)
-
-# Summary
-print("\n" + "=" * 70)
-print("POSTERIOR SUMMARY")
-print("=" * 70)
-summary = az.summary(trace, var_names=['alpha', 'beta_height', 'beta_age', 'sigma'])
-print(summary)
-print("=" * 70)
-
-# Check diagnostics
-print("\nDIAGNOSTICS:")
-print("-" * 70)
-for var in ['alpha', 'beta_height', 'beta_age', 'sigma']:
-    rhat = summary.loc[var, 'r_hat']
-    ess = summary.loc[var, 'ess_bulk']
-    print(f"{var:15} R-hat={rhat:.4f} {'✓' if rhat < 1.01 else '✗'}  " +
-          f"ESS={ess:>6.0f} {'✓' if ess > 400 else '✗'}")
-print("-" * 70)
-```
-
-### 2.2. Interpret Posterior
-
-```python
-# Extract posterior samples
-alpha_samples = trace.posterior['alpha'].values.flatten()
-beta_height_samples = trace.posterior['beta_height'].values.flatten()
-beta_age_samples = trace.posterior['beta_age'].values.flatten()
-sigma_samples = trace.posterior['sigma'].values.flatten()
-
-# Transform back to original scale
-beta_height_orig = beta_height_samples * (weight_std / height_std)
-beta_age_orig = beta_age_samples * (weight_std / age_std)
-
-# Visualize posteriors
-fig, axes = plt.subplots(2, 2, figsize=(16, 10))
-
-# Beta_height
-axes[0, 0].hist(beta_height_orig, bins=50, density=True, alpha=0.7,
-               color='skyblue', edgecolors='black')
-axes[0, 0].axvline(beta_height_orig.mean(), color='red', linewidth=2,
-                  label=f'Mean = {beta_height_orig.mean():.3f}')
-axes[0, 0].axvline(true_beta_height, color='green', linestyle='--', linewidth=2,
-                  label=f'True = {true_beta_height:.3f}')
-axes[0, 0].set_xlabel('β_height (kg/cm)', fontsize=12, fontweight='bold')
-axes[0, 0].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[0, 0].set_title('Posterior: Effect of Height\n(holding age constant)',
-                     fontsize=14, fontweight='bold')
-axes[0, 0].legend(fontsize=11)
-axes[0, 0].grid(alpha=0.3, axis='y')
-
-# Beta_age
-axes[0, 1].hist(beta_age_orig, bins=50, density=True, alpha=0.7,
-               color='lightgreen', edgecolors='black')
-axes[0, 1].axvline(beta_age_orig.mean(), color='red', linewidth=2,
-                  label=f'Mean = {beta_age_orig.mean():.3f}')
-axes[0, 1].axvline(true_beta_age, color='green', linestyle='--', linewidth=2,
-                  label=f'True = {true_beta_age:.3f}')
-axes[0, 1].set_xlabel('β_age (kg/year)', fontsize=12, fontweight='bold')
-axes[0, 1].set_ylabel('Density', fontsize=12, fontweight='bold')
-axes[0, 1].set_title('Posterior: Effect of Age\n(holding height constant)',
-                     fontsize=14, fontweight='bold')
-axes[0, 1].legend(fontsize=11)
-axes[0, 1].grid(alpha=0.3, axis='y')
-
-# Joint posterior (scatter)
-axes[1, 0].scatter(beta_height_orig, beta_age_orig, s=1, alpha=0.3)
-axes[1, 0].axvline(true_beta_height, color='green', linestyle='--', linewidth=2)
-axes[1, 0].axhline(true_beta_age, color='green', linestyle='--', linewidth=2)
-axes[1, 0].set_xlabel('β_height (kg/cm)', fontsize=12, fontweight='bold')
-axes[1, 0].set_ylabel('β_age (kg/year)', fontsize=12, fontweight='bold')
-axes[1, 0].set_title('Joint Posterior\nβ_height vs β_age',
-                     fontsize=14, fontweight='bold')
-axes[1, 0].grid(alpha=0.3)
-
-# Interpretation
-axes[1, 1].axis('off')
-interp = f"""
-POSTERIOR INTERPRETATION
-
-β_height (holding age constant):
-  Mean: {beta_height_orig.mean():.3f} kg/cm
-  95% CI: [{np.percentile(beta_height_orig, 2.5):.3f}, 
-           {np.percentile(beta_height_orig, 97.5):.3f}]
-  
-  → Mỗi cm chiều cao tăng
-    cân nặng tăng ~{beta_height_orig.mean():.3f} kg
-    (khi age không đổi)
-
-β_age (holding height constant):
-  Mean: {beta_age_orig.mean():.3f} kg/year
-  95% CI: [{np.percentile(beta_age_orig, 2.5):.3f}, 
-           {np.percentile(beta_age_orig, 97.5):.3f}]
-  
-  → Mỗi năm tuổi tăng
-    cân nặng tăng ~{beta_age_orig.mean():.3f} kg
-    (khi height không đổi)
-
-→ Cả hai effects đều positive!
-"""
-
-axes[1, 1].text(0.5, 0.5, interp, fontsize=10, family='monospace',
-               ha='center', va='center',
-               bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.9))
-
-plt.tight_layout()
-plt.show()
-```
-
-## 3. Matrix Notation: Elegant và Scalable
-
-Với nhiều predictors, matrix notation giúp code gọn gàng hơn:
-
-$$\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}$$
+$$
+y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_k x_k + \epsilon
+$$
 
 Trong đó:
-- $$\mathbf{y}$$: Vector outcomes ($$n \times 1$$)
-- $$\mathbf{X}$$: Design matrix ($$n \times k$$)
-- $$\boldsymbol{\beta}$$: Vector coefficients ($$k \times 1$$)
 
-```python
-# Matrix formulation
-X_standardized = np.column_stack([height_z, age_z])
+- $$y$$ là outcome,
+- $$x_1, x_2, \ldots, x_k$$ là các predictors,
+- $$\alpha$$ là intercept,
+- mỗi $$\beta_j$$ là hệ số của predictor thứ $$j$$.
 
-with pm.Model() as matrix_regression:
-    # Priors
-    alpha = pm.Normal('alpha', mu=0, sigma=1)
-    beta = pm.Normal('beta', mu=0, sigma=1, shape=2)  # Vector of 2 coefficients
-    sigma = pm.HalfNormal('sigma', sigma=1)
-    
-    # Linear model (matrix multiplication)
-    mu = alpha + pm.math.dot(X_standardized, beta)
-    
-    # Likelihood
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=weight_z)
-    
-    # Sample
-    trace_matrix = pm.sample(2000, tune=1000, chains=4, random_seed=42,
-                            return_inferencedata=True)
+Ý tưởng rất tự nhiên:
 
-print("\nMATRIX FORMULATION:")
-print("-" * 70)
-print("✓ Cleaner code")
-print("✓ Scales to many predictors")
-print("✓ Same results as explicit formulation")
-print("-" * 70)
-```
+- ta cộng đóng góp của từng predictor,
+- rồi cộng thêm phần nhiễu $$\epsilon$$ vì dữ liệu thật luôn dao động.
 
-## Tóm tắt và Kết nối
+![Multiple predictors visualization]({{ site.baseurl }}/img/chapter_img/chapter05/multiple_predictors_visualization.png)
 
-Multiple regression mở rộng simple regression:
+Hình trên giúp ta thấy một outcome có thể thay đổi theo **nhiều chiều cùng lúc**. Khi nhìn từng đồ thị hai chiều riêng lẻ, ta chỉ thấy một lát cắt của vấn đề. Multiple regression cố gắng ghép các lát cắt đó lại thành một mô hình chung.
 
-- **Model**: $$y = \alpha + \beta_1 x_1 + \beta_2 x_2 + \cdots + \epsilon$$
-- **Coefficients**: Mỗi $$\beta_j$$ = effect của $$x_j$$ **holding others constant**
-- **Implementation**: PyMC với multiple priors
-- **Matrix notation**: Elegant và scalable
+## 3. Ý nghĩa quan trọng nhất: "giữ các biến khác cố định"
 
-**Key insight**: Coefficients trong multiple regression có ý nghĩa khác simple regression - chúng đo lường **direct effects**, không phải total effects.
+Đây là ý khó nhất nhưng cũng là ý quan trọng nhất của whole chapter.
 
-Trong các bài tiếp theo, chúng ta sẽ học:
-- **Bài 5.2**: Confounding và DAGs - khi nào cần control for variables
-- **Bài 5.3**: Multicollinearity - vấn đề khi predictors correlate
-- **Bài 5.4**: Interactions - khi effects phụ thuộc nhau
+Trong multiple regression, hệ số $$\beta_1$$ không còn nghĩa là:
 
-## Bài tập
+> cứ $$x_1$$ tăng một đơn vị thì $$y$$ tăng $$\beta_1$$ đơn vị.
 
-**Bài tập 1: Three Predictors**
-Generate data với 3 predictors và fit multiple regression.
-(a) Interpret mỗi coefficient
-(b) Compare với simple regressions
-(c) Coefficients có khác nhau không?
+Nghĩa đúng là:
 
-**Bài tập 2: Holding Constant**
-(a) Giải thích "holding others constant" bằng lời
-(b) Tại sao điều này quan trọng?
-(c) Cho ví dụ khi không hold constant dẫn đến sai lầm
+> khi các predictor khác được giữ cố định, nếu $$x_1$$ tăng một đơn vị thì $$y$$ thay đổi trung bình khoảng $$\beta_1$$ đơn vị.
 
-**Bài tập 3: Matrix Formulation**
-(a) Implement regression với 5 predictors using matrix notation
-(b) Verify kết quả giống explicit formulation
-(c) Code nào gọn hơn?
+Nghe có vẻ chỉ thêm vài chữ, nhưng ý nghĩa thay đổi rất lớn.
 
-**Bài tập 4: Standardization**
-(a) Tại sao standardization quan trọng trong multiple regression?
-(b) Coefficients có comparable không khi không standardize?
-(c) Transform back to original scale
+### Ví dụ 1: lương, kinh nghiệm và học vấn
 
-**Bài tập 5: Predictions**
-Cho new data: Height=170cm, Age=30 years.
-(a) Predict weight với uncertainty
-(b) 95% credible interval
-(c) Visualize posterior predictive distribution
+Giả sử ta có mô hình:
 
-## Tài liệu Tham khảo
+$$
+\text{Lương} = \alpha + \beta_1 \cdot \text{Kinh nghiệm} + \beta_2 \cdot \text{Học vấn} + \epsilon
+$$
 
-### Primary References:
+Khi đó:
 
-**Gelman, A., Hill, J., & Vehtari, A. (2020).** *Regression and Other Stories*. Cambridge University Press.
-- Chapter 10: Linear regression with multiple predictors
+- $$\beta_1$$ là chênh lệch lương kỳ vọng giữa hai người có **cùng học vấn** nhưng khác nhau một năm kinh nghiệm,
+- $$\beta_2$$ là chênh lệch lương kỳ vọng giữa hai người có **cùng số năm kinh nghiệm** nhưng khác nhau một bậc học vấn.
+
+Đây là cách đọc thực tế hơn rất nhiều so với việc trộn tất cả các khác biệt vào một hệ số duy nhất.
+
+### Ví dụ 2: cân nặng, chiều cao và tuổi
+
+Nếu mô hình là:
+
+$$
+\text{Cân nặng} = \alpha + \beta_1 \cdot \text{Chiều cao} + \beta_2 \cdot \text{Tuổi} + \epsilon
+$$
+
+thì:
+
+- $$\beta_1$$ nói về ảnh hưởng của chiều cao giữa những người cùng độ tuổi,
+- $$\beta_2$$ nói về ảnh hưởng của tuổi giữa những người cùng chiều cao.
+
+Nói ngắn gọn: multiple regression luôn so sánh theo kiểu "**mọi thứ khác như nhau, chỉ thay đổi một biến**".
+
+## 4. Vì sao hệ số trong simple regression và multiple regression có thể khác nhau?
+
+Đây là điều khiến nhiều người mới học bị bối rối.
+
+Một predictor trong simple regression có thể mang theo ảnh hưởng của những biến chưa đưa vào mô hình.
+
+Ví dụ về lương:
+
+- nếu người học cao hơn thường cũng có kinh nghiệm nhiều hơn,
+- thì mô hình chỉ dùng học vấn có thể "gom" luôn một phần ảnh hưởng của kinh nghiệm vào hệ số học vấn.
+
+Khi thêm kinh nghiệm vào mô hình, hệ số học vấn có thể giảm xuống. Điều này không có nghĩa là mô hình mới tệ hơn. Ngược lại, nó thường có nghĩa là mô hình mới đang tách bạch các nguồn ảnh hưởng rõ hơn.
+
+### Một cách nghĩ trực giác
+
+Simple regression trả lời:
+
+> nhìn tổng thể, biến này đi cùng outcome như thế nào?
+
+Multiple regression trả lời:
+
+> nếu ta cố giữ các yếu tố khác ổn định, biến này còn liên quan đến outcome như thế nào?
+
+Hai câu hỏi này khác nhau, nên câu trả lời khác nhau là chuyện bình thường.
+
+## 5. Một ví dụ thực tế: dự đoán giá nhà
+
+Giả sử ta muốn dự đoán giá nhà từ ba biến:
+
+- diện tích,
+- số phòng ngủ,
+- khoảng cách tới trung tâm.
+
+Một mô hình hợp lý là:
+
+$$
+\text{Giá nhà} = \alpha + \beta_1 \cdot \text{Diện tích} + \beta_2 \cdot \text{Số phòng ngủ} + \beta_3 \cdot \text{Khoảng cách} + \epsilon
+$$
+
+Diễn giải:
+
+- $$\beta_1$$: giữa hai căn nhà có cùng số phòng ngủ và cùng khoảng cách tới trung tâm, căn rộng hơn 1 mét vuông thì giá kỳ vọng chênh bao nhiêu,
+- $$\beta_2$$: giữa hai căn có cùng diện tích và vị trí, thêm 1 phòng ngủ thì giá kỳ vọng đổi thế nào,
+- $$\beta_3$$: giữa hai căn có cùng diện tích và số phòng, căn xa trung tâm hơn 1 km thì giá kỳ vọng chênh bao nhiêu.
+
+Nếu không nói rõ "giữ các biến khác cố định", người đọc rất dễ hiểu nhầm hệ số.
+
+## 6. Multiple regression giúp gì cho ta?
+
+### 6.1. Dự đoán tốt hơn
+
+Khi outcome thực sự phụ thuộc vào nhiều yếu tố, thêm predictors phù hợp thường giúp dự đoán sát hơn.
+
+Ví dụ:
+
+- dự đoán điểm thi từ chỉ số giờ học thường kém hơn dự đoán từ giờ học + điểm nền tảng + tỷ lệ đi học.
+
+### 6.2. Giải thích công bằng hơn
+
+Ta có thể tách ảnh hưởng của từng biến thay vì đổ mọi thứ lên một predictor duy nhất.
+
+Ví dụ:
+
+- đánh giá hiệu quả khóa học nên xét đồng thời thời gian học, mức độ tham gia, trình độ đầu vào.
+
+### 6.3. Chuẩn bị cho causal thinking
+
+Multiple regression chưa tự động tạo ra nhân quả, nhưng nó là bước đầu để học cách:
+
+- điều chỉnh cho các biến liên quan,
+- so sánh công bằng hơn giữa các nhóm,
+- suy nghĩ về confounding trong bài tiếp theo.
+
+## 7. Điều gì cần cẩn thận khi dùng nhiều predictors?
+
+Thêm nhiều biến không phải lúc nào cũng tốt.
+
+Ta cần cảnh giác với ba tình huống:
+
+### 7.1. Bỏ sót biến quan trọng
+
+Nếu biến quan trọng bị bỏ ra ngoài, các hệ số còn lại có thể bị méo.
+
+### 7.2. Các predictors quá giống nhau
+
+Nếu hai biến gần như đo cùng một thứ, mô hình sẽ khó tách riêng ảnh hưởng của từng biến. Đây là chủ đề của bài 5.3 về multicollinearity.
+
+### 7.3. Đưa biến vào mà không suy nghĩ
+
+Không phải cứ "control cho mọi thứ" là tốt. Có những biến nên đưa vào, nhưng cũng có những biến không nên đưa vào. Đây là nội dung của bài 5.2 về confounding và DAGs.
+
+## 8. Nhìn multiple regression như một câu chuyện sinh dữ liệu
+
+Một cách hiểu theo tinh thần Bayes là xem mô hình như một câu chuyện:
+
+1. mỗi đối tượng có các đặc trưng khác nhau,
+2. từng đặc trưng đóng góp một phần vào outcome,
+3. còn lại là dao động không giải thích hết được.
+
+Ví dụ với điểm thi:
+
+1. mỗi sinh viên có số giờ học, điểm đầu vào và tỷ lệ chuyên cần,
+2. các yếu tố đó kết hợp để tạo ra mức điểm kỳ vọng,
+3. kết quả thật vẫn dao động do sức khỏe, tâm lý phòng thi và yếu tố ngẫu nhiên.
+
+Khi nghĩ theo cách này, công thức không còn là ký hiệu khô khan, mà là bản tóm tắt của một quá trình thực tế.
+
+## 9. Khi báo cáo kết quả, nên diễn giải thế nào?
+
+Một cách diễn giải tốt thường có ba phần:
+
+1. gọi tên predictor rõ ràng,
+2. nói điều kiện "giữ các biến khác cố định",
+3. gắn với đơn vị thực tế.
+
+Ví dụ:
+
+> Giữ nguyên học vấn và vị trí công việc, mỗi năm kinh nghiệm tăng thêm đi kèm mức lương kỳ vọng cao hơn khoảng X triệu đồng.
+
+Kiểu diễn giải này rõ ràng hơn nhiều so với việc chỉ nói:
+
+> $$\beta_1 = 0.42$$.
+
+## 10. Kết nối sang các bài tiếp theo
+
+Multiple regression là cánh cửa mở sang ba câu hỏi rất thực tế:
+
+- **Có biến nào đang làm méo mối quan hệ mình quan tâm không?** Đây là bài về confounding.
+- **Nếu các predictors giống nhau quá nhiều thì sao?** Đây là bài về multicollinearity.
+- **Nếu ảnh hưởng của một biến phụ thuộc vào biến khác thì sao?** Đây là bài về interaction.
+
+Hiểu chắc bài này sẽ giúp bạn không bị "ngợp" ở ba bài tiếp theo.
+
+> **3 ý cần nhớ.**
+>
+> Multiple regression cho phép mô tả outcome bằng nhiều predictors cùng lúc, phù hợp hơn với các bài toán thực tế.
+>
+> Mỗi hệ số trong multiple regression luôn phải được đọc kèm điều kiện "giữ các biến khác cố định".
+>
+> Khi hệ số thay đổi sau khi thêm predictor mới, đó thường là dấu hiệu mô hình đang tách bạch ảnh hưởng tốt hơn chứ không phải dấu hiệu mô hình sai.
+
+## Câu hỏi tự luyện
+
+1. Trong bài toán dự đoán giá nhà, vì sao chỉ dùng diện tích thường là chưa đủ?
+2. "Giữ các biến khác cố định" có ý nghĩa gì trong ví dụ lương theo kinh nghiệm và học vấn?
+3. Hãy nghĩ ra một bài toán thực tế trong ngành của bạn cần ít nhất ba predictors.
+4. Khi nào một hệ số trong simple regression có thể khác khá xa hệ số tương ứng trong multiple regression?
+
+## Tài liệu tham khảo
 
 **McElreath, R. (2020).** *Statistical Rethinking* (2nd Edition). CRC Press.
-- Chapter 5: The Many Variables & The Spurious Waffles
 
-**Kruschke, J. K. (2015).** *Doing Bayesian Data Analysis* (2nd Edition). Academic Press.
-- Chapter 18: Metric Predicted Variable with Multiple Metric Predictors
+**Gelman, A., Hill, J., & Vehtari, A. (2020).** *Regression and Other Stories*. Cambridge University Press.
 
 ---
 

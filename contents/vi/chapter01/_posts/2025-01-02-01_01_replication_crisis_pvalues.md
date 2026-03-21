@@ -10,146 +10,226 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu tại sao khoa học hiện đại đang đối mặt với một cuộc khủng hoảng về khả năng tái lập kết quả nghiên cứu, và vai trò của p-values trong cuộc khủng hoảng này. Bạn sẽ nhận ra rằng p-values không phải là công cụ "khách quan" và "chính xác" như nhiều người vẫn tin, mà chúng thường bị hiểu sai, dễ bị thao túng, và dẫn đến những kết luận sai lệch. Quan trọng hơn, bạn sẽ bắt đầu thấy rằng vấn đề không chỉ nằm ở cách chúng ta sử dụng p-values, mà còn ở chính bản chất của khung suy luận tần suất (frequentist) mà p-values dựa trên. Bài học này sẽ tạo động lực mạnh mẽ cho việc tìm kiếm một cách tiếp cận tốt hơn - phân tích Bayesian.
+Sau bài này, bạn cần hiểu ba điều. Thứ nhất, vì sao nhiều nghiên cứu được công bố nhưng lại không tái lập được. Thứ hai, vì sao p-value thường bị hiểu sai và dễ bị lạm dụng. Thứ ba, vì sao những vấn đề đó khiến cộng đồng khoa học phải tìm tới những cách suy luận khác, trong đó có Bayesian statistics.
 
-## Giới thiệu: Một Cuộc Khủng hoảng đang Diễn ra
+> **Ví dụ mini.** Một nghiên cứu báo cáo p-value < 0.05 cho thấy thuốc mới có hiệu quả, nhưng khi nhóm khác lặp lại đúng thiết kế thì không còn thấy hiệu quả nữa. Đây chính là kiểu tình huống làm nảy sinh khủng hoảng tái lập.
+>
+> **Câu hỏi tự kiểm tra.** Một p-value nhỏ có thực sự đồng nghĩa với việc giả thuyết nghiên cứu là đúng không?
 
-Hãy tưởng tượng bạn là một nhà khoa học đọc một nghiên cứu mới được công bố trên một tạp chí uy tín. Nghiên cứu báo cáo một phát hiện thú vị: một loại thuốc mới có hiệu quả trong việc điều trị một bệnh hiểm nghèo, với p-value < 0.05. Bạn quyết định lặp lại thí nghiệm trong phòng thí nghiệm của mình với cùng phương pháp, cùng cỡ mẫu, và cùng mức độ cẩn thận. Nhưng khi kết quả ra, bạn không thấy hiệu quả gì cả. P-value của bạn là 0.42. Điều gì đã xảy ra?
+## 1. Khủng hoảng tái lập là gì?
 
-Đây không phải là một trường hợp cá biệt. Trong những năm gần đây, khoa học đã đối mặt với một cuộc **khủng hoảng tái lập** (replication crisis) nghiêm trọng. Nhiều kết quả được công bố, đặc biệt trong tâm lý học, y học, và khoa học xã hội, không thể được tái lập khi các nhà nghiên cứu độc lập cố gắng lặp lại thí nghiệm. Các con số là đáng báo động: trong một nghiên cứu lớn của Open Science Collaboration năm 2015, chỉ 36% trong số 100 nghiên cứu tâm lý học được công bố có thể được tái lập thành công. Trong y học tiền lâm sàng, con số này thậm chí còn tồi tệ hơn: chỉ 11% theo một nghiên cứu của Begley và Ellis năm 2012.
+Trong khoa học, một kết quả đáng tin không chỉ cần “đẹp” trên một bài báo. Nó cần có khả năng **lặp lại được** khi nhóm khác làm lại thí nghiệm với quy trình tương tự.
 
-![Thống kê Khủng hoảng Tái lập]({{ site.baseurl }}/img/chapter_img/chapter01/replication_crisis_stats.png)
+Nhưng trong nhiều lĩnh vực như:
 
-Hình trên cho thấy tỷ lệ tái lập thành công trong các lĩnh vực khác nhau: Tâm lý học (36%), Y học tiền lâm sàng (11%), và Kinh tế học (61%). Những con số này cho thấy một cuộc khủng hoảng nghiêm trọng trong phương pháp khoa học hiện đại, đặc biệt trong các lĩnh vực phụ thuộc nhiều vào p-values và NHST.
+- tâm lý học,
+- y học tiền lâm sàng,
+- khoa học xã hội,
 
-Cuộc khủng hoảng này không phải là do các nhà khoa học gian lận hoặc thiếu cẩn thận. Nó là hệ quả của một vấn đề sâu xa hơn: cách chúng ta suy luận từ dữ liệu. Và ở trung tâm của vấn đề này là một công cụ thống kê được sử dụng rộng rãi nhất trong khoa học hiện đại: p-value.
+rất nhiều kết quả nổi bật đã không lặp lại được.
 
-## P-value là gì? Một Định nghĩa Chính xác (và Khó hiểu)
+![Thống kê khủng hoảng tái lập]({{ site.baseurl }}/img/chapter_img/chapter01/replication_crisis_stats.png)
 
-Trước khi chúng ta phê phán p-values, hãy đảm bảo rằng chúng ta hiểu chính xác chúng là gì. Đây là định nghĩa chính thức:
+Điều này không có nghĩa là mọi nhà khoa học đều gian lận. Phần lớn vấn đề nằm ở chỗ:
 
-> **P-value là xác suất quan sát được dữ liệu ít nhất cực đoan như dữ liệu quan sát, giả sử rằng giả thuyết không (null hypothesis) là đúng.**
+- dữ liệu thường nhiễu,
+- cỡ mẫu nhiều khi nhỏ,
+- và hệ thống công bố thưởng cho các kết quả “có ý nghĩa thống kê”.
 
-Hãy phân tích định nghĩa này từng phần. Giả sử chúng ta đang kiểm tra xem một loại thuốc mới có hiệu quả hay không. Giả thuyết không ($$H_0$$) là "thuốc không có hiệu quả", và giả thuyết thay thế ($$H_1$$) là "thuốc có hiệu quả". Chúng ta thu thập dữ liệu từ một thử nghiệm lâm sàng và tính toán một thống kê kiểm định, ví dụ như sự khác biệt trung bình giữa nhóm điều trị và nhóm đối chứng.
+## 2. Câu chuyện rất đời thường phía sau khủng hoảng này
 
-P-value trả lời câu hỏi: "Nếu thuốc thực sự không có hiệu quả ($$H_0$$ đúng), xác suất để chúng ta quan sát được một sự khác biệt ít nhất lớn như sự khác biệt chúng ta đã thấy là bao nhiêu?" Nếu p-value nhỏ (thường < 0.05), chúng ta kết luận rằng dữ liệu "không tương thích" với giả thuyết không, và chúng ta "bác bỏ" $$H_0$$.
+Hãy tưởng tượng có 20 nhóm nghiên cứu độc lập cùng kiểm tra một giả thuyết mà thực ra là sai. Nếu mỗi nhóm dùng ngưỡng $$p < 0.05$$, thì chỉ do ngẫu nhiên thôi, ta vẫn kỳ vọng sẽ có khoảng 1 nhóm tìm được “kết quả có ý nghĩa”.
 
-Nhưng hãy chú ý đến những gì p-value **không** nói. Nó không nói "xác suất giả thuyết không là đúng". Nó không nói "xác suất thuốc có hiệu quả". Nó không đo lường độ lớn của hiệu ứng. Nó không nói gì về tầm quan trọng thực tế của kết quả. Tất cả những gì nó nói là: "Nếu giả thuyết không đúng, dữ liệu này sẽ khá bất thường."
+Nếu:
 
-Sự khác biệt tinh tế này - giữa $$P(\text{dữ liệu} \mid H_0)$$ (cái mà p-value đo lường) và $$P(H_0 \mid \text{dữ liệu})$$ (cái mà chúng ta thực sự quan tâm) - là nguồn gốc của vô số hiểu lầm.
+- nhóm đó công bố,
+- còn 19 nhóm còn lại không công bố,
 
-## Những Hiểu lầm Phổ biến về P-values
+thì văn học khoa học trông như thể giả thuyết vừa được hỗ trợ.
 
-Hãy xem xét một số hiểu lầm phổ biến nhất về p-values, ngay cả trong cộng đồng khoa học:
+Đó là một trong những cơ chế nguy hiểm nhất đứng sau khủng hoảng tái lập.
 
-**Hiểu lầm 1: P-value là xác suất giả thuyết không là đúng.**  
-Sai. P-value là $$P(\text{dữ liệu} \mid H_0)$$, không phải $$P(H_0 \mid \text{dữ liệu})$$. Trong khung tần suất, giả thuyết không được coi là cố định (đúng hoặc sai), không phải là một biến ngẫu nhiên có xác suất.
+![Publication bias và file drawer problem]({{ site.baseurl }}/img/chapter_img/chapter01/publication_bias.png)
 
-**Hiểu lầm 2: 1 - p-value là xác suất giả thuyết thay thế là đúng.**  
-Sai. Ngay cả khi p-value nhỏ, điều này không tự động làm cho giả thuyết thay thế có khả năng cao. Có thể có nhiều giả thuyết thay thế khác nhau, hoặc có thể có vấn đề với thiết kế nghiên cứu.
+## 3. P-value thực ra là gì?
 
-**Hiểu lầm 3: P-value < 0.05 có nghĩa là kết quả "có ý nghĩa thống kê".**  
-Đúng về mặt quy ước, nhưng ngưỡng 0.05 là hoàn toàn tùy ý. Không có gì kỳ diệu xảy ra khi p-value vượt qua ngưỡng này. Một p-value 0.049 không khác biệt về mặt thực chất so với 0.051, nhưng một cái được gọi là "có ý nghĩa" và cái kia thì không.
+Đây là định nghĩa chuẩn:
 
-**Hiểu lầm 4: P-value nhỏ có nghĩa là hiệu ứng lớn hoặc quan trọng.**  
-Sai. P-value phụ thuộc vào cả độ lớn của hiệu ứng và cỡ mẫu. Với cỡ mẫu đủ lớn, ngay cả một hiệu ứng rất nhỏ và không có ý nghĩa thực tế cũng có thể cho p-value rất nhỏ. Ngược lại, một hiệu ứng lớn và quan trọng có thể có p-value lớn nếu cỡ mẫu nhỏ.
+> **P-value là xác suất quan sát được dữ liệu ít nhất cực đoan như dữ liệu đang có, giả sử giả thuyết không $$H_0$$ là đúng.**
 
-**Hiểu lầm 5: Nếu p-value > 0.05, giả thuyết không là đúng.**  
-Sai. Không bác bỏ được giả thuyết không không có nghĩa là nó đúng. Có thể chúng ta chỉ không có đủ dữ liệu (statistical power thấp) để phát hiện hiệu ứng.
+Nói gọn hơn, p-value trả lời câu hỏi:
 
-Những hiểu lầm này không phải là vô hại. Chúng dẫn đến những quyết định sai lệch trong nghiên cứu, chính sách, và y học lâm sàng.
+**Nếu giả thuyết không đúng, thì dữ liệu này có lạ không?**
 
-## P-hacking và Publication Bias: Khi Khoa học Trở thành Trò chơi
+Ví dụ:
 
-Vấn đề với p-values không chỉ nằm ở việc chúng bị hiểu sai, mà còn ở việc chúng dễ bị thao túng. Khi thành công nghề nghiệp của các nhà khoa học phụ thuộc vào việc công bố các kết quả "có ý nghĩa thống kê" (p < 0.05), một động lực mạnh mẽ được tạo ra để "tìm" các p-values nhỏ, ngay cả khi không có hiệu ứng thực sự.
+- $$H_0$$: thuốc không có hiệu quả,
+- dữ liệu: nhóm dùng thuốc cải thiện nhiều hơn nhóm đối chứng,
+- p-value nhỏ: dữ liệu này khá lạ nếu thật sự không có hiệu quả.
 
-**P-hacking** (còn gọi là data dredging hoặc fishing) là thực hành phân tích dữ liệu theo nhiều cách khác nhau cho đến khi tìm được một kết quả "có ý nghĩa". Các kỹ thuật p-hacking bao gồm:
+Vấn đề bắt đầu từ đây: đó **không phải** là câu hỏi mà nhà nghiên cứu thật sự muốn biết.
 
-- Thử nhiều biến phụ thuộc khác nhau và chỉ báo cáo cái cho p-value nhỏ nhất.
-- Thử nhiều cách phân nhóm dữ liệu khác nhau.
-- Thu thập dữ liệu cho đến khi p < 0.05, sau đó dừng lại.
-- Loại bỏ các outliers một cách có chọn lọc.
-- Thử nhiều phép kiểm định thống kê khác nhau.
+Nhà nghiên cứu thường muốn biết:
 
-Mỗi quyết định phân tích này có thể hợp lý khi được xem xét riêng lẻ, nhưng khi chúng được đưa ra sau khi nhìn thấy dữ liệu và với mục tiêu đạt được p < 0.05, chúng làm tăng đáng kể tỷ lệ phát hiện giả (false positive rate) lên xa trên 5%.
+- giả thuyết có khả năng đúng không,
+- bằng chứng mạnh đến đâu,
+- hiệu ứng có lớn không,
+- mình nên tin kết quả đến mức nào.
 
-![Các Kỹ thuật P-hacking]({{ site.baseurl }}/img/chapter_img/chapter01/phacking_techniques.png)
+P-value không trả lời trực tiếp các câu hỏi đó.
 
-Hình trên minh họa các kỹ thuật p-hacking phổ biến: (1) Optional stopping - dừng thu thập dữ liệu khi p < 0.05, (2) Cherry-picking - chỉ báo cáo biến phụ thuộc cho p-value nhỏ nhất, (3) Outlier removal - loại bỏ outliers một cách có chọn lọc, và (4) Subgroup analysis - thử nhiều cách phân nhóm khác nhau. Mỗi kỹ thuật này làm tăng tỷ lệ false positive lên xa trên 5% danh nghĩa.
+## 4. Một cách đọc p-value dễ hiểu hơn
 
-Một vấn đề liên quan là **publication bias**: các tạp chí khoa học có xu hướng công bố các nghiên cứu với kết quả "dương tính" (p < 0.05) hơn là các nghiên cứu với kết quả "âm tính" (p > 0.05). Điều này tạo ra một bức tranh sai lệch về bằng chứng khoa học. Nếu 20 phòng thí nghiệm độc lập thử nghiệm một giả thuyết sai, chúng ta kỳ vọng 1 trong số đó (5%) sẽ có p < 0.05 chỉ do ngẫu nhiên. Nếu chỉ nghiên cứu này được công bố và 19 nghiên cứu còn lại bị "file drawer" (giấu trong ngăn kéo), văn học khoa học sẽ cho rằng giả thuyết được hỗ trợ, trong khi thực tế nó là sai.
+Giả sử một thử nghiệm cho $$p = 0.03$$. Điều đó **không** có nghĩa là:
 
-![Publication Bias]({{ site.baseurl }}/img/chapter_img/chapter01/publication_bias.png)
+- “xác suất giả thuyết không đúng là 3%”,
+- hay “xác suất thuốc có hiệu quả là 97%”.
 
-Hình trên minh họa publication bias (file drawer problem): khi 20 lab độc lập thử nghiệm một giả thuyết SAI (không có hiệu ứng thực sự), chúng ta kỳ vọng khoảng 1 lab (5%) sẽ tìm thấy p < 0.05 chỉ do ngẫu nhiên. Nếu chỉ lab này được công bố và 19 lab còn lại bị "giấu trong ngăn kéo", văn học khoa học sẽ cho rằng giả thuyết được hỗ trợ, tạo ra một bức tranh sai lệch nghiêm trọng về bằng chứng khoa học.
+Nó chỉ có nghĩa là:
 
-## Tại sao P-values Không trả lời Câu hỏi Chúng ta Quan tâm
+- nếu thật sự không có hiệu quả,
+- thì xác suất để thấy dữ liệu này hoặc cực đoan hơn chỉ khoảng 3%.
 
-Vấn đề cơ bản nhất với p-values là chúng không trả lời câu hỏi mà các nhà khoa học thực sự quan tâm. Khi chúng ta tiến hành một nghiên cứu, chúng ta muốn biết:
+Sự khác biệt nghe có vẻ nhỏ, nhưng thực ra là cả một khoảng cách lớn về logic.
 
-- Giả thuyết của chúng ta có khả năng đúng không?
-- Nếu có hiệu ứng, nó lớn đến mức nào?
-- Chúng ta nên tin tưởng vào kết quả này đến mức nào?
-- Dữ liệu hỗ trợ giả thuyết này hơn các giả thuyết thay thế khác như thế nào?
+## 5. Những hiểu lầm phổ biến nhất về p-value
 
-P-values không trả lời bất kỳ câu hỏi nào trong số này một cách trực tiếp. Thay vào đó, chúng trả lời một câu hỏi rất khác: "Nếu giả thuyết không đúng và chúng ta lặp lại thí nghiệm này vô số lần, tỷ lệ nào trong số các thí nghiệm đó sẽ cho kết quả ít nhất cực đoan như cái chúng ta đã thấy?"
+Đây là những hiểu lầm rất thường gặp, kể cả trong bài báo khoa học.
 
-Đây là một câu hỏi về **hành vi dài hạn của một quy trình** (long-run behavior of a procedure), không phải về **độ tin cậy của một giả thuyết cụ thể** (plausibility of a specific hypothesis) dựa trên dữ liệu hiện có. Sự khác biệt này là cơ bản và phản ánh sự khác biệt triết học sâu sắc giữa thống kê tần suất và thống kê Bayesian.
+### Hiểu lầm 1. P-value là xác suất giả thuyết không đúng
 
-## Một Ví dụ Minh họa: Phát hiện Ngoại cảm
+Sai. P-value là:
 
-Hãy xem xét một ví dụ cụ thể để thấy rõ vấn đề. Năm 2011, nhà tâm lý học Daryl Bem công bố một nghiên cứu trên Journal of Personality and Social Psychology, một tạp chí uy tín, tuyên bố tìm thấy bằng chứng cho "ngoại cảm" (precognition) - khả năng dự đoán tương lai. Trong một trong các thí nghiệm của ông, người tham gia được yêu cầu dự đoán vị trí của một hình ảnh sẽ xuất hiện trên màn hình máy tính, và vị trí này được xác định ngẫu nhiên **sau khi** người tham gia đưa ra dự đoán. Bem báo cáo rằng người tham gia đoán đúng 53.1% thời gian, cao hơn đáng kể so với 50% kỳ vọng nếu họ chỉ đoán ngẫu nhiên, với p = 0.01.
+$$
+P(\text{dữ liệu hoặc cực đoan hơn} \mid H_0),
+$$
 
-Bây giờ, hãy suy nghĩ về điều này. Chúng ta có thực sự tin rằng con người có khả năng nhìn thấy tương lai không? Hầu hết các nhà khoa học sẽ nói không, vì điều này vi phạm mọi thứ chúng ta biết về vật lý và sinh học. Nhưng nếu chúng ta chỉ nhìn vào p-value, nó cho chúng ta biết rằng kết quả này "có ý nghĩa thống kê" và chúng ta nên "bác bỏ giả thuyết không" rằng không có ngoại cảm.
+không phải:
 
-Vấn đề ở đây là p-value không tính đến **prior plausibility** (độ hợp lý tiên nghiệm) của giả thuyết. Nó xử lý giả thuyết "con người có ngoại cảm" giống như giả thuyết "aspirin làm giảm đau đầu" - cả hai đều chỉ cần p < 0.05 để được "chấp nhận". Nhưng trực giác của chúng ta nói rằng chúng ta cần bằng chứng mạnh hơn nhiều cho một tuyên bố phi thường hơn.
+$$
+P(H_0 \mid \text{dữ liệu}).
+$$
 
-Đây chính xác là điều mà phân tích Bayesian làm. Nó cho phép chúng ta kết hợp kiến thức prior (những gì chúng ta đã biết trước khi thấy dữ liệu) với dữ liệu mới để đưa ra kết luận hợp lý. Nếu chúng ta bắt đầu với một prior rất hoài nghi về ngoại cảm (vì nó vi phạm vật lý), ngay cả dữ liệu của Bem cũng không đủ để làm chúng ta tin vào ngoại cảm. Chúng ta sẽ cần bằng chứng mạnh hơn nhiều.
+### Hiểu lầm 2. P-value nhỏ nghĩa là hiệu ứng lớn
 
-## Con đường Phía trước: Tại sao chúng ta cần Bayesian
+Sai. P-value còn phụ thuộc vào cỡ mẫu.
 
-Cuộc khủng hoảng tái lập và các vấn đề với p-values đã dẫn đến một sự phản tư sâu sắc trong cộng đồng khoa học. Nhiều nhà thống kê và nhà khoa học phương pháp đã kêu gọi giảm bớt sự phụ thuộc vào p-values và NHST. Một số đề xuất các giải pháp trong khung tần suất, như sử dụng khoảng tin cậy, tính toán effect sizes, hoặc điều chỉnh ngưỡng p-value.
+- Cỡ mẫu rất lớn  $$\rightarrow$$ hiệu ứng rất nhỏ vẫn có thể cho p-value nhỏ.
+- Cỡ mẫu nhỏ  $$\rightarrow$$ hiệu ứng lớn vẫn có thể chưa đủ nhỏ để qua ngưỡng 0.05.
 
-Nhưng những giải pháp này không giải quyết được vấn đề cơ bản: khung tần suất không trả lời trực tiếp các câu hỏi mà các nhà khoa học quan tâm. Chúng ta không muốn biết "Nếu giả thuyết không đúng, dữ liệu này sẽ hiếm đến mức nào?" Chúng ta muốn biết "Dựa trên dữ liệu này, giả thuyết nào có khả năng đúng nhất?"
+### Hiểu lầm 3. P-value > 0.05 nghĩa là không có hiệu ứng
 
-Phân tích Bayesian cung cấp một khung suy luận khác, một khung trả lời trực tiếp các câu hỏi này. Thay vì tính $$P(\text{dữ liệu} \mid H_0)$$, Bayesian tính $$P(H \mid \text{dữ liệu})$$ - xác suất của giả thuyết cho trước dữ liệu. Thay vì quyết định nhị phân "bác bỏ" hoặc "không bác bỏ", Bayesian cung cấp một phân phối xác suất đầy đủ về các giá trị tham số có thể, định lượng sự không chắc chắn của chúng ta.
+Sai. Nó có thể chỉ nói rằng dữ liệu hiện tại chưa đủ mạnh để phát hiện hiệu ứng.
 
-Trong các bài học tiếp theo, chúng ta sẽ khám phá chi tiết cách phân tích Bayesian hoạt động, tại sao nó tự nhiên và trực quan hơn, và làm thế nào nó giúp chúng ta tránh được các cạm bẫy của p-values. Nhưng trước tiên, chúng ta cần hiểu nền tảng triết học của Bayesian: xác suất như một thước đo độ tin cậy.
+### Hiểu lầm 4. 0.049 và 0.051 khác nhau về bản chất
 
-## Bài tập
+Thực ra gần như không. Nhưng khi biến 0.05 thành một vạch thi đỗ/rớt cứng nhắc, người ta thường diễn giải chúng như hai thế giới hoàn toàn khác nhau.
 
-**Bài tập 1: Diễn giải P-value.** Một nghiên cứu kiểm tra xem một loại thuốc mới có giảm huyết áp hay không. Giả thuyết không là "thuốc không có hiệu quả". Nghiên cứu báo cáo p = 0.03. Với mỗi phát biểu sau, hãy nói nó đúng hay sai và giải thích: (a) Xác suất giả thuyết không là đúng là 3%. (b) Xác suất thuốc có hiệu quả là 97%. (c) Nếu chúng ta lặp lại nghiên cứu này 100 lần và giả thuyết không đúng, chúng ta kỳ vọng thấy kết quả ít nhất cực đoan như thế này khoảng 3 lần. (d) Kết quả này có ý nghĩa lâm sàng quan trọng.
+![Các hiểu lầm phổ biến về p-value]({{ site.baseurl }}/img/chapter_img/chapter01/pvalue_misconceptions.png)
 
-**Bài tập 2: P-hacking Simulation.** Sử dụng Python, mô phỏng tình huống sau: Bạn là một nhà nghiên cứu kiểm tra 20 giả thuyết khác nhau, tất cả đều sai (không có hiệu ứng thực sự). Với mỗi giả thuyết, bạn sinh dữ liệu ngẫu nhiên và tính p-value. (a) Bao nhiêu trong 20 p-values sẽ < 0.05? (b) Nếu bạn chỉ công bố các kết quả với p < 0.05, tỷ lệ false positive là bao nhiêu? (c) Lặp lại mô phỏng này 1000 lần và vẽ histogram của số lượng "phát hiện có ý nghĩa". Điều này dạy bạn gì về publication bias?
+## 6. Vì sao p-value dễ bị lạm dụng?
 
-**Bài tập 3: Cỡ mẫu và P-value.** Xem xét hai nghiên cứu về cùng một hiệu ứng: (a) Nghiên cứu A: n = 50, hiệu ứng quan sát = 0.5, p = 0.08. (b) Nghiên cứu B: n = 500, hiệu ứng quan sát = 0.15, p = 0.02. Nghiên cứu nào "có ý nghĩa thống kê"? Nghiên cứu nào có hiệu ứng lớn hơn? Nếu bạn là một bác sĩ, bạn sẽ quan tâm đến nghiên cứu nào hơn? Điều này minh họa vấn đề gì với việc chỉ dựa vào p-values?
+Khi hệ thống công bố thưởng cho kết quả “có ý nghĩa thống kê”, người nghiên cứu dễ bị kéo vào những hành vi như:
 
-**Bài tập 4: Nghịch lý Ngoại cảm.** Giả sử xác suất prior của bạn cho "ngoại cảm tồn tại" là 0.0001 (rất hoài nghi). Bạn thấy một nghiên cứu với p = 0.01. (a) Điều này có làm bạn tin vào ngoại cảm không? Tại sao? (b) Nếu bạn thấy 10 nghiên cứu độc lập, tất cả đều cho p < 0.05, bạn có thay đổi ý kiến không? (c) Thảo luận về vai trò của prior plausibility trong đánh giá bằng chứng khoa học. Đây là một vấn đề mà thống kê tần suất không giải quyết được như thế nào?
+- thử nhiều biến đầu ra khác nhau,
+- thử nhiều cách lọc dữ liệu,
+- loại outlier có chọn lọc,
+- dừng thu thập dữ liệu khi vừa chạm ngưỡng,
+- chỉ báo cáo phân tích nào đẹp nhất.
 
-**Bài tập 5: Suy ngẫm về Khủng hoảng Tái lập.** Viết một đoạn văn ngắn (300-400 từ) suy ngẫm về: (a) Tại sao khủng hoảng tái lập lại nghiêm trọng đến vậy? (b) Vai trò của p-values và NHST trong cuộc khủng hoảng này. (c) Những thay đổi nào trong thực hành khoa học có thể giúp cải thiện tình hình? (d) Phân tích Bayesian có thể giải quyết một số vấn đề này như thế nào?
+Những hành vi đó không phải lúc nào cũng xuất phát từ gian lận. Nhiều khi chúng xuất phát từ áp lực công bố và từ việc người nghiên cứu tự thuyết phục rằng mình chỉ đang “khám phá dữ liệu”.
 
-## Tài liệu Tham khảo
+Nhưng hậu quả thì giống nhau: tỷ lệ phát hiện giả tăng mạnh.
 
-### Primary References:
+![Các kỹ thuật p-hacking]({{ site.baseurl }}/img/chapter_img/chapter01/phacking_techniques.png)
 
-**Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013).** *Bayesian Data Analysis* (3rd Edition). CRC Press.
-- Chapter 1: Probability and inference (critique of p-values)
+## 7. Optional stopping: một ví dụ rất dễ gặp
 
-**Kruschke, J. K. (2015).** *Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan* (2nd Edition). Academic Press.
-- Chapter 11: Null Hypothesis Significance Testing
+Giả sử bạn bắt đầu với 20 người tham gia và chưa thấy p-value đủ nhỏ. Bạn tuyển thêm 10 người, rồi thêm 10 người nữa, cho tới khi p < 0.05 thì dừng.
 
-**McElreath, R. (2020).** *Statistical Rethinking: A Bayesian Course with Examples in R and Stan* (2nd Edition). CRC Press.
-- Chapter 1: The Golem of Prague (critique of mechanical statistics)
+Nghe có vẻ vô hại, nhưng đây là một cách âm thầm tăng xác suất tìm được “kết quả có ý nghĩa” chỉ do may rủi.
 
-### Supplementary Reading:
+Trong Bayes, chuyện cập nhật tuần tự tự nhiên hơn nhiều, còn trong kiểm định tần suất cổ điển, việc dừng khi nhìn dữ liệu có thể phá vỡ diễn giải ban đầu của p-value.
 
-**Wasserstein, R. L., & Lazar, N. A. (2016).** The ASA Statement on p-Values: Context, Process, and Purpose. *The American Statistician*, 70(2), 129-133.
+## 8. Publication bias: thứ làm bức tranh khoa học méo đi
 
-**Open Science Collaboration. (2015).** Estimating the reproducibility of psychological science. *Science*, 349(6251), aac4716.
+Ngay cả khi mỗi nghiên cứu riêng lẻ đều làm đúng, khoa học vẫn có thể bị méo nếu:
 
-**Ioannidis, J. P. A. (2005).** Why Most Published Research Findings Are False. *PLoS Medicine*, 2(8), e124.
+- các kết quả “dương tính” được công bố,
+- các kết quả “âm tính” bị để trong ngăn kéo.
+
+Khi đó, người đọc chỉ thấy những nghiên cứu “thành công”, và dễ tưởng rằng bằng chứng cho một giả thuyết đang mạnh hơn thực tế.
+
+Đây là lý do ta không thể đánh giá một phát hiện chỉ bằng một bài báo đơn lẻ.
+
+## 9. Ví dụ nổi tiếng: ngoại cảm và phát hiện phi thường
+
+Một ví dụ hay được nhắc đến là các nghiên cứu tuyên bố có bằng chứng cho ngoại cảm. Nếu chỉ nhìn vào p-value, một số kết quả trông có vẻ “đáng chú ý”. Nhưng trực giác khoa học nói rằng:
+
+- một tuyên bố càng phi thường,
+- thì càng cần bằng chứng mạnh hơn rất nhiều.
+
+P-value không biết phân biệt giữa:
+
+- “aspirin giúp giảm đau đầu”,
+- và “con người nhìn thấy tương lai”.
+
+Nó chỉ chấm mức “lạ của dữ liệu dưới giả thuyết không”.
+
+Bayesian analysis khác ở chỗ nó cho phép đưa **prior plausibility** vào. Một giả thuyết rất khó tin từ đầu sẽ cần lượng bằng chứng mạnh hơn nhiều để posterior trở nên thuyết phục.
+
+![P-value và posterior probability không phải một thứ]({{ site.baseurl }}/img/chapter_img/chapter01/pvalue_vs_posterior_probability.png)
+
+## 10. Vấn đề sâu hơn: p-value trả lời sai câu hỏi
+
+Đây là điểm quan trọng nhất của bài.
+
+Nhà khoa học thường muốn biết:
+
+- giả thuyết nào đáng tin hơn,
+- tham số có thể nằm ở đâu,
+- dữ liệu hỗ trợ giả thuyết này mạnh đến mức nào,
+- mức độ bất định còn lại là bao nhiêu.
+
+P-value lại hỏi:
+
+- nếu giả thuyết không đúng, dữ liệu này có lạ không?
+
+Đó là một câu hỏi khác.
+
+Nó có thể hữu ích trong một số ngữ cảnh kiểm định, nhưng nó không phải câu trả lời trực tiếp cho mối quan tâm khoa học cốt lõi.
+
+## 11. Vì sao bài này mở đường cho Bayes?
+
+Bayesian statistics hấp dẫn không phải vì nó “ghét p-value”, mà vì nó cố trả lời trực tiếp hơn những điều ta thật sự quan tâm:
+
+- xác suất của giả thuyết sau khi thấy dữ liệu,
+- phân phối của tham số chưa biết,
+- mức độ bất định hiện tại,
+- và cách cập nhật niềm tin khi có thông tin mới.
+
+Chapter 1 sẽ dần đưa bạn đến đúng điểm đó. Bài này chỉ có vai trò khởi động: chỉ ra vì sao rất nhiều người đã cảm thấy cách suy luận cũ chưa đủ.
+
+> **3 ý cần nhớ.**
+> 1. Khủng hoảng tái lập không chỉ là lỗi của từng nhà nghiên cứu riêng lẻ mà còn là vấn đề của cả hệ thống suy luận và khuyến khích công bố.
+> 2. P-value rất dễ bị hiểu sai vì nó trả lời một câu hỏi khác với câu hỏi khoa học mà ta thực sự quan tâm.
+> 3. Khi p-values trở thành mục tiêu phải đạt, p-hacking và publication bias sẽ xuất hiện gần như tất yếu.
+
+## Câu hỏi tự luyện
+
+1. Vì sao một nghiên cứu có p-value nhỏ vẫn có thể không tái lập được?
+2. Hãy giải thích bằng lời sự khác nhau giữa $$P(\text{dữ liệu} \mid H_0)$$ và $$P(H_0 \mid \text{dữ liệu})$$.
+3. Vì sao cỡ mẫu lớn có thể làm một hiệu ứng nhỏ nhưng vô nghĩa thực tế vẫn cho p-value rất nhỏ?
+4. Hãy cho một ví dụ đời thường về publication bias ngoài khoa học.
+
+## Tài liệu tham khảo
+
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 1.
+- Kruschke, J. *Doing Bayesian Data Analysis* (2nd ed.), Chapter 11.
+- McElreath, R. *Statistical Rethinking* (2nd ed.), Chapter 1.
+- Wasserstein, R. L., & Lazar, N. A. (2016). The ASA Statement on p-Values.
 
 ---
 

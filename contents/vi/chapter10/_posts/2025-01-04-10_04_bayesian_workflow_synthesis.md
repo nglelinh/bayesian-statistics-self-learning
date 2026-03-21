@@ -97,6 +97,16 @@ print(f"\nInterpretation: 1 unit ↑ in x → {beta_post.mean():.3f} ↑ in y")
 print("=" * 70)
 ```
 
+### Đọc workflow này trong bài hồi quy
+
+Nếu áp workflow trên vào một bài hồi quy tuyến tính cơ bản, có ba điểm rất dễ bị lẫn.
+
+Thứ nhất, **OLS chỉ là một baseline tham chiếu**, không phải là posterior. Nó cho ta một đường fit trung tâm quen thuộc để so sánh, còn Bayes thì đi xa hơn bằng cách mô tả bất định quanh intercept, slope và noise.
+
+Thứ hai, **posterior của hệ số** và **posterior predictive cho một quan sát mới** là hai đối tượng khác nhau. Posterior của hệ số trả lời “tham số có khả năng nằm ở đâu”, còn posterior predictive trả lời “nếu có một quan sát mới, dữ liệu của nó có thể rơi vào đâu”.
+
+Thứ ba, **residual plot** hay posterior predictive check không phải thủ tục trang trí sau khi có kết quả đẹp. Chúng là bước chất vấn mô hình: đường tuyến tính có đủ không, phương sai có ổn không, và liệu mô hình hiện tại có đang bỏ sót cấu trúc nào trong dữ liệu hay không.
+
 ## Tóm tắt
 
 **Bayesian workflow** is iterative:

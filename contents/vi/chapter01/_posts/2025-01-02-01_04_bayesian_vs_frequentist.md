@@ -10,250 +10,250 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ sự khác biệt triết học và thực hành giữa hai trường phái thống kê chính: **Frequentist** và **Bayesian**. Bạn sẽ nhận ra rằng sự khác biệt không chỉ là về kỹ thuật tính toán, mà là về cách chúng ta **định nghĩa xác suất, diễn giải kết quả, và trả lời các câu hỏi khoa học**. Quan trọng hơn, bạn sẽ phát triển khả năng đánh giá khi nào nên dùng phương pháp nào, và hiểu tại sao Bayesian thường cung cấp câu trả lời trực tiếp và tự nhiên hơn cho các vấn đề thực tế.
+Sau bài này, bạn cần hiểu sự khác nhau giữa hai trường phái không chỉ ở công cụ tính toán, mà ở chính câu hỏi mà mỗi bên chọn để trả lời. Bạn cũng cần biết vì sao Bayesian thường cho diễn giải trực tiếp hơn, nhưng frequentist vẫn có vai trò trong nhiều bối cảnh thực tế.
 
-## Giới thiệu: Hai Cách Nhìn về Thống Kê
+> **Ví dụ mini.** Cùng dữ liệu 7 ngửa trong 10 lần tung, một frequentist hỏi “nếu đồng xu công bằng thì dữ liệu này lạ đến mức nào?”, còn một Bayesian hỏi “sau khi thấy dữ liệu này, xác suất thật sự có khả năng nằm ở đâu?”.
+>
+> **Câu hỏi tự kiểm tra.** Hai trường phái này khác nhau chủ yếu ở công thức tính toán, hay ở chính câu hỏi mà họ chọn để trả lời?
 
-Hãy tưởng tượng bạn tung một đồng xu 10 lần và được 7 lần ngửa. Bạn muốn biết: đồng xu này có thiên lệch hay không? Và nếu có, xác suất ra ngửa thực sự là bao nhiêu?
+## 1. Vì sao cần so sánh hai trường phái này?
 
-Hai nhà thống kê - một người theo trường phái Frequentist, một người theo Bayesian - sẽ tiếp cận câu hỏi này hoàn toàn khác nhau, không chỉ về mặt tính toán mà còn về mặt **triết học cơ bản**.
+Rất nhiều người học thống kê cảm thấy bối rối vì:
 
-**Nhà thống kê Frequentist** sẽ nói: "Nếu đồng xu cân bằng (xác suất thực sự là 0.5), xác suất để quan sát được 7 ngửa hoặc cực đoan hơn là bao nhiêu?" Anh ta tính ra p-value = 0.344, và kết luận: "Không đủ bằng chứng để bác bỏ giả thuyết đồng xu cân bằng."
+- frequentist và Bayesian đôi khi dùng cùng dữ liệu,
+- cùng mô hình,
+- thậm chí cùng một số công cụ toán,
 
-**Nhà thống kê Bayesian** sẽ hỏi một câu khác: "Cho trước dữ liệu này (7 ngửa trong 10 lần), xác suất thực sự ra ngửa có khả năng nằm ở đâu?" Cô ấy tính toán posterior distribution và trả lời: "Có 95% khả năng xác suất thực nằm trong khoảng [0.46, 0.86]. Giá trị có khả năng nhất là 0.65."
+nhưng lại diễn giải kết quả rất khác.
 
-Bạn thấy sự khác biệt không? Frequentist trả lời về **dữ liệu giả định** (nếu giả thuyết đúng, dữ liệu sẽ như thế nào), trong khi Bayesian trả lời về **tham số thực** (cho trước dữ liệu, tham số có khả năng là gì). Câu hỏi của Bayesian chính là câu hỏi mà hầu hết chúng ta thực sự quan tâm!
+Sự khác biệt nằm sâu hơn mức kỹ thuật. Nó nằm ở:
 
-## Sự Khác Biệt Triết Học Cơ Bản
+- xác suất là gì,
+- tham số được xem là gì,
+- và câu trả lời cuối cùng cần nhắm tới điều gì.
 
-### Xác Suất Là Gì?
+## 2. Cùng một bài toán, hai cách hỏi khác nhau
 
-Đây là nền tảng của mọi sự khác biệt.
+Xét lại ví dụ đồng xu:
 
-**Quan điểm Frequentist: Xác suất = Tần suất Dài Hạn**
+- tung 10 lần,
+- thấy 7 mặt ngửa,
+- muốn biết đồng xu có thiên lệch không.
 
-Với Frequentist, xác suất là tỷ lệ mà một sự kiện xảy ra trong vô số lần lặp lại. Khi nói "xác suất tung đồng xu ra ngửa là 0.5", họ có nghĩa là: nếu tung đồng xu vô hạn lần, 50% sẽ là ngửa.
+### Frequentist thường hỏi:
 
-Định nghĩa này có hệ quả quan trọng: **tham số θ không có xác suất**. Trong thí nghiệm tung đồng xu, tham số θ (xác suất thực ra ngửa) là một con số cố định - nó chỉ có một giá trị thực duy nhất, dù chúng ta không biết giá trị đó là gì. Vì nó không thể "lặp lại", nó không có "tần suất", và do đó không có "xác suất" theo nghĩa Frequentist.
+- nếu đồng xu thật sự cân bằng, dữ liệu như thế này có lạ không?
 
-Điều này nghe có vẻ kỳ lạ, nhưng nó nhất quán với định nghĩa của họ. Đối với Frequentist, chỉ có **dữ liệu** mới có thể ngẫu nhiên (vì chúng ta có thể tưởng tượng lặp lại thí nghiệm), còn **tham số** thì cố định.
+### Bayesian thường hỏi:
 
-**Quan điểm Bayesian: Xác suất = Mức Độ Tin Tưởng (Degree of Belief)**
+- sau khi thấy dữ liệu này, vùng giá trị hợp lý của xác suất ra ngửa là gì?
 
-Với Bayesian, xác suất đo lường **mức độ tin tưởng hoặc độ hợp lý** về một mệnh đề. Khi nói "xác suất θ = 0.7 là 30%", họ có nghĩa là: dựa trên những gì tôi biết, tôi tin 30% rằng θ có giá trị 0.7.
+Chỉ riêng khác biệt trong câu hỏi đã dẫn tới khác biệt lớn trong diễn giải.
 
-Định nghĩa này cho phép chúng ta gán xác suất cho **bất cứ thứ gì** mà chúng ta không chắc chắn - kể cả các tham số cố định. Trong thí nghiệm đồng xu, dù θ có một giá trị thực duy nhất, nhưng vì **chúng ta không biết** giá trị đó là gì, chúng ta có thể - và nên - dùng xác suất để biểu diễn sự không chắc chắn của mình.
+![So sánh Frequentist và Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/frequentist_vs_bayesian_comparison.png)
 
-Đối với Bayesian, **tham số** là biến ngẫu nhiên (phản ánh sự không biết của chúng ta), còn **dữ liệu** thì cố định (đã quan sát).
+## 3. Khác nhau ở định nghĩa xác suất
 
-### Ai Là Ngẫu Nhiên? Ai Là Cố Định?
+### Frequentist
 
-Đây là điểm then chốt:
+Xác suất là:
 
-| Khía cạnh | Frequentist | Bayesian |
-|-----------|-------------|----------|
-| **Tham số θ** | Cố định (nhưng không biết) | Biến ngẫu nhiên |
-| **Dữ liệu** | Ngẫu nhiên (có thể lặp lại) | Cố định (đã quan sát) |
-| **Xác suất** | Về dữ liệu chưa quan sát | Về tham số chưa biết |
+- tần suất dài hạn của một kết quả trong nhiều lần lặp lại.
 
-Hệ quả:
-- **Frequentist** có thể nói: $$P(\text{data} \mid \theta)$$ - "xác suất của dữ liệu cho trước tham số"
-- **Bayesian** có thể nói: $$P(\theta \mid \text{data})$$ - "xác suất của tham số cho trước dữ liệu"
+### Bayesian
 
-Câu nào là câu trả lời cho câu hỏi khoa học "tham số có khả năng là gì?"  Rõ ràng là câu thứ hai!
+Xác suất là:
 
-## Sự Khác Biệt trong Diễn Giải
+- mức độ tin tưởng hợp lý vào một mệnh đề, dựa trên thông tin hiện có.
 
-### Confidence Interval vs Credible Interval
+Điều này kéo theo một khác biệt rất quan trọng.
 
-Hãy xem một ví dụ cụ thể. Bạn tính toán và được khoảng [0.46, 0.86]. Bạn diễn giải như thế nào?
+### Với Frequentist
 
-**Diễn Giải Frequentist (95% Confidence Interval)**
+- tham số là cố định nhưng chưa biết,
+- dữ liệu là ngẫu nhiên.
 
-"Nếu chúng ta lặp lại thí nghiệm này nhiều lần, và mỗi lần tính một khoảng tin cậy 95%, thì 95% các khoảng đó sẽ chứa giá trị θ thật."
+### Với Bayesian
 
-Bạn **KHÔNG THỂ** nói: "Có 95% khả năng θ nằm trong khoảng [0.46, 0.86]."
+- dữ liệu quan sát đã cố định,
+- tham số chưa biết được mô tả bằng phân phối xác suất.
 
-Tại sao? Vì θ là cố định! Nó hoặc nằm trong khoảng (xác suất = 1), hoặc không nằm trong khoảng (xác suất = 0). Chúng ta chỉ không biết cái nào đúng.
+![So sánh nền tảng triết học]({{ site.baseurl }}/img/chapter_img/chapter01/frequentist_vs_bayesian_philosophy.png)
 
-Điều mà "95%" đề cập đến là **tính chất của phương pháp**, không phải của θ. Phương pháp này, khi áp dụng nhiều lần, sẽ tạo ra các khoảng mà 95% trong số chúng chứa θ.
+## 4. Confidence interval và credible interval khác nhau thế nào?
 
-Này nghe có vẻ phức tạp và gián tiếp, đúng không? Đó là vì nó *là* phức tạp và gián tiếp. Nó không trả lời câu hỏi "θ có khả năng ở đâu?" mà trả lời câu hỏi "phương pháp này đáng tin cậy thế nào?"
+Đây là điểm gây nhầm nhất cho người học.
 
-**Diễn Giải Bayesian (95% Credible Interval)**
+Giả sử bạn có một khoảng $$[0.46, 0.86]$$.
 
-"Có 95% khả năng θ nằm trong khoảng [0.46, 0.86]."
+### Frequentist confidence interval
 
-Hoặc chính xác hơn: "$$P(\theta \in [0.46, 0.86] \mid \text{data}) = 0.95$$"
+Diễn giải đúng là:
 
-Đơn giản, trực tiếp, và chính xác là câu trả lời bạn muốn. Bạn có thể nói điều này vì trong Bayesian, θ có phân phối xác suất - posterior distribution.
+- nếu ta lặp lại quy trình này rất nhiều lần,
+- thì 95% các khoảng được tạo ra sẽ chứa giá trị thật.
 
-### P-value vs Posterior Probability
+Điều này **không** có nghĩa là:
 
-**P-value (Frequentist)**
+- “có 95% xác suất tham số nằm trong khoảng đó”.
 
-Giả sử bạn muốn test xem θ có lớn hơn 0.5 hay không. Với dữ liệu 7/10, bạn tính p-value = 0.344.
+### Bayesian credible interval
 
-Diễn giải đúng: "Nếu θ = 0.5 (giả thuyết không), xác suất quan sát được 7 ngửa hoặc cực đoan hơn là 34.4%."
+Diễn giải là:
 
-Bạn **KHÔNG THỂ** nói: "Có 34.4% khả năng θ = 0.5" hay "Có 65.6% khả năng θ ≠ 0.5".
+- với dữ liệu hiện tại và prior hiện tại,
+- có 95% xác suất tham số nằm trong khoảng đó.
 
-P-value là $$P(\text{data or more extreme} \mid H_0)$$, không phải $$P(H_0 \mid \text{data})$$.
+Điều này gần đúng với kiểu câu hỏi mà người dùng thật sự muốn hỏi.
 
-**Posterior Probability (Bayesian)**
+## 5. P-value và posterior probability khác nhau thế nào?
 
-Với cùng dữ liệu, bạn tính posterior và được: $$P(\theta > 0.5 \mid \text{data}) = 0.89$$
+### Frequentist
 
-Diễn giải: "Có 89% khả năng θ lớn hơn 0.5."
+P-value nói:
 
-Đây chính xác là câu trả lời cho câu hỏi "θ có lớn hơn 0.5 không?" - một câu trả lời trực tiếp và có nghĩa.
+- nếu giả thuyết không đúng, dữ liệu này lạ đến mức nào?
 
-## Ưu và Nhược Điểm
+### Bayesian
 
-### Ưu Điểm của Frequentist
+Posterior probability nói:
 
-1. **Không cần prior**: Không phải chọn prior distribution, tránh tranh cãi về "chủ quan"
-2. **Đảm bảo tần suất**: Confidence intervals và tests có tính chất tần suất được đảm bảo
-3. **Được dạy rộng rãi**: Hầu hết người làm khoa học đều biết
-4. **Công cụ sẵn có**: Nhiều software và packages
+- sau khi thấy dữ liệu, giả thuyết hoặc tham số có khả năng ở đâu?
 
-### Nhược Điểm của Frequentist
+Đây là khác biệt giữa:
 
-1. **Diễn giải phức tạp**: CI và p-values rất khó diễn giải đúng, thường bị hiểu sai
-2. **Không trả lời câu hỏi quan tâm**: $$P(\text{data} \mid H_0)$$ thay vì $$P(H_0 \mid \text{data})$$
-3. **Phụ thuộc vào ý định**: Kết quả thay đổi tùy vào "stopping rule" (khi nào dừng thu thập dữ liệu)
-4. **Không cập nhật được**: Không có cách tự nhiên để kết hợp kiến thức trước hoặc cập nhật khi có dữ liệu mới
+- nói về **độ lạ của dữ liệu**,
+- và nói về **độ tin cậy của giả thuyết**.
 
-### Ưu Điểm của Bayesian
+![P-value so với posterior probability]({{ site.baseurl }}/img/chapter_img/chapter01/pvalue_vs_posterior_probability.png)
 
-1. **Diễn giải tự nhiên**: Posterior probabilities và credible intervals dễ hiểu và trực tiếp
-2. **Trả lời đúng câu hỏi**: $$P(\theta \mid \text{data})$$ - chính xác là điều bạn quan tâm
-3. **Cập nhật tuần tự**: Dễ dàng kết hợp dữ liệu mới: posterior hôm nay là prior ngày mai
-4. **Kết hợp kiến thức trước**: Prior cho phép tích hợp nghiên cứu trước, lý thuyết, expert knowledge
-5. **Xử lý tốt mẫu nhỏ**: Prior giúp regularization, ổn định estimates
-6. **Tự nhiên với hierarchical models**: Bayesian framework hoàn hảo cho partial pooling
+## 6. Một ví dụ y khoa để thấy khác biệt rõ hơn
 
-### Nhược Điểm của Bayesian
+Giả sử một xét nghiệm cho kết quả dương tính.
 
-1. **Cần chọn prior**: Phải quyết định prior distribution (nhưng có thể dùng weakly informative priors)
-2. **Tính toán phức tạp**: Thường cần MCMC, mất thời gian (nhưng PyMC, Stan rất tốt)
-3. **Ít được dạy**: Ít người học, ít hiểu (nhưng đang thay đổi!)
+### Frequentist style
 
-## Khi Nào Dùng Phương Pháp Nào?
+Người ta có thể nói:
 
-### Dùng Frequentist khi:
+- nếu bệnh nhân không mắc bệnh, xác suất có kết quả dương tính là bao nhiêu?
 
-- **Clinical trials với quy định**: FDA và các cơ quan quản lý thường yêu cầu p-values và kiểm soát Type I error
-- **Mẫu lớn, vấn đề đơn giản**: Khi không cần prior và asymptotic theory đủ tốt
-- **Báo cáo cho audience không biết Bayes**: Khi người đọc quen với p-values (dù hiểu sai!)
-- **Không có prior information**: Hoàn toàn mới, không có nghiên cứu trước
+### Bayesian style
 
-### Dùng Bayesian khi:
+Người ta hỏi trực tiếp hơn:
 
-- **Mẫu nhỏ**: Prior giúp ổn định estimates, regularization tự nhiên
-- **Cần diễn giải trực tiếp**: "Xác suất tham số lớn hơn 0 là bao nhiêu?"
-- **Có prior information**: Nghiên cứu trước, expert knowledge, lý thuyết
-- **Sequential learning**: Cập nhật model khi có dữ liệu mới (online learning)
-- **Hierarchical/multilevel data**: Học sinh trong lớp, bệnh nhân trong bệnh viện
-- **Complex models**: Flexible priors, many parameters, missing data
+- sau khi có kết quả dương tính, xác suất bệnh nhân thực sự mắc bệnh là bao nhiêu?
 
-### Ví Dụ Thực Tế
+Trong y khoa, rõ ràng câu hỏi thứ hai gần với nhu cầu của bác sĩ và bệnh nhân hơn.
 
-**Frequentist phù hợp:**
-- A/B testing với traffic lớn (hàng triệu visitors)
-- Clinical trial phase III
-- Quality control manufacturing
-- National surveys với n > 10,000
+![So sánh trong bối cảnh thử nghiệm lâm sàng và y khoa]({{ site.baseurl }}/img/chapter_img/chapter01/clinical_trial_comparison.png)
 
-**Bayesian phù hợp:**
-- A/B testing với traffic nhỏ (startup sớm)
-- Medical diagnosis (kết hợp prior knowledge)
-- Recommendation systems
-- Machine learning với uncertainty
-- Time series forecasting
-- Meta-analysis (kết hợp nhiều studies)
+## 7. Frequentist mạnh ở đâu?
 
-**Cả hai đều tốt:**
-- Linear regression với n lớn
-- Simple hypothesis tests với assumptions đủ
-- Descriptive statistics
+Sẽ không công bằng nếu xem frequentist như “sai hoàn toàn”.
 
-## Xu Hướng Hiện Đại
+Frequentist mạnh trong các bối cảnh như:
 
-Bayesian đang ngày càng trở nên phổ biến vì ba lý do chính:
+- thiết kế thử nghiệm chuẩn hóa với quy tắc quyết định cố định,
+- các bài toán có cỡ mẫu rất lớn,
+- các ngành hoặc cơ quan quản lý quen với ngôn ngữ kiểm định truyền thống,
+- các thủ tục cần bảo đảm tính chất dài hạn của quy trình.
 
-### 1. Công Cụ Tốt Hơn
+Ví dụ:
 
-Các tools như **PyMC**, **Stan**, và **TensorFlow Probability** làm cho Bayesian inference trở nên accessible. Bạn không cần viết MCMC từ đầu nữa - chỉ cần specify model và library sẽ lo phần còn lại.
+- nhiều clinical trial giai đoạn cuối,
+- kiểm soát chất lượng sản xuất,
+- những tình huống mà quy trình ra quyết định phải rất chuẩn hóa.
 
-### 2. Tính Toán Rẻ Hơn
+## 8. Bayesian mạnh ở đâu?
 
-GPUs, cloud computing, và các thuật toán MCMC hiệu quả (như NUTS trong PyMC) làm cho models phức tạp có thể fit trong vài phút thay vì vài ngày.
+Bayesian đặc biệt mạnh khi:
 
-### 3. Nhu Cầu Thực Tế
+- cần diễn giải trực tiếp về tham số hoặc giả thuyết,
+- có kiến thức prior đáng tin,
+- dữ liệu còn ít,
+- cần cập nhật tuần tự,
+- mô hình có cấu trúc phân cấp hoặc phức tạp,
+- cần dự báo đi kèm bất định.
 
-Tech companies (Google, Facebook, Netflix) sử dụng Bayesian rộng rãi. Machine learning cần uncertainty quantification. AI safety đòi hỏi Bayesian decision theory.
+Ví dụ:
 
-**American Statistical Association** (2016) đã công khai cảnh báo về lạm dụng p-values và khuyến nghị alternatives - trong đó Bayesian là một lựa chọn hàng đầu.
+- startup làm A/B test với traffic chưa lớn,
+- bác sĩ ra quyết định dựa trên nhiều nguồn thông tin,
+- mô hình recommendation,
+- dự báo time series,
+- phân tích khoa học có prior từ nghiên cứu trước.
 
-Nhiều journals, đặc biệt trong psychology và medicine, giờ khuyến khích hoặc yêu cầu Bayesian analysis cùng với hoặc thay vì p-values.
+## 9. Điểm yếu điển hình của mỗi bên
 
-## Tóm Tắt: Bayesian vs Frequentist
+### Frequentist thường gặp khó ở:
 
-| Khía cạnh | Frequentist | Bayesian |
-|-----------|-------------|----------|
-| **Xác suất** | Tần suất dài hạn | Mức độ tin tưởng |
-| **Tham số θ** | Cố định | Biến ngẫu nhiên |
-| **Dữ liệu** | Ngẫu nhiên | Cố định |
-| **Prior** | Không có | Bắt buộc |
-| **Kết quả** | Point estimate + CI | Posterior distribution |
-| **Diễn giải** | Phức tạp, gián tiếp | Đơn giản, trực tiếp |
-| **Câu trả lời** | $$P(\text{data} \mid \theta)$$ | $$P(\theta \mid \text{data})$$ |
+- diễn giải p-value và confidence interval,
+- kết hợp kiến thức prior,
+- nói trực tiếp về xác suất của tham số,
+- cập nhật tự nhiên khi dữ liệu tới theo đợt.
 
-**Kết luận**: Bayesian cung cấp một framework nhất quán và trực quan cho suy luận thống kê. Với công cụ hiện đại, Bayesian là lựa chọn ưu tiên cho hầu hết các bài toán trong khoa học dữ liệu, machine learning, và nghiên cứu khoa học hiện đại.
+### Bayesian thường gặp khó ở:
 
-## Bài Tập
+- phải chọn prior,
+- tính toán có thể nặng hơn,
+- cần người đọc chấp nhận cách diễn giải xác suất như degree of belief.
 
-**Bài tập 1: Diễn giải Confidence Interval.** Cho 95% CI = [0.3, 0.7] cho tỷ lệ ủng hộ một chính sách. (a) Viết diễn giải **đúng** theo quan điểm Frequentist. (b) Giải thích tại sao **không thể** nói "có 95% khả năng tỷ lệ thực nằm trong [0.3, 0.7]". (c) Nếu dùng Bayesian với prior uninformative, credible interval sẽ gần giống CI. Viết diễn giải Bayesian và so sánh với Frequentist.
+Nhưng với công cụ hiện đại như PyMC và Stan, rào cản tính toán đã giảm đi rất nhiều.
 
-**Bài tập 2: P-value.** Trong một thí nghiệm y học, p-value = 0.03 cho test "thuốc có hiệu quả". (a) Viết diễn giải **đúng** của p-value này. (b) Liệt kê 3 diễn giải **SAI** phổ biến. (c) Giải thích tại sao không thể dùng p-value để nói về xác suất giả thuyết đúng.
+## 10. Không phải lúc nào cũng là “chiến tranh”
 
-**Bài tập 3: Bayesian Posterior.** Với dữ liệu 12 thành công trong 15 thử, và prior Beta(2,2): (a) Tính posterior Beta(α', β'). (b) Tính $$P(\theta > 0.5 \mid \text{data})$$. (c) Tính 95% credible interval. (d) So sánh với p-value cho $$H_0: \theta = 0.5$$ và giải thích sự khác biệt.
+Trong thực hành hiện đại, nhiều nhà phân tích:
 
-**Bài tập 4: Khi nào dùng gì?** Với mỗi tình huống sau, chọn Frequentist hoặc Bayesian và giải thích tại sao: (a) Startup test hai versions của landing page với 500 visitors. (b) FDA approval cho thuốc mới với 10,000 patients. (c) Dự đoán sales tháng tới dựa trên 2 năm dữ liệu history. (d) Kiểm tra quality control với 1 triệu sản phẩm mỗi ngày.
+- dùng tư duy frequentist cho một số kiểm tra hoặc baseline,
+- nhưng dùng Bayesian cho mô hình chính và diễn giải kết quả.
 
-**Bài tập 5: Mô phỏng.** Viết code Python để: (a) Mô phỏng 1000 experiments với θ thật = 0.6, n = 20. (b) Cho mỗi experiment, tính 95% CI (Frequentist) và 95% credible interval (Bayesian với prior Beta(2,2)). (c) Tính tỷ lệ intervals chứa θ thật. (d) Vẽ histogram của độ rộng của các intervals. So sánh và giải thích.
+Điều quan trọng không phải là chọn phe một cách giáo điều. Điều quan trọng là:
 
-## Tài Liệu Tham Khảo
+- bạn có đang dùng công cụ phù hợp với câu hỏi hay không,
+- và diễn giải kết quả có trung thực với chính phương pháp đó hay không.
 
-### Primary References:
+![Cây quyết định: khi nào nghĩ theo Frequentist, khi nào theo Bayes]({{ site.baseurl }}/img/chapter_img/chapter01/decision_tree_freq_vs_bayes.png)
 
-**Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013).** *Bayesian Data Analysis* (3rd Edition). CRC Press.
-- Chapter 1: Probability and inference
-- Chapter 4: Asymptotics and connections to non-Bayesian approaches
+## 11. Vì sao khóa học này chọn trọng tâm là Bayes?
 
-**Kruschke, J. K. (2015).** *Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan* (2nd Edition). Academic Press.
-- Chapter 11: Null Hypothesis Significance Testing
-- Chapter 12: Bayesian Approaches to Testing a Point ("Null") Value
+Vì trong phần lớn các bài toán hiện đại mà người học khóa này quan tâm, Bayes trả lời trực tiếp hơn:
 
-**McElreath, R. (2020).** *Statistical Rethinking: A Bayesian Course with Examples in R and Stan* (2nd Edition). CRC Press.
-- Chapter 1: The Golem of Prague (fundamental differences)
-- Chapter 2: Small worlds and large worlds
+- tham số có khả năng nằm ở đâu,
+- bất định còn lại là bao nhiêu,
+- xác suất giả thuyết này lớn hơn giả thuyết kia là bao nhiêu,
+- và dự báo tương lai nên được hiểu thế nào.
 
-### Supplementary Reading:
+Nói ngắn gọn, Bayes thường nói đúng thứ mà người dùng cuối, nhà nghiên cứu, bác sĩ, kỹ sư hay product analyst muốn nghe.
 
-**Wasserstein, R. L., & Lazar, N. A. (2016).** The ASA's statement on p-values: Context, process, and purpose. *The American Statistician*, 70(2), 129-133.
-- ASA's official statement cảnh báo về p-values
+## 12. Một cách kết luận dễ nhớ
 
-**Dienes, Z. (2011).** Bayesian versus orthodox statistics: Which side are you on? *Perspectives on Psychological Science*, 6(3), 274-290.
-- So sánh triết học rất rõ ràng
+Nếu phải nhớ thật ngắn:
 
-**Morey, R. D., Hoekstra, R., Rouder, J. N., Lee, M. D., & Wagenmakers, E. J. (2016).** The fallacy of placing confidence in confidence intervals. *Psychonomic Bulletin & Review*, 23(1), 103-123.
-- Giải thích tại sao CI khó diễn giải
+- frequentist thường đánh giá dữ liệu dưới một giả thuyết,
+- Bayesian thường đánh giá giả thuyết sau khi thấy dữ liệu.
+
+Đó là lý do vì sao Bayesian thường có cảm giác “tự nhiên hơn” đối với câu hỏi thực tế.
+
+> **3 ý cần nhớ.**
+> 1. Frequentist và Bayesian khác nhau từ nền tảng triết học: ai là ngẫu nhiên, ai là cố định, và xác suất đang nói về điều gì.
+> 2. Frequentist thường trả lời câu hỏi về dữ liệu giả định dưới một giả thuyết, còn Bayesian trả lời trực tiếp về tham số hoặc giả thuyết sau khi thấy dữ liệu.
+> 3. Trong nhiều bài toán thực tế, câu trả lời Bayesian thường gần hơn với câu hỏi mà người dùng thật sự muốn hỏi.
+
+## Câu hỏi tự luyện
+
+1. Hãy giải thích bằng lời sự khác nhau giữa confidence interval và credible interval.
+2. Trong ví dụ đồng xu 7/10, frequentist và Bayesian đang hỏi hai câu khác nhau như thế nào?
+3. Với một bài toán chẩn đoán y khoa, vì sao cách diễn giải Bayesian thường tự nhiên hơn?
+4. Hãy nêu một tình huống mà frequentist vẫn là lựa chọn hợp lý.
+
+## Tài liệu tham khảo
+
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 1-4.
+- Dienes, Z. (2011). Bayesian versus orthodox statistics.
+- Wasserstein, R. L., & Lazar, N. A. (2016). ASA Statement on p-values.
 
 ---
 
-*Chúc mừng! Bạn đã hoàn thành Chapter 01 - Bayesian Inference Fundamentals.*  
-*Tiếp theo: Chapter 02 - Building Blocks of Bayesian Models*
+*Kết thúc Chapter 1. Bài học tiếp theo: [Chapter 2 - Cơ bản về Phân tích Dữ liệu Bayesian](/vi/chapter02/)*

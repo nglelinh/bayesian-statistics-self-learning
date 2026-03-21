@@ -17,20 +17,20 @@ Mở file `_config.yml` và thay đổi các thông tin sau:
 
 ```yaml
 # Setup
-title:               "Your Course Title"          # Tên khóa học của bạn
+title:               "Bayesian statistics"          # Tên khóa học của bạn
 description:         'Your Course Description'    # Mô tả khóa học
 url:                 https://your-username.github.io
-baseurl:             '/your-repo-name'            # Tên repository của bạn
-imgurl:              https://your-username.github.io/your-repo-name/img
+baseurl:             '/bayesian-statistics-self-learning'            # Tên repository của bạn
+imgurl:              https://your-username.github.io/bayesian-statistics-self-learning/img
 
 # Language-specific configurations
 t:
   en:
-    title: "Your Course Title"
-    description: "Your Course Description"
+    title: "Bayesian statistics"
+    description: "An educational course on Bayesian statistics"
   vi:
-    title: "Tiêu đề Khóa học của bạn"
-    description: "Mô tả khóa học của bạn"
+    title: "Bayesian statistics"
+    description: "An educational course on Bayesian statistics"
 
 # About/contact
 author:
@@ -43,10 +43,10 @@ author:
 Mở file `_layouts/default.html` và tìm dòng 24:
 
 ```html
-<a class="github-logo__wrapper" target="_blank" href="https://github.com/your-username/your-repo-name" title="Github">
+<a class="github-logo__wrapper" target="_blank" href="https://github.com/your-username/bayesian-statistics-self-learning" title="Github">
 ```
 
-Thay `your-username/your-repo-name` bằng username và tên repository thực tế của bạn.
+Thay `your-username/bayesian-statistics-self-learning` bằng username và tên repository thực tế của bạn.
 
 ### 2.3. Cập nhật Thông tin Tác giả
 
@@ -127,7 +127,7 @@ bundle install
 bundle exec jekyll serve
 
 # Mở browser tại
-http://127.0.0.1:4000/your-repo-name/
+http://127.0.0.1:4000/bayesian-statistics-self-learning/
 ```
 
 ## 📋 Checklist

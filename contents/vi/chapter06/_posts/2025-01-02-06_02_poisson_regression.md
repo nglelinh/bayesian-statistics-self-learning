@@ -34,71 +34,13 @@ Sau khi hoàn thành bài học này, bạn sẽ hiểu về **Poisson Regressio
 
 ![Poisson Regression Basics]({{ site.baseurl }}/img/chapter_img/chapter06/poisson_regression_basics.png)
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-
-# Generate count data
-np.random.seed(42)
-n = 150
-x = np.random.uniform(0, 5, n)
-
-# True rate (exponential relationship)
-lambda_true = np.exp(0.5 + 0.4*x)
-y = np.random.poisson(lambda_true)
-
-# Try linear regression
-lr = LinearRegression().fit(x.reshape(-1, 1), y)
-x_line = np.linspace(-1, 6, 100)
-y_pred_linear = lr.predict(x_line.reshape(-1, 1))
-
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Linear regression (WRONG!)
-axes[0].scatter(x, y, alpha=0.5, s=50, edgecolors='black', label='Data (counts)')
-axes[0].plot(x_line, y_pred_linear, 'r-', linewidth=3, label='Linear Regression')
-axes[0].axhline(0, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].fill_between(x_line, -10, 0, alpha=0.2, color='red', label='Invalid (<0)')
-axes[0].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('y (counts)', fontsize=12, fontweight='bold')
-axes[0].set_title('LINEAR REGRESSION (WRONG!)\n' +
-                 'Can predict negative counts!',
-                 fontsize=14, fontweight='bold', color='red')
-axes[0].set_ylim(-10, max(y)+10)
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3)
-
-# Poisson regression (CORRECT!)
-lambda_poisson = np.exp(lr.intercept_ + lr.coef_[0]*x_line)
-axes[1].scatter(x, y, alpha=0.5, s=50, edgecolors='black', label='Data (counts)')
-axes[1].plot(x_line, lambda_poisson, 'b-', linewidth=3, label='Poisson Regression')
-axes[1].axhline(0, color='green', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('E[y] = λ', fontsize=12, fontweight='bold')
-axes[1].set_title('POISSON REGRESSION (CORRECT!)\n' +
-                 'Always predicts λ > 0',
-                 fontsize=14, fontweight='bold', color='green')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("LINEAR vs POISSON REGRESSION")
-print("=" * 70)
-print("\nLinear Regression:")
-print(f"  Min prediction: {y_pred_linear.min():.2f}")
-if y_pred_linear.min() < 0:
-    print("  → Can predict negative counts! (Invalid)")
-
-print("\nPoisson Regression:")
-print(f"  Min prediction: {lambda_poisson.min():.3f}")
-print("  → Always positive ✓")
-print("=" * 70)
-```
+**Vấn đề của linear regression cho count data:**
+- **Linear regression** có thể dự đoán giá trị âm (invalid cho counts!)
+- **Count data** yêu cầu predictions ≥ 0
+- Hình minh họa:
+  - Panel trái: Linear regression cho negative predictions (sai!)
+  - Panel phải: Poisson regression với log link đảm bảo λ > 0 (đúng!)
+- **Giải pháp**: Sử dụng **log link function**: $$\log(\lambda) = \alpha + \beta x$$
 
 ## 2. Poisson Regression: Generative Model
 
@@ -130,54 +72,21 @@ $$
 - Mean = $$\lambda$$
 - Variance = $$\lambda$$ (equidispersion)
 
-```python
-# Visualize log link
-x_vals = np.linspace(-3, 3, 200)
-lambda_vals = np.exp(x_vals)
+![Exponential Function Parameters](../../../img/chapter_img/chapter06/exponential_function_parameters.png)
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
-
-# Exponential function
-axes[0].plot(x_vals, lambda_vals, 'b-', linewidth=3)
-axes[0].axhline(1, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].axvline(0, color='red', linestyle='--', linewidth=2, alpha=0.7)
-axes[0].set_xlabel('η = α + βx', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('λ = E[y]', fontsize=12, fontweight='bold')
-axes[0].set_title('EXPONENTIAL FUNCTION\n' +
-                 'λ = e^η',
-                 fontsize=14, fontweight='bold')
-axes[0].grid(alpha=0.3)
-axes[0].set_ylim(0, 20)
-
-# Effect of α
-for alpha in [-1, 0, 1]:
-    lambda_curve = np.exp(alpha + 0.5*x_vals)
-    axes[1].plot(x_vals, lambda_curve, linewidth=2, label=f'α = {alpha}')
-axes[1].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('λ = E[y]', fontsize=12, fontweight='bold')
-axes[1].set_title('EFFECT OF α (Intercept)\n' +
-                 'Shifts baseline rate',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
-axes[1].set_ylim(0, 20)
-
-# Effect of β
-for beta in [0.2, 0.5, 1]:
-    lambda_curve = np.exp(beta * x_vals)
-    axes[2].plot(x_vals, lambda_curve, linewidth=2, label=f'β = {beta}')
-axes[2].set_xlabel('x', fontsize=12, fontweight='bold')
-axes[2].set_ylabel('λ = E[y]', fontsize=12, fontweight='bold')
-axes[2].set_title('EFFECT OF β (Slope)\n' +
-                 'Steeper = stronger effect',
-                 fontsize=14, fontweight='bold')
-axes[2].legend(fontsize=11)
-axes[2].grid(alpha=0.3)
-axes[2].set_ylim(0, 20)
-
-plt.tight_layout()
-plt.show()
-```
+**Exponential function và parameter effects:**
+- **Panel trái**: Hàm exponential cơ bản $$\lambda = e^{\eta}$$
+  - Khi $$\eta = 0$$ → $$\lambda = 1$$ (baseline rate)
+  - Hàm luôn dương, tăng exponentially
+- **Panel giữa**: Effect của $$\alpha$$ (intercept)
+  - $$\alpha < 0$$: Baseline rate thấp ($$e^{-1} \approx 0.37$$)
+  - $$\alpha = 0$$: Baseline rate = 1
+  - $$\alpha > 0$$: Baseline rate cao ($$e^{1} \approx 2.72$$)
+  - $$\alpha$$ controls độ cao của baseline
+- **Panel phải**: Effect của $$\beta$$ (slope)
+  - $$\beta$$ nhỏ → tăng chậm (weak effect)
+  - $$\beta$$ lớn → tăng nhanh (strong effect)
+  - $$\beta$$ controls tốc độ tăng trưởng exponential
 
 ## 3. Bayesian Poisson Regression trong PyMC
 

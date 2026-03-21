@@ -18,11 +18,23 @@ layout: default
 
 <!-- Back to Chapter Home Link -->
 {% if page.chapter %}
-{% assign chapter_path = page.lang | default: site.default_lang | append: "/chapter" | append: page.chapter | append:
-"/" %}
-{% assign chapter_url = "/contents/" | append: chapter_path %}
+{% assign current_lang = page.lang | default: site.default_lang %}
+{% assign chapter_page = nil %}
+{% for site_page in site.pages %}
+  {% if site_page.lang == current_lang and site_page.layout == "page" and site_page.chapter == page.chapter %}
+    {% assign chapter_page = site_page %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% if chapter_page %}
+{% assign chapter_url = chapter_page.url | relative_url %}
+{% else %}
+{% assign chapter_path = current_lang | append: "/chapter" | append: page.chapter | append: "/" %}
+{% assign chapter_url = "/contents/" | append: chapter_path | relative_url %}
+{% endif %}
 <div style="margin-top: 20px; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #007bff;">
-  <a href="{{ site.baseurl }}{{ chapter_url }}" style="text-decoration: none; color: #007bff; font-weight: bold;">
+  <a href="{{ chapter_url }}" style="text-decoration: none; color: #007bff; font-weight: bold;">
     ← {% if page.lang == 'vi' %}Quay lại đầu chương{% else %}Back to Chapter Home{% endif %}
   </a>
 </div>

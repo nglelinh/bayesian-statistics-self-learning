@@ -1,269 +1,350 @@
-# Jekyll Course Template - Multilingual Support
+# Bayesian Statistics - Self Learning Course
 
-Template để tạo trang web khóa học với hỗ trợ đa ngôn ngữ (Tiếng Anh và Tiếng Việt), được xây dựng trên Jekyll và GitHub Pages.
+Khóa học **Bayesian Statistics** hoàn chỉnh bằng Tiếng Việt, được xây dựng dựa trên **Statistical Rethinking** của Richard McElreath.
+
+**🎯 Mục tiêu**: Dạy Bayesian reasoning như một framework nhất quán để suy luận thống kê, thay thế NHST bằng probabilistic modeling.
+
+**📚 33 bài học chi tiết** | **400+ biểu đồ minh họa** | **150+ bài tập thực hành** | **Python/PyMC**
 
 ## 🎯 Tính năng chính
 
-- ✅ Hỗ trợ đa ngôn ngữ (English/Vietnamese)
-- ✅ Cấu trúc nội dung theo chương (chapters)
-- ✅ Tìm kiếm nội dung
-- ✅ Responsive design
-- ✅ MathJax support cho công thức toán học
-- ✅ Tự động deploy lên GitHub Pages
-- ✅ Custom Jekyll plugins
-- ✅ Exam/Quiz templates
+- ✅ **33 bài học** chi tiết từ cơ bản đến nâng cao
+- ✅ **400+ biểu đồ** minh họa concepts
+- ✅ **150+ bài tập** thực hành với Jupyter notebooks
+- ✅ **Python/PyMC** - Công cụ hiện đại
+- ✅ **Tiếng Việt** - Dễ hiểu, dễ học
+- ✅ **Complete Bayesian workflow** - Từ model đến interpretation
+- ✅ **Real-world examples** - A/B testing, regression, GLM
+- ✅ **Causal inference** - DAGs và confounding
 
-## 🚀 Cách sử dụng template này
+## 📚 Cấu trúc Khóa học
 
-> 📖 **Xem hướng dẫn chi tiết trong [SETUP.md](./SETUP.md)**
+### Chapter 00: Prerequisites (7 bài)
+Kiến thức nền tảng: Probability, Distributions, Python, Linear Algebra, Calculus
 
-### Bước 1: Tạo repository mới từ template
+### Chapter 01: Bayesian Inference (4 bài)
+Replication crisis, P-values critique, Bayes' Theorem, Bayesian vs Frequentist
 
-1. Nhấn nút "Use this template" trên GitHub
-2. Đặt tên cho repository mới của bạn (ví dụ: `machine-learning-course`)
-3. Chọn Public hoặc Private
-4. Nhấn "Create repository from template"
+### Chapter 02: Probability & Updating (6 bài)
+Likelihood, Prior, Posterior, Conjugate Priors, Grid Approximation (64 charts!)
 
-### Bước 2: Cấu hình cơ bản
+### Chapter 03: MCMC (6 bài)
+Monte Carlo, Markov Chain, Metropolis-Hastings, HMC, NUTS, PyMC, Diagnostics
 
-Chỉnh sửa file `_config.yml`:
+### Chapter 04: Bayesian Linear Regression (4 bài)
+Generative model, Priors, Posterior inference, Model checking, Predictions
 
-```yaml
-# Setup
-title:               "Tên Khóa Học Của Bạn"
-description:         'Mô tả khóa học'
-url:                 https://your-username.github.io
-baseurl:             '/your-repo-name'
-imgurl:              https://your-username.github.io/your-repo-name/img
+### Chapter 05: Multivariate Regression (3 bài)
+Multiple predictors, Confounding, DAGs, Multicollinearity
 
-# About/contact
-author:
-  name:              Tên Giảng Viên
-  email:             email@example.com
-```
+### Chapter 06: Bayesian GLM (2 bài)
+Logistic Regression, Poisson Regression
 
-### Bước 3: Cấu hình GitHub Pages
+### Chapter 07: Priors & Regularization (1 bài)
+Regularization thông qua priors, Overfitting prevention
 
-1. Vào **Settings > Pages**
-2. Chọn **Source**: "GitHub Actions"
-3. Workflow sẽ tự động chạy khi bạn push code
+**📊 Tổng cộng**: 33 bài học | 400+ charts | 12-14 tuần
 
-### Bước 4: Tùy chỉnh nội dung
-
-#### Trang chủ
-
-Chỉnh sửa các file trong `home/_posts/`:
-- `21-01-20-introduction.md` - Giới thiệu khóa học
-- `21-01-20-contents.md` - Nội dung khóa học
-- `21-02-03-makers.md` - Thông tin giảng viên
-
-#### Nội dung các chương
-
-Tạo nội dung trong `contents/en/` và `contents/vi/`:
-
-```
-contents/
-├── en/
-│   ├── chapter00/
-│   │   └── _posts/
-│   │       └── 21-01-01-00_Introduction.md
-│   ├── chapter01/
-│   │   └── _posts/
-│   │       └── 21-01-07-01_00_Introduction.md
-│   └── ...
-└── vi/
-    ├── chapter00/
-    │   └── _posts/
-    │       └── 21-01-01-00_Gioi_thieu.md
-    └── ...
-```
-
-**Format file bài giảng:**
-
-```markdown
----
-layout: post
-title: Tiêu đề bài giảng
-chapter: '00'
-order: 1
-owner: Tên tác giả
-lang: en  # hoặc vi
-categories:
-- chapter00
 ---
 
-Nội dung bài giảng ở đây...
+## 🚀 Bắt đầu Học
 
-Sử dụng LaTeX cho công thức: $$f(x) = x^2$$
+### Cho Sinh viên
+
+1. **Clone repository**:
+```bash
+git clone https://github.com/your-username/bayesian-statistics-self-learning.git
+cd bayesian-statistics-self-learning
 ```
 
-## 📁 Cấu trúc thư mục
+2. **Cài đặt môi trường**:
+```bash
+pip install numpy matplotlib scipy seaborn pymc arviz pandas jupyter
+```
+
+3. **Bắt đầu học**:
+- Đọc lecture notes trong `contents/vi/chapter00/`
+- Làm bài tập trong `exercises/Chapter00_Prerequisites_Exercises.ipynb`
+- Xem [COURSE_SUMMARY.md](./COURSE_SUMMARY.md) để biết lộ trình chi tiết
+
+### Cho Giảng viên
+
+1. **Review course structure**: [COURSE_SUMMARY.md](./COURSE_SUMMARY.md)
+2. **Check lecture schedule**: [LECTURE_SCHEDULE.md](./LECTURE_SCHEDULE.md)
+3. **Assign exercises**: `exercises/` folder
+4. **Customize** theo nhu cầu lớp học
+
+---
+
+## 💻 Bài Tập & Labs
+
+### **Exercises** (8 notebooks - 150+ problems)
+
+Thư mục `exercises/` chứa **8 Jupyter notebooks** với **150+ bài tập**:
+
+| Notebook | Topics | Time |
+|----------|--------|------|
+| Chapter00 | Prerequisites | 2-3h |
+| Chapter01 | Bayesian Inference | 3-4h |
+| Chapter02 | Probability & Updating | 4-5h |
+| Chapter03 | MCMC | 5-6h |
+| Chapter04 | Linear Regression | 4-5h |
+| Chapter05 | Multivariate Regression | 4-5h |
+| Chapter06 | GLM | 4-5h |
+| Chapter07 | Regularization | 3-4h |
+
+**Xem chi tiết**: [exercises/README.md](./exercises/README.md)
+
+### **Labs** (7 labs - Complete solutions)
+
+Thư mục `labs/` chứa **7 lab exercises** với **solutions đầy đủ** (2 formats):
+
+| Lab | Topics | Solutions |
+|-----|--------|-----------|
+| Lab 1 | Conditional Probability & Bayes | ✅ .py + .ipynb |
+| Lab 2 | Simulation & Inference | ✅ .py + .ipynb |
+| Lab 3 | Continuous Distributions | ✅ .py + .ipynb |
+| Lab 4 | Conjugate Priors | ✅ .py + .ipynb |
+| Lab 5 | Normal Conjugacy | ✅ .py + .ipynb |
+| Lab 6 | Point Estimation | ✅ .py + .ipynb |
+| Lab 7 | Bayesian Regression | ✅ .py + .ipynb |
+
+**Features:**
+- ✅ **2 formats**: Python scripts (.py) + Jupyter notebooks (.ipynb)
+- ✅ **Theory mapping**: Explicit links to lecture chapters
+- ✅ **3000+ lines**: Production-quality code
+- ✅ **Step-by-step**: Detailed solutions with visualizations
+
+**Xem chi tiết**: [labs/README.md](./labs/README.md) | [labs/solutions/NOTEBOOKS_README.md](./labs/solutions/NOTEBOOKS_README.md)
+
+---
+
+## 🛠️ Công cụ
+
+### Bắt buộc
+- **Python** 3.8+
+- **PyMC** 5.0+ (Bayesian modeling)
+- **ArviZ** (Visualization & diagnostics)
+- **NumPy, Matplotlib, SciPy**
+
+### Tùy chọn
+- **Jupyter Notebook** (Interactive learning)
+- **Seaborn, Pandas**
+
+### Installation
+```bash
+pip install pymc arviz numpy matplotlib scipy jupyter seaborn pandas
+```
+
+## 📁 Cấu trúc Thư mục
 
 ```
 .
-├── _config.yml              # Cấu hình Jekyll
-├── _includes/               # Các component tái sử dụng
-│   ├── head.html
-│   └── sidebar.html
-├── _layouts/                # Layouts cho pages
-│   ├── default.html
-│   ├── page.html
-│   └── post.html
-├── _plugins/                # Custom Jekyll plugins
-│   ├── multilang.rb         # Hỗ trợ đa ngôn ngữ
-│   ├── multilang_post_url.rb
-│   ├── redirect_generator.rb
-│   └── search_generator.rb
-├── contents/                # Nội dung khóa học
-│   ├── en/                  # Nội dung tiếng Anh
-│   │   ├── chapter00/
-│   │   ├── chapter01/
-│   │   └── ...
-│   └── vi/                  # Nội dung tiếng Việt
-│       ├── chapter00/
-│       ├── chapter01/
-│       └── ...
-├── home/                    # Trang chủ
-│   └── _posts/
-├── img/                     # Hình ảnh
-│   └── chapter_img/
-├── public/                  # CSS, JS, assets
-│   ├── css/
-│   ├── js/
-│   └── logo.png
-├── Gemfile                  # Ruby dependencies
-├── index.html               # Trang chủ
-└── README.md                # Hướng dẫn dự án
+├── contents/vi/             # 📚 Lecture notes (Tiếng Việt)
+│   ├── chapter00/           # Prerequisites (7 bài)
+│   ├── chapter01/           # Bayesian Inference (4 bài)
+│   ├── chapter02/           # Probability & Updating (6 bài)
+│   ├── chapter03/           # MCMC (6 bài)
+│   ├── chapter04/           # Linear Regression (4 bài)
+│   ├── chapter05/           # Multivariate Regression (3 bài)
+│   ├── chapter06/           # GLM (2 bài)
+│   └── chapter07/           # Regularization (1 bài)
+│
+├── exercises/               # 💻 Jupyter notebooks bài tập
+│   ├── Chapter00_Prerequisites_Exercises.ipynb
+│   ├── Chapter01_Bayesian_Inference_Exercises.ipynb
+│   ├── Chapter02_Probability_Updating_Exercises.ipynb
+│   ├── Chapter03_MCMC_Exercises.ipynb
+│   ├── Chapter04_Linear_Regression_Exercises.ipynb
+│   ├── Chapter05_Multivariate_Regression_Exercises.ipynb
+│   ├── Chapter06_GLM_Exercises.ipynb
+│   ├── Chapter07_Regularization_Exercises.ipynb
+│   ├── README.md
+│   └── EXERCISES_OVERVIEW.md
+│
+├── img/chapter_img/         # 📊 Hình ảnh minh họa
+│
+├── COURSE_SUMMARY.md        # 📖 Tổng quan khóa học
+├── LECTURE_SCHEDULE.md      # 📅 Lịch giảng 14 tuần
+├── README.md                # Hướng dẫn này
+│
+└── [Jekyll files]           # Website infrastructure
+    ├── _config.yml
+    ├── _includes/
+    ├── _layouts/
+    ├── _plugins/
+    └── public/
 ```
 
-## 🛠️ Development
+## 📖 Tài liệu Tham khảo
 
-### Cài đặt môi trường
+### Primary (Bắt buộc)
+- **Richard McElreath (2020)** - *Statistical Rethinking* (2nd Edition)
+- **Video lectures**: https://www.youtube.com/playlist?list=PLDcUM9US4XdM9_N6XUUFrhghGJ4K25bFc
+
+### Secondary (Tham khảo)
+- **Andrew Gelman et al.** - *Bayesian Data Analysis* (3rd Edition)
+- **John K. Kruschke** - *Doing Bayesian Data Analysis*
+- **PyMC Documentation**: https://www.pymc.io/
+- **ArviZ Documentation**: https://arviz-devs.github.io/
+
+---
+
+## 🎯 Learning Outcomes
+
+Sau khi hoàn thành khóa học, bạn sẽ:
+
+- ✅ **Hiểu Bayesian reasoning** - Không chỉ công thức
+- ✅ **Critique p-values** - Biết tại sao NHST có vấn đề
+- ✅ **Implement MCMC** - Từ Metropolis-Hastings đến NUTS
+- ✅ **Sử dụng PyMC** - Fit models thực tế
+- ✅ **Check diagnostics** - R-hat, ESS, trace plots, divergences
+- ✅ **Interpret posteriors** - Uncertainty quantification
+- ✅ **Make predictions** - Với credible intervals
+- ✅ **Causal thinking** - DAGs, confounding, colliders
+- ✅ **Model comparison** - LOO, WAIC (preview)
+- ✅ **Regularization** - Priors để ngăn overfitting
+
+---
+
+## 🎓 Đối tượng Học viên
+
+### Phù hợp cho:
+- ✅ Graduate students (Data Science, Statistics, ML)
+- ✅ Researchers cần Bayesian methods
+- ✅ Data scientists muốn nâng cao
+- ✅ Anyone có background toán/thống kê cơ bản
+
+### Yêu cầu tiên quyết:
+- Probability & Statistics cơ bản
+- Linear algebra cơ bản
+- Python programming
+- Calculus cơ bản (derivatives, integrals)
+
+## 🛠️ Development (Website)
+
+### Chạy Jekyll local server
 
 ```bash
 # Cài đặt Ruby dependencies
 bundle install
 
-# Chạy Jekyll local server
+# Chạy server
 bundle exec jekyll serve
 
 # Truy cập tại
-http://127.0.0.1:4000/your-baseurl/
+http://127.0.0.1:4000/bayesian-statistics-self-learning/
 ```
 
-### Thêm chương mới
+### Deploy to GitHub Pages
 
-1. Tạo thư mục mới trong `contents/en/chapterXX/` và `contents/vi/chapterXX/`
-2. Tạo thư mục `_posts/` bên trong
-3. Thêm file markdown với format: `YYYY-MM-DD-title.md`
-4. Đảm bảo front matter có đầy đủ thông tin
-
-### Thêm hình ảnh
-
-1. Đặt hình ảnh vào `img/chapter_img/`
-2. Tham chiếu trong markdown:
-
-```markdown
-![Alt text]({{ site.imgurl }}/chapter_img/your-image.png)
-```
-
-## 🎨 Tùy chỉnh giao diện
-
-### CSS
-
-Chỉnh sửa các file trong `public/css/`:
-- `lanyon.css` - Layout chính
-- `poole.css` - Base styles
-- `syntax.css` - Code highlighting
-
-### JavaScript
-
-Chỉnh sửa các file trong `public/js/`:
-- `script.js` - Chức năng chung
-- `multilang.js` - Xử lý đa ngôn ngữ
-- `search.js` - Tìm kiếm
-
-## 📝 Viết nội dung với LaTeX
-
-Template hỗ trợ MathJax để hiển thị công thức toán học:
-
-```markdown
-Inline math: $$f(x) = x^2$$
-
-Display math:
-$$
-\min_{x \in \mathbb{R}^n} f(x)
-$$
-```
-
-## 🔍 Tìm kiếm
-
-Tìm kiếm được tạo tự động từ plugin `search_generator.rb`:
-- `search-index.json` - Index tiếng Anh
-- `search-index-vi.json` - Index tiếng Việt
-
-## 🌐 Đa ngôn ngữ
-
-### Sử dụng translation tags
-
-Trong template:
-
-```liquid
-{% t home %}           <!-- Hiển thị "Home" hoặc "Trang chủ" -->
-{% language_switch %}  <!-- Nút chuyển ngôn ngữ -->
-```
-
-### Cấu hình translations
-
-Trong `_config.yml`:
-
-```yaml
-t:
-  en:
-    title: "Course Title"
-    home: "Home"
-    chapters: "Chapters"
-  vi:
-    title: "Tiêu đề Khóa học"
-    home: "Trang chủ"
-    chapters: "Các chương"
-```
-
-## 📚 Tạo đề thi
-
-Để tạo đề thi hoặc bài tập:
-
-1. Tạo file HTML mới trong thư mục gốc
-2. Sử dụng cấu trúc HTML cơ bản với MathJax
-3. File sẽ tự động được build và deploy
-
-## 🤝 Đóng góp
-
-Để đóng góp vào khóa học:
-
-1. Fork repository
-2. Tạo branch mới: `git checkout -b feature/new-chapter`
-3. Commit changes: `git commit -am 'Add new chapter'`
-4. Push to branch: `git push origin feature/new-chapter`
-5. Tạo Pull Request
-
-## 📄 License
-
-Template này sử dụng theme Lanyon và được phát triển cho mục đích giáo dục.
-
-## 🙏 Credits
-
-- **Theme**: [Lanyon](https://github.com/poole/lanyon) by Mark Otto
-- **Jekyll**: Static site generator
-- **MathJax**: Mathematical formula rendering
-
-## 📞 Hỗ trợ
-
-Nếu có vấn đề, vui lòng:
-1. Kiểm tra [Issues](../../issues)
-2. Tạo issue mới nếu chưa có
-3. Liên hệ qua email trong `_config.yml`
+1. Push to GitHub
+2. GitHub Actions tự động build và deploy
+3. Truy cập tại: `https://your-username.github.io/bayesian-statistics-self-learning/`
 
 ---
 
-**Happy Teaching! 🎓**
+## 💡 Tips Học Tập
+
+### Cho Sinh viên
+
+1. **Đọc lecture notes trước** - Hiểu concepts
+2. **Làm bài tập** - Practice makes perfect
+3. **Chạy code** - Don't just read
+4. **Visualize** - Plots giúp hiểu
+5. **Interpret** - Không chỉ numbers
+6. **Ask questions** - Discussion forum
+
+### Cho Giảng viên
+
+1. **1 chapter/week** - Sustainable pace
+2. **Live coding** - Demo trong class
+3. **Office hours** - Support students
+4. **Peer review** - Students learn from each other
+5. **Real data** - Make it relevant
+6. **Emphasize interpretation** - Not just mechanics
+
+## 🤝 Đóng góp
+
+Contributions are welcome! Để đóng góp:
+
+1. Fork repository
+2. Tạo branch: `git checkout -b feature/improvement`
+3. Commit: `git commit -am 'Add improvement'`
+4. Push: `git push origin feature/improvement`
+5. Tạo Pull Request
+
+**Areas for contribution**:
+- Thêm examples
+- Improve explanations
+- Fix typos
+- Add visualizations
+- Translate to English
+
+---
+
+## 📄 License
+
+Course content: Educational use  
+Code: MIT License  
+Theme: Lanyon by Mark Otto
+
+---
+
+## 🙏 Acknowledgments
+
+- **Richard McElreath** - Statistical Rethinking
+- **PyMC Development Team**
+- **ArviZ Development Team**
+- **Bayesian Statistics Community**
+
+---
+
+## 📞 Contact
+
+**Giảng viên**: Nguyen Le Linh  
+**Email**: [Your email]  
+**Issues**: [GitHub Issues](../../issues)
+
+---
+
+## 🎉 Course Status
+
+**✅ COMPLETE AND READY TO USE**
+
+### **Theory:**
+- ✅ **43 lecture notes** (11 chapters)
+- ✅ **400+ illustrations**
+- ✅ **Narrative style** - Pedagogical approach
+- ✅ **Vietnamese** - Full translation
+
+### **Practice:**
+- ✅ **8 exercise notebooks** (150+ problems)
+- ✅ **7 lab exercises** with complete solutions
+- ✅ **14 solution files** (7 .py + 7 .ipynb)
+- ✅ **3000+ lines** of production code
+- ✅ **Theory mapping** - Labs ↔ Chapters
+
+### **Documentation:**
+- ✅ **Complete guides** - All aspects covered
+- ✅ **Quick references** - Easy lookup
+- ✅ **Student guide** - Learning pathway
+- ✅ **12-15 week curriculum**
+
+**Start learning Bayesian Statistics today! 🚀**
+
+**Quick links:**
+- 📚 [Course Index](./COURSE_INDEX.md) - Complete overview
+- 🎓 [Student Guide](./STUDENT_GUIDE.md) - How to learn
+- 💻 [Lab Solutions](./labs/solutions/NOTEBOOKS_README.md) - Interactive notebooks
+- 📊 [Final Summary](./FINAL_COMPLETE_SUMMARY.md) - What we built
+
+---
+
+**Last updated**: January 2025  
+**Version**: 1.0  
+**Status**: Production-ready
+
+---
+
+**Happy Learning! 🎓📊🐍**

@@ -3,6 +3,8 @@ layout: default
 ---
 
 <h1>{{page.chapter}}. {{page.title}}</h1>
+{% assign page_body = content | strip %}
+{{ content }}
 
 {% assign full_name = page.chapter | prepend: "chapter" %}
 {% assign current_lang = page.lang | default: site.default_lang %}
@@ -23,14 +25,17 @@ layout: default
   <p>No posts found for this chapter.</p>
 {% endif %}
 
-<!-- Get first post and show it -->
+{% if page_body == "" and post_list.size > 0 %}
+<!-- Get first post and show it when the chapter page has no custom body. -->
 {% assign first_post = post_list | first %}
 {{first_post.content}}
 
 <!-- Remove first element from post_list which is already shown above. -->
-{% assign post_list = post_list | shift %}  
+{% assign post_list = post_list | shift %}
+{% endif %}
 
 <!-- List up the posts in the chapter -->
+{% if post_list.size > 0 %}
 <ul style="list-style: none;">
 {% for post in post_list %}
   {% assign title_parts = post.title | split: " " %}
@@ -62,3 +67,4 @@ layout: default
   {% endif %}
 {% endfor %}
 </ul>
+{% endif %}

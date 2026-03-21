@@ -46,183 +46,62 @@ $$
 
 ### 1.2. Intuitive Understanding
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
+![Bias-Variance Demonstration](../../../img/chapter_img/chapter07/bias_variance_demonstration.png)
 
-# True function
-def true_function(x):
-    return 2 + 0.5*x + 0.1*x**2
+**Kết quả quan sát:**
 
-# Generate multiple datasets and fit models
-np.random.seed(42)
-n_datasets = 50
-n_points = 20
-x_test = np.linspace(0, 10, 100)
-y_true = true_function(x_test)
+- **HIGH BIAS (Underfitting)** - Degree 1:
+  - Model đơn giản (đường thẳng)
+  - Predictions sát nhau (low variance)
+  - Nhưng xa sự thật (high bias)
+  - Avg |Bias| ≈ 1.5-2.0, Avg Variance ≈ 0.2-0.3
 
-# Different model complexities
-degrees = [1, 3, 15]
-titles = ['HIGH BIAS\n(Underfitting)', 'BALANCED\n(Good Fit)', 'HIGH VARIANCE\n(Overfitting)']
-colors = ['red', 'green', 'orange']
+- **BALANCED** - Degree 3:
+  - Độ phức tạp vừa phải
+  - Variance hợp lý
+  - Bias thấp
+  - Avg |Bias| ≈ 0.3-0.5, Avg Variance ≈ 0.5-0.7
+  - **Sweet spot** cho trade-off
 
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+- **HIGH VARIANCE (Overfitting)** - Degree 10:
+  - Model phức tạp (polynomial bậc cao)
+  - Predictions spread out (high variance)
+  - Mean prediction gần sự thật (low bias)
+  - Nhưng individual predictions không đáng tin cậy!
+  - Avg |Bias| ≈ 0.2-0.4, Avg Variance ≈ 2.0-3.0
 
-for idx, (degree, title, color) in enumerate(zip(degrees, titles, colors)):
-    predictions = []
-    
-    for _ in range(n_datasets):
-        # Generate training data
-        x_train = np.random.uniform(0, 10, n_points)
-        y_train = true_function(x_train) + np.random.normal(0, 1, n_points)
-        
-        # Fit model
-        poly = PolynomialFeatures(degree=degree)
-        X_train_poly = poly.fit_transform(x_train.reshape(-1, 1))
-        X_test_poly = poly.transform(x_test.reshape(-1, 1))
-        
-        lr = LinearRegression().fit(X_train_poly, y_train)
-        y_pred = lr.predict(X_test_poly)
-        predictions.append(y_pred)
-        
-        # Plot individual fits (faint)
-        axes[idx].plot(x_test, y_pred, '-', alpha=0.1, color=color, linewidth=1)
-    
-    # Compute bias and variance
-    predictions = np.array(predictions)
-    mean_pred = predictions.mean(axis=0)
-    bias = mean_pred - y_true
-    variance = predictions.var(axis=0)
-    
-    # Plot
-    axes[idx].plot(x_test, y_true, 'b-', linewidth=3, label='True function', zorder=10)
-    axes[idx].plot(x_test, mean_pred, 'r--', linewidth=3, label='Mean prediction', zorder=9)
-    axes[idx].fill_between(x_test, 
-                          mean_pred - np.sqrt(variance),
-                          mean_pred + np.sqrt(variance),
-                          alpha=0.3, color=color, label='±1 SD')
-    
-    axes[idx].set_xlabel('x', fontsize=12, fontweight='bold')
-    axes[idx].set_ylabel('y', fontsize=12, fontweight='bold')
-    axes[idx].set_title(f'{title}\nDegree = {degree}',
-                       fontsize=14, fontweight='bold')
-    axes[idx].legend(fontsize=10)
-    axes[idx].grid(alpha=0.3)
-    axes[idx].set_ylim(-2, 18)
-    
-    # Add text
-    avg_bias = np.abs(bias).mean()
-    avg_var = variance.mean()
-    axes[idx].text(0.5, 0.95, f'Avg |Bias|: {avg_bias:.2f}\nAvg Variance: {avg_var:.2f}',
-                  transform=axes[idx].transAxes, ha='center', va='top',
-                  fontsize=11, bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.8))
-
-plt.tight_layout()
-plt.show()
-
-print("=" * 70)
-print("BIAS-VARIANCE TRADEOFF")
-print("=" * 70)
-print("\nHIGH BIAS (Underfitting):")
-print("  • Simple model")
-print("  • Predictions close together (low variance)")
-print("  • But far from truth (high bias)")
-
-print("\nBALANCED:")
-print("  • Medium complexity")
-print("  • Reasonable variance")
-print("  • Low bias")
-
-print("\nHIGH VARIANCE (Overfitting):")
-print("  • Complex model")
-print("  • Predictions spread out (high variance)")
-print("  • Mean close to truth (low bias)")
-print("  • But individual predictions unreliable!")
-print("=" * 70)
-```
+**Key insight**: 50 training sets khác nhau → 50 models khác nhau. Variance đo độ "dao động" của predictions giữa các models.
 
 ## 2. Decomposition: MSE = Bias² + Variance + Noise
 
-```python
-# Compute bias-variance decomposition
-degrees_range = range(1, 16)
-biases = []
-variances = []
-mses = []
+![MSE Decomposition](../../../img/chapter_img/chapter07/mse_decomposition.png)
 
-for degree in degrees_range:
-    predictions = []
-    
-    for _ in range(100):
-        x_train = np.random.uniform(0, 10, 20)
-        y_train = true_function(x_train) + np.random.normal(0, 1, 20)
-        
-        poly = PolynomialFeatures(degree=degree)
-        X_train_poly = poly.fit_transform(x_train.reshape(-1, 1))
-        X_test_poly = poly.transform(x_test.reshape(-1, 1))
-        
-        lr = LinearRegression().fit(X_train_poly, y_train)
-        y_pred = lr.predict(X_test_poly)
-        predictions.append(y_pred)
-    
-    predictions = np.array(predictions)
-    mean_pred = predictions.mean(axis=0)
-    
-    # Bias and Variance
-    bias_sq = ((mean_pred - y_true)**2).mean()
-    variance = predictions.var(axis=0).mean()
-    mse = ((predictions - y_true)**2).mean()
-    
-    biases.append(bias_sq)
-    variances.append(variance)
-    mses.append(mse)
+**Kết quả phân tích:**
 
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+**Optimal Complexity:**
+- **Optimal degree**: 2
+- **Bias²**: 0.046
+- **Variance**: 0.227
+- **MSE**: 0.274
 
-# Decomposition
-axes[0].plot(degrees_range, biases, 'r-o', linewidth=3, markersize=8, label='Bias²')
-axes[0].plot(degrees_range, variances, 'b-s', linewidth=3, markersize=8, label='Variance')
-axes[0].plot(degrees_range, mses, 'g-^', linewidth=3, markersize=8, label='MSE (Total)')
-axes[0].axvline(3, color='orange', linestyle='--', linewidth=2, alpha=0.7,
-               label='Optimal complexity')
-axes[0].set_xlabel('Model Complexity (Polynomial Degree)', fontsize=12, fontweight='bold')
-axes[0].set_ylabel('Error', fontsize=12, fontweight='bold')
-axes[0].set_title('BIAS-VARIANCE DECOMPOSITION\nMSE = Bias² + Variance',
-                 fontsize=14, fontweight='bold')
-axes[0].legend(fontsize=11)
-axes[0].grid(alpha=0.3)
+**Quan sát từ đường cong:**
 
-# Stacked area
-axes[1].fill_between(degrees_range, 0, biases, alpha=0.5, color='red', label='Bias²')
-axes[1].fill_between(degrees_range, biases, np.array(biases) + np.array(variances),
-                    alpha=0.5, color='blue', label='Variance')
-axes[1].plot(degrees_range, mses, 'g-', linewidth=3, label='Total MSE')
-axes[1].axvline(3, color='orange', linestyle='--', linewidth=2, alpha=0.7)
-axes[1].set_xlabel('Model Complexity (Polynomial Degree)', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Error', fontsize=12, fontweight='bold')
-axes[1].set_title('STACKED VIEW\nFinding the Sweet Spot',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3)
+- **Low complexity (degree 1-2)**:
+  - Bias² cao (đường đỏ)
+  - Variance thấp (đường xanh)
+  - Model quá đơn giản → underfitting
 
-plt.tight_layout()
-plt.show()
+- **Optimal complexity (degree 2-3)**:
+  - Bias² và Variance cân bằng
+  - MSE thấp nhất (đường xanh lá)
+  - **Sweet spot** - trade-off tối ưu!
 
-print("\n" + "=" * 70)
-print("OPTIMAL COMPLEXITY")
-print("=" * 70)
-optimal_idx = np.argmin(mses)
-optimal_degree = degrees_range[optimal_idx]
-print(f"\nOptimal degree: {optimal_degree}")
-print(f"  Bias²: {biases[optimal_idx]:.3f}")
-print(f"  Variance: {variances[optimal_idx]:.3f}")
-print(f"  MSE: {mses[optimal_idx]:.3f}")
-print("\n→ Sweet spot balances bias and variance!")
-print("=" * 70)
-```
+- **High complexity (degree 10+)**:
+  - Bias² thấp (model fit data tốt)
+  - Variance cao (không ổn định)
+  - MSE tăng → overfitting
+
+**Stacked view** (plot bên phải) cho thấy rõ: MSE = Bias² + Variance. Mục tiêu là tìm độ phức tạp minimize tổng error, không phải minimize riêng bias hay variance.
 
 ## 3. Regularization và Bias-Variance
 
@@ -230,68 +109,33 @@ print("=" * 70)
 - **Weak regularization** (λ small): Low bias, high variance
 - **Strong regularization** (λ large): High bias, low variance
 
-```python
-from sklearn.linear_model import Ridge
+![Regularization Bias-Variance](../../../img/chapter_img/chapter07/regularization_bias_variance.png)
 
-# Test different regularization strengths
-alphas = [0.001, 0.1, 1, 10, 100]
-degree = 10  # High degree polynomial
+**Kết quả quan sát với polynomial degree 10:**
 
-fig, axes = plt.subplots(2, 3, figsize=(18, 10))
-axes = axes.ravel()
+- **λ = 0.001** (Very Weak):
+  - Bias² ≈ 0.05-0.10, Variance ≈ 8-12
+  - HIGH variance → Overfitting
+  - Predictions spread out wildly
+  
+- **λ = 0.1** (Weak):
+  - Bias² ≈ 0.10-0.15, Variance ≈ 2-4
+  - Still high variance but better
+  
+- **λ = 1** (Balanced):
+  - Bias² ≈ 0.20-0.30, Variance ≈ 0.8-1.5
+  - Good balance
+  
+- **λ = 10** (Strong):
+  - Bias² ≈ 0.40-0.60, Variance ≈ 0.3-0.5
+  - Higher bias, lower variance
+  
+- **λ = 100** (Very Strong):
+  - Bias² ≈ 1.5-2.5, Variance ≈ 0.1-0.2
+  - HIGH bias → Underfitting
+  - Model too constrained, predictions almost flat
 
-for idx, alpha in enumerate(alphas):
-    predictions = []
-    
-    for _ in range(50):
-        x_train = np.random.uniform(0, 10, 20)
-        y_train = true_function(x_train) + np.random.normal(0, 1, 20)
-        
-        poly = PolynomialFeatures(degree=degree)
-        X_train_poly = poly.fit_transform(x_train.reshape(-1, 1))
-        X_test_poly = poly.transform(x_test.reshape(-1, 1))
-        
-        ridge = Ridge(alpha=alpha).fit(X_train_poly, y_train)
-        y_pred = ridge.predict(X_test_poly)
-        predictions.append(y_pred)
-        
-        axes[idx].plot(x_test, y_pred, '-', alpha=0.1, color='orange', linewidth=1)
-    
-    predictions = np.array(predictions)
-    mean_pred = predictions.mean(axis=0)
-    bias_sq = ((mean_pred - y_true)**2).mean()
-    variance = predictions.var(axis=0).mean()
-    
-    axes[idx].plot(x_test, y_true, 'b-', linewidth=3, label='True', zorder=10)
-    axes[idx].plot(x_test, mean_pred, 'r--', linewidth=3, label='Mean pred', zorder=9)
-    axes[idx].set_xlabel('x', fontsize=11, fontweight='bold')
-    axes[idx].set_ylabel('y', fontsize=11, fontweight='bold')
-    axes[idx].set_title(f'λ = {alpha}\nBias²={bias_sq:.2f}, Var={variance:.2f}',
-                       fontsize=13, fontweight='bold')
-    axes[idx].legend(fontsize=10)
-    axes[idx].grid(alpha=0.3)
-    axes[idx].set_ylim(-2, 18)
-
-axes[-1].axis('off')
-
-plt.tight_layout()
-plt.show()
-
-print("\n" + "=" * 70)
-print("REGULARIZATION EFFECT")
-print("=" * 70)
-print("\nWeak regularization (λ small):")
-print("  → Low bias, HIGH variance")
-print("  → Overfitting")
-
-print("\nStrong regularization (λ large):")
-print("  → HIGH bias, low variance")
-print("  → Underfitting")
-
-print("\nOptimal regularization:")
-print("  → Balanced bias-variance")
-print("=" * 70)
-```
+**Key insight**: Regularization parameter λ controls the trade-off. Optimal λ balances bias and variance for minimum MSE.
 
 ## 4. Bayesian Perspective
 
