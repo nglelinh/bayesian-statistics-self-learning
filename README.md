@@ -19,7 +19,7 @@ Khóa học **Bayesian Statistics** hoàn chỉnh bằng Tiếng Việt, đượ
 
 ## 📚 Cấu trúc Khóa học
 
-### Chapter 00: Prerequisites (7 bài)
+### Chapter 00: Prerequisites (15 bài)
 Kiến thức nền tảng: Probability, Distributions, Python, Linear Algebra, Calculus
 
 ### Chapter 01: Bayesian Inference (4 bài)
@@ -27,9 +27,6 @@ Replication crisis, P-values critique, Bayes' Theorem, Bayesian vs Frequentist
 
 ### Chapter 02: Probability & Updating (6 bài)
 Likelihood, Prior, Posterior, Conjugate Priors, Grid Approximation (64 charts!)
-
-### Chapter 03: MCMC (6 bài)
-Monte Carlo, Markov Chain, Metropolis-Hastings, HMC, NUTS, PyMC, Diagnostics
 
 ### Chapter 04: Bayesian Linear Regression (4 bài)
 Generative model, Priors, Posterior inference, Model checking, Predictions
@@ -43,7 +40,7 @@ Logistic Regression, Poisson Regression
 ### Chapter 07: Priors & Regularization (1 bài)
 Regularization thông qua priors, Overfitting prevention
 
-**📊 Tổng cộng**: 33 bài học | 400+ charts | 12-14 tuần
+**📊 Tổng cộng**: 35 bài học | 400+ charts | 12-14 tuần
 
 ---
 
@@ -78,16 +75,15 @@ pip install numpy matplotlib scipy seaborn pymc arviz pandas jupyter
 
 ## 💻 Bài Tập & Labs
 
-### **Exercises** (8 notebooks - 150+ problems)
+### **Exercises** (7 notebooks)
 
-Thư mục `exercises/` chứa **8 Jupyter notebooks** với **150+ bài tập**:
+Thư mục `exercises/` chứa **7 Jupyter notebooks**:
 
 | Notebook | Topics | Time |
 |----------|--------|------|
 | Chapter00 | Prerequisites | 2-3h |
 | Chapter01 | Bayesian Inference | 3-4h |
 | Chapter02 | Probability & Updating | 4-5h |
-| Chapter03 | MCMC | 5-6h |
 | Chapter04 | Linear Regression | 4-5h |
 | Chapter05 | Multivariate Regression | 4-5h |
 | Chapter06 | GLM | 4-5h |
@@ -141,10 +137,9 @@ pip install pymc arviz numpy matplotlib scipy jupyter seaborn pandas
 ```
 .
 ├── contents/vi/             # 📚 Lecture notes (Tiếng Việt)
-│   ├── chapter00/           # Prerequisites (7 bài)
+│   ├── chapter00/           # Prerequisites (15 bài)
 │   ├── chapter01/           # Bayesian Inference (4 bài)
 │   ├── chapter02/           # Probability & Updating (6 bài)
-│   ├── chapter03/           # MCMC (6 bài)
 │   ├── chapter04/           # Linear Regression (4 bài)
 │   ├── chapter05/           # Multivariate Regression (3 bài)
 │   ├── chapter06/           # GLM (2 bài)
@@ -154,7 +149,6 @@ pip install pymc arviz numpy matplotlib scipy jupyter seaborn pandas
 │   ├── Chapter00_Prerequisites_Exercises.ipynb
 │   ├── Chapter01_Bayesian_Inference_Exercises.ipynb
 │   ├── Chapter02_Probability_Updating_Exercises.ipynb
-│   ├── Chapter03_MCMC_Exercises.ipynb
 │   ├── Chapter04_Linear_Regression_Exercises.ipynb
 │   ├── Chapter05_Multivariate_Regression_Exercises.ipynb
 │   ├── Chapter06_GLM_Exercises.ipynb
@@ -196,7 +190,7 @@ Sau khi hoàn thành khóa học, bạn sẽ:
 
 - ✅ **Hiểu Bayesian reasoning** - Không chỉ công thức
 - ✅ **Critique p-values** - Biết tại sao NHST có vấn đề
-- ✅ **Implement MCMC** - Từ Metropolis-Hastings đến NUTS
+- ✅ **Implement Bayesian models** - Từ prior đến posterior inference
 - ✅ **Sử dụng PyMC** - Fit models thực tế
 - ✅ **Check diagnostics** - R-hat, ESS, trace plots, divergences
 - ✅ **Interpret posteriors** - Uncertainty quantification
@@ -313,13 +307,13 @@ Theme: Lanyon by Mark Otto
 **✅ COMPLETE AND READY TO USE**
 
 ### **Theory:**
-- ✅ **43 lecture notes** (11 chapters)
+- ✅ **37 lecture notes** (10 chapters)
 - ✅ **400+ illustrations**
 - ✅ **Narrative style** - Pedagogical approach
 - ✅ **Vietnamese** - Full translation
 
 ### **Practice:**
-- ✅ **8 exercise notebooks** (150+ problems)
+- ✅ **7 exercise notebooks**
 - ✅ **7 lab exercises** with complete solutions
 - ✅ **14 solution files** (7 .py + 7 .ipynb)
 - ✅ **3000+ lines** of production code

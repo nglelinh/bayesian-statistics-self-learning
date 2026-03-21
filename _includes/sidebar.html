@@ -14,7 +14,7 @@
     {% assign current_lang = page.lang | default: site.default_lang %}
     
     <!-- Manually define chapters to ensure they all appear -->
-    {% assign chapter_list = "00,01,02,03,04,05,06,07,08,09,10,12" | split: "," %}
+    {% assign chapter_list = "00,01,02,03,04,05,06,07,08,12" | split: "," %}
     
     {% for chapter_num in chapter_list %}
       <!-- Find chapter page -->

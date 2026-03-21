@@ -11,7 +11,6 @@ Thư mục này chứa **Jupyter notebooks bài tập** cho từng chapter của
 | 00 | `Chapter00_Prerequisites_Exercises.ipynb` | Probability, Distributions, Statistics, Python, Linear Algebra, Calculus | 2-3 giờ |
 | 01 | `Chapter01_Bayesian_Inference_Exercises.ipynb` | P-values, Bayes' Theorem, Bayesian vs Frequentist | 3-4 giờ |
 | 02 | `Chapter02_Probability_Updating_Exercises.ipynb` | Likelihood, Prior, Posterior, Conjugate Priors, Grid Approximation | 4-5 giờ |
-| 03 | `Chapter03_MCMC_Exercises.ipynb` | Monte Carlo, Metropolis-Hastings, PyMC, Diagnostics | 5-6 giờ |
 | 04 | `Chapter04_Linear_Regression_Exercises.ipynb` | Bayesian Linear Regression, Model Checking, Predictions | 4-5 giờ |
 | 05 | `Chapter05_Multivariate_Regression_Exercises.ipynb` | Multiple Predictors, Confounding, DAGs, Multicollinearity | 4-5 giờ |
 | 06 | `Chapter06_GLM_Exercises.ipynb` | Logistic Regression, Poisson Regression, Overdispersion | 4-5 giờ |
@@ -124,7 +123,7 @@ jupyter nbconvert --to html Chapter01_Bayesian_Inference_Exercises.ipynb
 Sau khi hoàn thành tất cả notebooks, bạn sẽ:
 
 - ✅ Thành thạo Bayesian reasoning
-- ✅ Implement MCMC từ đầu
+- ✅ Implement Bayesian models từ đầu
 - ✅ Sử dụng PyMC cho real problems
 - ✅ Fit và interpret Bayesian models
 - ✅ Check diagnostics và model assumptions
@@ -190,7 +189,5 @@ jupyter notebook Chapter01_Bayesian_Inference_Exercises.ipynb
 
 **Last updated**: January 2025  
 **Version**: 1.0
-
-
 
 

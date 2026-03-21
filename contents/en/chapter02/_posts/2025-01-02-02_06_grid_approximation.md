@@ -22,11 +22,7 @@ After this lesson, you should understand grid approximation as the bridge from h
 
 Conjugate models are elegant, but real problems are not always so cooperative.
 
-Examples:
-
-- the prior may be a mixture of competing beliefs,
-- the prior and likelihood may not combine into a closed-form posterior,
-- or we may simply want a very transparent computational approach.
+For example, the prior may be a mixture of competing beliefs, the prior and likelihood may fail to combine into a convenient closed-form posterior, or we may simply want a computational approach transparent enough that every step can still be inspected directly.
 
 Grid approximation is the simplest way to start.
 
@@ -42,19 +38,13 @@ $$
 
 At each point, compute:
 
-- the prior,
-- the likelihood,
-- the unnormalized posterior.
+the prior, the likelihood, and the unnormalized posterior.
 
 Then normalize the weights. The result is a discrete approximation to the posterior.
 
 ## 2. A tiny hand-worked example
 
-Suppose:
-
-- the prior is uniform on $$[0,1]$$,
-- the data are 6 heads in 9 tosses,
-- the grid is:
+Suppose the prior is uniform on $$[0,1]$$, the data are 6 heads in 9 tosses, and the grid is:
 
 $$
 \theta \in \{0,\ 0.25,\ 0.5,\ 0.75,\ 1\}.
@@ -68,11 +58,7 @@ $$
 
 Evaluate that expression at each grid point, multiply by the prior, and normalize.
 
-The main lesson is not the exact numbers. It is the workflow:
-
-- score candidate values,
-- compare them,
-- normalize them.
+The main lesson is not the exact numbers themselves, but the workflow: we score candidate values, compare them, and then normalize the resulting weights into a proper posterior approximation.
 
 ## 3. The grid algorithm
 
@@ -108,29 +94,19 @@ Using 5 points gives a rough picture. Using 20, 100, or 1000 points gives a smoo
 
 ![Effect of grid size]({{ site.baseurl }}/img/chapter_img/chapter02/grid_size_comparison.png)
 
-This gives a clear trade-off:
-
-- coarse grid  $$\rightarrow$$ faster but rougher,
-- fine grid  $$\rightarrow$$ more accurate but more expensive.
+This creates a clear trade-off: a coarse grid is faster but rougher, while a fine grid is more accurate but also more computationally expensive.
 
 ## 5. A useful case: non-conjugate priors
 
-Suppose analysts have two competing prior beliefs about a return rate:
+Suppose analysts have two competing prior beliefs about a return rate, with one mode near $$0.3$$ and another mode near $$0.7$$.
 
-- one mode near $$0.3$$,
-- another mode near $$0.7$$.
-
-That gives a mixture prior with two peaks. Closed-form algebra may no longer be convenient, but grid approximation still works naturally:
-
-1. evaluate the mixture prior on the grid,
-2. evaluate the likelihood,
-3. normalize.
+That gives a mixture prior with two peaks. Closed-form algebra may no longer be convenient, but grid approximation still works naturally, because we only need to evaluate the mixture prior on the grid, evaluate the likelihood at the same points, and then normalize the resulting weights.
 
 ![Grid approximation with a mixture prior]({{ site.baseurl }}/img/chapter_img/chapter02/grid_mixture_prior_example.png)
 
 ## 6. What can we do with a grid posterior?
 
-Quite a lot.
+Quite a lot, and that is precisely why grid approximation is more than a toy example.
 
 ### 6.1. Posterior mean
 
@@ -154,7 +130,7 @@ Draw grid points according to their posterior weights.
 
 ## 7. Posterior predictive with a grid
 
-Once the posterior is available on a grid, future-data prediction becomes easy:
+Once the posterior is available on a grid, future-data prediction becomes easy, because prediction can be obtained by averaging conditional predictive distributions over the posterior weights on the grid:
 
 $$
 P(y_{\text{new}} \mid D) = \sum_i P(y_{\text{new}} \mid \theta_i)p(\theta_i \mid D).
@@ -168,26 +144,21 @@ This is where the method starts to feel practically useful, not just pedagogical
 
 ### 8.1. When learning Bayesian inference
 
-It makes every part of Bayes visible.
+It makes every part of Bayes visible, because prior, likelihood, posterior, normalization, and prediction all appear as explicit computations on a finite set of candidate values.
 
 ### 8.2. For one-parameter problems
 
-It is often simple, fast, and easy to visualize.
+It is often simple, fast enough, and easy to visualize, which makes it especially attractive as a first computational method.
 
 ### 8.3. As a small-model check
 
-Even if you later use MCMC, grid approximation can be a useful sanity check in tiny problems.
+Even if you later use MCMC, grid approximation can still serve as a useful sanity check in tiny problems where an explicit approximation is cheap and easy to inspect.
 
 ![When to use grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/when_to_use_grid.png)
 
 ## 9. The main limitation: curse of dimensionality
 
-If each parameter uses 100 grid points:
-
-- 1 parameter  $$\rightarrow$$ 100 points,
-- 2 parameters  $$\rightarrow$$ 10,000 points,
-- 3 parameters  $$\rightarrow$$ 1,000,000 points,
-- 4 parameters  $$\rightarrow$$ 100,000,000 points.
+If each parameter uses 100 grid points, then 1 parameter requires 100 points, 2 parameters require 10,000 points, 3 parameters require 1,000,000 points, and 4 parameters require 100,000,000 points; this explosive growth is exactly what the phrase curse of dimensionality is meant to capture.
 
 ![Curse of dimensionality]({{ site.baseurl }}/img/chapter_img/chapter02/curse_of_dimensionality.png)
 
@@ -195,11 +166,7 @@ So grid approximation is excellent for very small models and quickly becomes imp
 
 ## 10. Where does grid approximation fit in the bigger picture?
 
-You can think of the main approaches this way:
-
-- conjugate priors for exact closed-form updates,
-- grid approximation for small transparent computational updates,
-- MCMC for general high-dimensional models.
+You can think of the main approaches this way: conjugate priors are ideal for exact closed-form updates in sufficiently simple problems, grid approximation is useful for small and transparent computational updates, and MCMC is the more general tool for complex high-dimensional models.
 
 ![From grid approximation to MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/grid_to_mcmc_bridge.png)
 
@@ -221,12 +188,7 @@ No. It is one of the best tools for building Bayesian intuition.
 
 ## Summary
 
-**Grid approximation computes a posterior by discretizing the parameter space into a finite grid.** It is intuitive, flexible, and excellent for learning or for very small models. Its main weakness is dimensionality, which is why more advanced methods such as MCMC are needed later.
-
-> **3 key takeaways.**
-> 1. Grid approximation turns a continuous posterior problem into a discrete weighted comparison over candidate values.
-> 2. It is especially useful for small models and for cases where conjugacy is unavailable.
-> 3. Its main limitation is the curse of dimensionality, so it does not scale to many parameters.
+**Grid approximation computes a posterior by discretizing the parameter space into a finite grid.** It is intuitive, flexible, and excellent for learning or for very small models, especially when conjugacy is unavailable but the parameter space is still simple enough to explore directly. Its main weakness is dimensionality, which is why more advanced methods such as MCMC are needed later. The main lesson to keep is that grid approximation turns a continuous posterior problem into a discrete weighted comparison over candidate values, works especially well for small models and non-conjugate examples, and fails to scale once the number of parameters becomes even moderately large.
 
 ## Practice questions
 
@@ -243,4 +205,4 @@ No. It is one of the best tools for building Bayesian intuition.
 
 ---
 
-*End of Chapter 02. Next chapter: [Chapter 03 - Sampling, Monte Carlo, and MCMC](/en/chapter03/)*
+*End of Chapter 02. Next chapter: [Chapter 04 - Bayesian Linear Regression](/en/chapter04/)*

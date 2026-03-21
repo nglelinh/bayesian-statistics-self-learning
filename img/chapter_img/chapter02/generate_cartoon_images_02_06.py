@@ -360,7 +360,7 @@ def create_grid_to_mcmc_bridge(output_dir):
     ax.add_patch(mcmc_box)
     
     ax.text(7.95, 8.2, 'MCMC', fontsize=14, ha='center', fontweight='bold')
-    ax.text(7.95, 7.8, '(Chapter 03)', fontsize=12, ha='center', fontweight='bold')
+    ax.text(7.95, 7.8, '(Advanced methods)', fontsize=12, ha='center', fontweight='bold')
     
     ax.text(7.95, 7.2, '• Sample THÔNG MINH', fontsize=10, ha='center')
     ax.text(7.95, 6.8, '• Nhanh với nhiều param', fontsize=10, ha='center')

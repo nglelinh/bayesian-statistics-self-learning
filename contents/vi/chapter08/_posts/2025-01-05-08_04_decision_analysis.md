@@ -318,4 +318,4 @@ Bayesian Decision Analysis:
 
 ---
 
-*Chương tiếp theo: [Chapter 09: Hierarchical Models](/vi/chapter09/)*
+*Chương tiếp theo: [Chapter 12: Labs Thực Hành Bayesian](/vi/chapter12/)*

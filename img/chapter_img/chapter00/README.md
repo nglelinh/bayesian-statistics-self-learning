@@ -68,7 +68,39 @@
    - One-sample: Chocolate weight test
    - Independent two-sample: So sánh chiều cao hai khoa
    - Paired: Cân nặng trước/sau dùng thuốc
-   - Bảng tóm tắt công thức và df
+    - Bảng tóm tắt công thức và df
+
+### Bài 0.12: Mô hình Thống kê là gì? (MỚI!)
+
+10. **statistical_model_definition_flow.png** - Sơ đồ dòng chảy mô hình thống kê
+     - Minh họa chuỗi: tham số chưa biết $$\theta$$ -> mô hình $$p(x\mid\theta)$$ -> dữ liệu $$x$$ -> posterior $$p(\theta\mid x)$$
+     - Nhấn mạnh góc nhìn generative story trước khi đi vào suy luận Bayes
+
+### Bài 0.13-0.19: Nền tảng mở rộng (MỚI!)
+
+11. **expectation_variance_covariance_visual.png** - Trực quan kỳ vọng, phương sai, hiệp phương sai
+    - Histogram với mean làm trọng tâm
+    - Scatter cho covariance dương và âm
+
+12. **lln_clt_convergence.png** - Trực quan LLN và CLT
+    - Running mean hội tụ về kỳ vọng thật
+    - Phân phối trung bình mẫu gần chuẩn
+
+13. **sampling_distribution_standard_error.png** - Sampling distribution và SE
+    - So sánh phân phối estimator khi n=20 và n=200
+    - Nhấn mạnh SE giảm khi cỡ mẫu tăng
+
+14. **bias_variance_tradeoff_curve.png** - Bias-variance tradeoff
+    - Đường Bias^2, Variance, và MSE theo độ phức tạp mô hình
+
+15. **log_probability_numerical_stability.png** - Log-probability và ổn định số
+    - So sánh tích trực tiếp với biểu diễn log-domain
+
+16. **basic_model_assumption_checks.png** - Kiểm tra giả định mô hình cơ bản
+    - Fit line, outlier và residual plot
+
+17. **simulation_statistical_intuition_workflow.png** - Workflow mô phỏng
+    - 4 bước: giả định -> tham số -> mô phỏng -> so sánh/cập nhật
 
 ## Scripts
 
@@ -76,6 +108,8 @@
 - `generate_images_professional.py` - Script cải tiến với style chuyên nghiệp cho bài 0.8
 - `generate_descriptive_statistics_images.py` - Script tạo hình minh họa cho bài 0.3 (MỚI!)
 - `generate_t_test_images.py` - Script tạo hình ảnh cho bài 0.9 (MỚI!)
+- `generate_statistical_model_definition_image.py` - Script tạo hình ảnh cho bài 0.12 (MỚI!)
+- `generate_foundational_concepts_images.py` - Script tạo hình ảnh cho bài 0.13-0.19 (MỚI!)
 
 ## Usage
 
@@ -90,6 +124,12 @@ python3 generate_images_professional.py
 
 # Bài 0.9: T-test
 python3 generate_t_test_images.py
+
+# Bài 0.12: Dinh nghia mo hinh thong ke
+python3 generate_statistical_model_definition_image.py
+
+# Bài 0.13-0.19: Kien thuc nen tang mo rong
+python3 generate_foundational_concepts_images.py
 ```
 
 ## Image Quality

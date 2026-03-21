@@ -22,11 +22,7 @@ Sau bài này, bạn nên hiểu grid approximation như cây cầu đi từ Bay
 
 Trong bài conjugacy, mọi thứ rất đẹp vì posterior vẫn nằm trong cùng họ phân phối với prior. Nhưng thực tế không phải lúc nào prior cũng “ngoan” như vậy.
 
-Ví dụ:
-
-- prior có thể là hỗn hợp hai niềm tin khác nhau,
-- likelihood có thể không ăn khớp với prior theo dạng giải tích,
-- hoặc ta chỉ đơn giản muốn một cách tính trực quan để nhìn thấy Bayes hoạt động.
+Chẳng hạn, prior có thể là hỗn hợp của hai niềm tin cạnh tranh nhau, likelihood có thể không ăn khớp với prior theo một dạng giải tích đủ đẹp, hoặc đơn giản hơn, ta chỉ muốn một cách tính đủ trực quan để có thể nhìn thấy Bayes đang vận hành như thế nào thay vì chỉ chấp nhận kết quả cuối cùng dưới dạng công thức.
 
 Lúc đó, grid approximation là cách đơn giản nhất để bắt đầu.
 
@@ -42,9 +38,7 @@ $$
 
 Ở mỗi điểm, ta tính:
 
-- prior,
-- likelihood,
-- posterior chưa chuẩn hóa.
+prior, likelihood, và posterior chưa chuẩn hóa.
 
 Cuối cùng, ta chuẩn hóa các trọng số này để thu được một posterior rời rạc trên lưới.
 
@@ -54,11 +48,7 @@ Nói bằng lời:
 
 ## 2. Ví dụ tay rất nhỏ: 6 ngửa trong 9 lần tung
 
-Giả sử:
-
-- prior đều trên $$[0,1]$$,
-- dữ liệu là 6 ngửa trong 9 lần tung,
-- ta dùng grid 5 điểm:
+Giả sử prior là phân phối đều trên $$[0,1]$$, dữ liệu là 6 mặt ngửa trong 9 lần tung, và ta dùng một grid gồm 5 điểm:
 
 $$
 \theta \in \{0,\ 0.25,\ 0.5,\ 0.75,\ 1\}.
@@ -82,11 +72,7 @@ Ta tính ở từng điểm:
 
 Rồi chuẩn hóa bằng cách chia cho tổng.
 
-Kết quả cho thấy:
-
-- vùng quanh $$0.75$$ được dữ liệu ủng hộ mạnh nhất trên grid này,
-- vùng quanh $$0.25$$ yếu hơn hẳn,
-- hai đầu $$0$$ và $$1$$ gần như không được dữ liệu ủng hộ.
+Kết quả cho thấy vùng quanh $$0.75$$ là nơi được dữ liệu ủng hộ mạnh nhất trên grid này, vùng quanh $$0.25$$ yếu hơn hẳn, còn hai đầu $$0$$ và $$1$$ gần như không nhận được sự ủng hộ nào đáng kể từ dữ liệu.
 
 Ví dụ này cực kỳ quan trọng vì nó cho ta thấy Bayes không bắt buộc phải bắt đầu bằng tích phân phức tạp. Ta có thể hiểu nó như một quy trình chấm điểm và chuẩn hóa.
 
@@ -126,49 +112,29 @@ Chia cho tổng toàn bộ trọng số để thu được posterior rời rạc
 
 ## 4. Grid mịn hơn thì tốt hơn, nhưng cũng tốn hơn
 
-Một lưới 5 điểm giúp ta hiểu ý tưởng. Nhưng để xấp xỉ tốt hơn, ta thường cần lưới mịn hơn:
-
-- 20 điểm,
-- 100 điểm,
-- 1000 điểm.
+Một lưới 5 điểm giúp ta nắm ý tưởng, nhưng để xấp xỉ tốt hơn, ta thường phải dùng lưới mịn hơn, chẳng hạn 20 điểm, 100 điểm, hay 1000 điểm, tùy độ chính xác mà ta mong muốn.
 
 ![So sánh grid với các độ mịn khác nhau]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation_basics.png)
 
-Khi grid mịn hơn:
-
-- posterior rời rạc nhìn giống posterior liên tục hơn,
-- các thống kê như mean hay credible interval chính xác hơn.
+Khi grid mịn hơn, posterior rời rạc sẽ nhìn giống posterior liên tục hơn và các thống kê như posterior mean hay credible interval cũng trở nên chính xác hơn.
 
 ![Ảnh hưởng của kích thước grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_size_comparison.png)
 
-Đây là một trade-off rất đơn giản:
-
-- grid thô  $$\rightarrow$$ nhanh nhưng xấp xỉ thô,
-- grid mịn  $$\rightarrow$$ chính xác hơn nhưng tốn tính toán hơn.
+Vì vậy, ta luôn đứng trước một trade-off rất đơn giản nhưng không thể né tránh: grid thô thì nhanh nhưng xấp xỉ còn thô, trong khi grid mịn thì chính xác hơn nhưng cũng tốn tính toán hơn.
 
 ## 5. Một ví dụ thực tế: prior không liên hợp
 
-Giả sử nhóm phân tích có hai niềm tin cạnh tranh về tỷ lệ khách quay lại:
+Giả sử nhóm phân tích có hai niềm tin cạnh tranh về tỷ lệ khách quay lại, trong đó một giả thuyết cho rằng tỷ lệ này thường quanh $$0.3$$ còn giả thuyết kia cho rằng nó thường quanh $$0.7$$.
 
-- giả thuyết 1: tỷ lệ thường quanh $$0.3$$,
-- giả thuyết 2: tỷ lệ thường quanh $$0.7$$.
-
-Ta có thể biểu diễn prior như một mixture hai đỉnh. Khi đó posterior thường không còn công thức đóng đẹp như Beta-Binomial nữa. Nhưng grid approximation vẫn xử lý được rất tự nhiên:
-
-1. tính giá trị prior mixture ở từng điểm,
-2. tính likelihood dữ liệu ở từng điểm,
-3. chuẩn hóa để ra posterior.
+Ta có thể biểu diễn prior này như một mixture hai đỉnh. Khi đó posterior thường không còn công thức đóng đẹp như Beta-Binomial nữa, nhưng grid approximation vẫn xử lý được rất tự nhiên vì ta chỉ cần tính giá trị prior mixture ở từng điểm trên lưới, tính likelihood của dữ liệu tại những điểm đó, rồi chuẩn hóa toàn bộ trọng số để thu được posterior.
 
 ![Ví dụ grid với prior mixture]({{ site.baseurl }}/img/chapter_img/chapter02/grid_mixture_prior_example.png)
 
-Đây là lý do grid approximation rất mạnh về mặt trực giác:
-
-- nó không yêu cầu prior phải liên hợp,
-- chỉ cần bạn tính được prior và likelihood trên lưới.
+Đây là lý do grid approximation rất mạnh về mặt trực giác: nó không đòi hỏi prior phải liên hợp, mà chỉ yêu cầu rằng ta có thể tính được prior và likelihood trên lưới các giá trị ứng viên.
 
 ## 6. Từ posterior trên grid, ta làm được gì?
 
-Rất nhiều thứ.
+Rất nhiều thứ, và đó chính là điều làm cho phương pháp này trở nên đáng học hơn là một mẹo tính toán tạm thời.
 
 ### 6.1. Tính posterior mean
 
@@ -204,10 +170,7 @@ Grid approximation rất hay ở chỗ tất cả các khái niệm Bayes trở 
 
 Một khi đã có posterior trên grid, ta có thể dự đoán dữ liệu mới.
 
-Ví dụ:
-
-- hiện tại đã có posterior về xác suất khách mua hàng,
-- ta muốn dự đoán số đơn hàng trong 50 khách tiếp theo.
+Ví dụ, sau khi đã có posterior về xác suất khách mua hàng, ta có thể muốn dự đoán số đơn hàng xuất hiện trong 50 khách tiếp theo.
 
 Ta chỉ cần trung bình hóa phân phối dự đoán điều kiện theo từng điểm trên grid:
 
@@ -223,25 +186,15 @@ $$
 
 ### 8.1. Khi học Bayes lần đầu
 
-Grid là cách tốt nhất để thấy thật rõ:
-
-- prior,
-- likelihood,
-- posterior,
-- chuẩn hóa,
-- và dự đoán.
+Grid là một trong những cách tốt nhất để thấy thật rõ prior, likelihood, posterior, bước chuẩn hóa, và cả cách posterior được dùng để tạo ra dự đoán, bởi vì mọi đối tượng đều hiện ra dưới dạng những trọng số cụ thể trên một tập điểm hữu hạn.
 
 ### 8.2. Khi bài toán chỉ có 1 tham số
 
-Lúc này grid thường rất ổn:
-
-- dễ hiểu,
-- dễ code,
-- dễ vẽ.
+Khi bài toán chỉ có một tham số, grid thường là một lựa chọn rất ổn vì nó vừa dễ hiểu, dễ code, vừa dễ trực quan hóa bằng đồ thị.
 
 ### 8.3. Khi muốn kiểm tra một mô hình nhỏ
 
-Ngay cả khi sau này bạn dùng MCMC, grid vẫn có thể là điểm tham chiếu tốt cho các ví dụ một tham số.
+Ngay cả khi về sau bạn dùng MCMC, grid vẫn có thể đóng vai trò như một điểm tham chiếu tốt cho những ví dụ một tham số, nơi ta muốn biết liệu thuật toán tính toán phức tạp hơn có đang cho ra kết quả hợp lý hay không.
 
 ![Khi nào nên dùng grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/when_to_use_grid.png)
 
@@ -249,28 +202,15 @@ Ngay cả khi sau này bạn dùng MCMC, grid vẫn có thể là điểm tham c
 
 Vấn đề xuất hiện khi số tham số tăng.
 
-Nếu mỗi tham số dùng 100 điểm grid:
-
-- 1 tham số  $$\rightarrow$$ 100 điểm,
-- 2 tham số  $$\rightarrow$$ 10,000 điểm,
-- 3 tham số  $$\rightarrow$$ 1,000,000 điểm,
-- 4 tham số  $$\rightarrow$$ 100,000,000 điểm.
+Nếu mỗi tham số dùng 100 điểm grid, thì một tham số tương ứng với 100 điểm, hai tham số đã nhảy lên 10,000 điểm, ba tham số thành 1,000,000 điểm, và bốn tham số lập tức vọt lên 100,000,000 điểm; chính tốc độ bùng nổ này tạo nên cái gọi là curse of dimensionality.
 
 ![Curse of dimensionality]({{ site.baseurl }}/img/chapter_img/chapter02/curse_of_dimensionality.png)
 
-Đó là lý do grid approximation:
-
-- rất tuyệt cho bài 1 tham số,
-- còn chấp nhận được cho bài 2 tham số nhỏ,
-- nhưng nhanh chóng trở nên không khả thi với mô hình thực tế nhiều tham số.
+Đó là lý do grid approximation rất tuyệt cho bài toán một tham số, còn có thể chấp nhận được cho một số bài hai tham số nhỏ, nhưng lại nhanh chóng trở nên không khả thi khi ta bước sang những mô hình thực tế có nhiều tham số hơn.
 
 ## 10. Grid approximation nằm ở đâu trong bức tranh lớn?
 
-Ta có thể xem các phương pháp tính posterior theo một trục phát triển:
-
-- conjugate prior: nhanh và chính xác nếu bài toán đủ “ngoan”,
-- grid approximation: trực quan, linh hoạt, tốt cho mô hình nhỏ,
-- MCMC: tổng quát hơn, dùng cho mô hình phức tạp nhiều tham số.
+Ta có thể xem các phương pháp tính posterior như nằm trên một trục phát triển tự nhiên: conjugate prior cho lời giải nhanh và chính xác nếu bài toán đủ “ngoan”, grid approximation mang lại một cơ chế tính toán trực quan và linh hoạt cho các mô hình nhỏ, còn MCMC là công cụ tổng quát hơn dành cho những mô hình phức tạp với nhiều tham số.
 
 ![Từ grid đến MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/grid_to_mcmc_bridge.png)
 
@@ -280,11 +220,7 @@ Grid chính là cây cầu giúp ta hiểu vì sao sau này cần các phương 
 
 ### 11.1. “Grid approximation luôn chính xác”
 
-Không. Nó là xấp xỉ. Độ chính xác phụ thuộc vào:
-
-- độ mịn của grid,
-- miền grid có phủ đủ vùng posterior hay không,
-- và số tham số của bài toán.
+Không. Nó chỉ là xấp xỉ, và độ chính xác của nó phụ thuộc vào độ mịn của grid, vào việc miền grid có phủ đủ vùng posterior quan trọng hay không, và vào chính số tham số của bài toán.
 
 ### 11.2. “Chỉ cần tăng grid là xong”
 
@@ -296,26 +232,7 @@ Ngược lại. Grid là cách rất tốt để xây trực giác Bayes, hiểu
 
 ## Tóm tắt
 
-**Grid approximation là cách xấp xỉ posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm.**
-
-Ưu điểm:
-
-- rất trực quan,
-- dễ triển khai,
-- không cần prior liên hợp,
-- tốt cho các bài toán nhỏ.
-
-Hạn chế:
-
-- chỉ phù hợp cho rất ít tham số,
-- càng nhiều tham số càng nhanh chóng không khả thi.
-
-Nếu conjugacy dạy ta Bayes giải tay, thì grid approximation dạy ta Bayes tính toán.
-
-> **3 ý cần nhớ.**
-> 1. Grid approximation biến posterior liên tục thành một bài toán rời rạc gồm nhiều điểm ứng viên.
-> 2. Phương pháp này rất trực quan và mạnh cho bài toán nhỏ, nhất là khi prior không liên hợp.
-> 3. Điểm yếu cốt lõi của grid là curse of dimensionality, nên nó chỉ phù hợp cho rất ít tham số.
+**Grid approximation là cách xấp xỉ posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm.** Ưu thế lớn nhất của phương pháp này là nó rất trực quan, dễ triển khai, không đòi hỏi prior liên hợp, và đặc biệt phù hợp cho những bài toán nhỏ nơi ta muốn nhìn rõ từng bước Bayes đang diễn ra như thế nào. Hạn chế cốt lõi của nó nằm ở chỗ phương pháp này chỉ phù hợp cho rất ít tham số, bởi vì khi số chiều tăng thì số điểm lưới tăng bùng nổ và nhanh chóng làm chi phí tính toán trở nên không thể chấp nhận được. Nếu conjugacy dạy ta Bayes giải tay, thì grid approximation dạy ta Bayes tính toán. Nói gọn lại, điều cần nhớ là grid approximation biến bài toán posterior liên tục thành một bài toán rời rạc trên các điểm ứng viên, nó đặc biệt mạnh cho các mô hình nhỏ và cho những prior không liên hợp, nhưng nó không mở rộng tốt do curse of dimensionality.
 
 ## Câu hỏi tự luyện
 
@@ -332,4 +249,4 @@ Nếu conjugacy dạy ta Bayes giải tay, thì grid approximation dạy ta Baye
 
 ---
 
-*Kết thúc Chapter 02. Bài học tiếp theo: [Chapter 03 - Sampling, Monte Carlo, và MCMC](/vi/chapter03/)*
+*Kết thúc Chapter 02. Bài học tiếp theo: [Chapter 04 - Bayesian Linear Regression](/vi/chapter04/)*

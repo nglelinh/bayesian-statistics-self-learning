@@ -190,4 +190,4 @@ $$p(x,y)=p(x\mid y)p(y)=p(y\mid x)p(x)$$
 
 ---
 
-*Bài học tiếp theo: [Chương 1: Cơ bản về Suy diễn Bayes](/vi/chapter01/)*
+*Bài học tiếp theo: [Bài 0.12: Mô hình Thống kê là gì?](/vi/chapter00/statistical-model-definition/)*
