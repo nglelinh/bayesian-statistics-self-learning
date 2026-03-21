@@ -2,6 +2,23 @@
 
 ## Danh sách Hình ảnh
 
+### Bài 0.3: Thống kê Mô tả (MỚI!)
+
+1. **descriptive_mean_vs_median.png** - So sánh trung bình và trung vị dưới phân phối đối xứng và lệch phải
+   - Panel trái: phân phối gần đối xứng, mean và median gần nhau
+   - Panel phải: phân phối lệch phải, mean bị kéo về phía đuôi dài
+   - Minh họa trực quan cách phát hiện độ lệch trước khi mô hình hóa
+
+2. **descriptive_spread_and_boxplot.png** - Minh họa độ phân tán và box plot / IQR
+   - Panel trái: hai tập dữ liệu cùng trung bình nhưng khác độ lệch chuẩn
+   - Panel phải: box plot với Q1, median, Q3, IQR và outlier tiềm năng
+   - Nhấn mạnh rằng biết giá trị trung tâm là chưa đủ
+
+3. **descriptive_correlation_patterns.png** - Ba mẫu hình scatter plot quan trọng
+   - Tuyến tính dương: Pearson r hoạt động tốt
+   - Phi tuyến: r có thể gần 0 dù vẫn có cấu trúc rõ
+   - Tương quan do nhóm ẩn: nhắc lại rằng correlation không ngụ ý causation
+
 ### Bài 0.8: P-values và Kiểm định Giả thuyết
 
 1. **pvalue_ttest_illustration.png** - Minh họa phân phối t và vùng p-value trong kiểm định t hai phía
@@ -57,6 +74,7 @@
 
 - `generate_images.py` - Script gốc tạo hình ảnh cho bài 0.8
 - `generate_images_professional.py` - Script cải tiến với style chuyên nghiệp cho bài 0.8
+- `generate_descriptive_statistics_images.py` - Script tạo hình minh họa cho bài 0.3 (MỚI!)
 - `generate_t_test_images.py` - Script tạo hình ảnh cho bài 0.9 (MỚI!)
 
 ## Usage
@@ -64,6 +82,9 @@
 Để tái tạo tất cả hình ảnh:
 
 ```bash
+# Bài 0.3: Thống kê mô tả
+python3 generate_descriptive_statistics_images.py
+
 # Bài 0.8: P-values
 python3 generate_images_professional.py
 

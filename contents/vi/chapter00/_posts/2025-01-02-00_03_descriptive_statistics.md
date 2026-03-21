@@ -54,6 +54,10 @@ Mối quan hệ giữa trung bình và trung vị cho chúng ta thông tin về 
 
 Sự khác biệt này không chỉ là một chi tiết kỹ thuật. Nó cho chúng ta biết liệu phân phối chuẩn có phải là mô hình phù hợp hay không. Nếu trung bình và trung vị khác nhau đáng kể, chúng ta có thể cần xem xét các phân phối lệch như log-normal, gamma, hoặc beta, tùy thuộc vào bản chất của dữ liệu.
 
+![Trung bình và trung vị dưới phân phối đối xứng và lệch phải]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_vs_median.png)
+
+*Hình 1: Ở phân phối gần đối xứng, trung bình và trung vị gần nhau. Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị. Đây là một dấu hiệu trực quan rất hữu ích để phát hiện độ lệch của phân phối trước khi chọn mô hình.*
+
 ## Thống kê Phân tán: Đo lường Sự Không chắc chắn
 
 Biết giá trị trung tâm là không đủ. Hai tập dữ liệu có thể có cùng trung bình nhưng rất khác nhau về độ phân tán. Một tập có thể tập trung chặt chẽ xung quanh trung bình, trong khi tập kia có thể phân tán rộng. Các thống kê phân tán giúp chúng ta định lượng sự biến thiên này.
@@ -85,6 +89,10 @@ $$\text{IQR} = Q3 - Q1$$
 IQR chứa 50% dữ liệu ở giữa và là một thống kê phân tán robust với các giá trị ngoại lai. Nó thường được sử dụng để phát hiện outliers: các giá trị nằm ngoài khoảng $$[Q1 - 1.5 \times \text{IQR}, Q3 + 1.5 \times \text{IQR}]$$ thường được coi là outliers tiềm năng.
 
 Trong phân tích Bayesian, phân vị được sử dụng rộng rãi để tóm tắt phân phối posterior. Thay vì chỉ báo cáo trung bình hoặc trung vị, chúng ta thường báo cáo **khoảng tin cậy** (credible interval), ví dụ như khoảng 95% chứa 95% xác suất posterior. Khoảng này thường được xây dựng từ các phân vị, ví dụ từ phân vị thứ 0.025 đến phân vị thứ 0.975.
+
+![Cùng trung bình nhưng khác độ phân tán, và cách box plot thể hiện IQR]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_spread_and_boxplot.png)
+
+*Hình 2: Bên trái, hai tập dữ liệu có cùng trung bình xấp xỉ như nhau nhưng mức độ phân tán rất khác. Bên phải, box plot cho thấy hộp chứa 50% dữ liệu ở giữa, trung vị nằm trong hộp, còn các điểm đỏ là outlier tiềm năng theo quy tắc $$1.5 \times \text{IQR}$$.*
 
 ## Trực quan hóa: Nhìn thấy Câu chuyện trong Dữ liệu
 
@@ -119,6 +127,10 @@ $$r = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n} 
 Hệ số tương quan luôn nằm giữa -1 và 1. Giá trị $$r = 1$$ chỉ ra mối quan hệ tuyến tính dương hoàn hảo, $$r = -1$$ chỉ ra mối quan hệ tuyến tính âm hoàn hảo, và $$r = 0$$ chỉ ra không có mối quan hệ tuyến tính.
 
 Tuy nhiên, cần cẩn thận khi diễn giải tương quan. Đầu tiên, tương quan chỉ đo lường mối quan hệ **tuyến tính**. Hai biến có thể có mối quan hệ phi tuyến mạnh nhưng tương quan bằng không. Thứ hai, **tương quan không ngụ ý nhân quả**. Việc hai biến tương quan không có nghĩa là một biến gây ra biến kia; có thể có một biến thứ ba ẩn ảnh hưởng đến cả hai, hoặc mối quan hệ có thể là ngẫu nhiên.
+
+![Các mẫu hình tương quan khác nhau trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_patterns.png)
+
+*Hình 3: Scatter plot cho thấy ba tình huống rất khác nhau: quan hệ tuyến tính dương mà Pearson $$r$$ đo tốt, quan hệ phi tuyến mà $$r$$ có thể đánh giá thấp, và tương quan do một biến nhóm ẩn tạo ra. Đây là lý do vì sao ta nên nhìn biểu đồ trước khi tin vào một hệ số tóm tắt.*
 
 Trong phân tích Bayesian, chúng ta thường mô hình hóa tương quan một cách rõ ràng thông qua các tham số trong mô hình. Ví dụ, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ mã hóa mối quan hệ giữa biến dự đoán và biến phản hồi, và chúng ta có thể định lượng sự không chắc chắn về mối quan hệ này thông qua phân phối posterior của $$\beta$$.
 
