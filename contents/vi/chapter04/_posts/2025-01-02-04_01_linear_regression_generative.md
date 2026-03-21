@@ -12,7 +12,7 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần nhìn hồi quy tuyến tính Bayes như một **câu chuyện sinh dữ liệu**, chứ không chỉ là bài toán “fit một đường thẳng”. Bạn cũng cần hiểu vai trò của intercept, slope và noise trong mô hình, và vì sao Bayesian regression luôn giữ lại bất định của tham số lẫn dự đoán.
+Sau bài này, bạn cần nhìn hồi quy tuyến tính Bayes như một **câu chuyện sinh dữ liệu**, chứ không chỉ là bài toán “fit một đường thẳng”. Bạn cũng cần hiểu vai trò của intercept (hệ số chặn), slope (hệ số dốc) và noise (độ nhiễu) trong mô hình, và vì sao Bayesian regression luôn giữ lại bất định của tham số lẫn dự đoán.
 
 > **Ví dụ mini.** Bạn muốn mô tả mối liên hệ giữa chiều cao và cân nặng. Cách nhìn cũ là “tìm đường thẳng tốt nhất”. Cách nhìn Bayes là “mỗi người có cân nặng được sinh ra quanh một xu hướng trung bình, và ta chưa chắc chắn về xu hướng đó”.
 >
@@ -20,27 +20,17 @@ Sau bài này, bạn cần nhìn hồi quy tuyến tính Bayes như một **câu
 
 ## 1. Regression không chỉ là vẽ đường thẳng
 
-Khi mới học hồi quy, nhiều người được dạy:
-
-- chọn một đường thẳng $$y = \alpha + \beta x$$,
-- rồi tìm đường làm sai số bình phương nhỏ nhất.
+Khi mới học hồi quy, nhiều người được dạy rằng chỉ cần chọn một đường thẳng $$y = \alpha + \beta x$$ rồi tìm đường làm sai số bình phương nhỏ nhất.
 
 Cách đó hữu ích, nhưng nó dễ khiến ta nghĩ regression chỉ là một kỹ thuật fitting hình học.
 
-Trong Bayesian regression, ta nhìn sâu hơn:
-
-- dữ liệu đến từ đâu,
-- tại sao các điểm không nằm đúng trên một đường,
-- và ta bất định đến mức nào về các tham số.
+Trong Bayesian regression, ta nhìn sâu hơn và buộc mình phải hỏi dữ liệu đến từ đâu, tại sao các điểm không nằm đúng trên một đường, và ta bất định đến mức nào về chính các tham số của đường đó.
 
 ![Frequentist vs Bayesian regression]({{ site.baseurl }}/img/chapter_img/chapter04/frequentist_vs_bayesian_regression.png)
 
 ## 2. Câu chuyện sinh dữ liệu của hồi quy tuyến tính
 
-Giả sử ta muốn mô hình hóa mối quan hệ giữa:
-
-- chiều cao $$x$$,
-- và cân nặng $$y$$.
+Giả sử ta muốn mô hình hóa mối quan hệ giữa chiều cao $$x$$ và cân nặng $$y$$.
 
 Câu chuyện sinh dữ liệu có thể kể như sau.
 
@@ -52,20 +42,11 @@ $$
 \mu_i = \alpha + \beta x_i.
 $$
 
-Ở đây:
-
-- $$\alpha$$ là intercept,
-- $$\beta$$ là slope.
+Ở đây $$\alpha$$ là intercept (hệ số chặn) còn $$\beta$$ là slope (hệ số dốc).
 
 ### Bước 2. Mỗi cá nhân dao động quanh xu hướng đó
 
-Không ai nằm chính xác trên đường trung bình, vì còn nhiều yếu tố khác như:
-
-- khối cơ,
-- chế độ ăn,
-- giới tính,
-- mức độ vận động,
-- sai số đo lường.
+Không ai nằm chính xác trên đường trung bình, vì còn nhiều yếu tố khác như khối cơ, chế độ ăn, giới tính, mức độ vận động, hay sai số đo lường.
 
 Vì vậy ta viết:
 
@@ -77,11 +58,7 @@ $$
 
 ### Bước 3. Ta chưa biết chính xác các tham số
 
-Ta không biết thật sự:
-
-- intercept là bao nhiêu,
-- slope là bao nhiêu,
-- noise là bao nhiêu.
+Ta không biết thật sự intercept là bao nhiêu, slope là bao nhiêu, và noise là bao nhiêu.
 
 Nên ta đặt prior cho chúng, rồi dùng dữ liệu để suy luận posterior.
 
@@ -95,31 +72,19 @@ Intercept là giá trị trung bình của $$y$$ khi $$x = 0$$.
 
 Về mặt toán học, nó rất tiện. Nhưng về mặt thực tế, nó không phải lúc nào cũng dễ diễn giải.
 
-Ví dụ:
+Ví dụ, nếu $$x$$ là chiều cao tính bằng cm, thì $$x=0$$ hầu như không có ý nghĩa thực tế.
 
-- nếu $$x$$ là chiều cao tính bằng cm, thì $$x=0$$ là không có ý nghĩa thực tế.
-
-Vì thế trong regression Bayes, ta thường:
-
-- center hoặc standardize biến đầu vào,
-- để intercept có ý nghĩa dễ đọc hơn.
+Vì thế trong regression Bayes, ta thường center (đưa biến về quanh trung tâm) hoặc standardize (chuẩn hóa) biến đầu vào để intercept có ý nghĩa dễ đọc hơn.
 
 ### 3.2. Slope $$\beta$$
 
-Slope cho biết:
+Slope cho biết trung bình $$y$$ thay đổi bao nhiêu khi $$x$$ tăng 1 đơn vị.
 
-- trung bình $$y$$ thay đổi bao nhiêu khi $$x$$ tăng 1 đơn vị.
-
-Ví dụ:
-
-- nếu $$\beta = 0.7$$ kg/cm, thì mỗi cm chiều cao tăng tương ứng với mức tăng trung bình 0.7 kg cân nặng.
+Ví dụ, nếu $$\beta = 0.7$$ kg/cm, thì mỗi cm chiều cao tăng tương ứng với mức tăng trung bình 0.7 kg cân nặng.
 
 ### 3.3. Noise $$\sigma$$
 
-Noise cho biết mức độ các điểm dữ liệu phân tán quanh đường hồi quy.
-
-- $$\sigma$$ nhỏ  $$\rightarrow$$ dữ liệu bám sát đường hơn,
-- $$\sigma$$ lớn  $$\rightarrow$$ dữ liệu phân tán mạnh hơn.
+Noise cho biết mức độ các điểm dữ liệu phân tán quanh đường hồi quy. Nếu $$\sigma$$ nhỏ thì dữ liệu bám sát đường hơn, còn nếu $$\sigma$$ lớn thì dữ liệu phân tán mạnh hơn.
 
 ![Ý nghĩa của các tham số regression]({{ site.baseurl }}/img/chapter_img/chapter04/regression_parameter_interpretation.png)
 
@@ -127,32 +92,29 @@ Noise cho biết mức độ các điểm dữ liệu phân tán quanh đường
 
 ### OLS thường trả lời
 
-- đường thẳng “tốt nhất” là gì?
+OLS (ordinary least squares, tức bình phương tối thiểu thông thường) thường trả lời câu hỏi về việc đường thẳng “tốt nhất” là gì theo một tiêu chí tối ưu hóa nhất định.
 
 ### Bayesian regression trả lời
 
-- những đường thẳng nào còn hợp lý sau khi thấy dữ liệu,
-- mức độ bất định của slope và intercept là bao nhiêu,
-- dự đoán cho quan sát mới bất định đến đâu.
+Bayesian regression thì trả lời một câu hỏi rộng hơn nhiều: những đường thẳng nào còn hợp lý sau khi thấy dữ liệu, mức độ bất định của slope và intercept là bao nhiêu, và dự đoán cho một quan sát mới sẽ bất định đến mức nào. Nói cách khác, OLS cho bạn một đường trung tâm, còn Bayes cho bạn một **phân phối của các đường có thể**.
 
-Nói cách khác:
+### 4.1. Các giả định cổ điển cần nói rõ trước khi suy luận Bayes
 
-- OLS cho bạn một đường trung tâm,
-- Bayes cho bạn một **phân phối của các đường có thể**.
+Trước khi đi vào posterior, ta nên nhắc rõ các giả định nền của linear regression:
 
-## 5. Vì sao “generative” là một từ rất quan trọng?
+- quan hệ trung bình có dạng tuyến tính theo tham số,
+- sai số có kỳ vọng bằng 0,
+- sai số độc lập có điều kiện theo biến đầu vào,
+- phương sai sai số ổn định (homoscedastic) trong mô hình cơ bản,
+- với bản đơn giản nhất, sai số thường được giả sử Normal.
 
-Nếu bạn xem regression như generative model, bạn sẽ tự hỏi đúng câu hỏi hơn:
+Bayes không "xóa" các giả định này; Bayes chỉ thêm một lớp bất định cho tham số và cho phép ta kiểm tra giả định minh bạch hơn ở bước model checking.
 
-- dữ liệu được sinh ra từ quá trình nào,
-- giả định Normal cho residual có hợp lý không,
-- noise có đồng nhất theo mọi giá trị của $$x$$ không,
-- và mô hình này có tạo ra dữ liệu giống với dữ liệu thật không.
+## 5. Vì sao “generative” (sinh dữ liệu) là một từ rất quan trọng?
 
-Đây là khác biệt rất quan trọng giữa:
+Nếu bạn xem regression như generative model (mô hình sinh dữ liệu), bạn sẽ tự hỏi đúng những câu hỏi hơn: dữ liệu được sinh ra từ quá trình nào, giả định Normal cho residual (phần dư) có hợp lý không, noise có đồng nhất theo mọi giá trị của $$x$$ không, và mô hình này có thực sự tạo ra dữ liệu giống dữ liệu thật hay không.
 
-- “fit xong là xong”,
-- và “mô hình hóa rồi kiểm tra”.
+Đây là khác biệt rất quan trọng giữa thái độ “fit xong là xong” và thái độ “mô hình hóa rồi kiểm tra”.
 
 ## 6. Viết mô hình Bayes đầy đủ
 
@@ -180,11 +142,42 @@ $$
 p(\alpha,\beta,\sigma \mid x,y).
 $$
 
-Điều quan trọng không phải là thuộc công thức này, mà là hiểu:
+Điều quan trọng không phải là thuộc công thức này, mà là hiểu prior (phân phối tiên nghiệm) đang nói điều gì trước dữ liệu, likelihood (hàm hợp lý) đang kể dữ liệu đến từ đâu, và posterior (phân phối hậu nghiệm) là câu trả lời xuất hiện sau khi hai thứ ấy được ghép lại.
 
-- prior nói điều gì trước dữ liệu,
-- likelihood nói dữ liệu đến từ đâu,
-- posterior là câu trả lời sau khi ghép cả hai lại.
+### 6.1. Khung joint likelihood - prior - posterior cho hồi quy
+
+Với dữ liệu $$\mathcal D=\{(x_i,y_i)\}_{i=1}^n$$, ta có:
+
+$$
+p(y\mid X,\alpha,\beta,\sigma)=\prod_{i=1}^n \mathcal N(y_i\mid \alpha+\beta x_i,\sigma).
+$$
+
+Joint prior (nếu giả sử độc lập tiên nghiệm):
+
+$$
+p(\alpha,\beta,\sigma)=p(\alpha)p(\beta)p(\sigma).
+$$
+
+Từ đó:
+
+$$
+p(\alpha,\beta,\sigma\mid X,y)
+\propto p(y\mid X,\alpha,\beta,\sigma)\,p(\alpha,\beta,\sigma).
+$$
+
+Đây là cách nhìn thống nhất của Buổi 7: mọi suy luận tham số hồi quy đều xuất phát từ một joint model rõ ràng.
+
+### 6.2. Khoảng cho slope: biết phương sai và không biết phương sai
+
+Khi phương sai nhiễu coi như đã biết, posterior của slope thường có dạng gần Normal và khoảng hậu nghiệm cho $$\beta$$ đọc theo kiểu:
+
+$$
+\mu_{\beta\mid D}\pm z_{0.975}\,\sigma_{\beta\mid D}.
+$$
+
+Khi phương sai chưa biết và được suy luận cùng dữ liệu, hậu nghiệm của $$\beta$$ thường có đuôi dày hơn (thực hành gần Student-t), nên khoảng hậu nghiệm thường rộng hơn để phản ánh thêm bất định.
+
+Vì vậy, khi báo cáo "interval của slope", cần nói rõ bạn đang ở bối cảnh biết hay không biết phương sai nhiễu.
 
 ## 7. Một ví dụ thực tế khác ngoài chiều cao - cân nặng
 
@@ -192,56 +185,43 @@ Regression Bayes xuất hiện ở rất nhiều nơi:
 
 ### Giá nhà và diện tích
 
-- $$x$$: diện tích,
-- $$y$$: giá nhà.
+Ở đây $$x$$ có thể là diện tích còn $$y$$ là giá nhà.
 
 ### Điểm thi và số giờ học
 
-- $$x$$: số giờ ôn tập,
-- $$y$$: điểm thi.
+Ở đây $$x$$ có thể là số giờ ôn tập còn $$y$$ là điểm thi.
 
 ### Doanh thu và chi phí quảng cáo
 
-- $$x$$: ngân sách ads,
-- $$y$$: doanh thu.
+Ở đây $$x$$ có thể là ngân sách quảng cáo còn $$y$$ là doanh thu.
 
-Trong mọi ví dụ đó, tư duy generative vẫn giống nhau:
-
-- có một xu hướng trung bình,
-- dữ liệu thật dao động quanh xu hướng,
-- và ta bất định về các tham số của xu hướng ấy.
+Trong mọi ví dụ đó, tư duy generative (sinh dữ liệu) vẫn giống nhau: có một xu hướng trung bình, dữ liệu thật dao động quanh xu hướng đó, và ta vẫn bất định về chính các tham số điều khiển xu hướng ấy.
 
 ## 8. Regression Bayes cho dự đoán như thế nào?
 
 Giả sử bạn muốn dự đoán cân nặng của một người cao 175 cm.
 
-Regression Bayes không chỉ cho một con số duy nhất. Nó cho:
+Regression Bayes không chỉ cho một con số duy nhất. Nó cho một giá trị trung bình dự đoán, bất định do chưa chắc về $$\alpha$$ và $$\beta$$, và cả bất định do noise cá thể $$\sigma$$.
 
-- một giá trị trung bình dự đoán,
-- bất định do chưa chắc về $$\alpha$$ và $$\beta$$,
-- bất định do noise cá thể $$\sigma$$.
+Đây là một điểm rất mạnh: ta không chỉ dự đoán, mà còn biết nên tự tin đến đâu vào dự đoán đó.
 
-Đây là một điểm rất mạnh:
+## 8.1. Cầu nối từ hồi quy 1 biến sang nhiều biến (dạng ma trận)
 
-- ta không chỉ dự đoán,
-- mà còn biết nên tự tin đến đâu vào dự đoán đó.
+Với nhiều biến giải thích, ta viết:
+
+$$
+y=X\mathbf w+\varepsilon,
+$$
+
+trong đó $$\mathbf w=(\alpha,\beta_1,\dots,\beta_p)^\top$$ và $$X$$ là ma trận thiết kế.
+
+Khi đó, suy luận Bayes chuyển từ "một slope" sang "một vector hệ số", nhưng tư duy không đổi: prior trên $$\mathbf w$$, likelihood từ mô hình sinh dữ liệu, và posterior cho toàn bộ vector tham số.
 
 ## 9. Một thói quen quan trọng từ bài này
 
-Mỗi khi thấy regression, hãy tự hỏi:
+Mỗi khi thấy một bài toán regression, hãy tự ép mình đi qua một chuỗi câu hỏi rất cụ thể: dữ liệu đang được sinh ra như thế nào, đâu là xu hướng trung bình, đâu là phần noise, tham số nào còn chưa biết, và khi tạo dự đoán mới thì những bất định nào cần được giữ lại. Nếu làm được như vậy, bạn đã bắt đầu nghĩ như người làm Bayesian modeling (mô hình hóa Bayes) chứ không chỉ như người chạy hồi quy.
 
-1. dữ liệu đang được sinh ra như thế nào?
-2. đâu là xu hướng trung bình?
-3. đâu là phần noise?
-4. tham số nào đang chưa biết?
-5. dự đoán mới cần giữ lại những bất định nào?
-
-Nếu làm được như vậy, bạn đã bắt đầu nghĩ như người làm Bayesian modeling chứ không chỉ như người chạy hồi quy.
-
-> **3 ý cần nhớ.**
-> 1. Bayesian linear regression là một generative model: dữ liệu được sinh quanh một xu hướng trung bình với nhiễu.
-> 2. Intercept, slope và noise đều là các đại lượng chưa biết và phải được suy luận, không chỉ ước lượng bằng một con số điểm.
-> 3. Regression Bayes mạnh ở chỗ giữ lại bất định của tham số lẫn dự đoán, thay vì chỉ đưa ra một đường thẳng duy nhất.
+> **3 ý cần nhớ.** Bayesian linear regression là một generative model trong đó dữ liệu được sinh quanh một xu hướng trung bình có nhiễu; intercept, slope và noise đều là các đại lượng chưa biết cần được suy luận chứ không chỉ ước lượng bằng một con số điểm; và điểm mạnh của regression Bayes nằm ở chỗ nó giữ lại bất định của cả tham số lẫn dự đoán thay vì chỉ đưa ra một đường thẳng duy nhất.
 
 ## Câu hỏi tự luyện
 

@@ -125,6 +125,38 @@ print("  Precision = TP / (TP + FP)")
 print("=" * 70)
 ```
 
+### 1.1.1. Đánh giá theo decision rule thay vì chỉ theo threshold 0.5
+
+Trong phân lớp Bayes, threshold 0.5 chỉ hợp lý khi chi phí hai loại lỗi gần như đối xứng. Nếu chi phí khác nhau, ta nên chọn ngưỡng theo expected risk.
+
+Ví dụ hai lớp (positive/negative):
+
+- chi phí false positive: $$C_{FP}$$
+- chi phí false negative: $$C_{FN}$$
+
+Quy tắc tối ưu (không có reject) là dự đoán positive khi:
+
+$$
+P(y=1\mid x) > \frac{C_{FP}}{C_{FP}+C_{FN}}.
+$$
+
+Nếu thêm hành động reject với chi phí $$C_R$$, ta chỉ phân lớp khi rủi ro của quyết định nhỏ hơn $$C_R$$.
+
+Điểm thực hành quan trọng: báo cáo confusion matrix nên đi kèm bối cảnh cost, thay vì ngầm mặc định mọi sai lầm có giá như nhau.
+
+### 1.1.2. Bayes factor như thước đo bằng chứng ở mức mô hình
+
+Ngoài metric phân lớp theo nhãn, có thể so sánh bằng chứng giữa hai mô hình/giả thuyết bằng Bayes factor:
+
+$$
+BF_{10}=\frac{p(D\mid M_1)}{p(D\mid M_0)}.
+$$
+
+- $$BF_{10}>1$$: dữ liệu ủng hộ $$M_1$$ hơn $$M_0$$.
+- $$BF_{10}<1$$: dữ liệu nghiêng về $$M_0$$.
+
+Bayes factor bổ sung cho ROC/AUC: ROC nói về năng lực phân biệt nhãn, còn Bayes factor nói về mức bằng chứng tương đối cho mô hình/giả thuyết.
+
 ### 1.2. ROC Curve
 
 **ROC (Receiver Operating Characteristic)**: Plot Sensitivity vs (1 - Specificity) for all thresholds.

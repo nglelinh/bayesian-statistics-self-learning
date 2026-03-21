@@ -22,8 +22,7 @@ After this lesson, you should be able to read a probability distribution as a st
 
 Suppose you are tracking the conversion rate of a new button on a website.
 
-- Week 1: 25 purchases out of 100 visits.
-- Week 2: 25 purchases out of 1000 visits.
+In Week 1, you see 25 purchases out of 100 visits, while in Week 2 you again see 25 purchases, but this time out of 1000 visits.
 
 Both weeks give the same point estimate: $$25\%$$. But they do not give the same level of certainty. In Week 2, we are much more confident that the true rate is close to $$25\%$$. In Week 1, values like $$18\%$$ or $$32\%$$ are still quite plausible.
 
@@ -37,18 +36,7 @@ A probability distribution is a **map of belief** over possible values.
 
 If a value gets high probability or high density, it means that value is more compatible with what we know, what the data suggest, or both.
 
-In Bayesian work, distributions appear everywhere:
-
-- for unknown parameters,
-- for observed data,
-- and for future predictions.
-
-In practice, when you look at a distribution, ask:
-
-- Where is the center?
-- How wide is it?
-- Is it skewed?
-- How much probability remains in the tails?
+In Bayesian work, distributions appear everywhere: for unknown parameters, for observed data, and for future predictions. In practice, when you look at a distribution, it helps to ask where its center is, how wide it is, whether it is skewed, and how much probability still remains in the tails, because those questions together turn a graph into an interpretable summary of uncertainty.
 
 ## 2. Discrete and continuous uncertainty
 
@@ -58,9 +46,7 @@ Use a discrete distribution when the variable takes countable values.
 
 Examples:
 
-- number of absent students,
-- number of spam emails in one hour,
-- number of heads in 10 coin flips.
+number of absent students, number of spam emails in one hour, or number of heads in 10 coin flips.
 
 Then we work with probabilities of exact outcomes:
 
@@ -74,10 +60,7 @@ Use a continuous distribution when the variable can take any value in an interva
 
 Examples:
 
-- height,
-- delivery time,
-- temperature,
-- the true conversion rate of an ad.
+height, delivery time, temperature, or the true conversion rate of an ad.
 
 Then we work with density $$p(x)$$ and probabilities over intervals:
 
@@ -97,8 +80,7 @@ $$
 
 But they say different things.
 
-- Beta$$(3,9)$$ is fairly wide: “I think $$0.25$$ is a reasonable center, but I am still open.”
-- Beta$$(30,90)$$ is much tighter: “I think $$0.25$$ is reasonable, and I am fairly confident it should stay close to that value.”
+Beta$$(3,9)$$ is fairly wide, which corresponds to saying, “I think $$0.25$$ is a reasonable center, but I am still quite open to nearby possibilities,” whereas Beta$$(30,90)$$ is much tighter and therefore corresponds to saying, “I think $$0.25$$ is reasonable, and I am fairly confident the true value should stay close to it.”
 
 ![Wide and narrow distributions]({{ site.baseurl }}/img/chapter_img/chapter02/narrow_vs_wide.png)
 
@@ -122,6 +104,8 @@ $$
 P(\theta \mid D) = \frac{P(D \mid \theta)P(\theta)}{P(D)}.
 $$
 
+Read together, these three objects define the basic rhythm of Bayesian inference: the prior states where we begin, the likelihood tells us what the data have to say, and the posterior records what remains after those two sources of information are combined coherently.
+
 ## 5. How to read the shape of a distribution
 
 ### 5.1. Center
@@ -132,8 +116,7 @@ The center tells you the most reasonable region for the quantity of interest.
 
 The width tells you how uncertain you still are.
 
-- Narrow distribution  $$\rightarrow$$ more certainty.
-- Wide distribution  $$\rightarrow$$ more uncertainty.
+A narrow distribution means greater certainty, whereas a wide distribution means greater remaining uncertainty.
 
 ### 5.3. Skewness
 
@@ -149,10 +132,7 @@ The tails tell you how much extreme risk is still on the table.
 
 Natural for quantities between 0 and 1:
 
-- success probabilities,
-- pass rates,
-- defect rates,
-- click-through rates.
+success probabilities, pass rates, defect rates, and click-through rates.
 
 ![The Beta family]({{ site.baseurl }}/img/chapter_img/chapter02/beta_distribution_family.png)
 
@@ -164,26 +144,19 @@ Natural for counting the number of successes in $$n$$ trials.
 
 Natural for counting events over time or space:
 
-- calls per hour,
-- orders per minute,
-- system failures per day.
+calls per hour, orders per minute, and system failures per day.
 
 ### 6.4. Normal
 
 Natural for continuous quantities varying around a center:
 
-- height,
-- measurement error,
-- test scores,
-- processing time.
+height, measurement error, test scores, and processing time.
 
 ## 7. Why Bayesian analysis keeps the full distribution
 
 Once you keep the full distribution, you can answer practical questions such as:
 
-- What is the probability that the conversion rate is above $$5\%$$?
-- What is a reasonable interval for the pass rate?
-- What might happen for the next 100 customers?
+what the probability is that the conversion rate is above $$5\%$$, what interval is reasonable for the pass rate, and what might happen for the next 100 customers.
 
 A single point estimate cannot answer those questions well.
 
@@ -219,10 +192,7 @@ No. Even with lots of data, distributions still matter for risk communication an
 
 **Probability distributions are the core language of Bayesian statistics.** They tell us not only which values are plausible, but also how certain we are, how much risk remains, and how future outcomes might behave.
 
-> **3 key takeaways.**
-> 1. A distribution always carries more information than a point estimate because it keeps uncertainty visible.
-> 2. Two distributions can share the same center and still imply very different levels of certainty.
-> 3. In Bayesian inference, prior, likelihood, and posterior are all distributions playing different roles.
+> **3 key takeaways.** A distribution always carries more information than a point estimate because it keeps uncertainty visible; two distributions can share the same center and still imply very different levels of certainty; and in Bayesian inference, prior, likelihood, and posterior are all distributions playing different roles.
 
 ## Practice questions
 

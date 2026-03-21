@@ -175,7 +175,115 @@ print("\n→ Different losses → different optimal actions!")
 print("=" * 70)
 ```
 
-## 3. Value of Information
+### 2.2. Ví dụ Session 6: MAP detection nhị phân
+
+Giả sử ta cần quyết định giữa hai trạng thái $$H_0$$ (an toàn) và $$H_1$$ (sự cố), với quan sát nhiễu $$x$$. Quy tắc MAP:
+
+$$
+\text{chọn }H_1 \text{ nếu } p(H_1\mid x)>p(H_0\mid x)
+\iff p(x\mid H_1)P(H_1)>p(x\mid H_0)P(H_0).
+$$
+
+Ví dụ số:
+
+- $$P(H_1)=0.2,\;P(H_0)=0.8$$
+- $$p(x\mid H_1)=0.30,\;p(x\mid H_0)=0.05$$
+
+So sánh:
+
+$$
+0.30\times0.2=0.06 \;>\; 0.05\times0.8=0.04.
+$$
+
+Nên MAP chọn $$H_1$$. Đây là dạng quyết định nhị phân xuất hiện trong phát hiện tín hiệu/cảnh báo lỗi.
+
+### 2.3. Ví dụ Session 6: quyết định cảnh báo với chi phí bất đối xứng
+
+Xét hai hành động: cảnh báo ($$a_1$$) hoặc không cảnh báo ($$a_0$$). Gọi $$q=P(H_1\mid x)$$ là xác suất hậu nghiệm có sự cố.
+
+Loss:
+
+- Báo động giả (chọn $$a_1$$ khi $$H_0$$ đúng): $$L_{FP}=5$$
+- Bỏ sót sự cố (chọn $$a_0$$ khi $$H_1$$ đúng): $$L_{FN}=40$$
+
+Expected loss:
+
+$$
+R(a_1\mid x)=L_{FP}(1-q),\qquad R(a_0\mid x)=L_{FN}q.
+$$
+
+Chọn cảnh báo khi $$R(a_1\mid x)<R(a_0\mid x)$$, tương đương:
+
+$$
+q>\frac{L_{FP}}{L_{FP}+L_{FN}}=\frac{5}{45}\approx 0.111.
+$$
+
+Nghĩa là chỉ cần posterior vượt 11.1% đã nên cảnh báo, vì chi phí bỏ sót lớn hơn nhiều chi phí báo động giả.
+
+### 2.4. Cầu nối với prior hỗn hợp từ Chapter 2
+
+Nếu prior là hỗn hợp kịch bản $$M_k$$:
+
+$$
+p(\theta)=\sum_k w_k p_k(\theta),
+$$
+
+thì sau dữ liệu:
+
+$$
+p(\theta\mid D)=\sum_k \tilde w_k p_k(\theta\mid D),
+\quad
+\tilde w_k\propto w_k p(D\mid M_k).
+$$
+
+Các trọng số hậu nghiệm $$\tilde w_k$$ chính là đầu vào cho expected loss ở bước quyết định. Tức là dữ liệu không chỉ cập nhật tham số mà còn cập nhật "độ tin" vào từng kịch bản prior.
+
+## 3. Bayesian hypothesis testing và Bayes factor
+
+### 3.1. Bayes factor là gì?
+
+Với hai giả thuyết $$H_0$$ và $$H_1$$:
+
+$$
+BF_{10}=\frac{p(D\mid H_1)}{p(D\mid H_0)}.
+$$
+
+- $$BF_{10}>1$$: dữ liệu nghiêng về $$H_1$$.
+- $$BF_{10}<1$$: dữ liệu nghiêng về $$H_0$$.
+
+Kết hợp với prior odds:
+
+$$
+\frac{P(H_1\mid D)}{P(H_0\mid D)}=BF_{10}\times\frac{P(H_1)}{P(H_0)}.
+$$
+
+### 3.2. One-sided vs two-sided trong Bayes
+
+- **One-sided**: ví dụ $$H_1: \theta>\theta_0$$, $$H_0: \theta\le\theta_0$$.
+- **Two-sided**: ví dụ $$H_1: \theta\neq\theta_0$$, $$H_0: \theta=\theta_0$$ (hoặc vùng lân cận thực dụng quanh $$\theta_0$$).
+
+Trong thực hành quyết định, one-sided thường gắn với câu hỏi hành động cụ thể ("có vượt chuẩn tối thiểu không?"). Two-sided phù hợp khi mục tiêu là phát hiện mọi sai khác theo cả hai hướng.
+
+### 3.3. Ví dụ tích hợp: posterior inference + loss + Bayes factor
+
+Giả sử từ phân tích posterior ta có:
+
+- $$P(H_1\mid D)=0.7,\;P(H_0\mid D)=0.3$$
+- Bayes factor tính được $$BF_{10}=3$$
+
+Quyết định hành động với loss bất đối xứng như mục 2.3. Nếu $$q=0.7$$ thì:
+
+$$
+R(a_1\mid D)=5(1-0.7)=1.5,
+\quad
+R(a_0\mid D)=40(0.7)=28.
+$$
+
+Nên chọn hành động cảnh báo $$a_1$$.
+
+Đây là workflow đầy đủ của Buổi 6: dữ liệu -> posterior/Bayes factor -> expected loss -> hành động.
+
+## 4. Value of Information
 
 **Question**: Should we collect more data before deciding?
 
@@ -233,7 +341,7 @@ else:
 print("=" * 70)
 ```
 
-## 4. Practical Example: A/B Testing
+## 5. Practical Example: A/B Testing
 
 ```python
 # A/B test: Which version better?
@@ -289,9 +397,10 @@ Bayesian Decision Analysis:
 
 - **Framework**: Actions + States + Loss function + Posterior
 - **Optimal action**: Minimize expected loss
+- **Bayes testing**: One-sided/two-sided framing + Bayes factor as evidence ratio
 - **Loss functions**: Squared, absolute, 0-1, custom
 - **Value of Information**: Should we collect more data?
-- **Applications**: Medical decisions, A/B testing, business
+- **Applications**: MAP detection, alarm decisions with asymmetric costs, A/B testing, business
 
 **Key insight**: Bayesian inference provides beliefs (posteriors). Decision theory tells us what to do with those beliefs!
 

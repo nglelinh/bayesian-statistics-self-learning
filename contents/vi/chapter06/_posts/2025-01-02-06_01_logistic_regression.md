@@ -67,6 +67,106 @@ $$
 2. **Transform to probability**: $$p = \text{logistic}(\eta)$$
 3. **Generate outcome**: $$y \sim \text{Bernoulli}(p)$$
 
+### 2.3. Quy tắc phân lớp Bayes từ prior-likelihood-posterior
+
+Cho lớp $$c_i$$ và đặc trưng $$x$$, xác suất hậu nghiệm lớp có dạng:
+
+$$
+P(c_i\mid x)=\frac{P(x\mid c_i)P(c_i)}{\sum_j P(x\mid c_j)P(c_j)}
+\propto P(x\mid c_i)P(c_i).
+$$
+
+Với mất mát 0-1, quy tắc phân lớp tối ưu là chọn lớp có posterior lớn nhất:
+
+$$
+\hat c(x)=\arg\max_i\;P(c_i\mid x).
+$$
+
+Điểm này là cầu nối trực tiếp từ Bayes theorem (Chapter 1-2) sang bài toán phân lớp ở Buổi 8.
+
+### 2.4. Ví dụ Session 8: prior-shift trong phân lớp trái cây
+
+Giả sử có 2 lớp: Táo ($$c_1$$) và Cam ($$c_2$$). Cùng một đặc trưng $$x$$ cho likelihood ratio:
+
+$$
+\frac{P(x\mid c_1)}{P(x\mid c_2)}=2.
+$$
+
+**Bối cảnh A** (siêu thị miền ôn đới): $$P(c_1)=0.8,\;P(c_2)=0.2$$.
+
+Khi đó posterior odds:
+
+$$
+\frac{P(c_1\mid x)}{P(c_2\mid x)}=2\times\frac{0.8}{0.2}=8.
+$$
+
+**Bối cảnh B** (chợ miền nhiệt đới): $$P(c_1)=0.2,\;P(c_2)=0.8$$.
+
+Khi đó:
+
+$$
+\frac{P(c_1\mid x)}{P(c_2\mid x)}=2\times\frac{0.2}{0.8}=0.5.
+$$
+
+Kết luận: cùng một bằng chứng cảm biến $$x$$ nhưng thay prior lớp có thể đảo quyết định phân lớp.
+
+### 2.5. Từ posterior sang decision rule tối thiểu rủi ro
+
+Khi chi phí sai khác nhau, không nên dùng ngưỡng 0.5 cố định. Với tập hành động $$a$$, chọn:
+
+$$
+a^*(x)=\arg\min_a\sum_i L(a,c_i)P(c_i\mid x).
+$$
+
+#### Ví dụ hai lớp, ba hành động (có reject)
+
+Hai trạng thái thật: $$c_1, c_2$$. Ba hành động: chọn $$c_1$$, chọn $$c_2$$, hoặc **reject** (trì hoãn để đo thêm).
+
+Loss matrix minh họa:
+
+- đúng lớp: 0,
+- nhầm lớp: 10,
+- reject: 3 (chi phí đo thêm/đợi).
+
+Giả sử posterior tại một điểm $$x$$ là $$P(c_1\mid x)=0.55,\;P(c_2\mid x)=0.45$$.
+
+Khi đó:
+
+$$
+R(a=c_1\mid x)=10\cdot 0.45=4.5,
+$$
+
+$$
+R(a=c_2\mid x)=10\cdot 0.55=5.5,
+$$
+
+$$
+R(a=\text{reject}\mid x)=3.
+$$
+
+Nên hành động tối ưu là reject vì rủi ro kỳ vọng thấp nhất. Đây là ví dụ chuẩn "two-class/three-action" của Buổi 8.
+
+### 2.6. Dạng discriminant và log-discriminant
+
+Trong thực hành, ta thường so sánh trực tiếp discriminant:
+
+$$
+g_i(x)=\log P(x\mid c_i)+\log P(c_i),
+$$
+
+và chọn lớp có $$g_i(x)$$ lớn nhất.
+
+Vì log là phép biến đổi đơn điệu, việc tối đa hóa posterior tương đương tối đa hóa log-discriminant, đồng thời ổn định số học tốt hơn khi xác suất rất nhỏ.
+
+### 2.7. Trường hợp Gaussian: biên tuyến tính hay bậc hai
+
+Nếu $$P(x\mid c_i)$$ là Gaussian đa biến:
+
+- **Covariance chung** giữa các lớp ($$\Sigma_i=\Sigma$$): biên quyết định là tuyến tính (LDA-like).
+- **Covariance khác nhau** theo lớp ($$\Sigma_i$$ khác nhau): biên quyết định là bậc hai (QDA-like).
+
+Đây là cách đọc trực quan giúp nối posterior rule với hình học biên phân lớp.
+
 ![Logistic Function Parameters](../../../img/chapter_img/chapter06/logistic_function_parameters.png)
 
 **Logistic function và parameter effects:**

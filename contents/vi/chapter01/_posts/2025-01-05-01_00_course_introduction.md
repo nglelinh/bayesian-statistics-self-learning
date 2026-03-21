@@ -127,6 +127,8 @@ Ta quay về nền tảng triết học: xác suất thực ra là gì? Tần su
 
 Ta học định lý Bayes như một quy tắc cập nhật niềm tin khi có thêm bằng chứng.
 
+Trong bài này, bạn nên chú ý ba ví dụ nền tảng của Buổi 2: xét nghiệm bệnh hiếm (VD1), điều kiện hóa theo ngữ cảnh kiểu Holmes/Watson (VD2), và cập nhật tuần tự hai xét nghiệm (VD3).
+
 ### Bài 1.4
 
 Ta đặt Bayes và Frequentist cạnh nhau để xem mỗi bên đang trả lời câu hỏi gì, mạnh ở đâu, và giới hạn ở đâu.
@@ -196,6 +198,20 @@ Nó hiệu quả khi bạn nhìn thấy một workflow thống nhất:
 - cực kỳ sư phạm,
 - nhiều ví dụ minh họa,
 - rất tốt cho việc kết nối khái niệm với diễn giải.
+
+## Thông tin môn học và đánh giá (Buổi 2)
+
+### Tài liệu tham khảo cốt lõi
+
+1. Gelman, A. et al. *Bayesian Data Analysis*.
+2. Congdon, P. *Bayesian Statistical Modelling*.
+3. Lee, P. M. *Bayesian Statistics: An Introduction*.
+
+### Cấu phần đánh giá
+
+- 20% thường kỳ
+- 30% giữa kỳ (thực hành)
+- 50% cuối kỳ (thực hành)
 
 ## Bạn không cần giỏi toán mới học được Bayes
 
