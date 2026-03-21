@@ -15,3 +15,11 @@ The Vietnamese Chapter 2 course flow SHALL explicitly present prior, likelihood,
 - **WHEN** a learner studies the Chapter 2 sequence for likelihood, prior, and posterior
 - **THEN** the learner can follow one continuous update narrative across the three concepts
 - **AND** the learner can locate at least one complete worked example that starts with a prior, incorporates observed data through likelihood, and ends with posterior interpretation
+
+### Requirement: Session 3 Example Fidelity From Image Slides
+When Session 3 examples are embedded in image-heavy slides, the Vietnamese Chapter 2 update SHALL preserve at least one recovered worked example (OCR-assisted or manually reconstructed) with explicit equations and interpretation.
+
+#### Scenario: Learner checks worked examples from Session 3-aligned content
+- **WHEN** a learner opens the revised Chapter 2 lessons
+- **THEN** the learner can find at least one worked example traceable to Session 3 slide material
+- **AND** the example includes enough numeric/algebraic detail to reproduce the update result

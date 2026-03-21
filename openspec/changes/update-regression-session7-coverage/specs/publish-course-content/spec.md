@@ -24,3 +24,11 @@ The Vietnamese Chapter 4 flow SHALL provide a concise transition from single-pre
 - **WHEN** a learner completes single-predictor regression lessons
 - **THEN** the learner can recognize the matrix-form model structure for multivariate regression
 - **AND** the learner can relate scalar intercept/slope notation to vector-matrix parameterization
+
+### Requirement: Session 7 Worked Example Fidelity
+The Vietnamese Chapter 4 update SHALL include at least one Session 7-traceable worked example (OCR-recovered when image-based) that shows prior-to-posterior updating for regression parameters with explicit posterior-summary values.
+
+#### Scenario: Learner checks regression update example in revised Chapter 4
+- **WHEN** a learner reviews worked examples in Session 7-aligned lessons
+- **THEN** the learner can find one derivation-oriented example with concrete prior assumptions and resulting posterior summaries for regression parameters
+- **AND** the learner can relate the computed posterior summaries to slope/intercept interpretation

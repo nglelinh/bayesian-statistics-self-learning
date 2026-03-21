@@ -23,3 +23,12 @@ The Vietnamese course flow SHALL connect posterior inference to decision rules t
 - **WHEN** a learner follows Session 6-aligned lessons from posterior summaries to action choice
 - **THEN** the learner can compute or interpret decision preference via expected posterior loss
 - **AND** the learner can explain how data updates mixture weights from prior to posterior in a practical example
+
+### Requirement: Session 6 Worked Example Fidelity
+The Vietnamese Session 6-aligned update SHALL include representative worked examples traceable to Session 6 slides, including a binary MAP detection decision, an asymmetric-cost alarm/action decision, and at least one mixture-prior posterior-weight update example.
+
+#### Scenario: Learner validates decision/testing examples in revised content
+- **WHEN** a learner reviews worked examples in Session 6-aligned lessons
+- **THEN** the learner can find one example where MAP selects between two hypotheses under noisy observations
+- **AND** the learner can find one example where expected-loss asymmetry changes the preferred action
+- **AND** the learner can find one example where mixture-prior weights are updated after data

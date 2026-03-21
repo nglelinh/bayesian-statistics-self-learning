@@ -23,3 +23,11 @@ The Vietnamese classification flow SHALL connect posterior decision rules to dis
 - **WHEN** a learner follows the Session 8-aligned classification section
 - **THEN** the learner can relate posterior-based rules to discriminant comparisons such as log-discriminants
 - **AND** the learner can distinguish linear-boundary and quadratic-boundary cases under Gaussian class-conditional assumptions
+
+### Requirement: Session 8 Worked Example Fidelity
+The Vietnamese Session 8 classification update SHALL include worked examples traceable to Session 8 slides, including a prior-shift classification intuition example and a two-class/three-action decision example with reject/defer option and explicit risk comparison.
+
+#### Scenario: Learner reproduces Session 8 decision examples
+- **WHEN** a learner reads the revised Session 8-aligned classification lessons
+- **THEN** the learner can find an example showing how class priors change posterior classification preference
+- **AND** the learner can find an example where action choice is based on comparing expected risks across at least three actions (including reject/defer)

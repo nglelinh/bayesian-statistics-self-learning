@@ -13090,14 +13090,15 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=bc9e0afb"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=296b8fae"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-1:-Conditional-Probability-and-Bayes'-Rule">Lab 1: Conditional Probability and Bayes' Rule<a class="anchor-link" href="#Lab-1:-Conditional-Probability-and-Bayes'-Rule">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Notebook này viết lại lời giải Lab 1 theo tinh thần “suy luận từ thông tin quan sát được”. Mỗi bài đều bắt đầu bằng việc xác định thông tin nào đã biết, đại lượng nào còn chưa biết và tại sao công thức Bayes hay xác suất có điều kiện lại là ngôn ngữ phù hợp để trả lời.</p>
+<p>Một con xúc xắc, một viên bi đỏ, một kết quả xét nghiệm dương tính. Nhìn bề ngoài, đó là những bài toán rất khác nhau. Nhưng nếu nhìn kỹ hơn, chúng đều hỏi cùng một điều: sau khi biết thêm một mẩu thông tin mới, ta phải thay đổi cách nhìn về thế giới ra sao?</p>
+<p>Lab 1 chính là nơi câu hỏi ấy được đặt ở dạng đơn giản nhất. Có lúc thông tin mới chỉ làm ta thu hẹp không gian mẫu. Có lúc nó buộc ta đi ngược từ dữ liệu quan sát được về nguyên nhân ẩn phía sau. Và chính từ những bài toán sơ cấp này, trực giác Bayesian bắt đầu hình thành.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=29f31258">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=8a4031da">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13116,14 +13117,14 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ce6d71f2"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=1e35b35b"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-lecture-connection">1. Problem framing and lecture connection<a class="anchor-link" href="#1.-Problem-framing-and-lecture-connection">¶</a></h2><p>Lab 1 là cầu nối giữa xác suất sơ cấp và tư duy Bayesian. Ở các bài xúc xắc hay hai con, dữ liệu chỉ là thông tin điều kiện làm thay đổi không gian mẫu hữu hiệu. Ở bài túi bi và xét nghiệm y khoa, công thức Bayes trở thành công cụ cập nhật niềm tin về nguyên nhân ẩn phía sau dữ liệu quan sát được.</p>
-<p>Các ý chính gắn với bài giảng gồm: xác suất có điều kiện, công thức Bayes, cập nhật tuần tự và vai trò của cách thu thập thông tin. Điểm khó nhất của lab này không nằm ở kỹ thuật tính mà nằm ở việc hiểu đúng biến cố điều kiện đang nói điều gì.</p>
+<h2 id="1.-Khi-th%C3%B4ng-tin-l%C3%A0m-%C4%91%E1%BB%95i-b%C3%A0i-to%C3%A1n">1. Khi thông tin làm đổi bài toán<a class="anchor-link" href="#1.-Khi-th%C3%B4ng-tin-l%C3%A0m-%C4%91%E1%BB%95i-b%C3%A0i-to%C3%A1n">¶</a></h2><p>Ở những bài đầu của lab, điều quan trọng không phải là những con số cuối cùng mà là cách đọc đúng biến cố điều kiện. Biết tổng hai lần tung xúc xắc bằng 7 không giống với việc biết riêng từng lần tung. Biết “ít nhất một con là nữ” không giống với việc chọn ngẫu nhiên một người con rồi phát hiện đó là nữ. Mỗi cách nhận thông tin đều tạo ra một không gian mẫu điều kiện khác nhau.</p>
+<p>Đến các bài túi bi và xét nghiệm y khoa, câu chuyện tiến thêm một bước: dữ liệu quan sát được không còn chỉ là thông tin phụ, mà trở thành dấu vết để suy ra nguyên nhân ẩn. Khi đó, công thức Bayes không còn là một công thức trang trí, mà là ngôn ngữ tự nhiên để cập nhật niềm tin từ bằng chứng.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=de195657"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d496e4eb"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2.-B%C3%A0i-1---X%C3%BAc-x%E1%BA%AFc-v%C3%A0-x%C3%A1c-su%E1%BA%A5t-c%C3%B3-%C4%91i%E1%BB%81u-ki%E1%BB%87n">2. Bài 1 - Xúc xắc và xác suất có điều kiện<a class="anchor-link" href="#2.-B%C3%A0i-1---X%C3%BAc-x%E1%BA%AFc-v%C3%A0-x%C3%A1c-su%E1%BA%A5t-c%C3%B3-%C4%91i%E1%BB%81u-ki%E1%BB%87n">¶</a></h2><h3 id="Problem-framing">Problem framing<a class="anchor-link" href="#Problem-framing">¶</a></h3><p>Ở phần (a), ta không suy luận về một tham số ẩn mà chỉ thu hẹp không gian mẫu sau khi biết biến cố điều kiện. Ở phần (b), thông tin $X+Y=7$ loại bỏ hầu hết các cặp kết quả và làm xác suất điều kiện trở thành bài toán đếm trên một tập con nhỏ hơn.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài này dạy một kỹ năng nền tảng: thông tin điều kiện không thay đổi bản chất phép thử, nhưng nó thay đổi tập kết quả còn khả dĩ. Vì vậy, xác suất điều kiện không nên được học như một công thức máy móc mà như thao tác “lọc lại” không gian mẫu sau khi biết thêm dữ liệu.</p>
@@ -13131,7 +13132,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=31c9d782"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6a0e9ba7"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 1.</strong></p>
 <ul>
@@ -13141,7 +13142,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=57c4acb7">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=142769fa">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13165,13 +13166,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c898b40a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f27c9a55"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Kết quả cho thấy $P(A\mid B)=\frac{2}{3}$ còn $P(B\mid A)=\frac{2}{3}$ trong bài này là trùng nhau do hình dạng đặc biệt của hai tập biến cố, chứ không phải là quy luật chung. Ở phần (b), khi biết $X+Y=7$ thì chỉ còn 6 cặp khả dĩ, trong đó có 2 cặp chứa số 3, nên xác suất điều kiện bằng $\frac{1}{3}$.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ee1f7efd"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f1b11f5f"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="3.-B%C3%A0i-2---T%C3%BAi-bi-v%C3%A0-Bayes-rule">3. Bài 2 - Túi bi và Bayes rule<a class="anchor-link" href="#3.-B%C3%A0i-2---T%C3%BAi-bi-v%C3%A0-Bayes-rule">¶</a></h2><p>Ta chọn ngẫu nhiên một túi rồi chọn một viên bi. Màu viên bi là dữ liệu quan sát, còn chiếc túi được chọn là nguyên nhân ẩn. Đây là bối cảnh cổ điển để dùng Bayes: posterior trả lời câu hỏi “nếu đã thấy bi đỏ thì khả năng nó đến từ túi nào là bao nhiêu?”.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài túi bi là một ví dụ Bayes mẫu mực vì nó phân tách rất rõ giữa nguyên nhân ẩn và dữ liệu quan sát. Ta không nhìn thấy chiếc túi nào đã được chọn, nhưng ta thấy màu viên bi. Công thức Bayes cho phép đi ngược từ dấu vết quan sát được về nguyên nhân có khả năng sinh ra dấu vết đó.</p>
@@ -13179,7 +13180,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0a685383"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c6274e21"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 2.</strong> Có ba túi, mỗi túi chứa $100$ viên bi. Túi 1 có $75$ đỏ và $25$ xanh, túi 2 có $60$ đỏ và $40$ xanh, túi 3 có $45$ đỏ và $55$ xanh. Chọn ngẫu nhiên một túi, rồi bốc ngẫu nhiên một viên bi từ túi đó.</p>
 <ul>
@@ -13189,7 +13190,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=764efe2a">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3106ec1e">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13206,13 +13207,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=51c1b882"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=984a10db"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Trước khi quan sát gì, mỗi túi có xác suất $\frac{1}{3}$. Sau khi thấy bi đỏ, posterior nghiêng về túi 1 vì túi này có tỷ lệ bi đỏ cao nhất. Ta thu được $P(\text{đỏ})=0.6$ và $P(\text{túi 1}\mid \text{đỏ})=\frac{5}{12}\approx 0.4167$.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=34de734f"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e4544a13"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="4.-B%C3%A0i-3---B%C3%A0i-to%C3%A1n-hai-con-v%C3%A0-c%E1%BA%A5u-tr%C3%BAc-th%C3%B4ng-tin">4. Bài 3 - Bài toán hai con và cấu trúc thông tin<a class="anchor-link" href="#4.-B%C3%A0i-3---B%C3%A0i-to%C3%A1n-hai-con-v%C3%A0-c%E1%BA%A5u-tr%C3%BAc-th%C3%B4ng-tin">¶</a></h2><p>Điểm cốt lõi của bài này là cách thông tin được cung cấp quyết định posterior. Câu “con đầu là nữ”, “có ít nhất một con là nữ” và “chọn ngẫu nhiên một người con rồi biết đó là nữ” không tạo ra cùng một không gian điều kiện.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài toán hai con nổi tiếng vì nó cho thấy posterior phụ thuộc vào cách thông tin được tạo ra và tiết lộ, chứ không chỉ phụ thuộc vào nội dung câu chữ bề mặt. Hai phát biểu nghe gần giống nhau có thể dẫn đến hai không gian mẫu điều kiện hoàn toàn khác nhau.</p>
@@ -13220,7 +13221,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5fb41333"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=d481e035"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 3.</strong> Xét gia đình có hai con với không gian mẫu giới tính $\Omega = \{(G,G),(G,B),(B,G),(B,B)\}$ và giả sử mọi khả năng là như nhau.</p>
 <ul>
@@ -13232,7 +13233,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=9bd789e2">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5bd0cf90">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13265,13 +13266,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=23ec3d7d"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2072d782"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Phần (a) cho xác suất $\frac{1}{2}$ vì khi biết con đầu là nữ, chỉ còn hai gia đình khả dĩ. Phần (b) cho $\frac{1}{3}$ vì điều kiện “ít nhất một con là nữ” vẫn giữ lại ba khả năng. Phần (c) quay lại gần $\frac{1}{2}$ vì cơ chế quan sát ngẫu nhiên ưu tiên gia đình có hai con gái. Phần (d) cho công thức $\frac{2-\alpha}{4-\alpha}$, và khi $\alpha\approx 0$ thì xác suất tiến gần $\frac{1}{2}$.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e6526cbc"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b8b4afbd"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="5.-B%C3%A0i-4---Chain-rule-v%C3%A0-l%E1%BA%A5y-m%E1%BA%ABu-kh%C3%B4ng-ho%C3%A0n-l%E1%BA%A1i">5. Bài 4 - Chain rule và lấy mẫu không hoàn lại<a class="anchor-link" href="#5.-B%C3%A0i-4---Chain-rule-v%C3%A0-l%E1%BA%A5y-m%E1%BA%ABu-kh%C3%B4ng-ho%C3%A0n-l%E1%BA%A1i">¶</a></h2><p>Công thức
 $$P(A \cap B \cap C)=P(A)P(B\mid A)P(C\mid A,B)$$
@@ -13283,7 +13284,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=53b6ba61"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4022cc0a"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 4.</strong></p>
 <ul>
@@ -13293,7 +13294,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=38154e8c">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=45601885">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13305,7 +13306,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f0e60d0c"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8caafeef"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="6.-B%C3%A0i-5---X%C3%A9t-nghi%E1%BB%87m-y-khoa-v%C3%A0-c%E1%BA%ADp-nh%E1%BA%ADt-tu%E1%BA%A7n-t%E1%BB%B1">6. Bài 5 - Xét nghiệm y khoa và cập nhật tuần tự<a class="anchor-link" href="#6.-B%C3%A0i-5---X%C3%A9t-nghi%E1%BB%87m-y-khoa-v%C3%A0-c%E1%BA%ADp-nh%E1%BA%ADt-tu%E1%BA%A7n-t%E1%BB%B1">¶</a></h2><p>Đây là ví dụ kinh điển cho sự khác biệt giữa độ chính xác của xét nghiệm và posterior cần quan tâm ở cấp cá nhân. Prior rất nhỏ vì bệnh hiếm, nên một kết quả dương tính đơn lẻ chưa đủ mạnh như直 giác thường nghĩ.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài xét nghiệm y khoa rất quan trọng vì nó chống lại một trực giác sai rất phổ biến: xét nghiệm có vẻ chính xác không đồng nghĩa với việc một cá nhân dương tính chắc chắn mắc bệnh. Prior ở mức dân số, tức tỷ lệ nền rất thấp, có thể làm posterior sau một lần dương tính vẫn còn khá khiêm tốn.</p>
@@ -13313,7 +13314,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=12f1cec6"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=fcc82d7c"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 5.</strong> Một căn bệnh có tỷ lệ mắc là $1/10000$. Xét nghiệm có: xác suất dương tính giả $2\%$ và xác suất âm tính giả $1\%$.</p>
 <ul>
@@ -13323,7 +13324,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=561e38da">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3e2e55f0">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13346,13 +13347,13 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d28921fe"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=33609655"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Mặc dù test khá chính xác, xác suất thực sự mắc bệnh sau một lần dương tính chỉ vào khoảng 0.49% vì bệnh quá hiếm. Sau khi có thêm một lần âm tính, posterior giảm xuống rất mạnh. Đây chính là Bayesian update: mỗi kết quả test mới thay đổi niềm tin trước đó.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e586aded"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=cbb52a07"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="7.-B%C3%A0i-6---Gi%E1%BA%A3i-h%E1%BB%87-%C4%91i%E1%BB%81u-ki%E1%BB%87n-x%C3%A1c-su%E1%BA%A5t">7. Bài 6 - Giải hệ điều kiện xác suất<a class="anchor-link" href="#7.-B%C3%A0i-6---Gi%E1%BA%A3i-h%E1%BB%87-%C4%91i%E1%BB%81u-ki%E1%BB%87n-x%C3%A1c-su%E1%BA%A5t">¶</a></h2><p>Ta có thể xem bài này như bài toán “khôi phục bức tranh xác suất” từ những mảnh thông tin điều kiện rời rạc. Khi đề chỉ cho một vài xác suất có điều kiện hay xác suất biên, nhiệm vụ của ta là kiểm tra xem chúng có nhất quán với nhau hay không rồi từ đó suy ra các xác suất còn thiếu.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của bài này nằm ở chỗ nhiều bài toán thực tế không cho ta toàn bộ phân phối chung ngay từ đầu. Ta thường chỉ biết một số tỷ lệ cục bộ hoặc các xác suất sau điều kiện. Việc ghép các mảnh đó lại thành một cấu trúc xác suất nhất quán là kỹ năng rất quan trọng trước khi có thể nói đến Bayes hay dự đoán.</p>
@@ -13360,13 +13361,13 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3c8f8196"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=51322271"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 6.</strong> Cho các biến cố $A,B,C$ thỏa mãn: $A,C$ độc lập; $B,C$ độc lập; $A,B$ xung khắc; $P(A+B)=2/3$, $P(B+C)=3/4$, và $P(A+B+C)=11/12$. Tính $P(A)$, $P(B)$, và $P(C)$.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=77bb85af">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3cdb01b7">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13385,7 +13386,7 @@ $$P(A_1\cap\cdots\cap A_k)=P(A_1)\prod_{j=2}^k P(A_j\mid A_1,\ldots,A_{j-1}).$$<
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=4c96c268"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=12a7a2aa"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="8.-B%C3%A0i-7---%C4%90%E1%BB%99c-l%E1%BA%ADp-c%C3%B3-%C4%91i%E1%BB%81u-ki%E1%BB%87n">8. Bài 7 - Độc lập có điều kiện<a class="anchor-link" href="#8.-B%C3%A0i-7---%C4%90%E1%BB%99c-l%E1%BA%ADp-c%C3%B3-%C4%91i%E1%BB%81u-ki%E1%BB%87n">¶</a></h2><h3 id="Ph%E1%BA%A7n-(a)">Phần (a)<a class="anchor-link" href="#Ph%E1%BA%A7n-(a)">¶</a></h3><p>Ta gọi đồng xu thứ nhất là đồng xu công bằng HT, đồng xu thứ hai là đồng xu giả HH, và $C$ là biến cố “đồng xu thứ nhất được chọn”. Khi đó:</p>
 <ul>
@@ -13409,7 +13410,7 @@ nên $A,B$ độc lập.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=294b9033"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=1399b412"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 7.</strong></p>
 <ul>
@@ -13419,13 +13420,13 @@ nên $A,B$ độc lập.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b4ecac66"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8c62adb6"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="9.-Model-criticism-and-reflection">9. Model criticism and reflection<a class="anchor-link" href="#9.-Model-criticism-and-reflection">¶</a></h2><p>Lab 1 cho thấy xác suất có điều kiện không chỉ là một công thức mà là cách mô tả luồng thông tin. Nếu mô tả thông tin đầu vào mơ hồ hoặc sai cơ chế thu thập dữ liệu, posterior sẽ sai theo. Đây là bài học Bayesian quan trọng nhất của lab: trước khi bấm máy tính, phải nói rõ ta biết điều gì và biết điều đó bằng cách nào.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3ece9507"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=426cb84f"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="10.-Conceptual-interpretation-questions">10. Conceptual interpretation questions<a class="anchor-link" href="#10.-Conceptual-interpretation-questions">¶</a></h2><ol>
 <li>Vì sao hai mệnh đề “ít nhất một con là nữ” và “chọn ngẫu nhiên một con rồi biết đó là nữ” cho hai posterior khác nhau?</li>
@@ -13436,20 +13437,20 @@ nên $A,B$ độc lập.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=dfcedf98"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=93990102"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="11.-Final-takeaway">11. Final takeaway<a class="anchor-link" href="#11.-Final-takeaway">¶</a></h2><p>Tất cả các bài trong Lab 1 đều xoay quanh cùng một ý tưởng: dữ liệu không tự nói lên xác suất, mà phải được đọc thông qua không gian mẫu và cơ chế sinh dữ liệu. Công thức Bayes chỉ là cách viết gọn của quá trình cập nhật này.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=525181e0"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=aa925333"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="12.-Lecture-references">12. Lecture references<a class="anchor-link" href="#12.-Lecture-references">¶</a></h2><p>Để nối lời giải này với phần lý thuyết trong course, nên đọc lại các lecture sau:</p>
+<h2 id="12.-Lecture-references">12. Lecture references<a class="anchor-link" href="#12.-Lecture-references">¶</a></h2><p>Nếu muốn quay lại đúng phần lý thuyết cho từng cụm bài trong Lab 1, nên đọc lại các lecture sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_01_probability_basics.md">Bài 0.1: Nền tảng Xác suất - Ngôn ngữ của Sự Không chắc chắn</a>: ôn lại không gian mẫu, biến cố và xác suất có điều kiện cho các bài xúc xắc và hai con.</li>
-<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_02_probability_as_plausibility.md">Bài 1.2: Xác suất như Độ hợp lý - Nền tảng Triết học của Bayesian</a>: củng cố cách đọc xác suất như mức độ hợp lý khi thông tin quan sát thay đổi.</li>
-<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_03_bayes_theorem_posterior.md">Bài 1.3: Định lý Bayes - Công cụ Cập nhật Niềm tin</a>: là lecture trực tiếp nhất cho bài túi bi, xét nghiệm y khoa và cập nhật niềm tin bằng Bayes.</li>
-<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_04_bayesian_vs_frequentist.md">Bài 1.4: Bayesian vs Frequentist - So Sánh và Lựa Chọn</a>: giúp phân biệt bài toán cập nhật niềm tin với cách đọc xác suất thuần tần suất.</li>
+<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_01_probability_basics.md">Bài 0.1: Nền tảng Xác suất - Ngôn ngữ của Sự Không chắc chắn</a>: <strong>Bài 1</strong> và <strong>Bài 4</strong>: đọc lại cách xác định không gian mẫu, biến cố và xác suất có điều kiện để thấy vì sao biết $B$ hay biết $X+Y=7$ làm đổi bài toán đếm.</li>
+<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_02_probability_as_plausibility.md">Bài 1.2: Xác suất như Độ hợp lý - Nền tảng Triết học của Bayesian</a>: <strong>Bài 3</strong> và <strong>Bài 7</strong>: đọc lại ý “xác suất phụ thuộc vào thông tin đang có” để hiểu vì sao hai phát biểu nghe gần giống nhau vẫn cho posterior khác nhau, và vì sao độc lập có điều kiện phải gắn với biến ẩn.</li>
+<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_03_bayes_theorem_posterior.md">Bài 1.3: Định lý Bayes - Công cụ Cập nhật Niềm tin</a>: <strong>Bài 2</strong> và <strong>Bài 5</strong>: đọc lại sơ đồ prior-likelihood-posterior để thấy cách đi từ viên bi đỏ hoặc kết quả xét nghiệm về nguyên nhân ẩn phía sau dữ liệu.</li>
+<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_04_bayesian_vs_frequentist.md">Bài 1.4: Bayesian vs Frequentist - So Sánh và Lựa Chọn</a>: <strong>Bài 5</strong> và <strong>Bài 6</strong>: đặc biệt cần khi dễ nhầm giữa tỷ lệ nền của quần thể với xác suất hậu nghiệm cho một cá nhân hay một giả thuyết cụ thể.</li>
 </ul>
 </div>
 </div>

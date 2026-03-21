@@ -13090,14 +13090,15 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5961e654"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=24d42a52"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-2:-Simulation-and-Bayesian-Updating">Lab 2: Simulation and Bayesian Updating<a class="anchor-link" href="#Lab-2:-Simulation-and-Bayesian-Updating">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Lab 2 chuyển từ xác suất giải tích sang kết hợp giữa công thức và mô phỏng. Điểm quan trọng không phải là “mô phỏng thay thế toán”, mà là mô phỏng giúp kiểm tra trực giác và nhìn thấy xác suất hội tụ khi số lần lặp tăng lên.</p>
+<p>Một game show với nhiều cánh cửa, một chuỗi xét nghiệm COVID, một bài toán bốc bi hay một ván bài quá nhiều trường hợp để đếm tay. Từ lab này trở đi, xác suất không còn chỉ nằm trên giấy. Ta bắt đầu dùng mô phỏng như một cách nhìn trực tiếp vào cơ chế sinh dữ liệu.</p>
+<p>Điểm đáng học ở đây là mô phỏng không thay thế lập luận xác suất. Ngược lại, nó buộc ta mô tả cơ chế của bài toán cho thật đúng. Nếu mô tả sai cách dữ liệu được tạo ra, mô phỏng càng chạy nhiều chỉ càng xác nhận một trực giác sai.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=9c599096">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=bbece708">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13116,13 +13117,14 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=51994eec"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=58889baf"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-lecture-connection">1. Problem framing and lecture connection<a class="anchor-link" href="#1.-Problem-framing-and-lecture-connection">¶</a></h2><p>Lab này gắn với ba chủ điểm: Bayes rule trong Monty Hall và xét nghiệm COVID, xác suất tổ hợp trong bài bốc bi và TOEIC, và simulation như một công cụ kiểm tra. Cách đọc Bayesian ở đây là luôn hỏi: thông tin nào đã được hé lộ, và nó thay đổi niềm tin của ta về trạng thái ẩn ra sao?</p>
+<h2 id="1.-T%E1%BB%AB-c%C3%B4ng-th%E1%BB%A9c-sang-m%C3%B4-ph%E1%BB%8Fng">1. Từ công thức sang mô phỏng<a class="anchor-link" href="#1.-T%E1%BB%AB-c%C3%B4ng-th%E1%BB%A9c-sang-m%C3%B4-ph%E1%BB%8Fng">¶</a></h2><p>Lab này xoay quanh những bài toán mà cơ chế sinh dữ liệu giữ vai trò quyết định. Trong Monty Hall, hành vi của người dẫn chương trình là một phần của mô hình. Trong bài bốc bi, sự khác nhau giữa “có hoàn lại” và “không hoàn lại” làm đổi hẳn cấu trúc xác suất. Trong chuỗi xét nghiệm COVID, niềm tin không được cập nhật một lần, mà dịch chuyển sau từng kết quả mới.</p>
+<p>Chính vì thế, mô phỏng xuất hiện như một người bạn đồng hành của công thức. Nó không làm bài toán dễ đi bằng mẹo, mà giúp ta kiểm tra xem mình đã mô tả đúng câu chuyện xác suất hay chưa. Khi công thức và mô phỏng cùng chỉ về một kết quả, trực giác của ta trở nên vững hơn rất nhiều.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=906eb529"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4dfbf63a"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2.-Task-1---Monty-Hall-v%E1%BB%9Bi-3-c%E1%BB%ADa-v%C3%A0-v%E1%BB%9Bi-$n$-c%E1%BB%ADa">2. Task 1 - Monty Hall với 3 cửa và với $n$ cửa<a class="anchor-link" href="#2.-Task-1---Monty-Hall-v%E1%BB%9Bi-3-c%E1%BB%ADa-v%C3%A0-v%E1%BB%9Bi-$n$-c%E1%BB%ADa">¶</a></h2><p>Người dẫn chương trình không mở cửa ngẫu nhiên mà mở có điều kiện trên vị trí xe. Chính điều kiện đó làm posterior nghiêng về phương án đổi cửa.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Monty Hall là bài tập hoàn hảo để thấy dữ liệu chỉ có ý nghĩa khi gắn với cơ chế sinh dữ liệu. Người dẫn chương trình không mở cửa ngẫu nhiên; ông ta hành động có điều kiện theo vị trí xe. Chính sự phụ thuộc đó tạo ra lợi thế của chiến lược đổi cửa.</p>
@@ -13130,13 +13132,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d5f46ea6"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6b1edadf"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Monty Hall problem.</strong> Có 3 cửa chứa 1 xe và 2 con dê. Người chơi chọn một cửa, người dẫn biết vị trí xe nên chỉ mở một cửa có dê, rồi cho người chơi quyền đổi sang cửa còn lại. Hãy phân tích xác suất thắng nếu giữ nguyên hay đổi cửa. Sau đó mở rộng bài toán khi số cánh cửa là $n$ bất kỳ.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=f7f97310">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=48272a75">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13175,13 +13177,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c4d30ab5"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=975db538"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Với 3 cửa, xác suất thắng khi đổi là $\frac{2}{3}$. Với $n$ cửa, xác suất này trở thành $\frac{n-1}{n}$ vì xác suất chọn sai ngay từ đầu là rất lớn, còn người dẫn lại dồn toàn bộ xác suất đó vào một cửa còn lại. Simulation chỉ đóng vai trò xác nhận kết quả lý thuyết.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=97e36699"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4319f5fd"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="3.-Task-2---B%E1%BB%91c-10-vi%C3%AAn-bi-v%C3%A0-x%C3%A1c-su%E1%BA%A5t-%C4%91%C3%BAng-5-%C4%91%E1%BB%8F">3. Task 2 - Bốc 10 viên bi và xác suất đúng 5 đỏ<a class="anchor-link" href="#3.-Task-2---B%E1%BB%91c-10-vi%C3%AAn-bi-v%C3%A0-x%C3%A1c-su%E1%BA%A5t-%C4%91%C3%BAng-5-%C4%91%E1%BB%8F">¶</a></h2><p>Ta so sánh hai cơ chế sinh dữ liệu khác nhau: có hoàn lại và không hoàn lại. Dù cùng hỏi “đúng 5 bi đỏ”, hai mô hình xác suất khác nhau vì sự phụ thuộc giữa các lượt bốc khác nhau.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài này dạy một phân biệt then chốt trong xác suất: cùng một câu hỏi đếm có thể cho hai đáp án khác nhau chỉ vì cơ chế lấy mẫu khác nhau. “Có hoàn lại” tạo ra các lượt bốc độc lập, còn “không hoàn lại” tạo ra phụ thuộc âm giữa các lượt.</p>
@@ -13189,13 +13191,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=40b17b59"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=df944b0d"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài toán bốc bi.</strong> Trong hộp có $8$ bi đỏ và $12$ bi đen. Bốc ngẫu nhiên $10$ viên. Tính xác suất bốc được đúng $5$ bi đỏ trong hai trường hợp: có hoàn lại và không hoàn lại.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=39931993">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=bd7dd0ed">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13224,7 +13226,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=9a3a25c8"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=154988a6"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="4.-Task-3---TOEIC-improvement-v%C3%A0-s%E1%BA%A3n-ph%E1%BA%A9m-h%E1%BB%8Fng-%E1%BB%9F-l%C6%B0%E1%BB%A3t-th%E1%BB%A9-10">4. Task 3 - TOEIC improvement và sản phẩm hỏng ở lượt thứ 10<a class="anchor-link" href="#4.-Task-3---TOEIC-improvement-v%C3%A0-s%E1%BA%A3n-ph%E1%BA%A9m-h%E1%BB%8Fng-%E1%BB%9F-l%C6%B0%E1%BB%A3t-th%E1%BB%A9-10">¶</a></h2><p>Task này gom hai bài nhỏ nhưng rất có giá trị vì chúng rèn cho người học thói quen nhận ra cấu trúc đơn giản ẩn sau một đề bài có vẻ dài dòng. Bài TOEIC thực chất là bài đếm có điều kiện trên một không gian điểm số rời rạc, còn bài sản phẩm hỏng ở lượt thứ 10 lại là bài đối xứng vị trí.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của cặp bài này là nhắc ta không phải lúc nào bài toán xác suất cũng cần machinery nặng. Nhiều khi điều quan trọng nhất là nhận ra đâu là không gian mẫu, đâu là điều kiện đang áp dụng, và khi nào có thể dùng đối xứng để rút gọn lập luận.</p>
@@ -13232,7 +13234,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=479d3a0b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=1d39e79c"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Hai bài nhỏ ở phần này là:</p>
 <ul>
@@ -13242,7 +13244,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=9a67c338">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=d257283a">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13259,13 +13261,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ec70d0f0"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7d0cd5e0"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Bài TOEIC là một ví dụ đếm có điều kiện trên không gian điểm số rời rạc. Bài sản phẩm hỏng ở lượt thứ 10 lại là bài đối xứng: trước khi nhìn thứ tự, mỗi vị trí trong 10 lượt bốc đều có cùng xác suất chứa một sản phẩm hỏng, nên xác suất ở lượt thứ 10 đúng bằng tỷ lệ hàng hỏng chung là 1%.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=548d6638"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5c36edf2"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="5.-Task-4---Sequential-Bayesian-update-cho-x%C3%A9t-nghi%E1%BB%87m-COVID">5. Task 4 - Sequential Bayesian update cho xét nghiệm COVID<a class="anchor-link" href="#5.-Task-4---Sequential-Bayesian-update-cho-x%C3%A9t-nghi%E1%BB%87m-COVID">¶</a></h2><p>Task này cho thấy cập nhật Bayes không phải là một phép tính một lần rồi xong. Khi dữ liệu đến theo chuỗi, posterior sau bước trước trở thành prior cho bước sau, và toàn bộ quá trình hình thành một đường đi của niềm tin qua thời gian.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa lớn nhất của bài là giúp sinh viên thấy bằng chứng có thể kéo niềm tin theo nhiều hướng khác nhau. Một vài kết quả dương tính đầu có thể đẩy posterior lên rất cao, nhưng các kết quả âm tính sau đó vẫn có thể kéo nó xuống lại nếu xét nghiệm đủ đáng tin.</p>
@@ -13273,7 +13275,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3059c72c"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e223cdcb"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài toán COVID và cập nhật tuần tự.</strong> Xác suất mắc bệnh ban đầu là $0.1$. Xét nghiệm có sai lầm loại I là $0.02$ và loại II là $0.03$. Một người làm 10 xét nghiệm với chuỗi kết quả
 $$+, +, -, +, -, -, +, -, -, -$$
@@ -13281,7 +13283,7 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=ab033ad1">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=e2d7cd05">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13315,7 +13317,7 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d89dd73e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=174a98b7"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="6.-Task-5---X%E1%BA%A1-th%E1%BB%A7,-simulation-l%C3%A1-b%C3%A0i-v%C3%A0-b%C3%A0i-to%C3%A1n-m%E1%BB%9F-r%E1%BB%99ng">6. Task 5 - Xạ thủ, simulation lá bài và bài toán mở rộng<a class="anchor-link" href="#6.-Task-5---X%E1%BA%A1-th%E1%BB%A7,-simulation-l%C3%A1-b%C3%A0i-v%C3%A0-b%C3%A0i-to%C3%A1n-m%E1%BB%9F-r%E1%BB%99ng">¶</a></h2><p>Task cuối cùng gom các bài mà cấu trúc xác suất không còn đồng nhất: có bài cần tách trường hợp, có bài dùng công thức tổng quát cho nhiều xạ thủ, và có bài nên dùng simulation vì không gian mẫu quá lớn để đếm tay tiện lợi.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của nhóm bài này là mở rộng “hộp đồ nghề” của người học. Không phải bài nào cũng giải bằng một công thức kinh điển duy nhất; đôi khi ta phải tổ chức lại bài toán thành các hàm xác suất nhỏ, đôi khi phải dựa vào mô phỏng để kiểm tra trực giác.</p>
@@ -13323,7 +13325,7 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=75e4ce39"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b1cdeb09"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Phần này gộp ba yêu cầu từ lab gốc:</p>
 <ul>
@@ -13334,7 +13336,7 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=3797ef68">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=963ab0a5">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13371,13 +13373,13 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b268de1e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6b9a0536"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="7.-Model-criticism-and-reflection">7. Model criticism and reflection<a class="anchor-link" href="#7.-Model-criticism-and-reflection">¶</a></h2><p>Simulation rất mạnh nhưng không miễn cho ta khỏi phải nghĩ về mô hình. Nếu hàm mô phỏng Monty Hall mở cửa sai quy tắc, kết quả sẽ lệch. Nếu bài sản phẩm hỏng bị hiểu nhầm là “bốc độc lập” thay vì “không hoàn lại”, xác suất cũng đổi hẳn. Vì vậy, mô phỏng tốt luôn bắt đầu từ một mô tả sinh dữ liệu chính xác.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e385ec5a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a59c974b"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="8.-Conceptual-interpretation-questions">8. Conceptual interpretation questions<a class="anchor-link" href="#8.-Conceptual-interpretation-questions">¶</a></h2><ol>
 <li>Vì sao trong Monty Hall, hành vi của người dẫn chương trình là phần quan trọng nhất của mô hình?</li>
@@ -13388,20 +13390,21 @@ Hãy thiết lập công thức và theo dõi dãy xác suất mắc bệnh củ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f5fd55b9"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=bb13a4c1"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="9.-Final-takeaway">9. Final takeaway<a class="anchor-link" href="#9.-Final-takeaway">¶</a></h2><p>Lab 2 cho thấy công thức và simulation không đối lập nhau. Công thức cho ta cơ chế, còn simulation cho ta cách kiểm tra trực giác và nhìn rõ hậu quả của từng giả định sinh dữ liệu.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5540085e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=50257441"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Các lecture dưới đây sẽ giúp nối phần mô phỏng và cập nhật Bayes của lab này với giáo trình:</p>
+<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Nếu muốn dùng course để tự gỡ từng cụm bài trong Lab 2, nên đọc lại các lecture sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_03_bayes_theorem_posterior.md">Bài 1.3: Định lý Bayes - Công cụ Cập nhật Niềm tin</a>: đọc lại Bayes rule cho Monty Hall, xét nghiệm COVID và các bài cập nhật tuần tự.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: rất hữu ích khi xác định dữ liệu nào là bằng chứng và cơ chế sinh dữ liệu nào tạo ra nó.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: nối trực tiếp với ý tưởng prior kết hợp cùng dữ liệu để cho ra posterior.</li>
-<li><a href="../../contents/vi/chapter03/_posts/2025-01-02-03_01_sampling_monte_carlo.md">Bài 3.1: Từ Tích phân Khó đến Sampling - Nền tảng Monte Carlo</a>: giúp hiểu simulation là công cụ kiểm tra trực giác và xấp xỉ xác suất, không phải mẹo tính riêng lẻ.</li>
+<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_01_probability_basics.md">Bài 0.1: Nền tảng Xác suất - Ngôn ngữ của Sự Không chắc chắn</a>: <strong>Task 2</strong> và <strong>Task 3</strong>: đọc lại phần tổ hợp, xác suất có điều kiện và đối xứng để phân biệt rõ bốc có hoàn lại, không hoàn lại, và các bài đếm theo vị trí.</li>
+<li><a href="../../contents/vi/chapter01/_posts/2025-01-02-01_03_bayes_theorem_posterior.md">Bài 1.3: Định lý Bayes - Công cụ Cập nhật Niềm tin</a>: <strong>Task 1</strong> và <strong>Task 4</strong>: đọc lại cách dữ liệu mới làm đổi xác suất của trạng thái ẩn, đặc biệt hữu ích cho Monty Hall và chuỗi xét nghiệm COVID.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: <strong>Task 1</strong>, <strong>Task 2</strong> và <strong>Task 4</strong>: đọc lại ý “cơ chế sinh dữ liệu là một phần của mô hình” để không mô phỏng sai cách người dẫn mở cửa hay sai kiểu bốc bi.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: <strong>Task 4</strong>: đọc lại cách lấy posterior sau mỗi lần quan sát và dùng posterior hiện tại làm prior cho bước kế tiếp.</li>
+<li><a href="../../contents/vi/chapter03/_posts/2025-01-02-03_01_sampling_monte_carlo.md">Bài 3.1: Từ Tích phân Khó đến Sampling - Nền tảng Monte Carlo</a>: <strong>Task 1</strong> và <strong>Task 5</strong>: đọc lại khi muốn hiểu simulation đang kiểm tra trực giác gì, hội tụ về đâu, và vì sao cần mô tả đúng cơ chế trước khi chạy mô phỏng.</li>
 </ul>
 </div>
 </div>

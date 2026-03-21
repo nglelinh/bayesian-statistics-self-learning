@@ -2,9 +2,7 @@
 
 ## Purpose
 Describe how the Jekyll site renders bilingual content, preserves older links, and deploys the course to GitHub Pages.
-
 ## Requirements
-
 ### Requirement: Multilingual Jekyll Configuration
 The site SHALL build as a Jekyll project configured for `en` and `vi`, SHALL use `en` as the default language, and SHALL keep site URLs compatible with the configured `baseurl`.
 
@@ -48,3 +46,17 @@ The repository SHALL build and deploy the Jekyll site through `.github/workflows
 - **THEN** GitHub Actions builds the site with `bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"`
 - **AND** the workflow uploads the built Pages artifact
 - **AND** the deploy job publishes that artifact to GitHub Pages
+
+### Requirement: Active Curriculum Navigation
+The site SHALL expose only active curriculum chapters in global navigation and chapter-to-chapter calls to action, and active pages SHALL not surface links into retired chapter URLs.
+
+#### Scenario: Render sidebar navigation after a chapter retirement
+- **WHEN** the site builds navigation after Chapter 11 has been retired
+- **THEN** the sidebar chapter list excludes Chapter 11
+- **AND** the remaining active chapters continue to render in order
+
+#### Scenario: Render chapter-level next-step cues after a chapter retirement
+- **WHEN** a learner finishes the final active lecture chapter
+- **THEN** the page does not point to a retired Chapter 11 URL
+- **AND** any next-step cue points to the remaining active learning path or ends the lecture sequence cleanly
+

@@ -6,6 +6,7 @@ Session 3 source material (`materials/buoi 3 - tien nghiem, hau nghiem.pptx`) co
 - Add missing Session 3 concepts (if any) into Chapter 2 with motivation-first explanations and consistent Bayes notation.
 - Ensure the Chapter 2 flow clearly connects `likelihood -> prior -> posterior` as a single update narrative, not only separate lesson fragments.
 - Add or refine worked examples (especially one end-to-end update example) when the audit finds missing continuity from Session 3.
+- Add OCR-backed example fidelity checks for image-heavy Session 3 slides, and preserve at least one recovered worked example in course content when relevant to Bayes prerequisites and update flow.
 
 ## Impact
 - Affected specs: `publish-course-content`

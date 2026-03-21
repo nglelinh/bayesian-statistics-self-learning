@@ -144,4 +144,4 @@ Thứ ba, **residual plot** hay posterior predictive check không phải thủ t
 
 **🎉 CHAPTER 10 COMPLETE!**
 
-*Chương tiếp theo: [Chapter 11: Advanced Topics](/vi/chapter11/)*
+*Tiếp theo, bạn có thể chuyển sang [Chapter 12: Labs Thực Hành Bayesian](/vi/chapter12/) để luyện lại toàn bộ workflow qua notebook và bài giải chi tiết.*

@@ -7,6 +7,10 @@ The source slide deck for Session 2 (`materials/buoi 2 - gioi thieu ve Bayesian.
 - Add missing instructional coverage for:
   - conditional probability and total-probability recap used by Bayes theorem,
   - confusion matrix interpretation (sensitivity, specificity, false positive context) tied to Bayes diagnostic reasoning,
+  - explicit worked examples from Session 2 slides:
+    - VD1 rare-disease diagnostic update with full numeric Bayes calculation,
+    - VD2 Holmes/Watson icy-road conditional update example,
+    - VD3 two-test sequential posterior update example,
   - explicit Session 2 course logistics details (core references and grading split) on the course introduction page.
 - Keep links and assets `{{ site.baseurl }}` compatible and preserve existing front matter conventions.
 

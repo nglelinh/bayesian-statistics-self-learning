@@ -2,9 +2,7 @@
 
 ## Purpose
 Describe how the repository provides exercises, labs, and generated lab lesson pages that support hands-on Bayesian practice.
-
 ## Requirements
-
 ### Requirement: Chapter Exercise Notebooks
 The repository SHALL provide chapter-aligned exercise notebooks in `exercises/`, and each exercise notebook SHALL follow the `ChapterXX_<Topic>_Exercises.ipynb` naming convention.
 
@@ -35,3 +33,12 @@ Running `python scripts/generate_lab_chapter.py` SHALL match numbered lab prompt
 - **WHEN** a prompt notebook or solution notebook is missing for a discovered lab number
 - **THEN** the script exits with a mismatch error
 - **AND** it does not silently generate a partial Chapter 12 set
+
+### Requirement: Practice References Align With Active Curriculum
+Practice notebooks and tracked exported lab HTML SHALL not reference retired chapter URLs from the active course.
+
+#### Scenario: Update practice references after a chapter retirement
+- **WHEN** a chapter such as Chapter 11 is retired
+- **THEN** lab notebooks and tracked generated exports no longer link learners to that retired chapter
+- **AND** any replacement references point to active lessons or use neutral wording without a retired URL
+

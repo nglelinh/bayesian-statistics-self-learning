@@ -13090,10 +13090,11 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=12f66e89"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2a808b15"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-3:-Bayesian-Analysis-&amp;-Continuous-Distributions">Lab 3: Bayesian Analysis &amp; Continuous Distributions<a class="anchor-link" href="#Lab-3:-Bayesian-Analysis-&amp;-Continuous-Distributions">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Notebook này viết lại lời giải cho Lab 3 theo hướng nhấn mạnh câu chuyện sinh dữ liệu, các giả định xác suất, cách diễn giải bất định và những chỗ cần sửa so với đề gốc. Mục tiêu không chỉ là ra đáp số mà còn là hiểu vì sao mỗi mô hình lại hợp lý trong từng bối cảnh.</p>
+<p>Một chiếc hộp kín đặt trước mặt ta. Bên trong có 10 viên bi, nhưng ta chưa biết có bao nhiêu viên đỏ. Mỗi lần bốc ra một viên là một lần thế giới hé lộ thêm một chút, và niềm tin của ta buộc phải thay đổi theo. Từ tình huống rất cụ thể ấy, Lab 3 mở dần ra những câu hỏi rộng hơn: nếu điều chưa biết không còn là một số đếm rời rạc mà là tuổi thọ của linh kiện, chiều cao của sinh viên, hay một đại lượng liên tục nói chung, thì ta phải mô tả bất định bằng cách nào?</p>
+<p>Điểm thú vị của lab này là mọi bài đều xoay quanh cùng một công việc: đọc dữ liệu trong đúng bối cảnh sinh ra nó. Có bài yêu cầu cập nhật niềm tin từng bước. Có bài yêu cầu chọn đúng phân phối để mô tả thời gian chờ. Có bài lại nhắc rằng trước khi tính bất cứ thứ gì, ta phải kiểm tra xem hàm đang xét có thật sự là một mật độ xác suất hợp lệ hay không.</p>
 </div>
 </div>
 </div>
@@ -13119,30 +13120,22 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e55d397e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-data-generating-story">1. Problem framing and data-generating story<a class="anchor-link" href="#1.-Problem-framing-and-data-generating-story">¶</a></h2><p>Lab 3 nối hai mạch ý tưởng tưởng như tách rời nhưng thật ra rất gần nhau. Ở Bài 1, ta chưa biết thành phần của chiếc hộp bi và phải cập nhật niềm tin sau khi quan sát dần từng viên bi. Đây là bài toán Bayes rời rạc: trạng thái chưa biết là số bi đỏ $k$, dữ liệu là chuỗi màu thu được, và bất định nằm ở chỗ trước khi mở hộp ta chưa biết hộp thiên về đỏ hay xanh. Ở Bài 2 đến Bài 4, đối tượng quan tâm là những đại lượng liên tục như tuổi thọ linh kiện hay chiều cao sinh viên. Khi đó, xác suất không còn gắn với từng điểm riêng lẻ mà gắn với khoảng giá trị và diện tích dưới mật độ.</p>
-<p>Hai phần cuối của đề lab chuyển sang kiểm tra xem một hàm có thật sự là mật độ xác suất hay không. Về mặt Bayesian, những bài này rất quan trọng vì nhiều tiên nghiệm và likelihood liên tục chỉ hợp lệ sau khi được chuẩn hóa đúng. Vì vậy, thay vì xem đây là các bài tính tích phân rời rạc, ta sẽ đọc chúng như những bài học về cách xây dựng một mô hình xác suất hợp lệ.</p>
+<h2 id="1.-T%E1%BB%AB-chi%E1%BA%BFc-h%E1%BB%99p-k%C3%ADn-%C4%91%E1%BA%BFn-nh%E1%BB%AFng-%C4%91%E1%BA%A1i-l%C6%B0%E1%BB%A3ng-li%C3%AAn-t%E1%BB%A5c">1. Từ chiếc hộp kín đến những đại lượng liên tục<a class="anchor-link" href="#1.-T%E1%BB%AB-chi%E1%BA%BFc-h%E1%BB%99p-k%C3%ADn-%C4%91%E1%BA%BFn-nh%E1%BB%AFng-%C4%91%E1%BA%A1i-l%C6%B0%E1%BB%A3ng-li%C3%AAn-t%E1%BB%A5c">¶</a></h2><p>Bài đầu tiên của lab là một bài Bayes rất “thật tay”: ta không biết cấu trúc bên trong chiếc hộp, và chỉ có thể học dần từ chuỗi quan sát khi bốc từng viên bi không hoàn lại. Ở đây, điều chưa biết là một trạng thái rời rạc của thế giới, còn dữ liệu đến theo thứ tự thời gian. Vì vậy, posterior không phải một thứ xuất hiện đột ngột ở cuối bài, mà là thứ dịch chuyển sau từng lần nhìn thấy đỏ hay xanh.</p>
+<p>Nhưng rồi câu chuyện đổi nhịp. Sang các bài tiếp theo, điều chưa biết không còn là số bi đỏ nữa mà là những đại lượng liên tục như tuổi thọ hay chiều cao. Lúc này, ta không còn đếm các khả năng hữu hạn, mà phải làm quen với mật độ, hàm phân phối tích lũy, kỳ vọng và phương sai như những công cụ để mô tả một không gian khả năng liên tục hơn nhiều.</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=50669ff7"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="2.-Connection-to-lecture-material">2. Connection to lecture material<a class="anchor-link" href="#2.-Connection-to-lecture-material">¶</a></h2><p>Lab này gắn trực tiếp với ba cụm kiến thức trong giáo trình.</p>
-<ol>
-<li><p>Thứ nhất là Bayes rời rạc: prior, likelihood và posterior được dùng ở Bài 1 để cập nhật niềm tin về số bi đỏ trong hộp khi quan sát dữ liệu không hoàn lại.</p>
-</li>
-<li><p>Thứ hai là các phân phối liên tục cơ bản như Exponential và Normal, vốn xuất hiện ở Bài 2, Bài 3 và Bài 4 để mô tả thời gian chờ và các đại lượng đo lường.</p>
-</li>
-<li><p>Thứ ba là tư duy về mật độ xác suất hợp lệ, rất cần cho việc hiểu tại sao một hàm liên tục có thể đóng vai trò tiên nghiệm hay likelihood trong mô hình Bayes.</p>
-</li>
-</ol>
-<p>Một sinh viên đã học tốt phần prior-likelihood-posterior, ý nghĩa của tham số phân phối mũ và phân phối chuẩn, cùng với cách tính xác suất từ CDF/PDF sẽ theo được lab này khá tự nhiên.</p>
+<h2 id="2.-Khi-x%C3%A1c-su%E1%BA%A5t-kh%C3%B4ng-c%C3%B2n-l%C3%A0-b%C3%A0i-to%C3%A1n-%C4%91%E1%BA%BFm">2. Khi xác suất không còn là bài toán đếm<a class="anchor-link" href="#2.-Khi-x%C3%A1c-su%E1%BA%A5t-kh%C3%B4ng-c%C3%B2n-l%C3%A0-b%C3%A0i-to%C3%A1n-%C4%91%E1%BA%BFm">¶</a></h2><p>Ở phần biến liên tục, một thay đổi rất quan trọng xảy ra: xác suất không còn gắn với từng giá trị riêng lẻ mà gắn với khoảng giá trị. Ta không hỏi “biến này bằng đúng bao nhiêu” theo kiểu đếm trường hợp nữa, mà hỏi nó rơi vào khoảng nào, kỳ vọng ở đâu, biến thiên mạnh đến mức nào, và giả định phân phối ta đang dùng có nói điều gì hợp lý về thế giới thật hay không.</p>
+<p>Chính vì thế, Bài 2 đến Bài 4 không nên được đọc như những bài thay số vào công thức của Exponential hay Normal. Chúng là những bài tập về cách gắn một mô hình xác suất vào một hiện tượng thực tế. Nếu chọn phân phối mũ, ta đang nói điều gì về rủi ro hỏng theo thời gian? Nếu chọn phân phối chuẩn cho chiều cao, ta đang chấp nhận kiểu đối xứng và mức độ dao động nào trong quần thể?</p>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=abed7efb"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Suggested-improvement-to-lecture-notes">Suggested improvement to lecture notes<a class="anchor-link" href="#Suggested-improvement-to-lecture-notes">¶</a></h2><p>Phần bài giảng hỗ trợ cho lab này nên bổ sung một đoạn nối rõ hơn giữa Bayes rời rạc và mô hình liên tục. Cụ thể, sinh viên thường biết công thức Bayes nhưng chưa thấy rõ vì sao ở bài bi trong hộp ta có thể cập nhật tuần tự từng lượt bốc, còn ở bài mật độ liên tục ta phải kiểm tra điều kiện chuẩn hóa trước khi bàn đến kỳ vọng hay phương sai.</p>
-<p>Một cải thiện ngắn nhưng rất hữu ích là thêm một tiểu mục mang tên “Từ trạng thái ẩn rời rạc đến tham số liên tục”. Tiểu mục này nên giải thích rằng trong cả hai trường hợp ta đều đang suy luận về một đại lượng chưa biết từ dữ liệu quan sát được; khác biệt chỉ nằm ở chỗ không gian tham số là hữu hạn hay liên tục. Khi trình bày như vậy, sinh viên sẽ bớt xem các bài tích phân là kỹ thuật thuần túy và nhìn chúng như nền tảng của mô hình Bayes.</p>
+<h3 id="M%E1%BB%99t-l%C6%B0u-%C3%BD-quan-tr%E1%BB%8Dng-tr%C6%B0%E1%BB%9Bc-khi-t%C3%ADnh-to%C3%A1n">Một lưu ý quan trọng trước khi tính toán<a class="anchor-link" href="#M%E1%BB%99t-l%C6%B0u-%C3%BD-quan-tr%E1%BB%8Dng-tr%C6%B0%E1%BB%9Bc-khi-t%C3%ADnh-to%C3%A1n">¶</a></h3><p>Hai bài cuối của lab đóng vai trò như một lời nhắc rất mạnh: không phải hàm nào trông giống mật độ cũng thật sự là mật độ. Trước khi nói đến kỳ vọng, phương sai hay bất kỳ kết luận Bayesian nào, ta phải chắc rằng mô hình xác suất của mình hợp lệ trên đúng miền giá trị đang xét.</p>
+<p>Vì vậy, nếu muốn giữ một sợi chỉ xuyên suốt cho toàn bộ lab, có thể giữ ba câu hỏi này trong đầu: điều chưa biết là gì, dữ liệu được sinh ra theo cơ chế nào, và mô hình xác suất mình đang dùng có thật sự hợp lệ để nối hai thứ đó với nhau hay không.</p>
 </div>
 </div>
 </div>
@@ -13166,7 +13159,7 @@ $$</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=8300721a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=46f3913d"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 1.</strong> Trong một hộp có $10$ viên bi gồm hai màu đỏ và xanh nhưng chưa biết cụ thể số lượng. Gọi $A_k$ là biến cố hộp có đúng $k$ viên đỏ với $0\le k\le 10$. Người ta lấy ra lần lượt từng viên cho đến hết hộp.</p>
 <ul>
@@ -13373,7 +13366,7 @@ $$</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0267fec6"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=7b1f902e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 2.</strong> Tìm hiểu phân phối mũ qua các đoạn code tham khảo, rồi trả lời câu hỏi: nếu tuổi thọ của một mạch điện tử có phân phối mũ với kỳ vọng $6.25$ năm và thời gian bảo hành là $5$ năm, hãy tính xác suất mạch phải thay thế trong thời gian bảo hành.</p>
 </div>
@@ -13454,7 +13447,7 @@ $$</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=dedc509e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=57ff54f6"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 3.</strong> Xét biến ngẫu nhiên chuẩn với tham số ghi trong đề là $\mu=4,\ \sigma=-1$. Hãy tính xác suất có điều kiện
 $$P(X\le 0\mid X&gt;-3).$$
@@ -13523,7 +13516,7 @@ P(X &lt;= 0 | X &gt; -3) = 0.00003167
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=a6e72a2b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=6c6be28c"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 4.</strong> Chiều cao sinh viên lớp KHDL16A được giả sử có phân phối chuẩn với kỳ vọng $160$ cm và độ lệch chuẩn $15$ cm.</p>
 <ul>
@@ -13596,7 +13589,7 @@ P(165 &lt; X &lt; 172) = 0.1576
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=49d56ccf"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=675dff1b"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 5.1.</strong> Cho biến ngẫu nhiên liên tục $X$ có mật độ
 $$
@@ -13672,7 +13665,7 @@ Var(X) = 0.4500
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=30e714c8"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=79be0c91"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 5.2.</strong> Cho biến ngẫu nhiên $X$ có mật độ
 $$f(x)=kx(2-x),\quad 0\le x\le 2.$$</p>
@@ -13749,20 +13742,20 @@ Median = 1.0000
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=1e8c8cf1"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=dcdfc229"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Kết quả cho thấy $k = \frac{3}{4}$, $E[X] = 1$, $\mathrm{Var}(X) = 0.2$, median bằng 1 và mode cũng bằng 1. Sự trùng nhau này đến từ tính đối xứng của mật độ quanh điểm 1. Trong các bài toán Bayesian, những mật độ đối xứng như vậy thường được dùng làm prior khi ta tin rằng giá trị trung tâm là hợp lý nhất nhưng vẫn muốn cho phép dao động hai phía.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=3f567d39"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e760b699"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="9.-Model-criticism-and-reflection">9. Model criticism and reflection<a class="anchor-link" href="#9.-Model-criticism-and-reflection">¶</a></h2><p>Lab 3 cho thấy một điều quan trọng: không phải bài nào có công thức Bayes cũng tự động là “mô hình tốt”. Ở Bài 2, phân phối mũ chỉ hợp lý khi hazard gần như không đổi. Ở Bài 4, chuẩn chỉ là một xấp xỉ cho chiều cao thực tế. Ở Bài 5, nếu hàm mật độ không chuẩn hóa hoặc âm trên support thì toàn bộ mô hình xác suất sụp đổ ngay từ đầu.</p>
 <p>Một điểm khác cũng đáng nhấn mạnh là nhiều quyết định mô hình hóa đều có lựa chọn thay thế hợp lý. Chẳng hạn ở Bài 1 ta dùng prior đều trên $k$, nhưng một prior tập trung quanh 5 cũng có thể bảo vệ được nếu có lý do thực nghiệm. Suy luận Bayes tốt luôn đi cùng việc nói rõ các lựa chọn này và hậu quả của chúng.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=4b701a69"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4639d2fb"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="10.-Conceptual-interpretation-questions">10. Conceptual interpretation questions<a class="anchor-link" href="#10.-Conceptual-interpretation-questions">¶</a></h2><p><strong>Câu 1.</strong> Ở Bài 1, vì sao posterior cuối cùng lại tập trung hoàn toàn vào $k=6$?<br/>
 <strong>Trả lời ngắn:</strong> vì sau khi bốc hết 10 viên, dữ liệu đã tiết lộ chính xác tổng số bi đỏ trong hộp; bất định ban đầu không còn nữa.</p>
@@ -13775,21 +13768,21 @@ Median = 1.0000
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=8dcf054a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=db8b28a4"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="11.-Final-takeaway">11. Final takeaway<a class="anchor-link" href="#11.-Final-takeaway">¶</a></h2><p>Điểm cốt lõi của lab này là bất định có thể được biểu diễn theo nhiều cách nhưng luôn phải bám vào câu chuyện sinh dữ liệu. Với hộp bi, bất định nằm ở số lượng bi đỏ chưa biết và được cập nhật sau mỗi lượt quan sát. Với tuổi thọ và chiều cao, bất định nằm ở các đại lượng liên tục nên xác suất gắn với khoảng giá trị. Với các bài về mật độ, bài học lớn nhất là một mô hình Bayesian chỉ đáng tin khi các thành phần xác suất của nó được định nghĩa hợp lệ và được diễn giải đúng bối cảnh.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0681bdbb"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2e91bc4e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="12.-Lecture-references">12. Lecture references<a class="anchor-link" href="#12.-Lecture-references">¶</a></h2><p>Nếu muốn ôn lại nền tảng lý thuyết đứng sau Lab 3, nên quay lại các lecture sau:</p>
+<h2 id="12.-Lecture-references">12. Lecture references<a class="anchor-link" href="#12.-Lecture-references">¶</a></h2><p>Nếu muốn quay lại đúng phần lecture để tháo từng cụm bài trong Lab 3, nên đọc lại các lecture sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: hỗ trợ phần suy luận về thành phần hộp bi từ chuỗi quan sát không hoàn lại.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_03_prior.md">Bài 2.3: Prior - Mã hóa Kiến thức Ban đầu</a>: giúp đọc rõ hơn vai trò của prior đều trên số bi đỏ trước khi quan sát dữ liệu.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: là cầu nối trực tiếp giữa prior, likelihood và posterior ở Bài 1 của lab.</li>
-<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_02_common_distributions.md">Bài 0.2: Các Phân phối Xác suất - Mô tả Sự Biến thiên trong Dữ liệu</a>: ôn lại các phân phối Exponential và Normal dùng ở các bài về tuổi thọ và chiều cao.</li>
-<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_07_probability_density_functions.md">00-07: Hàm Mật độ Xác suất (PDF) - Chi tiết</a>: đặc biệt quan trọng cho các bài kiểm tra một hàm có phải mật độ xác suất hợp lệ hay không.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: <strong>Bài 1</strong>: đọc lại cách viết likelihood từ cơ chế bốc không hoàn lại để thấy vì sao mỗi lượt quan sát lại làm đổi xác suất của các giả thuyết về chiếc hộp.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_03_prior.md">Bài 2.3: Prior - Mã hóa Kiến thức Ban đầu</a>: <strong>Bài 1</strong>: đọc lại khi muốn hiểu prior đều và prior tập trung quanh $k=5$ đang mã hóa hai cách tin ban đầu khác nhau như thế nào.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: <strong>Bài 1</strong>: đọc lại để theo dõi posterior sau từng lượt bốc, thay vì chỉ nhìn đáp án cuối cùng sau khi mở hết hộp.</li>
+<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_02_common_distributions.md">Bài 0.2: Các Phân phối Xác suất - Mô tả Sự Biến thiên trong Dữ liệu</a>: <strong>Bài 2</strong>, <strong>Bài 3</strong> và <strong>Bài 4</strong>: đọc lại đặc điểm của Exponential và Normal để hiểu mô hình đang giả định gì về tuổi thọ linh kiện và chiều cao sinh viên.</li>
+<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_07_probability_density_functions.md">00-07: Hàm Mật độ Xác suất (PDF) - Chi tiết</a>: <strong>Bài 5.1</strong> và <strong>Bài 5.2</strong>: đọc lại điều kiện một hàm là mật độ hợp lệ trước khi tính mean, median, mode hay bất kỳ đại lượng nào khác.</li>
 </ul>
 </div>
 </div>

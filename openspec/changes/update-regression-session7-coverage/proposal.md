@@ -9,6 +9,7 @@ Session 7 material (`materials/buoi 7 - hoi quy.pptx`) covers Bayesian linear re
   - joint likelihood/prior/posterior view for regression parameters,
   - slope interval interpretation with known-variance vs unknown-variance context,
   - transition from univariate to multivariate linear regression in matrix notation.
+- Add OCR-backed worked-example fidelity from Session 7 image slides, including a prior-to-posterior regression-parameter update example (posterior means/standard deviations for slope/intercept-related parameters).
 - Keep updates scoped to existing Chapter 4 regression content and avoid unrelated refactors.
 
 ## Impact

@@ -13090,14 +13090,15 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f3d06c91"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a2c8d259"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-7:-Bayesian-Regression-Workflow">Lab 7: Bayesian Regression Workflow<a class="anchor-link" href="#Lab-7:-Bayesian-Regression-Workflow">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Đề gốc của Lab 7 vừa là bài thực hành hồi quy vừa là một notebook giới thiệu nhiều kỹ thuật tính posterior. Phiên bản solution này tập trung lại thành một workflow mạch lạc: bắt đầu từ dữ liệu chiều cao-cân nặng, xây một mô hình hồi quy Bayesian tối giản, rồi dùng posterior predictive để đánh giá độ phù hợp.</p>
+<p>Một bảng số liệu chiều cao và cân nặng có thể được đọc theo nhiều cách. Ta có thể tìm một đường hồi quy “tốt nhất” theo bình phương tối thiểu và dừng lại ở đó. Nhưng ta cũng có thể hỏi nhiều hơn: độ dốc thật sự còn bất định đến đâu, dự đoán cho một người mới nên rộng đến mức nào, và làm sao biết mô hình đang dùng có đang bỏ sót điều gì trong dữ liệu?</p>
+<p>Lab 7 đi theo hướng thứ hai. Nó dùng bài toán hồi quy như một nơi để gom các bước của Bayesian workflow vào cùng một dòng chảy: đặt mô hình, suy luận posterior, tạo dự đoán, rồi quay lại kiểm tra mô hình.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=082b0792">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=f09c5011">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13119,14 +13120,14 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0f091ced"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=52ba6a67"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-lecture-connection">1. Problem framing and lecture connection<a class="anchor-link" href="#1.-Problem-framing-and-lecture-connection">¶</a></h2><p>Ta muốn mô tả mối liên hệ giữa chiều cao và cân nặng bằng một đường hồi quy tuyến tính, nhưng không chỉ lấy một đường “tốt nhất” theo least squares. Tư duy Bayesian xem hệ số chặn, hệ số dốc và độ nhiễu là các đại lượng chưa biết, rồi suy luận về chúng từ dữ liệu.</p>
-<p>Để notebook chạy được ngay cả khi không có thư viện bên ngoài, tôi dùng một mô hình hồi quy Gaussian với prior chuẩn cho vector hệ số và lấy độ lệch chuẩn nhiễu từ phần dư OLS như một xấp xỉ thực dụng. Đây không phải là mô hình đầy đủ nhất, nhưng đủ để minh họa posterior và posterior predictive.</p>
+<h2 id="1.-T%E1%BB%AB-m%E1%BB%99t-%C4%91%C6%B0%E1%BB%9Dng-fit-%C4%91%E1%BA%BFn-c%E1%BA%A3-m%E1%BB%99t-workflow-d%E1%BB%B1-%C4%91o%C3%A1n">1. Từ một đường fit đến cả một workflow dự đoán<a class="anchor-link" href="#1.-T%E1%BB%AB-m%E1%BB%99t-%C4%91%C6%B0%E1%BB%9Dng-fit-%C4%91%E1%BA%BFn-c%E1%BA%A3-m%E1%BB%99t-workflow-d%E1%BB%B1-%C4%91o%C3%A1n">¶</a></h2><p>Điểm bắt đầu của lab vẫn là một ý tưởng quen thuộc: nếu chiều cao tăng, cân nặng có xu hướng thay đổi theo cách nào? Nhưng thay vì chỉ săn tìm một đường thẳng trung tâm, ta xem hệ số chặn, hệ số dốc và độ nhiễu là những đại lượng chưa biết và để dữ liệu cập nhật niềm tin về chúng.</p>
+<p>Để giữ trọng tâm ở workflow, lab này bắt đầu với một mô hình hồi quy Gaussian tối giản. Nhờ vậy, người học có thể tập trung vào luồng suy nghĩ quan trọng hơn: so sánh với baseline cổ điển, đọc posterior của hệ số, chuyển posterior thành dự đoán cho quan sát mới, rồi dùng residual để tự hỏi mô hình hiện tại đã đủ tốt hay chưa.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=adf3694d"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=458e2cd5"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2.-Baseline:-least-squares-as-a-reference-point">2. Baseline: least squares as a reference point<a class="anchor-link" href="#2.-Baseline:-least-squares-as-a-reference-point">¶</a></h2><p>Least squares được đặt ở đầu không phải để thay thế Bayesian regression, mà để làm một mốc tham chiếu quen thuộc. Khi đã có điểm mốc này, người học sẽ dễ thấy posterior mean của hệ số hồi quy gần nó ở đâu và khác nó ở chỗ nào.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của bước baseline là giúp sinh viên không xem hồi quy Bayesian như một thứ hoàn toàn tách rời thống kê cổ điển. Nhiều ý tưởng quen thuộc như đường fit trung tâm hay phần dư vẫn còn đó, chỉ là Bayes bổ sung thêm cấu trúc bất định quanh các đại lượng ấy.</p>
@@ -13134,13 +13135,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=31b27e54"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=09e47324"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Lab 7 - bài toán gốc.</strong> Cho bảng dữ liệu gồm 25 cặp $(X,Y)$ biểu diễn chiều cao và cân nặng. Câu hỏi trung tâm là: liệu có thể dự đoán cân nặng của một người dựa vào chiều cao của họ không? Phần này bắt đầu bằng đường hồi quy bình phương tối thiểu như một mốc tham chiếu trước khi chuyển sang mô hình Bayes.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=61ebeefb">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3cccd3b5">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13158,7 +13159,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=dce0c10c"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=479da125"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="3.-Bayesian-linear-regression-with-normal-prior-on-coefficients">3. Bayesian linear regression with normal prior on coefficients<a class="anchor-link" href="#3.-Bayesian-linear-regression-with-normal-prior-on-coefficients">¶</a></h2><p>Ta đặt prior
 $$\beta \sim N(m_0, V_0), \qquad y \mid \beta \sim N(X\beta, \sigma^2 I),$$
@@ -13169,13 +13170,13 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f6b8cd9b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=22869df6"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Từ cùng bộ dữ liệu chiều cao-cân nặng, hãy xây dựng một mô hình hồi quy Bayes cho mối liên hệ giữa $X$ và $Y$, thay vì chỉ dùng least squares. Phần solution này diễn giải lại các ví dụ trong lab gốc theo workflow hồi quy Bayes hiện đại.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=e2e7a30f">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=af413106">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13194,7 +13195,7 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=924a7ebc"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=26a2f9fe"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="4.-Posterior-predictive-reasoning">4. Posterior predictive reasoning<a class="anchor-link" href="#4.-Posterior-predictive-reasoning">¶</a></h2><p>Posterior predictive là bước biến suy luận về tham số thành suy luận về dữ liệu tương lai. Đây là lúc Bayesian regression cho thấy giá trị thực hành rõ nhất: ta không chỉ học về đường hồi quy, mà còn học về độ bất định khi dự đoán một quan sát mới.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của bước này là giúp sinh viên phân biệt hai loại bất định thường bị trộn lẫn: bất định về giá trị trung bình có điều kiện và bất định của chính quan sát mới quanh giá trị trung bình đó. Posterior predictive gộp cả hai lớp bất định lại trong một đối tượng duy nhất.</p>
@@ -13202,13 +13203,13 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d855ec58"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=707d93a7"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Sau khi đã có phân phối hậu nghiệm của các hệ số hồi quy, mục tiêu tiếp theo là dùng posterior để dự đoán cân nặng cho các giá trị chiều cao mới, đồng thời giữ lại bất định của mô hình và của nhiễu quan sát.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=abcc6cad">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=dde80153">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13236,13 +13237,13 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5cf0dcd9"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ad0767c6"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Posterior mean của hệ số dốc dương cho thấy cân nặng tăng khi chiều cao tăng. Nhưng điều quan trọng hơn là predictive interval: nó nhắc ta rằng ngay cả khi biết khá rõ đường hồi quy trung bình, cân nặng của một cá thể mới vẫn có độ bất định đáng kể quanh đường đó.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=7f02bff2"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8427e1b1"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="5.-Posterior-predictive-check-and-reflection">5. Posterior predictive check and reflection<a class="anchor-link" href="#5.-Posterior-predictive-check-and-reflection">¶</a></h2><p>Phần residual check đặt ngay sau posterior predictive để nhấn mạnh rằng suy luận Bayesian chưa hoàn tất khi đã có posterior đẹp. Mô hình vẫn phải được chất vấn xem nó có bỏ sót cấu trúc nào trong dữ liệu hay không.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của bước này là biến model criticism thành một phần bắt buộc của workflow, chứ không phải một phụ lục tùy chọn. Nếu residual còn có xu hướng hay cấu trúc, ta học được điều gì đó về giới hạn của mô hình tuyến tính Gaussian hiện tại.</p>
@@ -13250,13 +13251,13 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=4564bdc0"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f318566e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Phần cuối của lab yêu cầu không chỉ fit hồi quy mà còn kiểm tra xem mô hình dự đoán có hợp lý với dữ liệu quan sát hay không. Vì vậy solution bổ sung posterior predictive check và phần phản tư về chất lượng mô hình.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=b2b14762">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=3f05ad9d">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13277,19 +13278,19 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=efbdb857"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b3f6b972"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Nếu phần dư có cấu trúc cong mạnh hoặc phương sai thay đổi theo chiều cao, mô hình tuyến tính Gaussian sẽ là chưa đủ. Khi đó ta nên cân nhắc biến đổi biến, thêm predictor, hoặc dùng một mô hình phương sai không hằng.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=d38817d8"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=cb7a5647"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="6.-Connection-back-to-the-original-lab">6. Connection back to the original lab<a class="anchor-link" href="#6.-Connection-back-to-the-original-lab">¶</a></h2><p>Notebook gốc còn giới thiệu nhiều ví dụ về posterior rời rạc, mô hình nhị thức, rejection sampling, Gibbs sampling và logistic regression. Những phần đó hữu ích như tài liệu tham khảo phương pháp. Tuy nhiên, để solution notebook nhất quán và dễ học, tôi gom trọng tâm vào một chu trình hoàn chỉnh: mô hình hóa, posterior, dự đoán và kiểm tra mô hình trong bài hồi quy tuyến tính.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=26c9a385"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b5715b7f"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="7.-Conceptual-interpretation-questions">7. Conceptual interpretation questions<a class="anchor-link" href="#7.-Conceptual-interpretation-questions">¶</a></h2><ol>
 <li>Vì sao least squares chỉ là điểm tham chiếu chứ chưa phải là toàn bộ suy luận Bayesian?</li>
@@ -13300,21 +13301,21 @@ $$V_n^{-1}=V_0^{-1}+\frac{X^TX}{\sigma^2}, \qquad m_n = V_n\left(V_0^{-1}m_0 + \
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fabc5c44"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c7ba80d1"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="8.-Final-takeaway">8. Final takeaway<a class="anchor-link" href="#8.-Final-takeaway">¶</a></h2><p>Lab 7 nên được đọc như một bài về workflow hơn là một cuộc thi cài thư viện. Bản chất của Bayesian regression là mô tả mối liên hệ giữa dữ liệu và các tham số chưa biết, rồi chuyển posterior đó thành dự đoán và kiểm tra mô hình một cách có ý nghĩa.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=dc6dc998"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=fbde2f43"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="9.-Lecture-references">9. Lecture references<a class="anchor-link" href="#9.-Lecture-references">¶</a></h2><p>Lab 7 bám rất sát workflow hồi quy Bayesian trong course, nên nên đọc lại các lecture sau:</p>
+<h2 id="9.-Lecture-references">9. Lecture references<a class="anchor-link" href="#9.-Lecture-references">¶</a></h2><p>Nếu muốn dùng lecture để đi lại đúng workflow của Lab 7, nên đọc lại các phần sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_01_linear_regression_generative.md">Bài 4.1: Bayesian Linear Regression - Mô hình Sinh dữ liệu</a>: để quay về câu chuyện sinh dữ liệu của hồi quy tuyến tính Bayesian.</li>
-<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_02_priors_for_regression.md">Bài 4.2: Priors for Regression - Chọn Prior có Nguyên tắc</a>: giúp chọn prior cho hệ số hồi quy có cơ sở thay vì dùng mặc định cảm tính.</li>
-<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_03_posterior_inference_pymc.md">Bài 4.3: Posterior Inference với PyMC - Từ Theory đến Practice</a>: mở rộng từ lời giải đóng dạng trong notebook sang suy luận hậu nghiệm tổng quát hơn.</li>
-<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_04_model_checking_prediction.md">Bài 4.4: Model Checking và Prediction - Đảm bảo Model Tốt</a>: là lecture trực tiếp nhất cho posterior predictive reasoning và kiểm tra mô hình.</li>
-<li><a href="../../contents/vi/chapter10/_posts/2025-01-04-10_04_bayesian_workflow_synthesis.md">Bài 10.4: Bayesian Workflow - Putting It All Together</a>: giúp nhìn toàn bộ lab như một workflow hoàn chỉnh từ mô hình hóa đến đánh giá mô hình.</li>
+<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_01_linear_regression_generative.md">Bài 4.1: Bayesian Linear Regression - Mô hình Sinh dữ liệu</a>: <strong>Bài 2</strong> và <strong>Bài 3</strong>: đọc lại câu chuyện sinh dữ liệu của hồi quy tuyến tính trước khi nhìn vào công thức posterior cho hệ số.</li>
+<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_02_priors_for_regression.md">Bài 4.2: Priors for Regression - Chọn Prior có Nguyên tắc</a>: <strong>Bài 3</strong>: đặc biệt cần khi muốn hiểu prior trên intercept và slope đang regularize mô hình ra sao, thay vì chỉ xem đó là tham số mặc định.</li>
+<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_03_posterior_inference_pymc.md">Bài 4.3: Posterior Inference với PyMC - Từ Theory đến Practice</a>: <strong>Bài 3</strong>: đọc lại nếu muốn nối lời giải đóng dạng trong notebook với cách suy luận hậu nghiệm tổng quát hơn trong thực hành.</li>
+<li><a href="../../contents/vi/chapter04/_posts/2025-01-02-04_04_model_checking_prediction.md">Bài 4.4: Model Checking và Prediction - Đảm bảo Model Tốt</a>: <strong>Bài 4</strong> và <strong>Bài 5</strong>: đọc lại khi muốn phân biệt posterior predictive với fitted mean, và hiểu residual check đang kiểm tra giả định gì của mô hình.</li>
+<li><a href="../../contents/vi/chapter10/_posts/2025-01-04-10_04_bayesian_workflow_synthesis.md">Bài 10.4: Bayesian Workflow - Putting It All Together</a>: toàn bộ <strong>Lab 7</strong>: đọc lại để thấy baseline, posterior, predictive và model criticism không phải các mảnh rời rạc mà là một workflow thống nhất.</li>
 </ul>
 </div>
 </div>

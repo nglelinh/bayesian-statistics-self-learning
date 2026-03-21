@@ -9,12 +9,12 @@
   </div>
 
   <nav class="sidebar-nav">
-    <a class="sidebar-nav-item{% if page.title == 'Home' %} active{% endif %}" href="{{ '/' | absolute_url }}">{% t home %}</a>
+    <a class="sidebar-nav-item{% if page.title == 'Home' %} active{% endif %}" href="{{ '/' | relative_url }}">{% t home %}</a>
 
     {% assign current_lang = page.lang | default: site.default_lang %}
     
     <!-- Manually define chapters to ensure they all appear -->
-    {% assign chapter_list = "00,01,02,03,04,05,06,07,08,09,10,11,12" | split: "," %}
+    {% assign chapter_list = "00,01,02,03,04,05,06,07,08,09,10,12" | split: "," %}
     
     {% for chapter_num in chapter_list %}
       <!-- Find chapter page -->
@@ -32,7 +32,7 @@
           <!-- Chapter header with dropdown -->
           <div class="sidebar-chapter-group">
             <a class="sidebar-nav-item sidebar-chapter-header{% if page.chapter == chapter_num %} active{% endif %}" 
-               href="{{ chapter_page.url | absolute_url }}"
+               href="{{ chapter_page.url | relative_url }}"
                data-chapter="{{ chapter_num }}">
               {{chapter_num}}. {{ chapter_page.title }}
               <span class="dropdown-arrow">▼</span>
@@ -54,7 +54,7 @@
               {% assign sorted_lessons = chapter_lessons | sort: "order" %}
               {% for lesson in sorted_lessons %}
                 <a class="sidebar-nav-item sidebar-lesson-item{% if page.url == lesson.url %} active{% endif %}" 
-                   href="{{ lesson.url | absolute_url }}">
+                   href="{{ lesson.url | relative_url }}">
                   {{ lesson.title }}
                 </a>
               {% endfor %}

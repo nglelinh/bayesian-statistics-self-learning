@@ -8,6 +8,7 @@ Session 4 material (`materials/buoi 4 - lien hop.pptx`) includes conjugate-prior
   - the definition of conjugacy in Bayesian inference and core pairs (Beta-Binomial, Gamma-Poisson, Normal-Normal),
   - prerequisite recap needed by Session 4 (Gamma function role and Beta/Gamma/Normal parameterization context),
   - approximation caveats noted in Session 4 (e.g., when Normal approximation is reasonable for Beta/CLT-style sums).
+- Add OCR-backed worked-example fidelity from Session 4 image slides, including a Gamma-Poisson outage-rate update example and a Normal-Normal Bayes-estimate/risk example.
 - Keep edits tightly scoped to Chapter 2 content and existing style conventions.
 
 ## Impact

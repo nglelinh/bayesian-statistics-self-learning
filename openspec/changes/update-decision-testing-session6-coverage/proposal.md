@@ -9,6 +9,7 @@ Session 6 material (`materials/buoi 6 - phoi hop.pptx`) introduces Bayesian deci
   - Bayesian hypothesis testing framing (one-sided vs two-sided decisions),
   - Bayes factor interpretation as evidence ratio,
   - mixture prior and mixture posterior weight-updating intuition.
+- Preserve Session 6 worked-example fidelity (OCR-backed for image slides), including a binary MAP detection example, an asymmetric-cost alarm decision example, and at least one mixture-prior posterior-weight update example.
 - Keep updates scoped to existing Bayesian course chapters and avoid unrelated refactors.
 
 ## Impact

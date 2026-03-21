@@ -8,6 +8,7 @@ Session 5 material (`materials/buoi 5 - uoc luong.pptx`) focuses on Bayesian poi
   - relationship between MAP and maximum likelihood under different priors,
   - posterior mean as Bayes estimator under squared-error loss (MMSE framing),
   - Bayesian interval estimation interpretation and construction.
+- Preserve Session 5 example fidelity (OCR-backed where needed) by covering representative worked problems: MAP with continuous prior + geometric likelihood, ML vs MAP in Gaussian channel model, MMSE posterior-mean derivation, and a credible-interval computation from conditional normal posterior.
 - Ensure at least one end-to-end worked example compares two point estimators (e.g., MAP vs posterior mean, or MAP vs MLE) and links to interval interpretation for the same posterior.
 - Keep edits scoped to existing Chapter 2 content and current teaching conventions.
 

@@ -13090,12 +13090,11 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b428c4c7"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=9229bc3a"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-4:-Conjugate-Models-and-Bayesian-Updating">Lab 4: Conjugate Models and Bayesian Updating<a class="anchor-link" href="#Lab-4:-Conjugate-Models-and-Bayesian-Updating">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Lab 4 đi từ các bài phân phối chuẩn cơ bản sang những cặp liên hợp quen thuộc. Điểm chính không phải là nhớ công thức, mà là thấy vì sao prior và likelihood kết hợp với nhau để tạo ra posterior có thể diễn giải được.</p>
-<p>Tiêu đề của lab nhấn vào hai ý. Cụm <strong>Conjugate Models</strong> dùng vì phần lớn bài tập ở đây xoay quanh các cặp prior-likelihood quen thuộc như Beta-Binomial hay Gamma-Poisson, nơi posterior vẫn nằm trong cùng một họ phân phối. Cụm <strong>Bayesian Updating</strong> dùng để nhấn mạnh quá trình học từ dữ liệu: ta bắt đầu với một prior, quan sát dữ liệu, rồi biến prior đó thành posterior. Ở một số bài, đặc biệt là bài cập nhật theo từng tuần, quá trình này còn được lặp lại nhiều lần nên sinh viên có thể nhìn rất rõ cách niềm tin thay đổi sau mỗi quan sát.</p>
-<p>Cách đặt tên này cũng giúp tránh hiểu nhầm rằng lab đang nói về “continuous variables” như một chủ đề riêng. Trọng tâm thật sự ở đây là cơ chế cập nhật Bayes trong các mô hình liên hợp, chứ không phải bản thân biến ngẫu nhiên có liên tục hay không.</p>
+<p>Từ lab này, việc cập nhật Bayes bắt đầu trở nên gọn gàng một cách đẹp mắt. Ta có một prior, ta nhìn dữ liệu, và posterior thu được vẫn nằm trong cùng một họ phân phối quen thuộc. Chính sự “ăn khớp” ấy làm cho nhiều bài toán tưởng phức tạp bỗng trở nên trong suốt hơn.</p>
+<p>Nhưng điều đáng học ở đây không chỉ là sự tiện lợi của công thức. Điều quan trọng hơn là thấy dữ liệu đã đẩy niềm tin ban đầu đi như thế nào, và vì sao trong một số mô hình sự cập nhật ấy lại có thể viết ra thành những quy tắc rất sạch.</p>
 </div>
 </div>
 </div>
@@ -13117,7 +13116,8 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=e84f73a7"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-lecture-connection">1. Problem framing and lecture connection<a class="anchor-link" href="#1.-Problem-framing-and-lecture-connection">¶</a></h2><p>Lab này kết nối ba mảng: xác suất chuẩn, conjugate priors, và cập nhật Bayes theo dữ liệu. Bài 2 và Bài 3 minh họa rõ nhất tinh thần Bayesian: prior mã hóa niềm tin trước quan sát, còn posterior là phiên bản đã được chỉnh lại sau khi xem dữ liệu. Khi gọi lab này là “Bayesian Updating”, điều ta muốn nhấn mạnh chính là chu trình đó: prior $\rightarrow$ likelihood $\rightarrow$ posterior, và posterior mới lại có thể trở thành điểm xuất phát cho lượt cập nhật tiếp theo.</p>
+<h2 id="1.-T%E1%BB%AB-prior-%C4%91%E1%BA%BFn-posterior-trong-c%C3%A1c-m%C3%B4-h%C3%ACnh-li%C3%AAn-h%E1%BB%A3p">1. Từ prior đến posterior trong các mô hình liên hợp<a class="anchor-link" href="#1.-T%E1%BB%AB-prior-%C4%91%E1%BA%BFn-posterior-trong-c%C3%A1c-m%C3%B4-h%C3%ACnh-li%C3%AAn-h%E1%BB%A3p">¶</a></h2><p>Lab này đi qua một loạt bối cảnh quen thuộc: xác suất chuẩn, tỷ lệ qua môn, số sinh viên nghỉ học, hay một người thi mãi đến khi đậu. Ở mỗi bài, ta đều bắt đầu với một prior nói lên cách nhìn ban đầu về tham số chưa biết, rồi để dữ liệu điều chỉnh cái nhìn ấy thành posterior.</p>
+<p>Điểm đặc biệt của lab là ở nhiều bài, prior và likelihood nói cùng một thứ ngôn ngữ đại số. Vì vậy, posterior không rơi vào một dạng hoàn toàn mới mà vẫn ở trong cùng họ phân phối. Khi điều đó xảy ra, ta nhìn rất rõ dữ liệu đã cộng thêm thông tin vào đâu và bất định còn lại co lại như thế nào.</p>
 <h3 id="V%C3%AC-sao-g%E1%BB%8Di-l%C3%A0-c%C3%A1c-c%E1%BA%B7p-li%C3%AAn-h%E1%BB%A3p?">Vì sao gọi là các cặp liên hợp?<a class="anchor-link" href="#V%C3%AC-sao-g%E1%BB%8Di-l%C3%A0-c%C3%A1c-c%E1%BA%B7p-li%C3%AAn-h%E1%BB%A3p?">¶</a></h3><p>Một prior và một likelihood được gọi là <strong>liên hợp</strong> nếu sau khi áp dụng công thức Bayes, posterior vẫn thuộc cùng họ phân phối với prior. Điểm hay của liên hợp không chỉ là tính toán gọn, mà còn là việc ta nhìn rất rõ dữ liệu đã làm thay đổi niềm tin trước đó như thế nào.</p>
 <p>Về mặt đại số, lý do chúng liên hợp là vì hạt nhân của prior và likelihood có cấu trúc “ăn khớp” với nhau. Khi nhân hai biểu thức lại để tạo posterior không chuẩn hóa, các số mũ hoặc các hạng tử bậc hai chỉ cộng vào nhau, chứ không tạo ra một dạng hàm hoàn toàn mới.</p>
 <p>Ví dụ, với prior Beta và likelihood Binomial, ta có phần phụ thuộc vào tham số $p$ dưới dạng:</p>
@@ -13379,7 +13379,7 @@ Việc đổi tên này không làm thay đổi toán học của bài, nhưng g
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b8b59d20"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ed8996b9"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 3.</strong> Tỷ lệ qua môn Bayesian được cho là có prior Beta với mean $80\%$ và độ lệch chuẩn $10\%$. Trong học kỳ vừa rồi có $40$ sinh viên thì $35$ em qua môn.</p>
 <ul>
@@ -13390,7 +13390,7 @@ Việc đổi tên này không làm thay đổi toán học của bài, nhưng g
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=12594154"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=82fdb58e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Phi%C3%AAn-b%E1%BA%A3n-1---Theo-%C4%91%E1%BB%81-g%E1%BB%91c">Phiên bản 1 - Theo đề gốc<a class="anchor-link" href="#Phi%C3%AAn-b%E1%BA%A3n-1---Theo-%C4%91%E1%BB%81-g%E1%BB%91c">¶</a></h3><p>Ở bản này, ta giữ nguyên cách đọc của đề: prior được mô tả bằng mean và standard deviation, rồi mới suy ra các tham số Beta cụ thể trước khi cập nhật bằng dữ liệu đậu/rớt.</p>
 </div>
@@ -13451,7 +13451,7 @@ Posterior risk (variance) = 0.002220
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=6f5e46ca"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=15d95659"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Phi%C3%AAn-b%E1%BA%A3n-2---%C4%90%E1%BA%B7t-t%C3%AAn-chu%E1%BA%A9n-Bayes-cho-t%E1%BB%B7-l%E1%BB%87-qua-m%C3%B4n">Phiên bản 2 - Đặt tên chuẩn Bayes cho tỷ lệ qua môn<a class="anchor-link" href="#Phi%C3%AAn-b%E1%BA%A3n-2---%C4%90%E1%BA%B7t-t%C3%AAn-chu%E1%BA%A9n-Bayes-cho-t%E1%BB%B7-l%E1%BB%87-qua-m%C3%B4n">¶</a></h3><p>Nếu muốn viết lại bài này theo ký hiệu Bayesian chuẩn hơn, ta nên gọi $\theta$ là <strong>xác suất qua môn thật sự</strong> của quần thể sinh viên. Khi đó:</p>
 <ul>
@@ -13471,7 +13471,7 @@ $$
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=0d7555a3">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=dccabf45">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13513,7 +13513,7 @@ $$
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0deea924"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=a98ff4d1"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 4.</strong> Xác suất Nam đậu TOEIC là $p$ với prior đều trên $(0.75,1)$. Nam thi cho đến khi đậu và biết rằng em đã thi đúng 3 lần. Tìm mật độ hậu nghiệm của $p$ và tính xác suất $p&lt;0.8$.</p>
 </div>
@@ -13554,7 +13554,7 @@ $$
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=15e419c5"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ec8e2a3e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 5.</strong> Số sinh viên nghỉ học không phép mỗi tuần có prior Gamma với trung bình $3$ và độ lệch chuẩn $2$. Quan sát 8 tuần vừa rồi cho dãy Poisson
 $$2,0,2,3,2,0,2,4.$$
@@ -13562,7 +13562,7 @@ Hãy tìm phân phối hậu nghiệm và vẽ đồ thị cập nhật sau từ
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=26562139"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5bdd1b36"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Phi%C3%AAn-b%E1%BA%A3n-1---Theo-%C4%91%E1%BB%81-g%E1%BB%91c">Phiên bản 1 - Theo đề gốc<a class="anchor-link" href="#Phi%C3%AAn-b%E1%BA%A3n-1---Theo-%C4%91%E1%BB%81-g%E1%BB%91c">¶</a></h3><p>Ở bản này, ta giữ cách phát biểu của đề: prior Gamma được cho qua mean và standard deviation, còn dữ liệu là chuỗi số sinh viên nghỉ học quan sát theo từng tuần.</p>
 </div>
@@ -13622,7 +13622,7 @@ week 8: Gamma(shape=17.25, rate=8.75), mean=1.971
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=a2526f8b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=df6e6d71"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Phi%C3%AAn-b%E1%BA%A3n-2---%C4%90%E1%BA%B7t-t%C3%AAn-chu%E1%BA%A9n-Bayes-cho-t%E1%BB%91c-%C4%91%E1%BB%99-ngh%E1%BB%89-h%E1%BB%8Dc">Phiên bản 2 - Đặt tên chuẩn Bayes cho tốc độ nghỉ học<a class="anchor-link" href="#Phi%C3%AAn-b%E1%BA%A3n-2---%C4%90%E1%BA%B7t-t%C3%AAn-chu%E1%BA%A9n-Bayes-cho-t%E1%BB%91c-%C4%91%E1%BB%99-ngh%E1%BB%89-h%E1%BB%8Dc">¶</a></h3><p>Nếu viết bài này theo ký hiệu Bayes chuẩn, ta nên gọi $\lambda$ là <strong>tốc độ nghỉ học trung bình mỗi tuần</strong> chưa biết. Khi đó:</p>
 <ul>
@@ -13638,7 +13638,7 @@ $$</li>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=5c2b0012">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=9b282e52">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13694,12 +13694,12 @@ $$</li>
 </div>
 <div class="cell border-box-sizing text_cell rendered" id="cell-id=697ac131"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Phần lý thuyết phù hợp nhất để đọc kèm Lab 4 nằm ở các lecture sau:</p>
+<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Nếu muốn quay lại đúng lecture cho từng cụm bài trong Lab 4, nên đọc lại các phần sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_02_common_distributions.md">Bài 0.2: Các Phân phối Xác suất - Mô tả Sự Biến thiên trong Dữ liệu</a>: ôn lại Normal, Beta, Gamma và Poisson trước khi dùng chúng như prior hay likelihood.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: giúp xác định đúng thành phần dữ liệu trong từng mô hình liên hợp.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: tóm tắt lại cơ chế cập nhật prior thành posterior sau khi thấy dữ liệu.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_05_conjugate_priors.md">Bài 2.5: Conjugate Priors - Prior Liên hợp</a>: là lecture cốt lõi cho Beta-Binomial, Gamma-Poisson và tinh thần cập nhật lặp lại của lab này.</li>
+<li><a href="../../contents/vi/chapter00/_posts/2025-01-02-00_02_common_distributions.md">Bài 0.2: Các Phân phối Xác suất - Mô tả Sự Biến thiên trong Dữ liệu</a>: <strong>Bài 1</strong> đến <strong>Bài 5</strong>: đọc lại Normal, Beta, Gamma, Binomial và Poisson để không lẫn vai trò của prior, likelihood và tham số trong từng bài.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_02_likelihood.md">Bài 2.2: Likelihood - Câu chuyện về Dữ liệu và Mô hình</a>: <strong>Bài 2</strong> và <strong>Bài 4</strong>: đặc biệt cần để viết đúng likelihood khi dữ liệu đến dưới dạng “thành công ở lần thứ ba” hay dưới ba mô hình Geometric, Binomial, Poisson khác nhau.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: <strong>Bài 3</strong>, <strong>Bài 4</strong> và <strong>Bài 5</strong>: đọc lại sơ đồ <code>prior -&gt; likelihood -&gt; posterior</code> để thấy dữ liệu đậu/rớt hay số nghỉ học đang cộng thông tin vào đâu.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_05_conjugate_priors.md">Bài 2.5: Prior liên hợp và đại số của cập nhật Bayes</a>: <strong>Bài 2</strong> đến <strong>Bài 5</strong>: đọc lại khi muốn hiểu vì sao Beta-Binomial, Beta-Geometric và Gamma-Poisson cho posterior gọn, còn trường hợp Poisson trên miền $[0,1]$ thì không còn liên hợp trọn vẹn.</li>
 </ul>
 </div>
 </div>

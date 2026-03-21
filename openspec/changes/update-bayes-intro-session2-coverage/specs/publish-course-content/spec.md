@@ -15,3 +15,12 @@ The Vietnamese introductory Bayesian lesson flow SHALL include Session 2 core co
 - **WHEN** a learner reads the Chapter 1 introduction lessons in `contents/vi/chapter01/_posts/`
 - **THEN** the learner can find Bayes-theorem prerequisites and diagnostic confusion-matrix interpretation without leaving the chapter
 - **AND** the course introduction page states the main Session 2 references and grading composition
+
+### Requirement: Session 2 Worked Example Fidelity
+The Vietnamese Chapter 1 Bayes-theorem lesson SHALL include Session 2 worked examples with explicit numeric updates: VD1 rare-disease test posterior calculation, VD2 Holmes/Watson icy-road conditional update, and VD3 two-test sequential posterior update.
+
+#### Scenario: Learner follows Session 2 examples in Chapter 1
+- **WHEN** a learner studies worked examples in the Bayes-theorem lesson
+- **THEN** the learner can see at least one full rare-disease posterior computation using total probability in the denominator
+- **AND** the learner can see one conditional-update example equivalent to the Holmes/Watson case
+- **AND** the learner can see one sequential two-test example where posterior is updated more than once

@@ -13090,14 +13090,15 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=9eb2a5ea"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c53d4a05"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-5:-Point-Estimation,-Normal-Conjugacy,-and-Credible-Intervals">Lab 5: Point Estimation, Normal Conjugacy, and Credible Intervals<a class="anchor-link" href="#Lab-5:-Point-Estimation,-Normal-Conjugacy,-and-Credible-Intervals">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Lab 5 pha trộn giữa sửa bài giữa kỳ, công thức liên hợp chuẩn và cách xây dựng khoảng tin cậy hậu nghiệm. Đề gốc có vài chỗ phụ thuộc MSSV, nên notebook này chọn một bộ giả định minh họa rõ ràng để lời giải vẫn tự chứa và chạy được.</p>
+<p>Sau khi đã có posterior, một câu hỏi mới xuất hiện: ta nên tóm tắt nó như thế nào? Có lúc ta cần một con số duy nhất để ra quyết định. Có lúc ta cần một khoảng để nói cho người khác biết mức độ bất định còn lại lớn đến đâu. Và có lúc chính sự khác nhau giữa mean, median và MAP mới là điều đáng học nhất.</p>
+<p>Lab 5 đi thẳng vào những câu hỏi ấy. Xen giữa các bài là những chỗ đề phụ thuộc MSSV, nên ở đây ta khóa một bộ giá trị minh họa để giữ trọng tâm ở lập luận Bayesian: posterior được tạo ra ra sao, rồi được chuyển thành quyết định hay thành khoảng bất định như thế nào.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=85eddda0">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=4a8630b7">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13114,14 +13115,14 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=03f0d70e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f185f766"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-assumptions">1. Problem framing and assumptions<a class="anchor-link" href="#1.-Problem-framing-and-assumptions">¶</a></h2><p>Lab này có hai nửa. Nửa đầu xoay quanh ước lượng điểm và cập nhật cho các mô hình một tham số. Nửa sau dùng conjugate normal để suy luận về một trung bình ẩn và xây dựng credible intervals.</p>
-<p>Đề gốc ở Bài 2 dùng các chữ số của MSSV. Vì notebook solution này phải dùng chung, tôi chốt một giả định minh họa: bốn chữ số cuối là <code>1,2,3,4</code>, nên tổng bốn chữ số bằng 10. Các kết quả số ở Bài 2 vì thế là một worked example; phần công thức tổng quát vẫn được giữ nguyên.</p>
+<h2 id="1.-Khi-posterior-ph%E1%BA%A3i-bi%E1%BA%BFn-th%C3%A0nh-quy%E1%BA%BFt-%C4%91%E1%BB%8Bnh">1. Khi posterior phải biến thành quyết định<a class="anchor-link" href="#1.-Khi-posterior-ph%E1%BA%A3i-bi%E1%BA%BFn-th%C3%A0nh-quy%E1%BA%BFt-%C4%91%E1%BB%8Bnh">¶</a></h2><p>Nửa đầu của lab xoay quanh các bài toán ước lượng điểm. Cùng một posterior, nhưng nếu tiêu chuẩn mất mát thay đổi thì điểm tóm tắt tối ưu cũng thay đổi theo. Điều đó buộc ta thôi nhìn posterior như một đích đến cuối cùng, và bắt đầu nhìn nó như nguyên liệu cho một quyết định cụ thể.</p>
+<p>Nửa sau chuyển sang Normal conjugacy và credible intervals. Ở đây, trọng tâm không còn là chọn một con số duy nhất, mà là diễn tả được mức độ chắc chắn hay bất định còn lại sau dữ liệu. Chính nhịp chuyển từ “một điểm” sang “một khoảng” làm lab này trở thành cầu nối rất tốt giữa suy luận Bayes và giao tiếp kết quả thống kê.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fbba81aa"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=578f2037"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2.-B%C3%A0i-1---Point-estimates-d%C6%B0%E1%BB%9Bi-c%C3%A1c-h%C3%A0m-t%E1%BB%95n-th%E1%BA%A5t-kh%C3%A1c-nhau">2. Bài 1 - Point estimates dưới các hàm tổn thất khác nhau<a class="anchor-link" href="#2.-B%C3%A0i-1---Point-estimates-d%C6%B0%E1%BB%9Bi-c%C3%A1c-h%C3%A0m-t%E1%BB%95n-th%E1%BA%A5t-kh%C3%A1c-nhau">¶</a></h2><p>Với prior $f_X(x)=3x^2$ trên $[0,1]$, ta có Beta$(3,1)$. Mỗi phần của bài hỏi một “điểm tốt nhất” khác nhau, tức là một quyết định tối ưu dưới một hàm tổn thất khác nhau.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài này làm rất rõ một thông điệp then chốt của Bayesian decision theory: không có một “ước lượng tốt nhất” tuyệt đối nếu ta chưa nói rõ tiêu chuẩn mất mát. Cùng một posterior, nhưng khi mục tiêu ra quyết định thay đổi thì điểm tóm tắt tối ưu cũng đổi theo.</p>
@@ -13129,7 +13130,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=4cb9be4d"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=db429586"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 1.</strong> Cho prior $X$ có mật độ $f_X(x)=3x^2$ trên $[0,1]$. Với từng likelihood và quan sát tương ứng sau đây, hãy tìm ước lượng điểm thích hợp:</p>
 <ul>
@@ -13141,7 +13142,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=aea06169">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=a406a878">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13168,13 +13169,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5460b82b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=dc81e083"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Interpretation">Interpretation<a class="anchor-link" href="#Interpretation">¶</a></h3><p>Bài 1 cho thấy “ước lượng tốt nhất” không có một đáp án duy nhất nếu ta không nói rõ tiêu chuẩn ra quyết định. Dưới mất mát bình phương ta dùng posterior mean, dưới mất mát trị tuyệt đối ta dùng median, còn dưới mất mát 0-1 ta dùng MAP.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0b354cae"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f8bdfb6f"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="3.-B%C3%A0i-2---Hai-b%C3%A0i-c%C3%A1-nh%C3%A2n-h%C3%B3a,-gi%E1%BA%A3i-b%E1%BA%B1ng-m%E1%BB%99t-v%C3%AD-d%E1%BB%A5-minh-h%E1%BB%8Da">3. Bài 2 - Hai bài cá nhân hóa, giải bằng một ví dụ minh họa<a class="anchor-link" href="#3.-B%C3%A0i-2---Hai-b%C3%A0i-c%C3%A1-nh%C3%A2n-h%C3%B3a,-gi%E1%BA%A3i-b%E1%BA%B1ng-m%E1%BB%99t-v%C3%AD-d%E1%BB%A5-minh-h%E1%BB%8Da">¶</a></h2><p>Bài 2 được cá nhân hóa theo MSSV, nên notebook này cố ý giải bằng một ví dụ minh họa cụ thể nhưng vẫn giữ cấu trúc tổng quát của lời giải. Điều quan trọng không phải là bốn chữ số cụ thể, mà là cách ta biến dữ liệu cá nhân hóa thành các tham số cập nhật trong mô hình liên hợp.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của bài này là giúp sinh viên tách biệt giữa con số đầu vào và logic Bayesian đứng sau. Khi đề thay MSSV, lời giải số sẽ thay đổi, nhưng cách xây posterior, cách diễn giải mean và variance hậu nghiệm, và cách cập nhật tuần tự thì không đổi.</p>
@@ -13182,7 +13183,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=53a81c8e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=716efe2a"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 2.</strong> Đây là hai bài cá nhân hóa theo MSSV trong lab gốc:</p>
 <ul>
@@ -13199,7 +13200,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=f2437a55">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=2caea8f3">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13238,7 +13239,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=9d740c8b"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8a81a00d"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="4.-B%C3%A0i-3---X%C3%A9t-nghi%E1%BB%87m-d%C6%B0%C6%A1ng-t%C3%ADnh-r%E1%BB%93i-nhi%E1%BB%81u-l%E1%BA%A7n-%C3%A2m-t%C3%ADnh">4. Bài 3 - Xét nghiệm dương tính rồi nhiều lần âm tính<a class="anchor-link" href="#4.-B%C3%A0i-3---X%C3%A9t-nghi%E1%BB%87m-d%C6%B0%C6%A1ng-t%C3%ADnh-r%E1%BB%93i-nhi%E1%BB%81u-l%E1%BA%A7n-%C3%A2m-t%C3%ADnh">¶</a></h2><p>Bài xét nghiệm này tiếp tục đào sâu một trực giác Bayesian quan trọng: một kết quả dương tính ban đầu chưa kết thúc câu chuyện. Khi thêm các kết quả âm tính tiếp theo, posterior có thể đảo chiều đáng kể vì mỗi phép đo mới lại là một mẩu bằng chứng mới.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa lớn nhất của bài là chuyển suy nghĩ từ “đếm xem bao nhiêu test dương hay âm” sang “sau mỗi test, niềm tin hợp lý nên là bao nhiêu”. Đây chính là cách Bayes biến chuỗi dữ liệu tuần tự thành chuỗi quyết định tuần tự.</p>
@@ -13246,7 +13247,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=7e14f9af"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3f544d2a"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Bài 3.</strong> Một căn bệnh có prior nhiễm là $0.2\%$. Xét nghiệm có độ nhạy $90\%$ và dương tính giả $1\%$. Một người test lần đầu dương tính.</p>
 <ul>
@@ -13256,7 +13257,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=abb2af2c">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=7199ee4a">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13280,7 +13281,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=117c1e14"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ca655cae"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="5.-B%C3%A0i-4-v%C3%A0-B%C3%A0i-5---Normal-Normal-conjugacy">5. Bài 4 và Bài 5 - Normal-Normal conjugacy<a class="anchor-link" href="#5.-B%C3%A0i-4-v%C3%A0-B%C3%A0i-5---Normal-Normal-conjugacy">¶</a></h2><p>Bài 4 và Bài 5 được đặt cạnh nhau để làm nổi bật sức mạnh của liên hợp chuẩn. Khi prior và likelihood đều Gaussian, posterior vẫn giữ dạng Gaussian và các công thức cập nhật có thể đọc như sự cân bằng giữa độ tin của prior và lượng thông tin trong dữ liệu.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của nhóm bài này là giúp người học thấy Bayesian updating không nhất thiết phải phụ thuộc vào tính toán số nặng. Trong nhiều mô hình cổ điển, ta có thể nhìn rất rõ dữ liệu đã kéo posterior mean đi bao xa và làm posterior variance co lại như thế nào.</p>
@@ -13288,7 +13289,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0336ff99"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=55a05ecb"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Phần này gộp hai bài chuẩn liên hợp Normal-Normal:</p>
 <ul>
@@ -13298,7 +13299,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=1158447f">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=7c234fac">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13318,7 +13319,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=770791af"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0db70361"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="6.-B%C3%A0i-6,-7,-8---Credible-intervals-and-posterior-summaries">6. Bài 6, 7, 8 - Credible intervals and posterior summaries<a class="anchor-link" href="#6.-B%C3%A0i-6,-7,-8---Credible-intervals-and-posterior-summaries">¶</a></h2><p>Ba bài cuối cùng gom nhiều họ phân phối khác nhau nhưng cùng chung một câu hỏi: posterior nên được báo cáo thế nào để diễn đạt mức độ bất định một cách có ý nghĩa? Khi chuyển từ Normal sang Beta rồi Gamma, ta thấy credible interval là một ý tưởng thống nhất, không bị trói vào một mô hình riêng lẻ.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa của nhóm bài này là giúp sinh viên vượt qua thói quen chỉ báo cáo posterior mean. Trong thực hành Bayesian, một khoảng đáng tin cậy thường truyền tải nhiều thông tin hơn vì nó cho biết cả vị trí trung tâm lẫn độ rộng của bất định còn lại.</p>
@@ -13326,7 +13327,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=b5a5593d"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=10e068b9"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p>Phần này gộp ba bài cuối của lab:</p>
 <ul>
@@ -13337,7 +13338,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=e857e04c">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=6594ccd2">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13374,19 +13375,19 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=8bc0425e"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=8da13130"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Reflection-on-inconsistencies">Reflection on inconsistencies<a class="anchor-link" href="#Reflection-on-inconsistencies">¶</a></h3><p>Bài 6 của đề gốc ghi gợi ý khoảng tin cậy không khớp với mức 99%. Với posterior variance tính đúng từ mô hình, khoảng 99% rộng hơn đáng kể so với gợi ý đó. Trong notebook này tôi ưu tiên tính nhất quán với công thức Bayes hơn là giữ nguyên đáp án gợi ý có vẻ sai.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=5391ebfa"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3d1bc2e9"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="7.-Model-criticism-and-reflection">7. Model criticism and reflection<a class="anchor-link" href="#7.-Model-criticism-and-reflection">¶</a></h2><p>Lab 5 nhấn mạnh rằng nhiều quyết định trong Bayesian analysis là quyết định về mục tiêu: ta muốn một điểm đại diện, một posterior đầy đủ, hay một khoảng đáng tin cậy? Ngoài ra, các bài phụ thuộc MSSV cho thấy một solution notebook tốt phải nói rõ giả định đã chọn, nếu không người học dễ lẫn lộn giữa công thức tổng quát và con số ví dụ.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=1c6d5027"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5d5d169c"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="8.-Conceptual-interpretation-questions">8. Conceptual interpretation questions<a class="anchor-link" href="#8.-Conceptual-interpretation-questions">¶</a></h2><ol>
 <li>Vì sao MAP, ML và MMSE có thể cho ba đáp án khác nhau trên cùng một bài?</li>
@@ -13397,20 +13398,20 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=c2a42e83"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=ef8a937b"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="9.-Final-takeaway">9. Final takeaway<a class="anchor-link" href="#9.-Final-takeaway">¶</a></h2><p>Lab 5 gom nhiều kỹ thuật khác nhau, nhưng tất cả đều quay về một điểm: posterior không chỉ cho ta một con số, mà cho ta một phân phối để từ đó chọn ra quyết định, khoảng tin cậy và diễn giải mức bất định phù hợp với câu hỏi đang đặt ra.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=68ee0a54"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=137ebc21"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Lab 5 gom nhiều kỹ thuật suy luận hậu nghiệm, nên các lecture nên đọc lại là:</p>
+<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Nếu muốn tự học mượt hơn theo từng cụm bài của Lab 5, nên quay lại các lecture sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: để quay lại ý tưởng mọi tóm tắt điểm và khoảng đều xuất phát từ posterior.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_05_conjugate_priors.md">Bài 2.5: Conjugate Priors - Prior Liên hợp</a>: phù hợp cho phần normal conjugacy và các cập nhật đóng dạng giải tích.</li>
-<li><a href="../../contents/vi/chapter08/_posts/2025-01-05-08_04_decision_analysis.md">Bài 8.4: Bayesian Decision Analysis - From Inference to Action</a>: rất sát với bài chọn posterior mean, median hay MAP dưới các hàm tổn thất khác nhau.</li>
-<li><a href="../../contents/vi/chapter10/_posts/2025-01-04-10_01_uncertainty_intervals.md">Bài 10.1: Communicating Uncertainty - Credible Intervals &amp; Predictions</a>: là lecture trực tiếp nhất cho credible intervals, posterior summaries và cách diễn giải bất định.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: <strong>Bài 1</strong>, <strong>Bài 3</strong> và <strong>Bài 6-8</strong>: đọc lại để nhớ rằng mọi point estimate, posterior probability hay credible interval đều xuất phát từ cùng một posterior.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_05_conjugate_priors.md">Bài 2.5: Prior liên hợp và đại số của cập nhật Bayes</a>: <strong>Bài 2</strong>, <strong>Bài 4</strong> và <strong>Bài 5</strong>: đọc lại phần Normal conjugacy và các cập nhật đóng dạng để theo kịp các bài có prior-likelihood liên hợp hoặc dữ liệu phụ thuộc MSSV.</li>
+<li><a href="../../contents/vi/chapter08/_posts/2025-01-05-08_04_decision_analysis.md">Bài 8.4: Bayesian Decision Analysis - From Inference to Action</a>: <strong>Bài 1</strong> và <strong>Bài 3</strong>: đặc biệt cần khi muốn hiểu vì sao posterior mean, median, MAP hay xác suất vượt ngưỡng là các cách ra quyết định khác nhau.</li>
+<li><a href="../../contents/vi/chapter10/_posts/2025-01-04-10_01_uncertainty_intervals.md">Bài 10.1: Communicating Uncertainty - Credible Intervals &amp; Predictions</a>: <strong>Bài 6</strong>, <strong>Bài 7</strong> và <strong>Bài 8</strong>: đọc lại cách diễn giải credible interval như một phát biểu về bất định hậu nghiệm, không phải một khoảng “chứa tham số” theo nghĩa tần suất.</li>
 </ul>
 </div>
 </div>

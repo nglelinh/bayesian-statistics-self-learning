@@ -13090,14 +13090,15 @@ div#notebook {
 <main>
 <div class="border-box-sizing" id="notebook" tabindex="-1">
 <div class="container" id="notebook-container">
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=2dbb5c6a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=3cfbd99f"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Lab-6:-Point-Estimation-and-Mixture-Priors">Lab 6: Point Estimation and Mixture Priors<a class="anchor-link" href="#Lab-6:-Point-Estimation-and-Mixture-Priors">¶</a></h1><p><strong>Phân tích dữ liệu Bayesian - IUH</strong></p>
-<p>Lab 6 là nơi rất thích hợp để phân biệt giữa “quyết định Bayesian” và “kiểm định kiểu chấp nhận hay bác bỏ”. Đồng thời, nó giới thiệu mixture priors như một cách mô tả bất định ngay ở cấp prior.</p>
+<p>Lab 6 đặt người học trước hai kiểu do dự khác nhau. Kiểu thứ nhất là do dự sau khi đã có posterior: nên đọc nó bằng mean, median, MAP hay một xác suất vượt ngưỡng? Kiểu thứ hai đến sớm hơn, ngay từ prior: nếu trước dữ liệu ta chưa chắc chỉ có một niềm tin nền duy nhất, thì có nên để nhiều khả năng cùng tồn tại hay không?</p>
+<p>Chính vì vậy, lab này nối hai chủ đề tưởng xa nhau mà rất hợp nhau: quyết định Bayesian và mixture priors. Một bên hỏi cách đọc posterior. Bên kia hỏi cách xây prior khi tri thức ban đầu không thuần nhất.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=f73ff488">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=e15cfa99">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13114,13 +13115,14 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=ca8637a8"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=24d90e4b"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="1.-Problem-framing-and-lecture-connection">1. Problem framing and lecture connection<a class="anchor-link" href="#1.-Problem-framing-and-lecture-connection">¶</a></h2><p>Phần đầu của lab hỏi: nếu posterior đã có, ta nên tóm tắt nó bằng điểm nào dưới những tiêu chuẩn tổn thất khác nhau? Phần sau hỏi: nếu prior không chắc là một họ duy nhất, ta có thể pha trộn nhiều prior thành một mixture rồi cập nhật từng thành phần ra sao?</p>
+<h2 id="1.-Khi-m%E1%BB%99t-posterior-c%C3%B3-nhi%E1%BB%81u-c%C3%A1ch-%C4%91%E1%BB%8Dc-v%C3%A0-m%E1%BB%99t-prior-c%C3%B3-nhi%E1%BB%81u-ti%E1%BA%BFng-n%C3%B3i">1. Khi một posterior có nhiều cách đọc và một prior có nhiều tiếng nói<a class="anchor-link" href="#1.-Khi-m%E1%BB%99t-posterior-c%C3%B3-nhi%E1%BB%81u-c%C3%A1ch-%C4%91%E1%BB%8Dc-v%C3%A0-m%E1%BB%99t-prior-c%C3%B3-nhi%E1%BB%81u-ti%E1%BA%BFng-n%C3%B3i">¶</a></h2><p>Ở phần đầu, bài toán trông quen thuộc: posterior đã có rồi, giờ chỉ còn chọn một điểm đại diện. Nhưng đây lại là nơi sinh viên dễ mắc sai lầm nhất, vì rất dễ xem mean, median và MAP như ba cách tính khác nhau của cùng một đáp án, thay vì ba quyết định khác nhau dưới ba tiêu chuẩn mất mát khác nhau.</p>
+<p>Sang phần sau, mức độ bất định được đẩy lùi thêm một tầng nữa. Không chỉ posterior mới có nhiều cách đọc; ngay cả prior cũng có thể là một hỗn hợp của nhiều khả năng nền. Khi đó, dữ liệu không chỉ cập nhật tham số mà còn tái phân bố độ tin cậy giữa các kịch bản prior cạnh tranh nhau.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=81502758"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=4fc6e794"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="2.-B%C3%A0i-1---Posterior-v%C3%A0-c%C3%A1c-%C6%B0%E1%BB%9Bc-l%C6%B0%E1%BB%A3ng-%C4%91i%E1%BB%83m">2. Bài 1 - Posterior và các ước lượng điểm<a class="anchor-link" href="#2.-B%C3%A0i-1---Posterior-v%C3%A0-c%C3%A1c-%C6%B0%E1%BB%9Bc-l%C6%B0%E1%BB%A3ng-%C4%91i%E1%BB%83m">¶</a></h2><p>Với prior $f(x)=2x$ trên $[0,1]$ và likelihood $f(y\mid x)=4xy$, quan sát $y=\frac{1}{5}$ chỉ tạo ra một hằng số nhân theo $x$. Vì vậy posterior tỉ lệ với $x^2$, tức là Beta$(3,1)$.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài mở đầu này nhấn mạnh rằng posterior là một phân phối, không phải một đáp án điểm duy nhất. Mean, median và MAP chỉ là ba cách đọc khác nhau của cùng một posterior dưới ba tiêu chuẩn mất mát khác nhau.</p>
@@ -13128,13 +13130,13 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=24510825"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2d331356"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Phần 1 - Bài 1.</strong> Cho prior $X\sim 2x$ trên $[0,1]$, likelihood $Y\mid X=x\sim 4xy$ trên $0\le y\le 1$, và quan sát $y=1/5$. Hãy tìm các ước lượng điểm tốt nhất của hậu nghiệm theo ba hàm tổn thất: bình phương, trị tuyệt đối, và 0-1.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=382d39b6">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=47ad6058">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13151,7 +13153,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=973ab8f8"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=b3b5c4ec"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="3.-B%C3%A0i-2---Thay-ki%E1%BB%83m-%C4%91%E1%BB%8Bnh-m%E1%BB%99t-ph%C3%ADa-b%E1%BA%B1ng-posterior-probability">3. Bài 2 - Thay kiểm định một phía bằng posterior probability<a class="anchor-link" href="#3.-B%C3%A0i-2---Thay-ki%E1%BB%83m-%C4%91%E1%BB%8Bnh-m%E1%BB%99t-ph%C3%ADa-b%E1%BA%B1ng-posterior-probability">¶</a></h2><p>Đề gốc dùng ngôn ngữ kiểm định giả thuyết. Ở đây ta giữ nguyên câu hỏi thực chất nhưng viết lại theo tinh thần Bayesian: posterior có ủng hộ mạnh cho mệnh đề $x&gt;0.7$ hay không?</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Bài này viết lại một câu hỏi quen thuộc của kiểm định giả thuyết bằng ngôn ngữ Bayesian trực tiếp hơn. Thay vì hỏi có “bác bỏ” một giả thuyết hay không, ta hỏi posterior dành bao nhiêu xác suất cho mệnh đề quan tâm.</p>
@@ -13159,7 +13161,7 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=246beabd"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=91b007f9"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Phần 1 - Bài 2.</strong> Với cùng thông tin như Bài 1, xét giả thuyết một phía
 $$H_0: x \le 0.7,\qquad H_1: x &lt; 0.7$$
@@ -13167,7 +13169,7 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=bd7071b6">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=5095263f">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13180,7 +13182,7 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=f7e5c94a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=13bf4256"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="4.-B%C3%A0i-3---Mixture-of-two-normals">4. Bài 3 - Mixture of two normals<a class="anchor-link" href="#4.-B%C3%A0i-3---Mixture-of-two-normals">¶</a></h2><p>Mixture of two normals là bài đầu tiên trong lab nơi prior không còn mang một đỉnh niềm tin duy nhất. Thay vào đó, prior mã hóa hai khả năng nền khác nhau và cho phép người học biểu diễn bất định ở cấp độ mô hình, không chỉ ở cấp độ tham số.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa cốt lõi của bài là giúp sinh viên thấy có những lúc một prior đơn lẻ là quá nghèo để mô tả kiến thức ban đầu. Nếu trước dữ liệu ta thực sự phân vân giữa hai kịch bản, mixture prior là cách trung thực hơn để diễn đạt trạng thái hiểu biết đó.</p>
@@ -13188,13 +13190,13 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=8487cf20"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=c6529e60"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Phần 2 - Bài 1.</strong> Cho prior hỗn hợp của $X$ gồm $45\%\,N(1.4,0.4^2)$ và $55\%\,N(2.1,0.5^2)$. Hãy xác định phân phối prior hỗn hợp của $X$, bao gồm kỳ vọng và phương sai.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=497e8917">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=8c36c09d">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13211,7 +13213,7 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=0610d0d5"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=87532b5e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="5.-B%C3%A0i-4---Beta-mixture-posterior-for-Binomial-data">5. Bài 4 - Beta mixture posterior for Binomial data<a class="anchor-link" href="#5.-B%C3%A0i-4---Beta-mixture-posterior-for-Binomial-data">¶</a></h2><p>Bài Beta mixture posterior cho thấy khi prior là hỗn hợp, dữ liệu không chỉ cập nhật tham số của từng thành phần mà còn cập nhật luôn độ tin cậy tương đối giữa các thành phần đó. Nói cách khác, dữ liệu đang “bỏ phiếu” xem kịch bản prior nào hợp lý hơn.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Đây là một bước tiến rất quan trọng về mặt trực giác. Trong prior liên hợp thông thường, ta chỉ theo dõi một bộ tham số. Với mixture prior, bản thân cấu trúc posterior cũng giàu hơn vì nó mang thông tin về sự cạnh tranh giữa nhiều giả thuyết nền.</p>
@@ -13219,13 +13221,13 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=dd7eaa1c"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=0c0ee0d9"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Phần 2 - Bài 2.</strong> Cho dữ liệu $n=50$, $x=36$, likelihood Binomial theo $\theta$, và prior hỗn hợp gồm $40\%\,\text{Beta}(20,30)$ với $60\%\,\text{Beta}(40,50)$. Hãy xác định posterior hỗn hợp của $\theta\mid x$.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=d62e23e2">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=f49563c4">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13256,7 +13258,7 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=96daa3d5"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=40d53d73"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="6.-B%C3%A0i-5---Gamma-mixture-posterior-for-Exponential-data">6. Bài 5 - Gamma mixture posterior for Exponential data<a class="anchor-link" href="#6.-B%C3%A0i-5---Gamma-mixture-posterior-for-Exponential-data">¶</a></h2><p>Bài Gamma mixture cho dữ liệu Exponential lặp lại ý tưởng của Bài 4 nhưng trong bối cảnh tham số dương liên tục. Điều này giúp người học thấy mixture updating không phải một mẹo riêng của Beta-Binomial, mà là một khuôn suy luận có thể tái sử dụng ở nhiều họ phân phối khác nhau.</p>
 <h3 id="%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">Ý nghĩa của bài tập<a class="anchor-link" href="#%C3%9D-ngh%C4%A9a-c%E1%BB%A7a-b%C3%A0i-t%E1%BA%ADp">¶</a></h3><p>Ý nghĩa lớn nhất của bài là xây sự linh hoạt trong tư duy mô hình hóa. Khi kiến thức ban đầu có nhiều nguồn hoặc nhiều kịch bản, ta không cần ép chúng vào một prior đơn; ta có thể để dữ liệu tự điều chỉnh trọng số giữa các khả năng cạnh tranh.</p>
@@ -13264,7 +13266,7 @@ và mức ý nghĩa $0.1$. Solution hiện diễn giải lại bài này theo po
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=663fe908"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=e96c40ad"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">Đề bài nhắc lại<a class="anchor-link" href="#%C4%90%E1%BB%81-b%C3%A0i-nh%E1%BA%AFc-l%E1%BA%A1i">¶</a></h3><p><strong>Phần 2 - Bài 3.</strong> Cho mẫu kích thước $15$ từ phân phối mũ $X\mid \theta\sim \text{Exp}(\theta)$ với trung bình mẫu $\overline{x}=3$. Prior hỗn hợp cho $\theta$ là
 $$0.6\times \text{Gamma}(7,8) + 0.4\times \text{Gamma}(10,9).$$
@@ -13272,7 +13274,7 @@ Hãy xác định các hệ số của các hậu nghiệm thành phần.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered" id="cell-id=59ce657e">
+<div class="cell border-box-sizing code_cell rendered" id="cell-id=65d78d1c">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
@@ -13298,13 +13300,13 @@ Hãy xác định các hệ số của các hậu nghiệm thành phần.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=e7ffc41a"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=f050fce5"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="7.-Model-criticism-and-reflection">7. Model criticism and reflection<a class="anchor-link" href="#7.-Model-criticism-and-reflection">¶</a></h2><p>Mixture priors rất mạnh vì chúng cho phép ta nói “tôi không chắc prior nào đúng” thay vì cố ép mọi niềm tin về một phân phối duy nhất. Nhưng cái giá phải trả là posterior không còn tóm gọn bằng một cặp tham số đơn giản. Vì vậy, khi dùng mixture priors, ta nên báo cáo cả trọng số hậu nghiệm lẫn posterior của từng thành phần.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=48e3dd1c"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=718bb559"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="8.-Conceptual-interpretation-questions">8. Conceptual interpretation questions<a class="anchor-link" href="#8.-Conceptual-interpretation-questions">¶</a></h2><ol>
 <li>Vì sao posterior mean, median và MAP là ba quyết định khác nhau dù xuất phát từ cùng một posterior?</li>
@@ -13315,20 +13317,21 @@ Hãy xác định các hệ số của các hậu nghiệm thành phần.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=fc331998"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=2b5a23a5"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="9.-Final-takeaway">9. Final takeaway<a class="anchor-link" href="#9.-Final-takeaway">¶</a></h2><p>Lab 6 nhắc rằng Bayesian analysis không chỉ tạo ra posterior, mà còn yêu cầu ta quyết định cách đọc posterior ấy. Khi prior là hỗn hợp, bản thân việc dữ liệu “chọn” thành phần nào cũng là một phần của suy luận.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered" id="cell-id=95034989"><div class="inner_cell">
+<div class="cell border-box-sizing text_cell rendered" id="cell-id=5809f15e"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Để nối Lab 6 với course, nên đọc lại các lecture sau theo đúng hai mạch của notebook:</p>
+<h2 id="10.-Lecture-references">10. Lecture references<a class="anchor-link" href="#10.-Lecture-references">¶</a></h2><p>Nếu muốn nối từng cụm bài của Lab 6 về đúng lecture trong course, nên đọc lại các phần sau:</p>
 <ul>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_03_prior.md">Bài 2.3: Prior - Mã hóa Kiến thức Ban đầu</a>: giúp nhìn mixture prior như một cách mã hóa niềm tin ban đầu phong phú hơn một họ phân phối đơn lẻ.</li>
-<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: cần cho việc theo dõi từng thành phần mixture được cập nhật ra sao sau khi có dữ liệu.</li>
-<li><a href="../../contents/vi/chapter08/_posts/2025-01-05-08_04_decision_analysis.md">Bài 8.4: Bayesian Decision Analysis - From Inference to Action</a>: nối trực tiếp với phần ước lượng điểm và diễn giải posterior probability thay cho ngôn ngữ kiểm định.</li>
-<li><a href="../../contents/vi/chapter11/_posts/2025-01-05-11_02_mixture_models.md">Bài 11.2: Mixture Models - Clustering &amp; Heterogeneity</a>: là lecture mở rộng hữu ích nếu muốn hiểu sâu hơn trực giác và ứng dụng của mixture structures.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_04_posterior.md">Bài 2.4: Posterior - Cập nhật Niềm tin với Dữ liệu</a>: <strong>Bài 1</strong> và <strong>Bài 2</strong>: đọc lại cách đi từ prior và likelihood đến posterior trước khi bàn mean, median, MAP hay xác suất $P(x&gt;0.7\mid y)$.</li>
+<li><a href="../../contents/vi/chapter08/_posts/2025-01-05-08_04_decision_analysis.md">Bài 8.4: Bayesian Decision Analysis - From Inference to Action</a>: <strong>Bài 1</strong> và <strong>Bài 2</strong>: đọc lại khi muốn hiểu vì sao một posterior có thể được tóm tắt bằng nhiều quyết định khác nhau, và vì sao posterior probability tự nhiên hơn ngôn ngữ “bác bỏ/chấp nhận”.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_03_prior.md">Bài 2.3: Prior - Mã hóa Kiến thức Ban đầu</a>: <strong>Bài 3</strong>, <strong>Bài 4</strong> và <strong>Bài 5</strong>: đọc lại để thấy mixture prior đang mã hóa nhiều kịch bản niềm tin ban đầu cùng lúc, chứ không phải chỉ một họ phân phối duy nhất.</li>
+<li><a href="../../contents/vi/chapter02/_posts/2025-01-02-02_05_conjugate_priors.md">Bài 2.5: Prior liên hợp và đại số của cập nhật Bayes</a>: <strong>Bài 4</strong> và <strong>Bài 5</strong>: đọc lại khi muốn theo dõi cách từng thành phần Beta hay Gamma trong hỗn hợp vẫn được cập nhật theo quy tắc liên hợp quen thuộc.</li>
+<li>Không còn lecture riêng về mixture models trong active curriculum; với <strong>Bài 3</strong> đến <strong>Bài 5</strong>, hãy quay lại <strong>Bài 2.3</strong> và <strong>Bài 2.5</strong> ở trên để đọc trực giác về prior hỗn hợp và cách từng thành phần được cập nhật.</li>
 </ul>
 </div>
 </div>

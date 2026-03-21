@@ -23,3 +23,12 @@ The Vietnamese Chapter 2 flow SHALL include Bayesian interval estimation as a co
 - **WHEN** a learner completes the posterior-estimation section
 - **THEN** the learner can read and interpret a Bayesian interval statement as posterior probability over parameter values
 - **AND** the learner can compare interval interpretation with point-estimate summaries in one coherent example
+
+### Requirement: Session 5 Worked Example Fidelity
+The Vietnamese Chapter 2 estimation update SHALL include representative Session 5 worked examples (OCR-recovered when image-based), covering MAP derivation, ML-vs-MAP comparison, MMSE/posterior-mean derivation, and one Bayesian interval computation.
+
+#### Scenario: Learner reviews Session 5 example set in revised lessons
+- **WHEN** a learner studies estimation examples in the Chapter 2 flow
+- **THEN** the learner can find at least one explicit MAP derivation and one MMSE/posterior-mean derivation
+- **AND** the learner can find at least one explicit ML-vs-MAP comparison
+- **AND** the learner can find at least one worked Bayesian interval computation

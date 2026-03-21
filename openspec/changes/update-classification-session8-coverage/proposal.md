@@ -9,6 +9,7 @@ Session 8 material (`materials/buoi 8 - phan lop.pptx`) presents Bayesian patter
   - minimum-risk decision rule with configurable loss matrix (including reject/defer action),
   - discriminant-function view and equivalent monotone transforms (e.g., log discriminants),
   - Gaussian class-conditional cases and implications for linear vs quadratic decision boundaries.
+- Preserve Session 8 worked-example fidelity, including: prior-shift fruit classification intuition, the two-class/three-action risk example (with reject option), and discriminant/log-discriminant computation examples.
 - Keep edits tightly scoped to classification-related lessons and existing teaching style conventions.
 
 ## Impact

@@ -23,3 +23,11 @@ The Vietnamese Chapter 2 conjugacy lesson SHALL explicitly connect Session 4 cor
 - **WHEN** a learner finishes the conjugacy lesson
 - **THEN** the learner can identify the three core Session 4 conjugate families and their data stories
 - **AND** the learner can connect posterior updates to Bayesian estimation interpretation in at least one worked example
+
+### Requirement: Session 4 Worked Example Fidelity
+The Vietnamese Chapter 2 conjugacy update SHALL preserve Session 4 worked-example intent from image-heavy slides by including at least one Gamma-Poisson update example and one Normal-Normal Bayes-estimation example with explicit posterior-summary computation.
+
+#### Scenario: Learner validates conjugacy examples against Session 4 content
+- **WHEN** a learner reviews worked examples in the revised conjugacy lessons
+- **THEN** the learner can find a Gamma-Poisson example with prior-to-posterior parameter update
+- **AND** the learner can find a Normal-Normal example that reports Bayes estimate and posterior uncertainty/risk summary
