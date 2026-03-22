@@ -10,9 +10,28 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu
+## Mục tiêu học tập
 
-Bài học này giới thiệu các khái niệm giải tích cần thiết cho Bayesian Statistics, bao gồm đạo hàm, tích phân, và tối ưu hóa.
+Sau bài này, bạn sẽ nắm vai trò của đạo hàm, tích phân, và tối ưu hóa trong suy luận thống kê Bayes. Cụ thể, bạn sẽ hiểu đạo hàm như công cụ phân tích độ nhạy và tìm cực trị, tích phân như phép chuẩn hóa và tính xác suất trên miền liên tục, và tối ưu hóa như bước tìm nghiệm xấp xỉ (ví dụ MAP) trước hoặc song song với lấy mẫu posterior.
+
+## Giới thiệu: vì sao giải tích là lõi của Bayes liên tục?
+
+Nhiều mô hình Bayesian làm việc với tham số liên tục. Khi đó, ba thao tác toán học xuất hiện lặp đi lặp lại: lấy đạo hàm để tối ưu hàm log-posterior, lấy tích phân để chuẩn hóa phân phối và marginalize biến ẩn, và dùng gradient để thiết kế thuật toán tính toán hiệu quả. Vì vậy, giải tích không phải phần phụ trợ; nó là phần lõi giúp biến mô hình xác suất thành suy luận có thể tính được.
+
+Trong bài này, mỗi công thức sẽ được đọc theo hai tầng: tầng hình thức (ký hiệu toán học) và tầng ý nghĩa thống kê (nó trả lời câu hỏi gì trong phân tích dữ liệu). Cách đọc hai tầng này là kỹ năng quan trọng cho các chương MCMC, hồi quy Bayes, và model checking.
+
+## Khung liên hệ với workflow Bayesian
+
+Một workflow điển hình có thể viết ngắn gọn:
+
+$$
+\text{prior} \times \text{likelihood} \propto \text{posterior (unnormalized)}.
+$$
+
+Từ đây, giải tích tham gia ở hai điểm:
+
+1. **Đạo hàm**: tìm điểm cực trị của log-posterior (MAP, Laplace approximation).
+2. **Tích phân**: chuẩn hóa posterior hoặc tính xác suất/kỳ vọng trên miền liên tục.
 
 ## 1. Đạo hàm (Derivatives)
 

@@ -12,16 +12,11 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu sâu về **bias-variance tradeoff** - một trong những concepts quan trọng nhất trong machine learning và statistics. Bạn sẽ học tại sao simple models có high bias, complex models có high variance, và làm sao tìm sweet spot ở giữa. Đây là foundation để hiểu regularization và model selection.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu sâu về **bias-variance tradeoff** (đánh đổi giữa độ lệch và độ dao động), một trong những ý tưởng nền tảng nhất của machine learning và statistics. Bài học sẽ giải thích vì sao mô hình quá đơn giản thường có **high bias**, vì sao mô hình quá phức tạp thường có **high variance**, và vì sao mục tiêu thực sự của model selection không phải là đẩy một thành phần về thấp nhất có thể, mà là tìm điểm cân bằng khiến sai số tổng thể nhỏ nhất. Đây là cơ sở trực tiếp để hiểu regularization, overfitting, và cả logic của việc chọn mô hình.
 
 ## Giới thiệu: Hai Loại Error
 
-Khi model dự đoán sai, có hai nguyên nhân:
-
-1. **Bias**: Model quá simple → không capture được pattern
-2. **Variance**: Model quá complex → học noise thay vì signal
-
-**Tradeoff**: Giảm bias → tăng variance (và ngược lại).
+Khi một mô hình dự đoán sai, sai số đó thường không đến từ một nguyên nhân duy nhất. Một phần sai số có thể đến từ việc mô hình quá đơn giản nên bỏ sót cấu trúc thật của dữ liệu; đó là **bias** (độ lệch). Một phần khác có thể đến từ việc mô hình quá nhạy với dữ liệu huấn luyện, khiến chỉ cần thay mẫu một chút là dự đoán dao động mạnh; đó là **variance** (độ dao động). Điều cốt lõi là hai thành phần này thường kéo ngược nhau: giảm bias thường làm variance tăng, còn ép variance xuống quá mạnh thường làm bias tăng lên.
 
 ## 1. Bias và Variance: Định nghĩa
 
@@ -48,101 +43,25 @@ $$
 
 ![Bias-Variance Demonstration](../../../img/chapter_img/chapter07/bias_variance_demonstration.png)
 
-**Kết quả quan sát:**
-
-- **HIGH BIAS (Underfitting)** - Degree 1:
-  - Model đơn giản (đường thẳng)
-  - Predictions sát nhau (low variance)
-  - Nhưng xa sự thật (high bias)
-  - Avg |Bias| ≈ 1.5-2.0, Avg Variance ≈ 0.2-0.3
-
-- **BALANCED** - Degree 3:
-  - Độ phức tạp vừa phải
-  - Variance hợp lý
-  - Bias thấp
-  - Avg |Bias| ≈ 0.3-0.5, Avg Variance ≈ 0.5-0.7
-  - **Sweet spot** cho trade-off
-
-- **HIGH VARIANCE (Overfitting)** - Degree 10:
-  - Model phức tạp (polynomial bậc cao)
-  - Predictions spread out (high variance)
-  - Mean prediction gần sự thật (low bias)
-  - Nhưng individual predictions không đáng tin cậy!
-  - Avg |Bias| ≈ 0.2-0.4, Avg Variance ≈ 2.0-3.0
-
-**Key insight**: 50 training sets khác nhau → 50 models khác nhau. Variance đo độ "dao động" của predictions giữa các models.
+Hình minh họa cho trực giác này rất rõ. Với mô hình bậc 1, các đường fit từ nhiều tập dữ liệu khác nhau khá gần nhau, nghĩa là variance thấp, nhưng hầu hết đều lệch xa quy luật thật, nghĩa là bias cao; đây là trạng thái underfitting điển hình. Với mô hình bậc 3, mức độ linh hoạt vừa đủ để bám sát quy luật thật hơn mà chưa dao động quá nhiều giữa các mẫu, nên bias giảm xuống trong khi variance vẫn còn kiểm soát được; đó là vùng cân bằng tốt nhất của trade-off. Với mô hình bậc 10, đường trung bình có thể đã gần quy luật thật hơn, tức bias thấp hơn, nhưng từng mô hình riêng lẻ lại dao động mạnh theo từng mẫu huấn luyện, nghĩa là variance tăng vọt. Vì vậy, việc nhìn 50 training sets khác nhau như 50 phiên bản khác nhau của cùng một bài toán là cách trực quan nhất để hiểu variance: nó đo mức “rung lắc” của dự đoán khi dữ liệu thay đổi.
 
 ## 2. Decomposition: MSE = Bias² + Variance + Noise
 
 ![MSE Decomposition](../../../img/chapter_img/chapter07/mse_decomposition.png)
 
-**Kết quả phân tích:**
-
-**Optimal Complexity:**
-- **Optimal degree**: 2
-- **Bias²**: 0.046
-- **Variance**: 0.227
-- **MSE**: 0.274
-
-**Quan sát từ đường cong:**
-
-- **Low complexity (degree 1-2)**:
-  - Bias² cao (đường đỏ)
-  - Variance thấp (đường xanh)
-  - Model quá đơn giản → underfitting
-
-- **Optimal complexity (degree 2-3)**:
-  - Bias² và Variance cân bằng
-  - MSE thấp nhất (đường xanh lá)
-  - **Sweet spot** - trade-off tối ưu!
-
-- **High complexity (degree 10+)**:
-  - Bias² thấp (model fit data tốt)
-  - Variance cao (không ổn định)
-  - MSE tăng → overfitting
-
-**Stacked view** (plot bên phải) cho thấy rõ: MSE = Bias² + Variance. Mục tiêu là tìm độ phức tạp minimize tổng error, không phải minimize riêng bias hay variance.
+Khi nhìn vào decomposition của MSE, ta thấy ngay vì sao việc chọn mô hình không thể dựa trên một tiêu chí đơn lẻ. Ở vùng độ phức tạp thấp, chẳng hạn bậc 1 hoặc 2, thành phần $$\text{Bias}^2$$ còn lớn vì mô hình quá đơn giản để mô tả dữ liệu, dù variance khi đó khá thấp. Khi độ phức tạp tăng lên vùng trung gian, hai thành phần này bắt đầu cân bằng hơn và tổng MSE đạt mức nhỏ nhất; đó là “sweet spot” thực sự của mô hình. Nhưng khi tiếp tục tăng độ phức tạp, bias có thể giảm thêm một chút trong khi variance tăng rất mạnh, làm MSE tăng trở lại. Biểu đồ stacked ở bên phải đặc biệt hữu ích vì nó cho thấy trực quan rằng mục tiêu không phải là tối thiểu hóa riêng bias hay riêng variance, mà là tối thiểu hóa tổng sai số dự báo.
 
 ## 3. Regularization và Bias-Variance
 
-**Regularization** controls bias-variance tradeoff:
-- **Weak regularization** (λ small): Low bias, high variance
-- **Strong regularization** (λ large): High bias, low variance
+Regularization chính là chiếc núm điều khiển trade-off này. Khi regularization yếu, tức $$\lambda$$ nhỏ, mô hình được phép linh hoạt hơn nên bias có xu hướng thấp nhưng variance lại cao. Khi regularization mạnh, tức $$\lambda$$ lớn, mô hình bị ép đơn giản hơn nên variance giảm, nhưng bias lại tăng.
 
 ![Regularization Bias-Variance](../../../img/chapter_img/chapter07/regularization_bias_variance.png)
 
-**Kết quả quan sát với polynomial degree 10:**
-
-- **λ = 0.001** (Very Weak):
-  - Bias² ≈ 0.05-0.10, Variance ≈ 8-12
-  - HIGH variance → Overfitting
-  - Predictions spread out wildly
-  
-- **λ = 0.1** (Weak):
-  - Bias² ≈ 0.10-0.15, Variance ≈ 2-4
-  - Still high variance but better
-  
-- **λ = 1** (Balanced):
-  - Bias² ≈ 0.20-0.30, Variance ≈ 0.8-1.5
-  - Good balance
-  
-- **λ = 10** (Strong):
-  - Bias² ≈ 0.40-0.60, Variance ≈ 0.3-0.5
-  - Higher bias, lower variance
-  
-- **λ = 100** (Very Strong):
-  - Bias² ≈ 1.5-2.5, Variance ≈ 0.1-0.2
-  - HIGH bias → Underfitting
-  - Model too constrained, predictions almost flat
-
-**Key insight**: Regularization parameter λ controls the trade-off. Optimal λ balances bias and variance for minimum MSE.
+Ví dụ với polynomial bậc 10 cho thấy điểm này rất rõ. Khi $$\lambda=0.001$$, regularization quá yếu nên mô hình dao động mạnh, biểu hiện ở variance rất lớn và hiện tượng overfitting rõ rệt. Khi tăng dần lên $$0.1$$ rồi $$1$$, variance giảm xuống đáng kể và mô hình bước vào vùng cân bằng tốt hơn. Nếu tiếp tục tăng lên $$10$$ hay $$100$$, mô hình bắt đầu bị bó quá mạnh, các dự đoán trở nên gần như phẳng, variance thấp nhưng bias tăng cao, tức quay lại vùng underfitting. Bài học ở đây là $$\lambda$$ không phải tham số “càng lớn càng an toàn”; nó phải được chọn sao cho bias và variance đạt một mức cân bằng tốt nhất cho mục tiêu dự báo.
 
 ## 4. Bayesian Perspective
 
-Trong Bayesian statistics:
-- **Prior strength** controls bias-variance
-- **Weak priors**: High variance (flexible, data-driven)
-- **Strong priors**: High bias (rigid, prior-driven)
+Trong Bayesian statistics, vai trò của regularization được chuyển thành vai trò của **prior strength** (độ mạnh của tiên nghiệm). Priors yếu để dữ liệu quyết định nhiều hơn nên mô hình linh hoạt hơn nhưng cũng dao động hơn; priors mạnh ràng buộc mô hình nhiều hơn nên variance giảm, nhưng đổi lại bias có thể tăng nếu prior quá cứng.
 
 ```python
 import pymc as pm
@@ -213,15 +132,9 @@ plt.show()
 
 ## Tóm tắt
 
-Bias-Variance Tradeoff:
+Bias-variance tradeoff cho thấy sai số dự báo không thể được hiểu chỉ bằng một thước đo đơn giản về “độ khớp”. **Bias** phản ánh cái giá của việc dùng một mô hình quá đơn giản, còn **variance** phản ánh cái giá của việc dùng một mô hình quá nhạy với dữ liệu huấn luyện. Công thức $$\text{MSE}=\text{Bias}^2+\text{Variance}+\text{Irreducible Error}$$ nhắc ta rằng mô hình tốt là mô hình cân bằng được hai lực đối nghịch này. Regularization là công cụ thực hành để điều chỉnh điểm cân bằng đó, còn trong Bayesian statistics, chính độ mạnh của prior đảm nhiệm vai trò ấy.
 
-- **Bias**: Error from overly simple model
-- **Variance**: Error from sensitivity to training data
-- **MSE = Bias² + Variance + Irreducible Error**
-- **Regularization**: Controls tradeoff
-- **Goal**: Find sweet spot that minimizes total error
-
-**Key insight**: Perfect fit on training data ≠ good model. Balance is key!
+Điểm cần nhớ nhất là một mô hình fit training data thật đẹp chưa chắc là một mô hình tốt; mô hình tốt là mô hình khái quát hóa tốt trên dữ liệu mới.
 
 Bài tiếp theo: **Feature Selection**.
 

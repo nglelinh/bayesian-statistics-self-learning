@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.17: Luật số lớn và Định lý giới hạn trung tâm"
+title: "Bài 0.16: Luật số lớn và Định lý giới hạn trung tâm"
 chapter: '00'
-order: 17
+order: 16
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -14,7 +14,13 @@ lesson_type: required
 
 Sau bài này, bạn sẽ hiểu vì sao trung bình mẫu ổn định khi số mẫu tăng (LLN), vì sao tổng/trung bình nhiều biến ngẫu nhiên có xu hướng gần chuẩn (CLT), và vì sao hai định lý này là nền cho tư duy mô phỏng, ước lượng, và kiểm định.
 
+## Giới thiệu: vì sao ngẫu nhiên vẫn tạo ra quy luật ổn định?
+
+Một trong những ý tưởng nền tảng của thống kê là: từng quan sát riêng lẻ có thể rất nhiễu, nhưng khi tổng hợp đủ nhiều quan sát, ta lại thấy cấu trúc quy luật rõ ràng. LLN và CLT là hai định lý mô tả chính xác hiện tượng này, đồng thời giải thích vì sao các ước lượng mẫu có thể dùng để suy luận về quần thể.
+
 ![LLN va CLT truc quan]({{ site.baseurl }}/img/chapter_img/chapter00/lln_clt_convergence.png)
+
+*Cách đọc hình: Hình này minh họa lln va clt truc quan. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Ben trai la hoi tu trung binh chay (LLN); ben phai la phan phoi trung binh mau gan dang chuan (CLT).* 
 
 ## 1) Luật số lớn (LLN): trung bình mẫu hội tụ
@@ -59,9 +65,7 @@ Muốn sai số giảm 2 lần, ta thường phải tăng cỡ mẫu lên khoả
 
 ## 5) Liên hệ với Bayes và mô phỏng
 
-Trong Bayes:
-
-Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu, số mẫu posterior càng tăng thì estimate càng ổn định hơn, và rất nhiều chẩn đoán về uncertainty thực chất đều dựa trên trực giác của LLN và CLT.
+Trong Bayes, Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu: số mẫu posterior càng tăng thì estimate càng ổn định hơn, và nhiều chẩn đoán về uncertainty thực chất đều dựa trên trực giác của LLN và CLT.
 
 ## Tóm tắt nhanh
 
@@ -83,4 +87,4 @@ Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu, số mẫu 
 
 ---
 
-*Bài học tiếp theo: [0.18 Sampling Distribution và Standard Error](/vi/chapter00/sampling-distribution-standard-error/)*
+*Bài học tiếp theo: [0.17 Sampling Distribution và Standard Error](/vi/chapter00/sampling-distribution-standard-error/)*

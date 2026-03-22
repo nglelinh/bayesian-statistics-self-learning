@@ -30,6 +30,8 @@ Trong đó $$p$$ là xác suất thành công trong một lần thử.
 
 ![Bernoulli mô tả một lần thử nhị phân với hai kết quả có thể]({{ site.baseurl }}/img/chapter_img/chapter00/bernoulli_binary_outcomes.png)
 
+*Cách đọc hình: Hình này minh họa bernoulli mô tả một lần thử nhị phân với hai kết quả có thể. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+
 ## 2) Từ Bernoulli sang Binomial
 
 Nếu lặp lại thí nghiệm Bernoulli $$n$$ lần độc lập với cùng $$p$$, số lần thành công $$K$$ tuân theo Binomial:
@@ -43,6 +45,17 @@ $$
 Bernoulli mô tả một quan sát nhị phân đơn lẻ, còn Binomial mô tả tổng số lần thành công sau nhiều lần thử cùng loại.
 
 ![Binomial đếm số lần thành công sau nhiều lần thử Bernoulli độc lập]({{ site.baseurl }}/img/chapter_img/chapter00/binomial_success_count_distribution.png)
+
+*Cách đọc hình: Hình này minh họa binomial đếm số lần thành công sau nhiều lần thử bernoulli độc lập. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+
+Trong hình minh họa này, ta đang dùng tham số $$n=12$$ và $$p=0.35$$.
+
+**Cách đọc biểu đồ `binomial_success_count_distribution.png`:**
+
+- Trục ngang là số lần thành công $$k$$ (từ $$0$$ đến $$n$$), trục dọc là xác suất $$P(K=k)$$.
+- Mỗi cột cho biết khả năng nhận được đúng $$k$$ lần thành công sau $$n$$ phép thử.
+- Đỉnh phân phối thường nằm gần $$k\approx np$$, nên khi $$p$$ tăng thì khối xác suất dịch sang bên phải.
+- Về mặt trực giác, biểu đồ cho ta thấy ngay "số lần thành công nào là khả dĩ nhất" và "mức độ phân tán quanh giá trị kỳ vọng".
 
 ## 3) Hằng số chuẩn hóa trong Bernoulli/Binomial
 
@@ -73,7 +86,7 @@ $$
 =(p+1-p)^n=1.
 $$
 
-Nói ngắn gọn: với Bernoulli/Binomial, "hằng số chuẩn hóa" nằm ngay trong cấu trúc PMF và được bảo đảm bởi đồng nhất thức nhị thức.
+Nói ngắn gọn: với Bernoulli/Binomial, PMF Binomial đã "tự chuẩn hóa" sẵn: không cần thêm một hằng số ngoài công thức.
 
 ## 4) Ý nghĩa của các tham số
 

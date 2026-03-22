@@ -12,22 +12,15 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu các strategies khác nhau cho model comparison: model selection (chọn 1 model tốt nhất), model averaging (trung bình nhiều models), và khi nào dùng approach nào. Bạn sẽ học cách use `az.compare` effectively và interpret stacking weights.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu các chiến lược khác nhau cho **model comparison**, bao gồm **model selection** (chọn một mô hình tốt nhất), **model averaging** (trung bình hóa dự báo từ nhiều mô hình), và **model expansion** (mở rộng sang một mô hình lớn hơn bao trùm các lựa chọn nhỏ hơn). Bài học cũng sẽ giải thích cách dùng `az.compare` một cách hiệu quả và cách diễn giải **stacking weights** sao cho đúng tinh thần dự báo Bayesian.
 
 ## Giới thiệu: Three Approaches
 
-Khi có nhiều models:
-
-1. **Model Selection**: Chọn 1 model tốt nhất
-2. **Model Averaging**: Combine predictions từ nhiều models
-3. **Model Expansion**: Build larger model chứa tất cả
+Khi có nhiều mô hình cạnh tranh, ta không nhất thiết chỉ có một lựa chọn duy nhất là “chọn ra kẻ thắng cuộc”. Trong thực hành, có ba chiến lược lớn. Một là **model selection**, tức chọn mô hình có năng lực dự báo tốt nhất theo tiêu chí đang dùng. Hai là **model averaging**, tức kết hợp dự báo từ nhiều mô hình bằng các trọng số thích hợp để phản ánh bất định mô hình. Ba là **model expansion**, tức xây dựng một mô hình lớn hơn bao quát các lựa chọn con thay vì buộc phải loại trừ lẫn nhau.
 
 ## 1. Model Selection
 
-**Idea**: Chọn model với lowest LOO/WAIC.
-
-**Pros**: Simple, interpretable
-**Cons**: Ignores uncertainty about model choice
+Ý tưởng của model selection là chọn mô hình có LOO hay WAIC tốt nhất, tức mô hình được kỳ vọng dự báo ngoài mẫu tốt nhất trong tập ứng viên. Ưu điểm của cách này là đơn giản và dễ diễn giải. Nhược điểm của nó là thường bỏ qua độ bất định về chính lựa chọn mô hình, đặc biệt khi nhiều mô hình có hiệu năng rất sát nhau.
 
 ```python
 import numpy as np
@@ -53,9 +46,9 @@ print("=" * 70)
 
 ## 2. Model Averaging
 
-**Idea**: Weighted average of predictions from all models.
+Model averaging đi theo hướng khác: thay vì cưỡng bức một quyết định chọn duy nhất, nó lấy trung bình có trọng số của các dự báo từ nhiều mô hình.
 
-**Weights**: Based on predictive accuracy (stacking weights).
+Các trọng số này thường được xây dựng từ predictive accuracy, chẳng hạn qua **stacking weights**, để mô hình dự báo tốt hơn đóng góp nhiều hơn vào kết quả cuối cùng.
 
 $$
 \hat{y} = \sum_{k=1}^K w_k \hat{y}_k
@@ -168,14 +161,7 @@ print("=" * 70)
 
 ## Tóm tắt
 
-Model comparison strategies:
-
-- **Selection**: Choose best model (Δ LOO > 4)
-- **Averaging**: Weighted combination (Δ LOO < 4)
-- **Stacking weights**: Optimal weights for averaging
-- **az.compare**: Provides all information needed
-
-**Key insight**: Model averaging often more robust than selection!
+Model comparison không phải lúc nào cũng đồng nghĩa với việc chọn ra một mô hình duy nhất. Khi một mô hình thắng rõ ràng, model selection là cách làm tự nhiên và dễ truyền đạt. Khi nhiều mô hình gần ngang nhau, model averaging thường hợp lý hơn vì nó phản ánh đúng bất định về cấu trúc mô hình và thường cho dự báo ổn định hơn. Stacking weights cung cấp một cơ chế thực dụng để hiện thực hóa ý tưởng đó, còn `az.compare` gom hầu hết thông tin cần thiết vào cùng một bảng. Điểm quan trọng nhất là chiến lược so sánh mô hình nên được chọn theo mục tiêu dự báo và mức độ bất định mô hình, chứ không chỉ theo thói quen “chọn hạng nhất”.
 
 Bài tiếp theo: **Decision Analysis** - from inference to action.
 

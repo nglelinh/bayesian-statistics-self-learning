@@ -18,9 +18,7 @@ After this lesson, you will understand a practical definition of a statistical m
 
 From a dataset, we can compute means, standard deviations, and histograms. But those summaries alone do not answer inference questions such as:
 
-- what is the true population rate,
-- whether an effect is large enough to matter,
-- how uncertain future predictions are.
+What the true population rate is, whether an effect is large enough to matter, or how uncertain future predictions are.
 
 To answer these, we need a bridge from "unknown parameter" to "observable data." That bridge is a statistical model.
 
@@ -32,33 +30,19 @@ $$
 \mathcal{M} = \{p(x\mid \theta): \theta \in \Theta\}
 $$
 
-Where:
-
-- $$x$$: observed data,
-- $$\theta$$: unknown quantity controlling the data-generating mechanism,
-- $$\Theta$$: parameter space (valid values of $$\theta$$).
+Here, $$x$$ denotes observed data, $$\theta$$ is the unknown quantity governing the data-generating mechanism, and $$\Theta$$ is the parameter space, that is, the set of valid values of $$\theta$$.
 
 In short: a statistical model encodes "if parameters look like this, data tend to look like that."
 
 ## 3) Generative-story view
 
-In this course, we use a generative interpretation:
-
-1. Choose parameter(s) $$\theta$$ (unknown).
-2. Generate data $$x$$ from $$p(x\mid\theta)$$.
-3. Compare observed data with what the model expects.
+In this course, we use a generative interpretation: first imagine some unknown parameter value $$\theta$$, then generate data $$x$$ from $$p(x\mid\theta)$$, and finally compare the observed data with what the model would expect under plausible values of $$\theta$$.
 
 Coin example:
 
-- $$\theta$$ is the probability of heads,
-- each toss: $$y_i \sim \text{Bernoulli}(\theta)$$,
-- after $$n$$ tosses: $$k=\sum_i y_i \sim \text{Binomial}(n,\theta)$$.
+In the coin example, $$\theta$$ is the probability of heads, each toss produces an observation $$y_i \sim \text{Bernoulli}(\theta)$$, and after $$n$$ tosses the total number of heads $$k=\sum_i y_i$$ follows $$\text{Binomial}(n,\theta)$$.
 
-The model is not only the binomial formula. It also assumes:
-
-- each trial has the same $$\theta$$,
-- trials are independent,
-- the data are counts from repeated trials.
+The model is not only the binomial formula. It also assumes that each trial has the same $$\theta$$, that trials are independent, and that the data are counts arising from repeated trials under a common mechanism.
 
 ![Statistical model as bridge from parameters to data]({{ site.baseurl }}/img/chapter_img/chapter00/statistical_model_definition_flow.png)
 *Figure 1: A statistical model links unknown parameters $$\theta$$ to observed data $$x$$ through the data-generating mechanism $$p(x\mid\theta)$$, then updates beliefs to posterior $$p(\theta\mid x)$$.*
@@ -67,15 +51,11 @@ The model is not only the binomial formula. It also assumes:
 
 A common mistake is to search for a perfectly true model. In practice:
 
-- a model is a map, not the territory,
-- every model simplifies reality,
-- model value comes from prediction, explanation, and decision support.
+A model is a map rather than the territory, every model necessarily simplifies reality, and its value comes from how well it supports prediction, explanation, and decision-making.
 
 So whenever we model, we ask:
 
-- which assumptions are being imposed,
-- whether those assumptions fit the context,
-- how conclusions could fail if assumptions are wrong.
+We should therefore ask which assumptions are being imposed, whether those assumptions fit the context, and how our conclusions could fail if those assumptions are wrong.
 
 ## 5) Direct link to Bayesian inference
 
@@ -87,9 +67,7 @@ $$
 
 Here:
 
-- $$p(x\mid\theta)$$ comes from the statistical model,
-- $$p(\theta)$$ is the prior,
-- posterior $$p(\theta\mid x)$$ is the updated belief.
+The term $$p(x\mid\theta)$$ comes from the statistical model, $$p(\theta)$$ is the prior, and the posterior $$p(\theta\mid x)$$ is the updated belief after seeing the data.
 
 If the model is unclear, the likelihood is unclear, and the posterior loses interpretability.
 
@@ -103,17 +81,9 @@ $$
 
 where $$\mu$$ is class-average height and $$\sigma$$ is spread.
 
-This model implicitly assumes:
+This model implicitly assumes approximately normal data, conditional independence given the parameters, and a shared data-generating process across observations.
 
-- approximately normal data,
-- conditional independence given parameters,
-- a shared data-generating process across observations.
-
-With this model, we can:
-
-- estimate and interpret $$\mu, \sigma$$,
-- make predictions,
-- check model mismatch.
+With this model, we can estimate and interpret $$\mu, \sigma$$, make predictions, and check whether the model is missing important structure.
 
 ## Quick recap
 

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.21: Kiểm tra giả định mô hình cơ bản"
+title: "Bài 0.20: Kiểm tra giả định mô hình cơ bản"
 chapter: '00'
-order: 21
+order: 20
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -15,6 +15,8 @@ lesson_type: required
 Sau bài này, bạn sẽ biết cách kiểm tra nhanh nhưng có hệ thống các giả định cốt lõi của mô hình (dạng phân phối, tính độc lập, cấu trúc sai số), nhận diện dấu hiệu sai mô hình (misspecification), và biến kết quả kiểm tra thành hành động cải tiến mô hình.
 
 ![Kiem tra gia dinh mo hinh co ban]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_checks.png)
+
+*Cách đọc hình: Hình này minh họa kiem tra gia dinh mo hinh co ban. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Minh hoa fit va residual de nhin nhanh outlier, xu huong phan du, va dau hieu misspecification.*
 
 ## 1) Giả định mô hình là gì và nằm ở đâu?
@@ -76,6 +78,8 @@ Nếu residual có hình cong, ta nên nghĩ đến việc thêm thành phần p
 Kết luận: nhận xét "đuôi phải dài" không phải cảm giác thị giác, mà xuất phát từ thống kê mô tả cụ thể.
 
 ![Diamonds price distribution]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_diamonds_distribution.png)
+
+*Cách đọc hình: Hình này minh họa diamonds price distribution. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 2: Histogram gia kim cuong (diamonds) voi vach q95, cho thay phan phoi lech phai va duoi cao.*
 
 **Bước 2 - Fit baseline và kiểm tra residual**:
@@ -91,6 +95,8 @@ Chẩn đoán định lượng trên residual cho thấy tương quan $$\mathrm{
 Kết luận: phương sai residual tăng mạnh theo mức dự báo, vi phạm giả định đồng nhất phương sai.
 
 ![Diamonds residual vs fitted]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_diamonds_residuals.png)
+
+*Cách đọc hình: Hình này minh họa diamonds residual vs fitted. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 3: Residual vs fitted cua mo hinh baseline tren diamonds; do phan tan residual mo rong khi fitted tang (dau hieu heteroscedasticity).*
 
 **Bước 3 - Cập nhật mô hình và kiểm tra lại**:
@@ -126,6 +132,8 @@ Sau khi tổng hợp, có $$n=1953$$ ô quan sát zone-ngày.
 Theo Poisson, $$\mathbb{E}[Y]=\mathrm{Var}(Y)$$, nên dấu hiệu trên là vi phạm trực tiếp.
 
 ![Taxis trip-count distribution]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_taxis_distribution.png)
+
+*Cách đọc hình: Hình này minh họa taxis trip-count distribution. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 4: Phan phoi so chuyen theo zone-ngay trong taxis, kem thong ke mean, variance, va var/mean de nhan dien overdispersion.*
 
 **Bước 2 - Kiểm tra phần zero và đuôi phải**: tỉ lệ zero quan sát là `P(Y=0)=0.245`, trong khi Poisson với $$\lambda=2.697$$ chỉ dự báo `P(Y=0)=e^{-\lambda}=0.067`.
@@ -137,6 +145,8 @@ Sai khác zero rất lớn, cho thấy Poisson thiếu linh hoạt.
 Poisson đánh giá thấp mạnh các ngày có lưu lượng cao.
 
 ![Observed vs model implied probabilities on taxis]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_taxis_probabilities.png)
+
+*Cách đọc hình: Hình này minh họa observed vs model implied probabilities on taxis. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 5: So sanh xac suat quan sat voi xac suat suy ra tu Poisson va Negative Binomial cho hai thong ke muc tieu: $$P(Y=0)$$ va $$P(Y\ge 10)$$.*
 
 **Bước 3 - Cập nhật và kiểm tra lại**:
@@ -200,4 +210,4 @@ Các kỹ thuật kiểm tra sâu hơn như posterior predictive checks, WAIC, L
 
 ---
 
-*Bài học tiếp theo: [0.22 Mô phỏng để kiểm tra trực giác thống kê](/vi/chapter00/simulation-for-statistical-intuition/)*
+*Bài học tiếp theo: [0.21 Mô phỏng để kiểm tra trực giác thống kê](/vi/chapter00/simulation-for-statistical-intuition/)*

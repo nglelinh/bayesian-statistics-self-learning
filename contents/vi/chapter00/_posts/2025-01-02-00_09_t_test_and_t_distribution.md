@@ -46,6 +46,8 @@ Nếu **$$|t|$$ lớn**, trung bình mẫu cách xa $$\mu_0$$ một số lượn
 
 ![Diễn giải T-value]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_interpretation.png)
 
+*Cách đọc hình: Hình này minh họa diễn giải t-value. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+
 Hình trên minh họa cách diễn giải các t-value khác nhau với df = 15. Ở panel 1 với $$t = 0.5$$, p-value lớn khoảng 0.62 nên dữ liệu rất phù hợp với $$H_0$$; ở panel 2 với $$t = 2.0$$, p-value khoảng 0.064 nên kết quả ở trạng thái lưng chừng, sát ngưỡng 0.05; ở panel 3 với $$t = 3.0$$, p-value nhỏ khoảng 0.009 nên bằng chứng chống lại $$H_0$$ mạnh hơn nhiều; còn panel 4 với $$t = -0.70$$ là ví dụ chocolate thực tế, nơi p = 0.495 cho thấy chưa có đủ bằng chứng để chống lại giả thuyết không.
 
 Vùng được tô màu trong mỗi panel thể hiện "vùng cực đoan" dùng để tính p-value (two-tailed test).
@@ -70,6 +72,8 @@ Khi mẫu nhỏ, $$s$$ là một ước lượng không chắc chắn của $$\s
 
 ![So sánh Phân phối T và Phân phối Chuẩn]({{ site.baseurl }}/img/chapter_img/chapter00/t_vs_normal_distribution.png)
 
+*Cách đọc hình: Hình này minh họa so sánh phân phối t và phân phối chuẩn. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+
 Hình trên so sánh phân phối t với nhiều giá trị df khác nhau. Với **df = 2** tương ứng mẫu rất nhỏ, đuôi phân phối cực dày vì bất định trong việc ước lượng $$\sigma$$ còn rất lớn; với **df = 5** đuôi vẫn dày hơn chuẩn rõ rệt; với **df = 10** độ khác biệt đã giảm đi; còn với **df = 30** thì đường cong gần như không còn phân biệt được với phân phối chuẩn, vốn có thể xem như trường hợp giới hạn khi $$df = \infty$$.
 
 Lưu ý cách các critical values thay đổi: với df = 2 và $$\alpha = 0.05$$ (two-tailed), critical value là ±4.303, trong khi với phân phối chuẩn chỉ là ±1.96. Điều này làm cho việc bác bỏ $$H_0$$ khó hơn nhiều khi mẫu nhỏ - một đặc tính thận trọng và hợp lý.
@@ -79,6 +83,8 @@ Lưu ý cách các critical values thay đổi: với df = 2 và $$\alpha = 0.05
 Có ba loại t-test phổ biến, tùy thuộc vào thiết kế nghiên cứu:
 
 ![Ba Loại T-test]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_types.png)
+
+*Cách đọc hình: Hình này minh họa ba loại t-test. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 
 Hình trên minh họa trực quan ba loại t-test với ví dụ cụ thể: (1) One-sample test với dữ liệu chocolate - so sánh trung bình mẫu với giá trị giả thuyết, (2) Independent two-sample test - so sánh chiều cao giữa hai khoa khác nhau, và (3) Paired test - so sánh cân nặng trước và sau khi dùng thuốc của cùng nhóm bệnh nhân. Mỗi loại có công thức và degrees of freedom riêng.
 
@@ -263,4 +269,4 @@ Trong các chương sau, bạn sẽ thấy cách phương pháp Bayesian giải 
 
 ---
 
-*Bài học tiếp theo: [0.13 Giới thiệu Hàm Gamma và Beta](/vi/chapter00/gamma-function-intro/)*
+*Bài học tiếp theo: [0.13 Phân phối đồng thời (Joint Distribution)](/vi/chapter00/joint-distribution/)*

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.22: Mô phỏng để kiểm tra trực giác thống kê"
+title: "Bài 0.21: Mô phỏng để kiểm tra trực giác thống kê"
 chapter: '00'
-order: 22
+order: 21
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -14,7 +14,13 @@ lesson_type: required
 
 Sau bài này, bạn sẽ xem mô phỏng như một công cụ suy luận chứ không chỉ là minh họa, biết dùng mô phỏng để kiểm tra công thức, phát hiện hiểu sai trực giác, và chuẩn bị tốt cho workflow Bayesian dựa trên generative story.
 
+## Giới thiệu: mô phỏng như phòng thí nghiệm của suy luận
+
+Trong nhiều bài toán xác suất, trực giác bằng lời dễ dẫn đến kết luận sai, còn công thức đóng đôi khi khó kiểm tra nhanh trong bối cảnh thực tế. Mô phỏng cung cấp một "phòng thí nghiệm" trung gian: ta phát biểu giả định, sinh dữ liệu theo giả định đó, rồi đối chiếu hệ quả với điều mình tin là đúng. Cách làm này giúp học sâu hơn vì nó buộc ta nối chặt mô hình lý thuyết với hành vi dữ liệu quan sát được.
+
 ![Quy trinh mo phong thong ke]({{ site.baseurl }}/img/chapter_img/chapter00/simulation_statistical_intuition_workflow.png)
+
+*Cách đọc hình: Hình này minh họa quy trinh mo phong thong ke. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Quy trinh mo phong 4 buoc: gia dinh mo hinh -> dat tham so -> sinh du lieu -> so sanh va cap nhat.*
 
 ## 1) Vì sao cần mô phỏng?
