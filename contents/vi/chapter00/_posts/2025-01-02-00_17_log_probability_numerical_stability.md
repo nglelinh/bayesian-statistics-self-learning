@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.17: Log-probability và Ổn định số"
+title: "Bài 0.20: Log-probability và Ổn định số"
 chapter: '00'
-order: 17
+order: 20
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -33,14 +33,11 @@ $$
 
 giúp:
 
-- biến tích thành tổng,
-- ổn định số hơn,
-- tối ưu và suy luận dễ hơn.
+Biến tích thành tổng, làm tính toán ổn định số hơn, và giúp tối ưu hóa cũng như suy luận dễ hơn đáng kể.
 
 ## 2) Underflow và overflow
 
-- **Underflow**: số dương quá nhỏ bị làm tròn thành 0.
-- **Overflow**: số quá lớn vượt khả năng biểu diễn.
+**Underflow** là khi một số dương quá nhỏ bị làm tròn thành 0, còn **overflow** là khi một số quá lớn vượt quá khả năng biểu diễn của máy.
 
 Trong Bayes, cả hai đều có thể phá hỏng tính posterior nếu ta tính trực tiếp trên thang xác suất.
 
@@ -99,4 +96,4 @@ với $$m=\max_j a_j$$.
 
 ---
 
-*Bài học tiếp theo: [Bài 0.18: Kiểm tra giả định mô hình cơ bản](/vi/chapter00/basic-model-assumption-checks/)*
+*Bài học tiếp theo: [0.21 Kiểm tra giả định mô hình cơ bản](/vi/chapter00/basic-model-assumption-checks/)*

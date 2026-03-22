@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.19: Mô phỏng để kiểm tra trực giác thống kê"
+title: "Bài 0.22: Mô phỏng để kiểm tra trực giác thống kê"
 chapter: '00'
-order: 19
+order: 22
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -21,9 +21,7 @@ Sau bài này, bạn sẽ xem mô phỏng như một công cụ suy luận chứ
 
 Nhiều bài toán thống kê khó vì trực giác dễ sai:
 
-- nhầm xác suất có điều kiện,
-- đánh giá sai mức bất định,
-- tin vào kết quả "đẹp" nhưng không kiểm tra cơ chế sinh dữ liệu.
+Ta có thể nhầm xác suất có điều kiện, đánh giá sai mức bất định, hoặc tin vào một kết quả "đẹp" mà không kiểm tra cơ chế sinh dữ liệu đứng sau nó.
 
 Mô phỏng giúp ta nhìn trực tiếp hệ quả của giả định.
 
@@ -38,18 +36,13 @@ Nếu kết quả mô phỏng mâu thuẫn trực giác, thường trực giác 
 
 ## 3) Khi nào nên mô phỏng?
 
-- Khi công thức quá phức tạp hoặc khó kiểm tra tay,
-- khi muốn kiểm tra độ nhạy theo tham số,
-- khi cần dạy/học một khái niệm xác suất bằng trực quan,
-- khi cần sanity check cho code suy luận Bayesian.
+Mô phỏng đặc biệt hữu ích khi công thức quá phức tạp hoặc khó kiểm tra tay, khi ta muốn kiểm tra độ nhạy theo tham số, khi cần dạy hay học một khái niệm xác suất bằng trực quan, hoặc khi cần sanity check cho code suy luận Bayesian.
 
 ## 4) Ví dụ ngắn
 
 Muốn hiểu khoảng bất định của tỷ lệ $$p$$ khi $$n$$ nhỏ:
 
-- giả sử giá trị thật $$p=0.2$$,
-- mô phỏng nhiều mẫu Binomial với $$n=20$$ và $$n=200$$,
-- so sánh độ dao động của $$\hat p$$.
+Ta có thể giả sử giá trị thật $$p=0.2$$, mô phỏng nhiều mẫu Binomial với $$n=20$$ và $$n=200$$, rồi so sánh độ dao động của $$\hat p$$ giữa hai bối cảnh đó.
 
 Bạn sẽ thấy ngay vì sao dữ liệu nhỏ dễ dao động lớn và vì sao prior có thể quan trọng trong bối cảnh ít dữ liệu.
 
@@ -57,9 +50,7 @@ Bạn sẽ thấy ngay vì sao dữ liệu nhỏ dễ dao động lớn và vì 
 
 Mô phỏng là "phòng thí nghiệm" của Bayesian workflow:
 
-- kiểm tra prior predictive,
-- kiểm tra posterior predictive,
-- kiểm tra độ ổn định của quyết định theo giả định khác nhau.
+Nó cho phép ta kiểm tra prior predictive, posterior predictive, và cả độ ổn định của quyết định khi các giả định đầu vào thay đổi.
 
 Nói cách khác, mô phỏng giúp ta học tư duy "model implies data".
 

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "00-06: Giải tích Cơ bản"
+title: "Bài 0.9: Giải tích Cơ bản"
 chapter: '00'
-order: 6
+order: 9
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -595,3 +595,7 @@ print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2
 
 *Bài học này hoàn thành phần kiến thức cơ bản. Bạn đã sẵn sàng cho Bayesian Statistics!*
 
+
+---
+
+*Bài học tiếp theo: [0.10 Hàm Mật độ Xác suất (PDF)](/vi/chapter00/probability-density-functions/)*

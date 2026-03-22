@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.3: Thống kê Mô tả - Ngôn ngữ Đầu tiên của Dữ liệu"
+title: "Bài 0.6: Thống kê Mô tả - Ngôn ngữ Đầu tiên của Dữ liệu"
 chapter: '00'
-order: 3
+order: 6
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -180,4 +180,4 @@ Tất cả các công cụ thống kê mô tả mà chúng ta đã thảo luận
 
 ---
 
-*Bài học tiếp theo: [0.4 Python Cơ bản cho Data Science](/vi/chapter00/python-basics/)*
+*Bài học tiếp theo: [0.7 Python Cơ bản cho Data Science](/vi/chapter00/python-basics/)*

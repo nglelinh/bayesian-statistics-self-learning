@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.15: Sampling Distribution và Standard Error"
+title: "Bài 0.18: Sampling Distribution và Standard Error"
 chapter: '00'
-order: 15
+order: 18
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -39,15 +39,13 @@ $$
 
 Vậy:
 
-- SD của dữ liệu đo mức phân tán cá thể,
-- SE đo mức không chắc chắn của ước lượng.
+SD của dữ liệu đo mức phân tán giữa các cá thể, còn SE đo mức không chắc chắn của chính ước lượng.
 
 ## 3) Nhầm lẫn phổ biến: SD vs SE
 
 Hai dataset có SD giống nhau nhưng cỡ mẫu khác nhau sẽ có SE khác nhau.
 
-- $$n$$ lớn -> SE nhỏ hơn -> ước lượng ổn định hơn,
-- $$n$$ nhỏ -> SE lớn hơn -> kết luận kém chắc chắn hơn.
+Nếu $$n$$ lớn hơn thì SE nhỏ hơn và ước lượng ổn định hơn, còn nếu $$n$$ nhỏ thì SE lớn hơn và kết luận vì thế cũng kém chắc chắn hơn.
 
 ## 4) SE liên quan gì đến khoảng tin cậy/credible?
 
@@ -85,4 +83,4 @@ Nếu bạn quen tư duy sampling distribution + SE, việc đọc posterior int
 
 ---
 
-*Bài học tiếp theo: [Bài 0.16: Ước lượng điểm, Bias-Variance, Consistency](/vi/chapter00/point-estimation-bias-variance-consistency/)*
+*Bài học tiếp theo: [0.19 Ước lượng điểm, Bias-Variance, Consistency](/vi/chapter00/point-estimation-bias-variance-consistency/)*

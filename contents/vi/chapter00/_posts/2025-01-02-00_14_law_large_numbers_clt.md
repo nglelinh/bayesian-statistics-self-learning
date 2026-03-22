@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.14: Luật số lớn và Định lý giới hạn trung tâm"
+title: "Bài 0.17: Luật số lớn và Định lý giới hạn trung tâm"
 chapter: '00'
-order: 14
+order: 17
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -47,16 +47,13 @@ ngay cả khi phân phối gốc không chuẩn (n đủ lớn).
 
 ## 3) LLN và CLT khác nhau thế nào?
 
-- **LLN** trả lời: trung bình mẫu có hội tụ về giá trị đúng không?
-- **CLT** trả lời: tốc độ và dạng bất định quanh giá trị đúng trông như thế nào?
-
-LLN là câu chuyện "đúng về đâu"; CLT là câu chuyện "dao động ra sao quanh cái đúng".
+**LLN** trả lời câu hỏi trung bình mẫu có hội tụ về giá trị đúng hay không, còn **CLT** trả lời câu hỏi tốc độ và dạng bất định quanh giá trị đúng trông như thế nào. Nói cách khác, LLN là câu chuyện "đúng về đâu", còn CLT là câu chuyện "dao động ra sao quanh cái đúng".
 
 ## 4) Liên hệ với sai số chuẩn
 
 Từ CLT, độ lớn dao động của $$\bar X_n$$ tỉ lệ với $$1/\sqrt{n}$$. Đây là lý do sai số chuẩn giảm chậm:
 
-- muốn sai số giảm 2 lần, thường cần tăng cỡ mẫu khoảng 4 lần.
+Muốn sai số giảm 2 lần, ta thường phải tăng cỡ mẫu lên khoảng 4 lần.
 
 Đây là trực giác quan trọng khi thiết kế thí nghiệm và đánh giá độ tin cậy của ước lượng.
 
@@ -64,9 +61,7 @@ Từ CLT, độ lớn dao động của $$\bar X_n$$ tỉ lệ với $$1/\sqrt{n
 
 Trong Bayes:
 
-- Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu,
-- khi số mẫu posterior tăng, estimate ổn định hơn,
-- nhiều chẩn đoán uncertainty thực chất dùng tư duy LLN/CLT.
+Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu, số mẫu posterior càng tăng thì estimate càng ổn định hơn, và rất nhiều chẩn đoán về uncertainty thực chất đều dựa trên trực giác của LLN và CLT.
 
 ## Tóm tắt nhanh
 
@@ -88,4 +83,4 @@ Trong Bayes:
 
 ---
 
-*Bài học tiếp theo: [Bài 0.15: Sampling Distribution và Standard Error](/vi/chapter00/sampling-distribution-standard-error/)*
+*Bài học tiếp theo: [0.18 Sampling Distribution và Standard Error](/vi/chapter00/sampling-distribution-standard-error/)*

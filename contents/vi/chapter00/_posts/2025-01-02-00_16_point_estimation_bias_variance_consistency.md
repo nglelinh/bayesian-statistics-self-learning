@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.16: Ước lượng điểm, Bias-Variance, Consistency"
+title: "Bài 0.19: Ước lượng điểm, Bias-Variance, Consistency"
 chapter: '00'
-order: 16
+order: 19
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -23,9 +23,7 @@ Sau bài này, bạn sẽ hiểu ba tiêu chí cốt lõi để đánh giá esti
 
 Ví dụ:
 
-- $$\bar X$$ để ước lượng $$\mu$$,
-- tỷ lệ mẫu $$\hat p$$ để ước lượng $$p$$,
-- hệ số hồi quy mẫu để ước lượng slope thật.
+Ta có thể dùng $$\bar X$$ để ước lượng $$\mu$$, dùng tỷ lệ mẫu $$\hat p$$ để ước lượng $$p$$, hoặc dùng hệ số hồi quy mẫu để ước lượng slope thật.
 
 ## 2) Bias
 
@@ -35,8 +33,7 @@ $$
 \mathrm{Bias}(\hat\theta)=\mathbb{E}[\hat\theta]-\theta
 $$
 
-- bias = 0: estimator không chệch,
-- bias khác 0: estimator có xu hướng lệch về một phía.
+Khi bias bằng 0, estimator là không chệch; còn khi bias khác 0, estimator có xu hướng lệch có hệ thống về một phía.
 
 ## 3) Variance của estimator
 
@@ -74,8 +71,7 @@ Nói đơn giản: khi dữ liệu đủ nhiều, estimator tiến gần giá tr
 
 Trong Bayes, ta không chỉ dùng point estimate mà dùng cả posterior. Tuy nhiên, tư duy bias-variance vẫn rất hữu ích:
 
-- prior mạnh thường giảm variance nhưng có thể tăng bias,
-- prior yếu thường giảm bias nhưng variance có thể lớn khi dữ liệu ít.
+Prior mạnh thường làm variance giảm nhưng có thể làm bias tăng, còn prior yếu thường giảm bias nhưng variance lại có thể lớn khi dữ liệu còn ít.
 
 ## Tóm tắt nhanh
 
@@ -97,4 +93,4 @@ Trong Bayes, ta không chỉ dùng point estimate mà dùng cả posterior. Tuy 
 
 ---
 
-*Bài học tiếp theo: [Bài 0.17: Log-probability và Ổn định số](/vi/chapter00/log-probability-numerical-stability/)*
+*Bài học tiếp theo: [0.20 Log-probability và Ổn định số](/vi/chapter00/log-probability-numerical-stability/)*

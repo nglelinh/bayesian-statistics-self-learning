@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.13: Kỳ vọng, Phương sai, và Hiệp phương sai"
+title: "Bài 0.16: Kỳ vọng, Phương sai, và Hiệp phương sai"
 chapter: '00'
-order: 13
+order: 16
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -51,10 +51,7 @@ $$
 \mathrm{SD}(X)=\sqrt{\mathrm{Var}(X)}
 $$
 
-Trực giác:
-
-- phương sai lớn -> dữ liệu phân tán mạnh,
-- phương sai nhỏ -> dữ liệu tập trung hơn.
+Về trực giác, phương sai lớn cho thấy dữ liệu phân tán mạnh, còn phương sai nhỏ cho thấy dữ liệu tập trung hơn quanh trung bình.
 
 ## 3) Hiệp phương sai: quan hệ cùng biến thiên
 
@@ -64,9 +61,7 @@ $$
 \mathrm{Cov}(X,Y)=\mathbb{E}\big[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\big]
 $$
 
-- $$\mathrm{Cov}>0$$: thường tăng cùng nhau,
-- $$\mathrm{Cov}<0$$: một tăng khi biến kia giảm,
-- gần 0: ít quan hệ tuyến tính.
+Khi $$\mathrm{Cov}>0$$, hai biến có xu hướng tăng cùng nhau; khi $$\mathrm{Cov}<0$$, một biến tăng thì biến kia thường giảm; còn khi hiệp phương sai gần 0, quan hệ tuyến tính giữa chúng yếu hoặc gần như không đáng kể.
 
 Lưu ý: hiệp phương sai phụ thuộc đơn vị đo. Vì vậy thực hành thường dùng tương quan:
 
@@ -87,9 +82,7 @@ Tính chất (4) chỉ đi một chiều: cov bằng 0 chưa chắc độc lập
 
 Trong Bayesian inference:
 
-- posterior mean là kỳ vọng theo posterior,
-- uncertainty thường báo bằng posterior SD hoặc posterior variance,
-- khi có nhiều tham số, covariance matrix cho biết mức phụ thuộc giữa các tham số.
+Posterior mean chính là kỳ vọng theo posterior, độ không chắc chắn thường được báo bằng posterior SD hoặc posterior variance, và khi có nhiều tham số thì covariance matrix cho biết mức phụ thuộc giữa các tham số đó.
 
 Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp phương sai thì rất khó diễn giải kết quả.
 
@@ -113,4 +106,4 @@ Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp 
 
 ---
 
-*Bài học tiếp theo: [Bài 0.14: Luật số lớn và Định lý giới hạn trung tâm](/vi/chapter00/law-large-numbers-clt/)*
+*Bài học tiếp theo: [0.17 Luật số lớn và Định lý giới hạn trung tâm](/vi/chapter00/law-large-numbers-clt/)*

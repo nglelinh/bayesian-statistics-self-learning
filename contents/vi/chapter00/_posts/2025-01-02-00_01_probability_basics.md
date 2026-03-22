@@ -112,32 +112,25 @@ $$
 
 Trực giác là thế này:
 
-- khi chưa biết $$C$$, ta đang trộn nhiều cơ chế sinh dữ liệu khác nhau với nhau,
-- khi đã biết $$C$$, ta biết rõ mình đang ở cơ chế nào,
-- và trong từng cơ chế riêng lẻ, $$A$$ và $$B$$ có thể không còn ảnh hưởng lẫn nhau nữa.
+Khi chưa biết $$C$$, ta đang trộn nhiều cơ chế sinh dữ liệu khác nhau vào chung một bức tranh; khi đã biết $$C$$, ta biết chính xác mình đang ở cơ chế nào; và trong từng cơ chế riêng lẻ đó, $$A$$ và $$B$$ có thể không còn ảnh hưởng lẫn nhau nữa.
 
 Ví dụ, giả sử ta chọn ngẫu nhiên một trong hai đồng xu:
 
-- đồng xu 1 là công bằng,
-- đồng xu 2 luôn ra ngửa.
+Đồng xu thứ nhất là công bằng, còn đồng xu thứ hai luôn ra ngửa.
 
 Sau đó ta tung đồng xu đã chọn hai lần. Gọi:
 
-- $$C$$ là biến cố “đã chọn đồng xu 1”,
-- $$A$$ là biến cố “lần tung thứ nhất ra ngửa”,
-- $$B$$ là biến cố “lần tung thứ hai ra ngửa”.
+Gọi $$C$$ là biến cố “đã chọn đồng xu 1”, $$A$$ là biến cố “lần tung thứ nhất ra ngửa”, và $$B$$ là biến cố “lần tung thứ hai ra ngửa”.
 
 Nếu **biết trước đã chọn đồng xu nào**, hai lần tung là độc lập có điều kiện:
 
-- dưới đồng xu công bằng, mỗi lần tung là độc lập với xác suất ngửa bằng $$1/2$$,
-- dưới đồng xu luôn ngửa, mỗi lần tung vẫn độc lập theo nghĩa cả hai đều chắc chắn ra ngửa.
+Dưới đồng xu công bằng, mỗi lần tung là độc lập với xác suất ngửa bằng $$1/2$$; dưới đồng xu luôn ngửa, hai lần tung vẫn độc lập theo nghĩa cả hai đều chắc chắn ra ngửa.
 
 Nhưng nếu **không biết** đã chọn đồng xu nào, thì $$A$$ và $$B$$ không còn độc lập theo nghĩa thông thường nữa. Lý do là kết quả của lần tung đầu hé lộ thông tin về việc ta đang cầm loại đồng xu nào, và thông tin đó làm thay đổi niềm tin về lần tung thứ hai.
 
 Đây là một ý rất quan trọng trong Bayes:
 
-- phụ thuộc không phải lúc nào cũng đến từ việc các biến “tác động trực tiếp” lên nhau,
-- đôi khi nó đến từ việc ta chưa biết một biến ẩn đang chi phối cả hai.
+Phụ thuộc không phải lúc nào cũng đến từ việc các biến "tác động trực tiếp" lên nhau; đôi khi nó xuất hiện đơn giản vì ta chưa biết một biến ẩn đang đồng thời chi phối cả hai.
 
 Khi học lên các mô hình hỗn hợp, mô hình phân cấp hay đồ thị nhân quả, bạn sẽ gặp lại ý tưởng này rất nhiều.
 
@@ -193,4 +186,4 @@ Khi bạn tiến xa hơn trong khóa học này, bạn sẽ thấy rằng mọi 
 
 ---
 
-*Bài học tiếp theo: [0.2 Các Phân phối Xác suất Thường gặp](/vi/chapter00/common-distributions/)*
+*Bài học tiếp theo: [0.2 Bernoulli và Binomial](/vi/chapter00/00_02_01_bernoulli_binomial/)*

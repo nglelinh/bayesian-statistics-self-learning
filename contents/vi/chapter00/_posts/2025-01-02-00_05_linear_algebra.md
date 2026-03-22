@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "00-05: Đại số Tuyến tính Cơ bản"
+title: "Bài 0.8: Đại số Tuyến tính Cơ bản"
 chapter: '00'
-order: 5
+order: 8
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -568,3 +568,7 @@ print(f"\nR² = {r_squared:.4f}")
 
 *Bài học này kết thúc phần kiến thức cơ bản. Bạn đã sẵn sàng bắt đầu khóa học Bayesian Statistics!*
 
+
+---
+
+*Bài học tiếp theo: [0.9 Giải tích Cơ bản](/vi/chapter00/calculus-basics/)*
