@@ -46,12 +46,7 @@ Setting $$z=n$$ (a positive integer) gives:
 
 $$\Gamma(n+1) = n!$$
 
-Examples:
-
-- $$\Gamma(1)=1$$
-- $$\Gamma(2)=1!=1$$
-- $$\Gamma(3)=2!=2$$
-- $$\Gamma(6)=5!=120$$
+For example, $$\Gamma(1)=1$$, $$\Gamma(2)=1!=1$$, $$\Gamma(3)=2!=2$$, and $$\Gamma(6)=5!=120$$.
 
 So on integer arguments, Gamma exactly matches factorial.
 
@@ -91,8 +86,7 @@ $$p(\theta\mid a,b)=\frac{1}{B(a,b)}\theta^{a-1}(1-\theta)^{b-1},\quad 0<\theta<
 
 ### 5.3 Dirichlet and Student-t
 
-- Dirichlet is a multivariate generalization of Beta, with Gamma in its normalization constant.
-- Student-t also contains a Gamma ratio in its front coefficient.
+Dirichlet is a multivariate generalization of Beta, and its normalization constant is also written with Gamma. Likewise, the Student-t distribution contains a Gamma ratio in its front coefficient to ensure the density is properly normalized.
 
 In short: if you do Bayesian analysis long enough, you repeatedly use Gamma.
 

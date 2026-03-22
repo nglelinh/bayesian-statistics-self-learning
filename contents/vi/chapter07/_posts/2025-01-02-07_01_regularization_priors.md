@@ -12,42 +12,21 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **regularization** - kỹ thuật quan trọng để ngăn **overfitting**. Bạn sẽ học cách priors trong Bayesian statistics tự nhiên thực hiện regularization, so sánh với Ridge (L2) và Lasso (L1) regression, và biết khi nào cần regularization. Đây là kỹ năng thiết yếu cho modeling với nhiều predictors.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **regularization** (điều chuẩn) như một cơ chế cốt lõi để ngăn **overfitting** (quá khớp). Bài học sẽ làm rõ vì sao priors trong Bayesian statistics thực hiện regularization một cách tự nhiên, chúng liên hệ thế nào với Ridge regression và Lasso regression trong ngôn ngữ frequentist, và trong những tình huống nào ta thật sự cần dùng regularization thay vì chỉ thêm độ phức tạp cho mô hình. Đây là kỹ năng thiết yếu khi làm modeling với nhiều **predictors** (biến dự báo), đặc biệt trong các bài toán mà số biến nhiều hơn trực giác của ta có thể kiểm soát bằng mắt.
 
 ## Giới thiệu: Vấn đề Overfitting
 
-**Scenario**: Bạn có 20 data points và muốn fit polynomial regression.
-
-**Câu hỏi**: Degree bao nhiêu là đủ?
-- Degree 1: Simple linear (có thể underfit)
-- Degree 10: Perfect fit training data (nhưng overfit!)
-- Degree 15: Crazy wiggles!
-
-**Overfitting**: Model học **noise** thay vì **signal** → poor generalization.
+Hãy tưởng tượng bạn chỉ có 20 điểm dữ liệu nhưng lại muốn fit một polynomial regression. Câu hỏi tưởng như kỹ thuật, chẳng hạn nên chọn bậc 1, bậc 10, hay bậc 15, thực ra dẫn thẳng tới một vấn đề rất nền tảng của thống kê hiện đại. Nếu mô hình quá đơn giản, nó sẽ **underfit** và bỏ sót cấu trúc quan trọng; nhưng nếu mô hình quá linh hoạt, nó có thể bám chặt cả những dao động ngẫu nhiên của dữ liệu huấn luyện. Khi đó, mô hình học **noise** thay vì **signal**, và dù có vẻ rất giỏi trên training data, nó lại dự đoán kém trên dữ liệu mới. Đó chính là hiện tượng overfitting.
 
 ## 1. Demonstrating Overfitting
 
 ![Overfitting Demonstration](../../../img/chapter_img/chapter07/overfitting_demonstration.png)
 
-**Overfitting demonstration với polynomial regression:**
-- **Degree 1** (top-left): UNDERFIT - Too simple
-  - High training error, high test error
-  - Model quá đơn giản, không capture được pattern
-- **Degree 3** (top-right): GOOD FIT - Just right
-  - Low training error, low test error
-  - Balance giữa bias và variance
-- **Degree 10** (bottom-left): OVERFIT - Too complex
-  - Very low training error, HIGH test error
-  - Bắt đầu memorize noise trong training data
-- **Degree 15** (bottom-right): SEVERE OVERFIT
-  - Perfect training fit, terrible test performance
-  - Model hoàn toàn mất khả năng generalize
-
-**Key insight**: Test error tăng cao khi model quá phức tạp → cần regularization!
+Hình minh họa cho thấy rất rõ logic của vấn đề. Với polynomial bậc 1, mô hình quá đơn giản nên cả training error lẫn test error đều cao; đây là trạng thái underfit cổ điển. Với bậc 3, mô hình đủ linh hoạt để nắm bắt xu hướng chính của dữ liệu mà chưa bắt đầu học thuộc nhiễu, nên sai số huấn luyện và sai số kiểm tra đều thấp hơn. Khi tăng lên bậc 10, ta bắt đầu thấy một mô hình có vẻ rất đẹp trên training data nhưng lại có test error cao, bởi nó đã “ghi nhớ” những dao động ngẫu nhiên vốn không lặp lại ở dữ liệu mới. Đến bậc 15, hiện tượng này trở nên cực đoan hơn: mô hình gần như mất hẳn khả năng **generalize** (khái quát hóa). Điểm quan trọng cần giữ lại là test error thường tăng trở lại khi mô hình quá phức tạp, và đó chính là lúc regularization trở nên cần thiết.
 
 ## 2. Regularization: The Solution
 
-**Idea**: **Penalize large coefficients** → prefer simpler models.
+Ý tưởng cốt lõi của regularization là không để mô hình tự do sử dụng những hệ số quá lớn chỉ để bám sát training data. Nói cách khác, ta thêm một cơ chế ưu tiên các mô hình đơn giản hơn bằng cách phạt những cấu hình hệ số quá cực đoan.
 
 ### 2.1. Ridge Regression (L2 Regularization)
 
@@ -56,11 +35,9 @@ $$
 \min_{\beta} \sum_{i=1}^n (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^p \beta_j^2
 $$
 
-- First term: Fit data well
-- Second term: Keep coefficients small
-- $$\lambda$$: Regularization strength (higher = more penalty)
+Trong biểu thức này, hạng đầu tiên buộc mô hình phải khớp dữ liệu, còn hạng thứ hai phạt tổng bình phương của các hệ số để giữ chúng ở quy mô vừa phải. Tham số $$\lambda$$ đóng vai trò điều khiển mức độ phạt; khi $$\lambda$$ càng lớn thì regularization càng mạnh và mô hình càng bị ép về phía những lời giải “hiền” hơn.
 
-**Bayesian interpretation**: Ridge = **Normal prior** on coefficients!
+Từ góc nhìn Bayesian, Ridge regression có thể được hiểu như việc đặt **Normal prior** (tiên nghiệm chuẩn) lên các hệ số.
 
 $$
 \beta_j \sim \text{Normal}(0, \sigma^2)
@@ -73,7 +50,7 @@ $$
 \min_{\beta} \sum_{i=1}^n (y_i - \hat{y}_i)^2 + \lambda \sum_{j=1}^p |\beta_j|
 $$
 
-**Bayesian interpretation**: Lasso = **Laplace prior** on coefficients!
+Trong ngôn ngữ Bayesian, Lasso tương ứng với việc đặt **Laplace prior** (tiên nghiệm Laplace) lên các hệ số.
 
 $$
 \beta_j \sim \text{Laplace}(0, b)
@@ -81,21 +58,7 @@ $$
 
 ![Regularization Priors](../../../img/chapter_img/chapter07/regularization_priors.png)
 
-**Regularization priors comparison:**
-- **Normal prior (Ridge/L2)** - Panel trái:
-  - Gaussian distribution centered at 0
-  - Smooth tails → coefficients shrink towards 0 but rarely exactly 0
-  - Good for when many predictors có small effects
-- **Laplace prior (Lasso/L1)** - Panel giữa:
-  - Sharp peak at 0, heavier tails
-  - Promotes **sparsity**: nhiều coefficients = exactly 0
-  - Good for **feature selection** (automatic variable selection)
-- **Comparison** - Panel phải:
-  - Laplace có sharper peak → stronger sparsity
-  - Normal smoother → shrinkage without exact zeros
-  - Uniform (flat) = no regularization → overfitting risk
-  
-**Key insight**: Priors encode regularization preferences!
+Hình so sánh các priors cho thấy regularization trong Bayes thực chất là một lựa chọn mô hình hóa rất cụ thể chứ không phải một thủ thuật thêm vào sau. **Normal prior** ở panel bên trái có tâm tại 0 và phần đuôi trơn, nên nó có xu hướng kéo các hệ số về gần 0 nhưng hiếm khi ép chúng bằng đúng 0; kiểu prior này phù hợp khi ta tin rằng nhiều predictor đều có ảnh hưởng nhỏ. **Laplace prior** ở panel giữa nhọn hơn tại 0 và có đuôi dày hơn, nên nó khuyến khích **sparsity** (tính thưa), tức nhiều hệ số sẽ bị đẩy mạnh về 0 hơn; vì vậy nó đặc biệt hữu ích cho **feature selection** (chọn biến). Panel so sánh ở bên phải nhấn mạnh rằng lựa chọn prior thực chất là lựa chọn một “triết lý điều chuẩn”: prior phẳng gần như không regularize, trong khi Normal và Laplace mã hóa những mức độ và kiểu co rút khác nhau.
 
 ## 3. Bayesian Regularization trong PyMC
 
@@ -198,15 +161,15 @@ print("=" * 70)
 
 ## 4. Choosing Regularization Strength
 
-**How strong should priors be?**
+Một trong những câu hỏi thực tế nhất là nên regularize mạnh đến mức nào, hay trong ngôn ngữ Bayesian, prior nên hẹp đến đâu để vừa kiểm soát overfitting vừa không bóp nghẹt tín hiệu thật.
 
 ### 4.1. Cross-Validation
 
-Use cross-validation to choose prior scale.
+Một cách làm thực dụng là dùng cross-validation để chọn prior scale sao cho năng lực dự báo ngoài mẫu là tốt nhất.
 
 ### 4.2. Prior Predictive Checks
 
-Check if priors generate reasonable predictions.
+Một cách làm mang tinh thần Bayesian hơn là dùng **prior predictive checks** để xem liệu prior hiện tại có sinh ra những dự đoán hợp lý hay không, trước cả khi nhìn dữ liệu.
 
 ```python
 # Prior predictive check
@@ -260,28 +223,13 @@ plt.show()
 
 ## 5. Khi nào Cần Regularization?
 
-**Regularization cần thiết khi**:
-1. **Many predictors** (p large relative to n)
-2. **Correlated predictors** (multicollinearity)
-3. **Small sample size** (n small)
-4. **Want sparse solutions** (feature selection)
-
-**Regularization KHÔNG cần khi**:
-- Few predictors (p << n)
-- Large sample size
-- Predictors uncorrelated
-- Strong theory about all predictors
+Regularization đặc biệt cần thiết khi số lượng predictor lớn so với cỡ mẫu, khi các predictor tương quan mạnh với nhau gây ra **multicollinearity** (đa cộng tuyến), khi dữ liệu ít nên mô hình dễ dao động mạnh theo từng mẫu, hoặc khi mục tiêu của ta là tìm một lời giải thưa với chỉ một số ít biến quan trọng được giữ lại. Ngược lại, nếu số predictor ít, cỡ mẫu lớn, các biến gần như độc lập với nhau, và ta có cơ sở lý thuyết mạnh để giữ toàn bộ biến trong mô hình, thì regularization có thể đóng vai trò thứ yếu hơn. Điểm mấu chốt là regularization không phải lúc nào cũng là “thuốc bổ”; nó là phản ứng có chủ đích trước nguy cơ mô hình quá linh hoạt so với lượng thông tin mà dữ liệu thực sự cung cấp.
 
 ## Tóm tắt
 
-Regularization ngăn overfitting bằng cách penalize large coefficients:
+Regularization ngăn overfitting bằng cách kiểm soát quy mô của các hệ số thay vì để mô hình tự do đuổi theo mọi dao động của dữ liệu huấn luyện. Ridge regression có thể được hiểu như việc đặt Normal prior để co tất cả hệ số về gần 0, còn Lasso tương ứng với Laplace prior và khuyến khích lời giải thưa hơn. Từ góc nhìn Bayesian, regularization không phải một phần phụ trợ nằm ngoài mô hình, mà chính là hệ quả của việc chọn priors phù hợp với mức độ tin tưởng của ta về độ lớn và cấu trúc của các hệ số. Cường độ regularization có thể được điều chỉnh bằng cross-validation hoặc bằng prior predictive checks, tùy mục tiêu của phân tích.
 
-- **Ridge (L2)**: Normal prior → shrinks all coefficients
-- **Lasso (L1)**: Laplace prior → sparse solutions
-- **Bayesian**: Priors = natural regularization
-- **Strength**: Choose via cross-validation or prior predictive checks
-
-**Key insight**: In Bayesian statistics, regularization is just **choosing appropriate priors**!
+Điểm quan trọng nhất của bài là nhận ra rằng trong Bayesian statistics, nói “regularize” về bản chất chính là nói “chọn prior một cách có trách nhiệm”.
 
 Bài tiếp theo: **Bias-Variance Tradeoff**.
 

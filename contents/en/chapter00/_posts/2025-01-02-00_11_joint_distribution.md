@@ -18,8 +18,7 @@ After this lesson, you will understand that a joint distribution is the natural 
 
 In previous lessons, we used one-variable distributions:
 
-- discrete: $$p(x)=P(X=x)$$,
-- continuous: $$f(x)$$ with $$P(a\le X\le b)=\int_a^b f(x)\,dx$$.
+For the discrete case, we wrote $$p(x)=P(X=x)$$; for the continuous case, we wrote $$f(x)$$ and interpreted probability through the integral $$P(a\le X\le b)=\int_a^b f(x)\,dx$$.
 
 That is a one-dimensional view. Now we extend to two dimensions (and in general, many dimensions): from $$p(x)$$ or $$f(x)$$ to $$p(x,y)$$ or $$f(x,y)$$. So joint distributions are not a separate idea; they are a **direct multivariable extension of distribution functions**.
 
@@ -28,9 +27,7 @@ That is a one-dimensional view. Now we extend to two dimensions (and in general,
 
 In practice, we usually care about several variables at once. For example:
 
-- height $$H$$ and weight $$W$$,
-- study time $$T$$ and exam score $$S$$,
-- disease status $$D$$ and test result $$X$$.
+We may care simultaneously about height $$H$$ and weight $$W$$, about study time $$T$$ and exam score $$S$$, or about disease status $$D$$ together with test result $$X$$.
 
 If we model variables separately, we can miss their relationship. Joint distributions answer questions like: "what is the probability that **both** $$H$$ falls in this range and $$W$$ falls in that range?"
 
@@ -42,10 +39,7 @@ For discrete variables $$X, Y$$, the joint distribution is:
 
 $$p(x,y) = P(X=x, Y=y)$$
 
-Validity conditions:
-
-1. $$p(x,y) \ge 0$$ for all $$x,y$$
-2. $$\sum_x\sum_y p(x,y)=1$$
+For this to be valid, we need $$p(x,y) \ge 0$$ for all $$x,y$$ and the double sum $$\sum_x\sum_y p(x,y)=1$$.
 
 Here, $$p(x,y)$$ is the probability that both variables take specific values simultaneously.
 
@@ -67,13 +61,11 @@ As with one-dimensional PDFs, $$f(x,y)$$ is not a point probability; it is a den
 
 ## 3) From joint to marginal
 
-Marginal distributions describe one variable after "summing out" (or integrating out) the other.
-
-- Discrete:
+Marginal distributions describe one variable after "summing out" or integrating out the other. In the discrete case, we have:
 
 $$p_X(x)=\sum_y p(x,y),\qquad p_Y(y)=\sum_x p(x,y)$$
 
-- Continuous:
+In the continuous case, the corresponding formulas are:
 
 $$f_X(x)=\int_{-\infty}^{\infty} f(x,y)\,dy,\qquad f_Y(y)=\int_{-\infty}^{\infty} f(x,y)\,dx$$
 
@@ -107,8 +99,7 @@ $$p(x,y)=p_X(x)p_Y(y)$$
 
 for all $$x,y$$ (or $$f(x,y)=f_X(x)f_Y(y)$$ in the continuous case).
 
-- If true: knowing $$Y$$ does not change beliefs about $$X$$.
-- If false: one variable carries information about the other.
+If this identity holds, knowing $$Y$$ does not change our beliefs about $$X$$; if it fails, one variable carries information about the other.
 
 Most interesting Bayesian models exploit dependence structure.
 
@@ -116,8 +107,7 @@ Most interesting Bayesian models exploit dependence structure.
 
 Suppose:
 
-- $$X \in \{0,1\}$$ (attend class or not)
-- $$Y \in \{0,1\}$$ (pass or fail)
+Let $$X \in \{0,1\}$$ indicate whether a student attends class, and let $$Y \in \{0,1\}$$ indicate whether that student passes.
 
 with joint table:
 
@@ -130,12 +120,7 @@ x=1 & 0.15 & 0.45
 \end{array}
 $$
 
-Quick checks:
-
-- Total is 1.
-- $$p_X(1)=0.15+0.45=0.60$$.
-- $$p_Y(1)=0.10+0.45=0.55$$.
-- $$p(Y=1\mid X=1)=0.45/0.60=0.75$$.
+As a quick check, the total probability is 1. We also get $$p_X(1)=0.15+0.45=0.60$$, $$p_Y(1)=0.10+0.45=0.55$$, and $$p(Y=1\mid X=1)=0.45/0.60=0.75$$.
 
 Since $$0.75 \ne 0.55$$, knowing $$X=1$$ changes the probability of passing, so the variables are dependent.
 

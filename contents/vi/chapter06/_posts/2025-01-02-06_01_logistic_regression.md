@@ -12,36 +12,23 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **Logistic Regression** - một trong những models quan trọng nhất cho **binary outcomes** (yes/no, success/failure, 0/1). Bạn sẽ học tại sao linear regression không phù hợp cho binary data, cách sử dụng **link functions**, và cách interpret coefficients theo **odds ratios**. Đây là bước đầu vào **Generalized Linear Models (GLMs)**.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **Logistic Regression** (hồi quy logistic) như một mô hình nền tảng cho các **binary outcomes** (biến kết quả nhị phân) như yes/no, success/failure, hay 0/1. Trọng tâm của bài không chỉ là thay một công thức hồi quy khác, mà là hiểu vì sao linear regression không phù hợp với dữ liệu nhị phân, vì sao ta cần **link function** (hàm liên kết), và vì sao hệ số của mô hình phải được diễn giải thông qua **odds ratio** (tỷ số odds) thay vì theo trực giác tuyến tính thông thường. Đây cũng là cánh cửa đầu tiên để đi vào họ **Generalized Linear Models (GLMs)**, tức các mô hình tuyến tính tổng quát.
 
 ## Giới thiệu: Vấn đề của Linear Regression cho Binary Data
 
-Giả sử chúng ta muốn predict:
-- Có mua sản phẩm không? (yes/no)
-- Có vượt qua kỳ thi không? (pass/fail)
-- Có mắc bệnh không? (disease/healthy)
-
-**Outcome**: $$y \in \{0, 1\}$$
-
-**Câu hỏi**: Có thể dùng linear regression không?
+Giả sử chúng ta muốn dự đoán một người có mua sản phẩm hay không, có vượt qua kỳ thi hay không, hoặc có mắc bệnh hay không. Trong tất cả các ví dụ này, **outcome** (biến kết quả) chỉ nhận hai giá trị, nghĩa là $$y \in \{0,1\}$$. Câu hỏi tự nhiên là liệu ta có thể dùng luôn linear regression quen thuộc hay không.
 
 $$
 y = \alpha + \beta x + \epsilon
 $$
 
-**Vấn đề**: Linear regression có thể predict **bất kỳ giá trị nào** (-∞ đến +∞), nhưng probability phải trong **[0, 1]**!
+Vấn đề xuất hiện ngay lập tức: linear regression có thể dự đoán bất kỳ giá trị nào trên trục số thực, từ âm vô cùng đến dương vô cùng, trong khi xác suất lại bắt buộc phải nằm trong đoạn $$[0,1]$$. Điều này cho thấy ta cần một mô hình vẫn giữ được phần dự báo tuyến tính ở bên trong, nhưng có cơ chế biến đổi kết quả cuối cùng thành một xác suất hợp lệ.
 
 ## 1. Tại sao Linear Regression Không Hoạt động
 
 ![Logistic Regression Basics]({{ site.baseurl }}/img/chapter_img/chapter06/logistic_regression_basics.png)
 
-**Vấn đề của linear regression cho binary data:**
-- **Linear regression** dự đoán giá trị bất kỳ (-∞ đến +∞)
-- **Binary outcomes** yêu cầu probability trong [0, 1]
-- Hình minh họa:
-  - Panel trái: Linear regression cho predictions ngoài [0,1] (invalid!)
-  - Panel phải: Logistic regression đảm bảo predictions luôn trong [0,1]
-- **Giải pháp**: Sử dụng **logistic function** để transform linear predictor thành probability
+Đối với dữ liệu nhị phân, khó khăn cốt lõi của linear regression nằm ở chỗ mô hình này không biết rằng đầu ra của ta phải là xác suất. Ở panel bên trái, đường hồi quy tuyến tính có thể cho ra các dự đoán nhỏ hơn 0 hoặc lớn hơn 1, tức là những giá trị vô nghĩa nếu ta hiểu chúng là probability. Ở panel bên phải, logistic regression khắc phục điểm này bằng cách dùng **logistic function** (hàm logistic) để biến một **linear predictor** (bộ dự báo tuyến tính) thành xác suất hợp lệ, nhờ đó mọi dự đoán đều luôn nằm trong khoảng $$[0,1]$$.
 
 ## 2. Logistic Regression: Generative Model
 
@@ -49,7 +36,7 @@ $$
 
 ### 2.1. Link Function
 
-**Idea**: Transform linear predictor để đảm bảo output trong [0, 1].
+Ý tưởng trung tâm của logistic regression là vẫn xây dựng một biểu thức tuyến tính ở tầng bên trong, nhưng sau đó đi qua một **link function** (hàm liên kết) để bảo đảm đầu ra cuối cùng là xác suất.
 
 **Logit link function**:
 $$
@@ -63,9 +50,7 @@ $$
 
 ### 2.2. Generative Story
 
-1. **Linear predictor**: $$\eta = \alpha + \beta x$$
-2. **Transform to probability**: $$p = \text{logistic}(\eta)$$
-3. **Generate outcome**: $$y \sim \text{Bernoulli}(p)$$
+Ta có thể đọc mô hình theo đúng tinh thần **generative story** (câu chuyện sinh dữ liệu) như sau. Trước hết, từ biến dự báo $$x$$ ta tạo ra một đại lượng tuyến tính $$\eta=\alpha+\beta x$$. Tiếp theo, đại lượng này được biến đổi qua hàm logistic để cho ra xác suất $$p=\text{logistic}(\eta)$$. Cuối cùng, quan sát nhị phân được sinh ra theo phân phối Bernoulli, tức $$y\sim\text{Bernoulli}(p)$$. Cách viết này giúp ta thấy logistic regression không phải là một “mẹo biến đổi công thức”, mà là một mô hình xác suất hoàn chỉnh.
 
 ### 2.3. Quy tắc phân lớp Bayes từ prior-likelihood-posterior
 
@@ -122,11 +107,7 @@ $$
 
 Hai trạng thái thật: $$c_1, c_2$$. Ba hành động: chọn $$c_1$$, chọn $$c_2$$, hoặc **reject** (trì hoãn để đo thêm).
 
-Loss matrix minh họa:
-
-- đúng lớp: 0,
-- nhầm lớp: 10,
-- reject: 3 (chi phí đo thêm/đợi).
+Trong ví dụ minh họa này, ta giả sử **loss matrix** (ma trận mất mát) được chọn theo cách rất đơn giản: dự đoán đúng thì chi phí bằng 0, dự đoán nhầm thì chi phí bằng 10, còn quyết định **reject** thì chịu chi phí bằng 3 vì phải đo thêm hoặc chờ thêm thông tin.
 
 Giả sử posterior tại một điểm $$x$$ là $$P(c_1\mid x)=0.55,\;P(c_2\mid x)=0.45$$.
 
@@ -160,27 +141,11 @@ Vì log là phép biến đổi đơn điệu, việc tối đa hóa posterior t
 
 ### 2.7. Trường hợp Gaussian: biên tuyến tính hay bậc hai
 
-Nếu $$P(x\mid c_i)$$ là Gaussian đa biến:
-
-- **Covariance chung** giữa các lớp ($$\Sigma_i=\Sigma$$): biên quyết định là tuyến tính (LDA-like).
-- **Covariance khác nhau** theo lớp ($$\Sigma_i$$ khác nhau): biên quyết định là bậc hai (QDA-like).
-
-Đây là cách đọc trực quan giúp nối posterior rule với hình học biên phân lớp.
+Nếu $$P(x\mid c_i)$$ là Gaussian đa biến, thì hình dạng của biên quyết định phụ thuộc vào cấu trúc covariance. Khi các lớp dùng **covariance chung** với $$\Sigma_i=\Sigma$$, biên quyết định sẽ là tuyến tính, gần với trực giác của LDA. Ngược lại, khi mỗi lớp có covariance riêng, tức $$\Sigma_i$$ khác nhau, biên quyết định thường trở thành bậc hai, gần với trực giác của QDA. Cách nhìn này đặc biệt hữu ích vì nó nối quy tắc posterior ở mức xác suất với hình học của biên phân lớp trong không gian đặc trưng.
 
 ![Logistic Function Parameters](../../../img/chapter_img/chapter06/logistic_function_parameters.png)
 
-**Logistic function và parameter effects:**
-- **Panel trái**: Hàm logistic cơ bản $$p = \frac{1}{1 + e^{-\eta}}$$
-  - Khi $$\eta = 0$$ → $$p = 0.5$$ (điểm uốn)
-  - Hàm có dạng chữ S, tiệm cận đến 0 và 1
-- **Panel giữa**: Effect của $$\alpha$$ (intercept)
-  - $$\alpha < 0$$: Curve dịch sang phải (baseline probability thấp)
-  - $$\alpha > 0$$: Curve dịch sang trái (baseline probability cao)
-  - $$\alpha$$ controls vị trí của điểm uốn
-- **Panel phải**: Effect của $$\beta$$ (slope)
-  - $$\beta$$ nhỏ → curve thoải (weak effect)
-  - $$\beta$$ lớn → curve dốc (strong effect)
-  - $$\beta$$ controls độ mạnh của relationship
+Hình này giúp ta đọc logistic function một cách trực quan hơn. Ở panel bên trái, hàm $$p=\frac{1}{1+e^{-\eta}}$$ có dạng chữ S quen thuộc, đi qua điểm $$p=0.5$$ khi $$\eta=0$$ và tiệm cận dần về 0 và 1 ở hai đầu. Ở panel giữa, thay đổi $$\alpha$$, tức **intercept** (hệ số chặn), chủ yếu làm đường cong dịch sang trái hoặc sang phải, nên có thể hiểu như việc thay đổi mức xác suất nền. Ở panel bên phải, thay đổi $$\beta$$, tức **slope** (độ dốc), làm đường cong thoải hơn hoặc dốc hơn, qua đó phản ánh độ mạnh của mối liên hệ giữa biến dự báo và xác suất của biến kết quả.
 
 ## 3. Bayesian Logistic Regression trong PyMC
 
@@ -245,28 +210,11 @@ plt.show()
 
 ### 4.1. Odds vs Probability
 
-**Probability**: $$p = P(y=1)$$
-
-**Odds**: $$\text{odds} = \frac{p}{1-p}$$
-
-**Example**:
-- p = 0.5 → odds = 1 (50-50 chance)
-- p = 0.8 → odds = 4 (4 times more likely to be 1 than 0)
-- p = 0.2 → odds = 0.25 (4 times more likely to be 0 than 1)
+Để diễn giải logistic regression đúng cách, ta cần phân biệt **probability** (xác suất) với **odds**. Xác suất được viết là $$p=P(y=1)$$, còn odds được định nghĩa bởi $$\text{odds}=\frac{p}{1-p}$$. Khi $$p=0.5$$ thì odds bằng 1, nghĩa là hai khả năng cân bằng nhau; khi $$p=0.8$$ thì odds bằng 4, tức khả năng xảy ra biến cố lớn gấp bốn lần khả năng không xảy ra; còn khi $$p=0.2$$ thì odds chỉ bằng 0.25, nghĩa là khả năng không xảy ra biến cố cao hơn nhiều.
 
 ![Odds vs Probability](../../../img/chapter_img/chapter06/odds_probability_relationship.png)
 
-**Relationship giữa probability, odds, và log-odds:**
-- **Panel trái**: Probability → Odds transformation
-  - p = 0.2 → odds = 0.25 (4:1 against)
-  - p = 0.5 → odds = 1.0 (even odds, breakpoint)
-  - p = 0.8 → odds = 4.0 (4:1 favor)
-  - Odds nhỏ hơn 1 = less likely, lớn hơn 1 = more likely
-- **Panel phải**: Probability → Log-Odds (logit)
-  - p = 0.5 → log-odds = 0 (symmetric point)
-  - p < 0.5 → log-odds < 0 (negative)
-  - p > 0.5 → log-odds > 0 (positive)
-  - Log-odds scale là linear trong logistic regression: $$\text{logit}(p) = \alpha + \beta x$$
+Hình minh họa cho thấy mối liên hệ giữa probability, odds, và **log-odds** (log của odds). Ở panel bên trái, khi probability tăng từ 0.2 lên 0.5 rồi 0.8 thì odds thay đổi theo cách phi tuyến từ 0.25 lên 1 rồi 4. Điều này nhắc ta rằng odds nhỏ hơn 1 tương ứng với biến cố ít có khả năng xảy ra hơn, còn odds lớn hơn 1 tương ứng với biến cố có khả năng xảy ra hơn. Ở panel bên phải, khi lấy log của odds, điểm $$p=0.5$$ trở thành 0, các xác suất nhỏ hơn 0.5 cho log-odds âm, và các xác suất lớn hơn 0.5 cho log-odds dương. Chính trên thang log-odds này mà logistic regression trở lại dạng tuyến tính quen thuộc: $$\text{logit}(p)=\alpha+\beta x$$.
 
 ### 4.2. Interpreting β
 
@@ -275,14 +223,14 @@ $$
 \log\left(\frac{p}{1-p}\right) = \alpha + \beta x
 $$
 
-**Interpretation**: 1 unit increase in $$x$$ → $$\beta$$ increase in log-odds.
+Vì vậy, trên thang log-odds, mỗi khi $$x$$ tăng thêm 1 đơn vị thì log-odds tăng thêm $$\beta$$ đơn vị.
 
 **On odds scale**:
 $$
 \text{odds} = e^{\alpha + \beta x}
 $$
 
-**Odds ratio**: 1 unit increase in $$x$$ → odds multiply by $$e^\beta$$.
+Nếu quay trở lại thang odds, ta thấy mỗi lần $$x$$ tăng 1 đơn vị thì odds sẽ được nhân với $$e^\beta$$. Đây chính là **odds ratio** (tỷ số odds), và cũng là cách diễn giải thực tế nhất cho hệ số của logistic regression.
 
 ```python
 # Compute odds ratios
@@ -386,15 +334,9 @@ plt.show()
 
 ## Tóm tắt
 
-Logistic regression cho binary outcomes:
+Logistic regression là câu trả lời tự nhiên khi biến kết quả chỉ có hai trạng thái. Vấn đề mà nó giải quyết là linear regression không thể bảo đảm dự đoán nằm trong khoảng $$[0,1]$$, còn lời giải của nó là dùng **logit link** để nối một cấu trúc tuyến tính bên trong với một xác suất hợp lệ ở đầu ra. Mô hình cốt lõi có dạng $$\log\left(\frac{p}{1-p}\right)=\alpha+\beta x$$, và hệ số nên được đọc qua **odds ratio** $$e^\beta$$ thay vì theo trực giác “tăng bao nhiêu đơn vị của $$y$$” như ở linear regression. Trong PyMC, điều này được triển khai một cách rất trực tiếp bằng phân phối `pm.Bernoulli` kết hợp với `pm.math.invlogit`.
 
-- **Problem**: Linear regression predicts outside [0,1]
-- **Solution**: Logit link function
-- **Model**: $$\log(p/(1-p)) = \alpha + \beta x$$
-- **Interpretation**: Odds ratios ($$e^\beta$$)
-- **PyMC**: `pm.Bernoulli` với `pm.math.invlogit`
-
-**Key insight**: GLMs = Linear models + Link functions → handle non-normal outcomes!
+Điểm quan trọng nhất cần giữ lại là tư duy của GLM: ta vẫn bắt đầu bằng một phần tuyến tính, nhưng dùng một hàm liên kết phù hợp để xử lý những biến kết quả không còn tuân theo mô hình Gaussian quen thuộc.
 
 Bài tiếp theo: **Poisson Regression** cho count data.
 

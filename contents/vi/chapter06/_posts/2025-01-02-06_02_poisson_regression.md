@@ -12,41 +12,23 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **Poisson Regression** - model cho **count data** (số lần xảy ra events). Bạn sẽ học tại sao linear regression không phù hợp cho counts, cách sử dụng **log link function**, và cách interpret coefficients theo **rate ratios**. Đây là GLM thứ hai quan trọng sau logistic regression.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **Poisson Regression** (hồi quy Poisson) như mô hình chuẩn cho **count data** (dữ liệu đếm), tức những dữ liệu ghi nhận số lần một sự kiện xảy ra. Bạn sẽ thấy vì sao linear regression không phù hợp khi biến kết quả chỉ nhận các số nguyên không âm, vì sao **log link function** (hàm liên kết log) giúp mô hình tạo ra dự đoán hợp lệ, và vì sao hệ số của mô hình nên được diễn giải thông qua **rate ratio** (tỷ số tốc độ) thay vì theo hiệu số cộng đơn giản. Đây là GLM quan trọng thứ hai sau logistic regression.
 
 ## Giới thiệu: Count Data Everywhere
 
-**Count data** (dữ liệu đếm) xuất hiện khắp nơi:
-- Số lượng khách hàng đến cửa hàng mỗi giờ
-- Số lượng emails nhận được mỗi ngày
-- Số lượng accidents trên đường cao tốc mỗi tháng
-- Số lượng goals trong một trận bóng đá
-- Số lượng mutations trong DNA sequence
-
-**Đặc điểm**:
-- $$y \in \{0, 1, 2, 3, ...\}$$ (non-negative integers)
-- Không có upper bound
-- Variance thường tăng với mean
-
-**Câu hỏi**: Có thể dùng linear regression không?
+**Count data** (dữ liệu đếm) xuất hiện ở rất nhiều bối cảnh thực tế, chẳng hạn như số khách đến cửa hàng mỗi giờ, số email nhận được mỗi ngày, số tai nạn trên cao tốc mỗi tháng, số bàn thắng trong một trận bóng đá, hay số đột biến trong một đoạn DNA. Điểm chung của các biến này là $$y \in \{0,1,2,3,\ldots\}$$, tức chúng là các số nguyên không âm, thường không có chặn trên rõ ràng, và phương sai thường tăng lên khi giá trị trung bình tăng lên. Điều đó dẫn đến câu hỏi quen thuộc: liệu ta có thể dùng linear regression cho loại dữ liệu này hay không.
 
 ## 1. Vấn đề của Linear Regression cho Count Data
 
 ![Poisson Regression Basics]({{ site.baseurl }}/img/chapter_img/chapter06/poisson_regression_basics.png)
 
-**Vấn đề của linear regression cho count data:**
-- **Linear regression** có thể dự đoán giá trị âm (invalid cho counts!)
-- **Count data** yêu cầu predictions ≥ 0
-- Hình minh họa:
-  - Panel trái: Linear regression cho negative predictions (sai!)
-  - Panel phải: Poisson regression với log link đảm bảo λ > 0 (đúng!)
-- **Giải pháp**: Sử dụng **log link function**: $$\log(\lambda) = \alpha + \beta x$$
+Khó khăn cơ bản của linear regression trong bối cảnh này là mô hình tuyến tính có thể cho ra dự đoán âm, trong khi số lần xảy ra của một sự kiện không thể nhỏ hơn 0. Hình minh họa cho thấy ở panel bên trái, đường hồi quy tuyến tính có thể đi vào vùng giá trị âm, còn ở panel bên phải, Poisson regression dùng **log link** để bảo đảm rằng tham số cường độ $$\lambda$$ luôn dương. Nói cách khác, thay vì dự đoán trực tiếp số đếm, ta mô hình hóa log của tốc độ kỳ vọng, nhờ đó đầu ra luôn phù hợp với bản chất của dữ liệu.
 
 ## 2. Poisson Regression: Generative Model
 
 ### 2.1. Log Link Function
 
-**Idea**: Transform linear predictor để đảm bảo output > 0.
+Ý tưởng cốt lõi của Poisson regression là giữ lại phần tuyến tính ở bên trong, nhưng dùng **log link function** để bảo đảm rằng đại lượng cuối cùng, tức tốc độ kỳ vọng $$\lambda$$, luôn lớn hơn 0.
 
 **Log link**:
 $$
@@ -60,33 +42,18 @@ $$
 
 ### 2.2. Generative Story
 
-1. **Linear predictor**: $$\eta = \alpha + \beta x$$
-2. **Transform to rate**: $$\lambda = \exp(\eta)$$
-3. **Generate counts**: $$y \sim \text{Poisson}(\lambda)$$
+Theo ngôn ngữ **generative story** (câu chuyện sinh dữ liệu), mô hình được đọc như sau. Từ biến dự báo $$x$$, ta tạo ra một đại lượng tuyến tính $$\eta=\alpha+\beta x$$. Đại lượng này sau đó được đưa qua hàm mũ để tạo ra tốc độ kỳ vọng $$\lambda=\exp(\eta)$$. Cuối cùng, số đếm quan sát được sinh ra từ phân phối Poisson, tức $$y\sim\text{Poisson}(\lambda)$$. Việc tách ba bước này ra rõ ràng giúp ta thấy mô hình vừa giữ được phần tuyến tính thuận tiện cho suy luận, vừa tôn trọng cấu trúc xác suất riêng của dữ liệu đếm.
 
-**Poisson distribution**:
+Phân phối Poisson có dạng:
 $$
 P(y = k \mid \lambda) = \frac{\lambda^k e^{-\lambda}}{k!}
 $$
 
-- Mean = $$\lambda$$
-- Variance = $$\lambda$$ (equidispersion)
+Điểm đặc trưng của phân phối này là giá trị trung bình và phương sai đều bằng $$\lambda$$; tính chất đó thường được gọi là **equidispersion** (đồng phương sai theo nghĩa mean bằng variance).
 
 ![Exponential Function Parameters](../../../img/chapter_img/chapter06/exponential_function_parameters.png)
 
-**Exponential function và parameter effects:**
-- **Panel trái**: Hàm exponential cơ bản $$\lambda = e^{\eta}$$
-  - Khi $$\eta = 0$$ → $$\lambda = 1$$ (baseline rate)
-  - Hàm luôn dương, tăng exponentially
-- **Panel giữa**: Effect của $$\alpha$$ (intercept)
-  - $$\alpha < 0$$: Baseline rate thấp ($$e^{-1} \approx 0.37$$)
-  - $$\alpha = 0$$: Baseline rate = 1
-  - $$\alpha > 0$$: Baseline rate cao ($$e^{1} \approx 2.72$$)
-  - $$\alpha$$ controls độ cao của baseline
-- **Panel phải**: Effect của $$\beta$$ (slope)
-  - $$\beta$$ nhỏ → tăng chậm (weak effect)
-  - $$\beta$$ lớn → tăng nhanh (strong effect)
-  - $$\beta$$ controls tốc độ tăng trưởng exponential
+Hình minh họa giúp ta đọc hàm mũ theo cách trực quan hơn. Ở panel bên trái, hàm cơ bản $$\lambda=e^\eta$$ luôn dương và đi qua điểm $$\lambda=1$$ khi $$\eta=0$$, nên có thể xem đó là mức tốc độ nền. Ở panel giữa, thay đổi $$\alpha$$, tức **intercept** (hệ số chặn), chủ yếu làm dịch chuyển toàn bộ đường cong lên hoặc xuống, qua đó thay đổi mức nền của tốc độ. Ở panel bên phải, thay đổi $$\beta$$, tức **slope** (độ dốc), làm tốc độ tăng nhanh hơn hoặc chậm hơn theo $$x$$, vì vậy nó phản ánh sức mạnh của mối quan hệ giữa biến dự báo và cường độ xảy ra sự kiện.
 
 ## 3. Bayesian Poisson Regression trong PyMC
 
@@ -156,14 +123,14 @@ $$
 \log(\lambda) = \alpha + \beta x
 $$
 
-**Interpretation**: 1 unit increase in $$x$$ → $$\beta$$ increase in log(rate).
+Trên thang log, mỗi khi $$x$$ tăng thêm 1 đơn vị thì log của tốc độ kỳ vọng tăng thêm $$\beta$$ đơn vị.
 
 **On rate scale**:
 $$
 \lambda = e^{\alpha + \beta x}
 $$
 
-**Rate ratio**: 1 unit increase in $$x$$ → rate multiply by $$e^\beta$$.
+Khi quay trở về thang gốc, điều đó có nghĩa là tốc độ kỳ vọng được nhân với $$e^\beta$$. Đại lượng $$e^\beta$$ này chính là **rate ratio** (tỷ số tốc độ), và đây là cách diễn giải tự nhiên nhất cho hệ số của Poisson regression.
 
 ```python
 # Compute rate ratios
@@ -291,13 +258,7 @@ plt.show()
 
 ## 6. Overdispersion: Khi Variance > Mean
 
-**Poisson assumption**: Variance = Mean
-
-**Reality**: Thường Variance > Mean (**overdispersion**)
-
-**Solutions**:
-1. **Negative Binomial** regression (allows overdispersion)
-2. **Zero-Inflated Poisson** (nếu có nhiều zeros)
+Một giả định trung tâm của Poisson regression là phương sai bằng trung bình. Trong dữ liệu thực, giả định này thường bị phá vỡ vì phương sai lớn hơn trung bình, hiện tượng được gọi là **overdispersion** (quá phân tán). Khi điều đó xảy ra, mô hình Poisson thường tỏ ra quá tự tin và đánh giá thấp độ bất định. Hai hướng xử lý phổ biến là dùng **Negative Binomial regression** khi cần cho phép phương sai lớn hơn mean một cách linh hoạt, hoặc dùng **Zero-Inflated Poisson** nếu dữ liệu có quá nhiều số 0 hơn điều mà Poisson thông thường có thể giải thích.
 
 ```python
 # Check overdispersion
@@ -319,15 +280,9 @@ print("=" * 70)
 
 ## Tóm tắt
 
-Poisson regression cho count data:
+Poisson regression là mô hình tự nhiên cho dữ liệu đếm vì nó giải quyết đúng điểm yếu của linear regression: dự đoán của mô hình tuyến tính có thể âm, còn dữ liệu đếm thì không. Bằng cách dùng **log link**, mô hình hóa $$\log(\lambda)=\alpha+\beta x$$ rồi suy ra $$\lambda$$ trên thang gốc, Poisson regression bảo đảm rằng tốc độ kỳ vọng luôn dương. Hệ số của mô hình được hiểu tốt nhất thông qua **rate ratio** $$e^\beta$$, còn giả định quan trọng nhất luôn cần kiểm tra là phương sai có xấp xỉ trung bình hay không. Nếu dữ liệu quá phân tán, ta phải nghĩ đến những mô hình linh hoạt hơn.
 
-- **Problem**: Linear regression can predict negative counts
-- **Solution**: Log link function
-- **Model**: $$\log(\lambda) = \alpha + \beta x$$
-- **Interpretation**: Rate ratios ($$e^\beta$$)
-- **Assumption**: Variance = Mean (check for overdispersion!)
-
-**Key insight**: Log link ensures predictions always positive, suitable for counts and rates.
+Điểm cốt lõi cần nhớ là hàm liên kết log không chỉ là một thủ thuật toán học, mà là cơ chế giúp phần tuyến tính của mô hình tương thích với bản chất của dữ liệu đếm và dữ liệu tốc độ.
 
 Bài tiếp theo: **Model Evaluation for GLMs**.
 

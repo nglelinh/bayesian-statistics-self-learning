@@ -36,6 +36,8 @@ $$
 
 ![Poisson mô tả số sự kiện đếm được trong các khoảng thời gian cố định]({{ site.baseurl }}/img/chapter_img/chapter00/poisson_counts_timeline.png)
 
+*Cách đọc hình: Hình này minh họa poisson mô tả số sự kiện đếm được trong các khoảng thời gian cố định. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+
 ## 2) Khi nào dùng Exponential?
 
 Exponential phù hợp khi ta quan tâm thời gian chờ đến sự kiện tiếp theo.
@@ -55,6 +57,8 @@ $$
 Nghĩa là tốc độ sự kiện càng cao thì thời gian chờ trung bình càng thấp.
 
 ![Exponential mô tả thời gian chờ tới sự kiện kế tiếp]({{ site.baseurl }}/img/chapter_img/chapter00/exponential_waiting_time_curve.png)
+
+*Cách đọc hình: Hình này minh họa exponential mô tả thời gian chờ tới sự kiện kế tiếp. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 
 ## 3) Hằng số chuẩn hóa trong Poisson/Exponential
 

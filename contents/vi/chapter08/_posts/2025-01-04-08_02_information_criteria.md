@@ -12,24 +12,15 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **information criteria** - metrics để compare models dựa trên predictive accuracy. Bạn sẽ học WAIC (Watanabe-Akaike IC) và LOO-CV (Leave-One-Out Cross-Validation), cách compute chúng với ArviZ, và interpret results. Đây là công cụ quan trọng cho model selection.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **information criteria** như những thước đo dùng để so sánh mô hình dựa trên năng lực dự báo ngoài mẫu, chứ không phải chỉ dựa trên độ khớp với dữ liệu huấn luyện. Bài học sẽ giải thích WAIC, LOO-CV, cách tính chúng với ArviZ, và quan trọng hơn là cách diễn giải kết quả sao cho không rơi vào lối dùng chỉ số một cách máy móc. Đây là công cụ then chốt cho **model selection** (chọn mô hình) trong Bayesian workflow.
 
 ## Giới thiệu: The Problem of Model Selection
 
-**Scenario**: Bạn có 3 models:
-- Model 1: Simple (y ~ x)
-- Model 2: Polynomial (y ~ x + x²)
-- Model 3: Complex (y ~ x + x² + x³ + ...)
-
-**Question**: Which is best?
-
-**Wrong answer**: Model with lowest training error (→ overfitting!)
-
-**Right answer**: Model with best **out-of-sample predictive accuracy**.
+Giả sử bạn có ba mô hình ứng viên, từ một mô hình tuyến tính đơn giản đến một mô hình đa thức phức tạp hơn nhiều. Câu hỏi “mô hình nào là tốt nhất?” thoạt nhìn có vẻ dễ trả lời bằng cách chọn mô hình có training error nhỏ nhất, nhưng đó chính là câu trả lời sai cổ điển vì nó mở đường cho overfitting. Câu trả lời đúng phải xoay quanh **out-of-sample predictive accuracy** (độ chính xác dự báo ngoài mẫu), tức khả năng dự đoán dữ liệu mới mà mô hình chưa từng nhìn thấy.
 
 ## 1. Predictive Accuracy: The Gold Standard
 
-**Goal**: Estimate how well model predicts **new data**.
+Mục tiêu thật sự của model comparison là ước lượng xem mô hình dự đoán **new data** tốt đến mức nào. Vì vậy, predictive accuracy mới là “gold standard”, còn training fit chỉ là một tín hiệu phụ rất dễ gây hiểu lầm nếu đứng một mình.
 
 **Log Pointwise Predictive Density (lppd)**:
 $$
@@ -38,9 +29,7 @@ $$
 
 where $$y_{-i}$$ = all data except $$i$$.
 
-**Problem**: Need to refit model $$n$$ times (expensive!).
-
-**Solution**: Approximate with **information criteria**.
+Vấn đề là nếu làm điều này một cách ngây thơ bằng leave-one-out thực thụ, ta phải fit lại mô hình tới $$n$$ lần, thường là quá tốn kém. Information criteria xuất hiện như những xấp xỉ có cơ sở lý thuyết cho bài toán đó.
 
 ```python
 import numpy as np
@@ -71,7 +60,7 @@ print("=" * 70)
 
 ## 2. WAIC: Watanabe-Akaike Information Criterion
 
-**WAIC** = Bayesian generalization of AIC.
+**WAIC** có thể được xem như phiên bản Bayesian của AIC, nhưng cần hiểu nó không đơn thuần là một công thức thay tên đổi họ. Nó cố gắng cân bằng giữa mức độ khớp của mô hình với dữ liệu và độ phức tạp hiệu dụng của mô hình.
 
 $$
 \text{WAIC} = -2(\text{lppd} - p_{\text{WAIC}})
@@ -79,7 +68,7 @@ $$
 
 where $$p_{\text{WAIC}}$$ = effective number of parameters (penalty).
 
-**Lower WAIC = Better predictive accuracy**
+Giá trị WAIC càng thấp thì predictive accuracy ước lượng càng tốt.
 
 ```python
 # Fit 3 models
@@ -143,17 +132,7 @@ print("=" * 70)
 
 ## 3. LOO-CV: Leave-One-Out Cross-Validation
 
-**LOO-CV**: Gold standard for predictive accuracy.
-
-**Idea**: For each data point $$i$$:
-1. Remove $$y_i$$
-2. Fit model on remaining $$n-1$$ points
-3. Predict $$y_i$$
-4. Compute log probability
-
-**Problem**: Need $$n$$ model fits!
-
-**Solution**: **PSIS-LOO** (Pareto Smoothed Importance Sampling) approximates LOO without refitting.
+**LOO-CV** thường được xem là chuẩn tham chiếu cho predictive accuracy vì nó trực tiếp hỏi: nếu bỏ một điểm dữ liệu ra ngoài, mô hình còn lại dự đoán điểm đó tốt đến mức nào. Về nguyên tắc, ta phải lần lượt bỏ từng quan sát $$y_i$$, fit mô hình trên $$n-1$$ điểm còn lại, rồi đánh giá log probability của chính điểm bị bỏ ra. Cách làm này rất thuyết phục về mặt khái niệm nhưng lại quá đắt về mặt tính toán. Vì vậy, trong thực hành Bayesian, người ta thường dùng **PSIS-LOO** để xấp xỉ LOO mà không cần refit mô hình nhiều lần.
 
 ```python
 # Compute LOO
@@ -180,7 +159,7 @@ print("=" * 70)
 
 ## 4. Model Comparison with az.compare
 
-**Best practice**: Use `az.compare` to compare all models at once.
+Trong thực hành, cách gọn và đáng tin cậy nhất là dùng `az.compare` để so sánh tất cả các mô hình cùng lúc, thay vì đọc WAIC hay LOO của từng mô hình một cách rời rạc.
 
 ```python
 # Compare all models
@@ -217,11 +196,7 @@ print("=" * 70)
 
 ## 5. Pareto k Diagnostic
 
-**Pareto k**: Diagnostic for LOO reliability.
-
-- k < 0.5: Good
-- 0.5 < k < 0.7: OK
-- k > 0.7: Bad (LOO unreliable)
+**Pareto k** là diagnostic dùng để kiểm tra xem xấp xỉ PSIS-LOO có đáng tin hay không. Khi $$k<0.5$$, ta thường có thể yên tâm rằng xấp xỉ hoạt động tốt; khi $$k$$ nằm giữa 0.5 và 0.7, kết quả vẫn có thể chấp nhận được nhưng cần cẩn trọng hơn; còn khi $$k>0.7$$, dấu hiệu cảnh báo đã đủ mạnh để nghi ngờ rằng LOO hiện tại không còn ổn định và có thể cần những biện pháp khác.
 
 ```python
 # Plot Pareto k
@@ -250,15 +225,7 @@ plt.show()
 
 ## Tóm tắt
 
-Information Criteria cho model selection:
-
-- **WAIC**: Bayesian AIC, fast computation
-- **LOO-CV**: Gold standard, uses PSIS approximation
-- **Lower = Better** predictive accuracy
-- **Pareto k**: Check LOO reliability
-- **az.compare**: Compare multiple models
-
-**Key insight**: Choose model based on **predictive accuracy**, not training fit!
+Information criteria cho ta một ngôn ngữ nhất quán để so sánh mô hình theo mục tiêu dự báo ngoài mẫu. WAIC cung cấp một xấp xỉ nhanh và hoàn toàn Bayesian cho năng lực dự báo, còn LOO-CV gần với chuẩn tham chiếu hơn và trong thực hành thường được tính qua PSIS-LOO. Khi dùng các chỉ số này, điều quan trọng không phải là thuộc lòng tên viết tắt, mà là luôn nhớ rằng mô hình nên được chọn theo **predictive accuracy**, không phải theo training fit. Diagnostic Pareto k đóng vai trò nhắc ta rằng ngay cả một tiêu chí tốt cũng cần được kiểm tra độ tin cậy trước khi ra quyết định.
 
 Bài tiếp theo: **Model Comparison** strategies.
 

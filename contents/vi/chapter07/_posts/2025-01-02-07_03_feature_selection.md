@@ -12,18 +12,11 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu về **feature selection** - kỹ thuật identify predictors quan trọng khi có nhiều candidates. Bạn sẽ học Bayesian approaches (Laplace priors, spike-and-slab, horseshoe), so sánh với frequentist methods (Lasso, stepwise), và biết khi nào nên dùng approach nào. Đây là kỹ năng quan trọng cho high-dimensional data.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **feature selection** (chọn biến) như bài toán xác định predictor nào thật sự quan trọng khi ta có rất nhiều ứng viên. Bài học sẽ đi qua các Bayesian approaches như Laplace priors, spike-and-slab, và horseshoe priors, đồng thời so sánh chúng với những frequentist methods quen thuộc như Lasso hay stepwise procedures. Mục tiêu không chỉ là biết công cụ nào tồn tại, mà là hiểu mỗi công cụ đang mã hóa giả định gì về độ thưa của mô hình, và khi nào mỗi cách tiếp cận là hợp lý hơn trong bối cảnh dữ liệu có số chiều cao.
 
 ## Giới thiệu: Vấn đề của Many Predictors
 
-**Scenario**: Bạn có 100 potential predictors, nhưng chỉ 5 thực sự quan trọng.
-
-**Challenges**:
-1. Fitting all 100 → overfitting
-2. Testing all combinations → computationally expensive (2^100 models!)
-3. Multiple testing → false discoveries
-
-**Goal**: Automatically identify relevant predictors.
+Hãy xét tình huống bạn có 100 **potential predictors** nhưng chỉ khoảng 5 biến trong số đó thật sự có tín hiệu. Nếu giữ tất cả các biến, mô hình dễ overfit; nếu thử mọi tổ hợp có thể, chi phí tính toán sẽ bùng nổ vì số mô hình cần xét lên đến $$2^{100}$$; còn nếu kiểm định từng biến riêng lẻ, ta lại đối mặt với nguy cơ **false discoveries** do multiple testing. Vì vậy, mục tiêu của feature selection không đơn thuần là “làm mô hình gọn hơn”, mà là nhận diện một cách có nguyên tắc những biến thật sự liên quan trong khi vẫn kiểm soát được độ bất định và chi phí mô hình hóa.
 
 ## 1. Frequentist Approaches
 
@@ -33,48 +26,13 @@ Sau khi hoàn thành bài học này, bạn sẽ hiểu về **feature selection
 
 ![Lasso Feature Selection](../../../img/chapter_img/chapter07/lasso_feature_selection.png)
 
-**Kết quả quan sát:**
-
-**Dataset**: 20 features, chỉ 5 features đầu có true coefficients khác 0.
-
-- **α = 0.001** (Weak regularization):
-  - 13 features selected
-  - Model giữ nhiều features, including noise
-  
-- **α = 0.01** (Still weak):
-  - 13 features selected
-  - Vẫn chưa đủ mạnh để loại bỏ noise
-
-- **α = 0.1** (Moderate):
-  - 13 features selected
-  - Coefficients bắt đầu shrink về 0
-  
-- **α = 0.5** (Strong):
-  - 9 features selected
-  - Nhiều coefficients bị set về 0
-  - Sparsity tăng
-
-**Key observation**: Higher α → more sparsity. Lasso automatically performs feature selection bằng cách set coefficients = 0 exactly.
+Ví dụ trong hình dùng một dataset có 20 features nhưng chỉ 5 feature đầu có hệ số thật sự khác 0. Khi $$\alpha$$ còn rất nhỏ như 0.001 hoặc 0.01, regularization quá yếu nên mô hình vẫn giữ lại khoảng 13 feature, nghĩa là còn nhiều biến nhiễu lọt vào mô hình. Khi tăng lên mức trung bình như 0.1, các hệ số bắt đầu co mạnh hơn về 0 nhưng số biến được giữ lại vẫn còn khá lớn. Chỉ khi $$\alpha$$ đủ mạnh, chẳng hạn 0.5, ta mới thấy rõ hiệu ứng thưa hơn: nhiều hệ số bị đẩy về 0 và số feature được chọn giảm xuống. Bài học trực tiếp từ ví dụ này là Lasso thực hiện feature selection bằng cách ép một số hệ số về đúng 0, và mức độ **sparsity** tăng lên khi regularization mạnh hơn.
 
 ### 1.2. Cross-Validation để Chọn α
 
 ![Lasso CV and Regularization Path](../../../img/chapter_img/chapter07/lasso_cv_regularization_path.png)
 
-**Kết quả Cross-Validation:**
-
-- **Optimal α**: 1.0000 (from 5-fold CV)
-- **Selected features**: 7 features
-- **True relevant**: 5 features
-- CV slightly overselects but close to true sparsity
-
-**Regularization Path (Right plot):**
-
-- **Low α** (left side): All coefficients non-zero, large magnitudes
-- **Increasing α**: Coefficients shrink gradually toward 0
-- **Optimal α** (red line): Balance between fit and sparsity
-- **High α** (right side): Most coefficients reach 0, only strongest signals survive
-
-**Key insight**: Cross-validation finds optimal λ that balances bias-variance. Regularization path shows how each feature "drops out" as regularization increases. The first 5 features (colored lines) are the true non-zero coefficients and persist longer than noise features (gray lines).
+Kết quả cross-validation trong ví dụ này chọn $$\alpha=1.0$$ như mức regularization tốt nhất theo năng lực dự báo ngoài mẫu. Ở mức đó, mô hình giữ lại 7 feature, nhiều hơn một chút so với 5 feature thật sự liên quan, nhưng vẫn khá gần với cấu trúc thưa thật của dữ liệu. Regularization path ở panel bên phải bổ sung một trực giác rất quan trọng: khi $$\alpha$$ còn nhỏ, hầu hết hệ số đều khác 0 và có độ lớn đáng kể; khi $$\alpha$$ tăng dần, các hệ số co lại về 0 theo những tốc độ khác nhau; và những feature mang tín hiệu thật thường “trụ” lâu hơn các biến nhiễu. Vì vậy, cross-validation không chỉ giúp chọn mức regularization tối ưu mà còn cho ta một cách nhìn động về việc từng biến rời khỏi mô hình như thế nào.
 
 ## 2. Bayesian Approaches
 
@@ -140,9 +98,7 @@ plt.show()
 
 ### 2.2. Horseshoe Prior
 
-**Horseshoe prior**: More flexible than Laplace.
-- Allows large coefficients (heavy tails)
-- Strong shrinkage for small coefficients
+**Horseshoe prior** linh hoạt hơn Laplace prior vì nó vừa cho phép một số hệ số thật sự lớn tồn tại nhờ phần đuôi dày, vừa co rất mạnh những hệ số nhỏ về gần 0. Chính khả năng vừa “tha” cho tín hiệu mạnh vừa “phạt” mạnh nhiễu yếu khiến horseshoe trở thành một prior đặc biệt hấp dẫn trong các bài toán sparse signals.
 
 ```python
 # Horseshoe prior
@@ -201,9 +157,7 @@ print("=" * 70)
 
 ## 3. Posterior Inclusion Probabilities
 
-**Bayesian advantage**: Quantify uncertainty about feature importance.
-
-**Posterior Inclusion Probability (PIP)**: P(β_j ≠ 0 \mid data)
+Ưu điểm quan trọng của cách tiếp cận Bayesian là nó không chỉ đưa ra một danh sách biến được chọn, mà còn định lượng được độ bất định của chính quá trình lựa chọn đó. **Posterior Inclusion Probability (PIP)** được hiểu như xác suất hậu nghiệm để một hệ số đủ khác 0 theo một tiêu chuẩn thực dụng, và nhờ vậy nó cho phép ta nói về mức độ chắc chắn của tầm quan trọng biến, thay vì chỉ nói “được chọn” hay “không được chọn”.
 
 ```python
 # Compute PIPs
@@ -266,14 +220,9 @@ print("=" * 70)
 
 ## Tóm tắt
 
-Feature selection identifies relevant predictors:
+Feature selection là bài toán chọn ra những predictor thật sự liên quan khi số biến ứng viên lớn và nguy cơ overfitting hiện hữu. Lasso giải bài toán này bằng cách dùng L1 penalty để tạo lời giải thưa, Bayesian Lasso diễn giải cùng ý tưởng ấy qua Laplace prior, còn horseshoe prior mang lại một cơ chế co rút tinh tế hơn, đặc biệt hữu ích khi ta tin rằng chỉ có một số ít tín hiệu mạnh nổi bật giữa rất nhiều biến yếu. Quan trọng hơn, cách tiếp cận Bayesian còn cung cấp **uncertainty quantification** cho chính việc chọn biến, chẳng hạn qua Posterior Inclusion Probabilities, thay vì chỉ trả về một danh sách biến có vẻ tối ưu.
 
-- **Lasso**: L1 penalty → sparse solutions
-- **Bayesian Lasso**: Laplace prior
-- **Horseshoe**: Heavy-tailed prior → better for strong signals
-- **PIPs**: Quantify uncertainty about feature importance
-
-**Key insight**: Bayesian approaches provide **uncertainty quantification** about which features matter!
+Điểm quan trọng nhất của bài là chọn biến không nên được hiểu như một thao tác lọc cơ học, mà là một phần của quá trình suy luận về cấu trúc tín hiệu trong dữ liệu.
 
 **Chapter 07 Complete!** Regularization, Bias-Variance, Feature Selection.
 

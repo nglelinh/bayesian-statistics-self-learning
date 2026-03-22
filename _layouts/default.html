@@ -1,9 +1,45 @@
 <!DOCTYPE html>
 <html lang="{% if page.lang %}{{ page.lang }}{% else %}{{ site.default_lang }}{% endif %}">
+  {% assign current_lang = page.lang | default: site.default_lang %}
+  {% assign access_gate = site.access_gate_payload %}
 
   {% include head.html %}
 
-  <body class="sidebar-overlay">
+  <body class="sidebar-overlay{% if access_gate and access_gate.enabled %} access-gate-enabled{% endif %}">
+
+    {% if access_gate and access_gate.enabled %}
+    <div class="access-gate" id="access-gate" role="dialog" aria-modal="true" aria-labelledby="access-gate-title">
+      <div class="access-gate__panel">
+        <p class="access-gate__eyebrow">{{ site.t[current_lang].title | default: site.title }}</p>
+        <h1 class="access-gate__title" id="access-gate-title">{{ site.t[current_lang].access_gate_title }}</h1>
+        <p class="access-gate__description">{{ site.t[current_lang].access_gate_description }}</p>
+
+        <form class="access-gate__form" id="access-gate-form" novalidate>
+          <label class="access-gate__label" for="access-gate-password">
+            {{ site.t[current_lang].access_gate_password_label }}
+          </label>
+          <input
+            class="access-gate__input"
+            id="access-gate-password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+          <button class="access-gate__button" type="submit">
+            {{ site.t[current_lang].access_gate_submit }}
+          </button>
+          <p class="access-gate__error" id="access-gate-error" hidden>
+            {{ site.t[current_lang].access_gate_error }}
+          </p>
+        </form>
+
+        <noscript>
+          <p class="access-gate__noscript">{{ site.t[current_lang].access_gate_js_required }}</p>
+        </noscript>
+      </div>
+    </div>
+    {% endif %}
 
     {% include sidebar.html %}
 
@@ -35,6 +71,7 @@
 
     <label for="sidebar-checkbox" class="sidebar-toggle"></label>
 
+    <script src='{{ site.baseurl }}/public/js/access-gate.js'></script>
     <script src='{{ site.baseurl }}/public/js/script.js'></script>
     <script src='{{ site.baseurl }}/public/js/multilang.js'></script>
     <script src='{{ site.baseurl }}/public/js/sidebar-submenu.js'></script>

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.18: Sampling Distribution và Standard Error"
+title: "Bài 0.17: Sampling Distribution và Standard Error"
 chapter: '00'
-order: 18
+order: 17
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -14,7 +14,13 @@ lesson_type: required
 
 Sau bài này, bạn sẽ phân biệt rõ dữ liệu gốc với phân phối của ước lượng, hiểu standard error là độ bất định của estimator (không phải độ phân tán của dữ liệu), và dùng trực giác này để đọc kết quả suy luận đúng hơn.
 
+## Giới thiệu: từ một mẫu dữ liệu đến độ tin cậy của ước lượng
+
+Trong thực hành, ta thường chỉ có một mẫu dữ liệu duy nhất, nhưng vẫn cần trả lời câu hỏi "ước lượng hiện tại ổn định đến đâu nếu quy trình lấy mẫu được lặp lại?". Sampling distribution và standard error chính là ngôn ngữ để lượng hóa câu hỏi đó một cách khoa học.
+
 ![Sampling distribution va standard error]({{ site.baseurl }}/img/chapter_img/chapter00/sampling_distribution_standard_error.png)
+
+*Cách đọc hình: Hình này minh họa sampling distribution va standard error. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Cung mot bai toan nhung n lon hon cho sampling distribution hep hon, tuong ung SE nho hon.*
 
 ## 1) Sampling distribution là gì?
@@ -83,4 +89,4 @@ Nếu bạn quen tư duy sampling distribution + SE, việc đọc posterior int
 
 ---
 
-*Bài học tiếp theo: [0.19 Ước lượng điểm, Bias-Variance, Consistency](/vi/chapter00/point-estimation-bias-variance-consistency/)*
+*Bài học tiếp theo: [0.18 Ước lượng điểm, Bias-Variance, Consistency](/vi/chapter00/point-estimation-bias-variance-consistency/)*

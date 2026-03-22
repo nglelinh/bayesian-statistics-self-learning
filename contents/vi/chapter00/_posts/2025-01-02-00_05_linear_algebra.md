@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu
+## Mục tiêu học tập
 
-Bài học này giới thiệu các khái niệm đại số tuyến tính cần thiết cho Bayesian Statistics, bao gồm vectors, matrices, và các phép toán quan trọng.
+Sau bài này, bạn sẽ hiểu vì sao đại số tuyến tính là hạ tầng toán học của mô hình thống kê Bayes: dữ liệu được biểu diễn dưới dạng vector-ma trận, tham số hồi quy được viết thành toán tử tuyến tính, và nhiều thuật toán suy luận dựa trực tiếp vào các phép biến đổi tuyến tính. Bạn cũng sẽ đọc được ý nghĩa hình học của các công thức thay vì chỉ thao tác ký hiệu.
+
+## Giới thiệu: từ công thức rời rạc đến cấu trúc tuyến tính
+
+Khi số biến tăng, việc viết mô hình bằng từng phương trình riêng lẻ trở nên khó theo dõi. Đại số tuyến tính giải quyết vấn đề này bằng cách gom các đại lượng vào vector và ma trận, giúp ta nhìn mô hình như một cấu trúc thống nhất. Đây là bước chuyển quan trọng vì hầu hết mô hình Bayes hiện đại (hồi quy tuyến tính, GLM, mô hình phân cấp) đều được hiện thực hiệu quả trên cấu trúc này.
+
+Về mặt phương pháp luận, bạn có thể xem bài này như phần "ngôn ngữ hình thức" cho các chương mô hình hóa: nếu chương 0.7 cung cấp công cụ lập trình, thì bài này cung cấp khuôn toán học để diễn đạt và suy luận.
+
+## Cầu nối sang suy luận Bayesian
+
+Nhiều biểu thức Bayesian cơ bản có thể viết gọn bằng đại số tuyến tính. Chẳng hạn mô hình hồi quy Gaussian:
+
+$$
+\mathbf{y}=\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\epsilon},\qquad
+\boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
+$$
+
+Biểu diễn này cho phép ta tách rõ ba thành phần: dữ liệu $$\mathbf{X}$$, tham số $$\boldsymbol{\beta}$$, và cấu trúc nhiễu. Khi đi tiếp sang posterior inference, các đối tượng này sẽ xuất hiện lặp lại trong cả công thức lẫn mã tính toán.
 
 ## 1. Vectors (Vectơ)
 

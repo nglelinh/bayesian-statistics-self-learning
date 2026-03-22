@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.14: Phân phối đồng thời (Joint Distribution)"
+title: "Bài 0.13: Phân phối đồng thời (Joint Distribution)"
 chapter: '00'
-order: 14
+order: 13
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -22,7 +22,9 @@ Với biến rời rạc, ta viết $$p(x)=P(X=x)$$; với biến liên tục, t
 
 Đây là mô tả một chiều. Bây giờ ta mở rộng sang hai chiều (và tổng quát là nhiều chiều): từ $$p(x)$$ hoặc $$f(x)$$ sang $$p(x,y)$$ hoặc $$f(x,y)$$. Vì vậy, joint distribution không phải khái niệm tách rời, mà là **bước mở rộng trực tiếp của hàm phân phối nhiều biến**.
 
-![Mo rong tu 1 bien sang nhieu bien](/bayesian-statistics-self-learning/img/chapter_img/chapter00/joint_distribution_marginalization.png)
+![Mo rong tu 1 bien sang nhieu bien]({{ site.baseurl }}/img/chapter_img/chapter00/joint_distribution_marginalization.png)
+
+*Cách đọc hình: Hình này minh họa mo rong tu 1 bien sang nhieu bien. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Minh hoa mo rong tu ham phan phoi 1 bien sang phan phoi dong thoi 2 bien. O giua la joint density $$f(x,y)$$; phia tren va ben phai la phan phoi bien thu duoc bang tich phan theo truc con lai; duong ngang dut the hien mot lat cat de hinh dung phan phoi co dieu kien.*
 
 Trong thực tế, ta thường quan tâm nhiều biến cùng lúc. Ví dụ:
@@ -177,4 +179,4 @@ $$p(x,y)=p(x\mid y)p(y)=p(y\mid x)p(x)$$
 
 ---
 
-*Bài học tiếp theo: [0.15 Mô hình Thống kê là gì?](/vi/chapter00/statistical-model-definition/)*
+*Bài học tiếp theo: [0.14 Mô hình Thống kê là gì?](/vi/chapter00/statistical-model-definition/)*

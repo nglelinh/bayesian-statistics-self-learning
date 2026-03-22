@@ -12,17 +12,11 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu cách đánh giá **GLM models** (Logistic, Poisson). Bạn sẽ học về **classification metrics** (accuracy, sensitivity, specificity, ROC curves), **calibration plots**, và **posterior predictive checks** cho GLMs. Đây là kỹ năng quan trọng để đánh giá model performance trong thực tế.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu cách đánh giá các **GLM models** như logistic regression và Poisson regression trong bối cảnh thực tế. Trọng tâm của bài là học cách chọn đúng tiêu chí đánh giá cho đúng loại biến kết quả, từ các **classification metrics** (thước đo phân lớp) như accuracy, sensitivity, specificity, và ROC curves, đến **calibration plot** (đồ thị hiệu chỉnh xác suất), **deviance** (độ lệch mô hình), và **posterior predictive checks** (kiểm tra dự báo hậu nghiệm). Đây là bước rất quan trọng, vì một mô hình chỉ thật sự có giá trị khi ta hiểu rõ nó đang làm tốt điều gì, đang làm chưa tốt điều gì, và những sai lệch nào còn tồn tại.
 
-## Giới thiệu: Evaluating GLMs Khác Linear Regression
+## Giới thiệu: Đánh giá GLMs khác gì so với Linear Regression
 
-Với linear regression, chúng ta dùng:
-- R², RMSE, residual plots
-
-Với GLMs:
-- **Binary outcomes**: Accuracy, ROC, calibration
-- **Count outcomes**: Deviance, overdispersion checks
-- **All GLMs**: Posterior predictive checks
+Với linear regression, chúng ta thường quen dùng các chỉ số như $$R^2$$, RMSE, hay các biểu đồ residual để xem mô hình khớp dữ liệu đến đâu. Tuy nhiên, khi chuyển sang GLMs, tiêu chí đánh giá phải thay đổi theo bản chất của biến kết quả. Với **binary outcomes** (biến kết quả nhị phân), ta quan tâm đến năng lực phân biệt lớp và hiệu chỉnh xác suất nên thường dùng accuracy, ROC, hay calibration. Với **count outcomes** (biến kết quả đếm), ta phải kiểm tra mức độ khớp của phân phối, deviance, và dấu hiệu **overdispersion** (quá phân tán). Dù vậy, có một nguyên tắc chung cho mọi GLM: luôn cần dùng **posterior predictive checks** để so sánh dữ liệu mô hình sinh ra với dữ liệu thực tế.
 
 ## 1. Evaluating Logistic Regression
 
@@ -131,8 +125,7 @@ Trong phân lớp Bayes, threshold 0.5 chỉ hợp lý khi chi phí hai loại l
 
 Ví dụ hai lớp (positive/negative):
 
-- chi phí false positive: $$C_{FP}$$
-- chi phí false negative: $$C_{FN}$$
+Ta ký hiệu chi phí của **false positive** là $$C_{FP}$$ và chi phí của **false negative** là $$C_{FN}$$.
 
 Quy tắc tối ưu (không có reject) là dự đoán positive khi:
 
@@ -142,7 +135,7 @@ $$
 
 Nếu thêm hành động reject với chi phí $$C_R$$, ta chỉ phân lớp khi rủi ro của quyết định nhỏ hơn $$C_R$$.
 
-Điểm thực hành quan trọng: báo cáo confusion matrix nên đi kèm bối cảnh cost, thay vì ngầm mặc định mọi sai lầm có giá như nhau.
+Điểm thực hành quan trọng là confusion matrix không nên được trình bày như một bảng đếm trung tính về mặt ngữ cảnh. Một ngưỡng chỉ có ý nghĩa khi gắn với chi phí của từng loại sai lầm, bởi trong nhiều bài toán ứng dụng, false negative có thể nghiêm trọng hơn rất nhiều so với false positive, hoặc ngược lại.
 
 ### 1.1.2. Bayes factor như thước đo bằng chứng ở mức mô hình
 
@@ -152,16 +145,11 @@ $$
 BF_{10}=\frac{p(D\mid M_1)}{p(D\mid M_0)}.
 $$
 
-- $$BF_{10}>1$$: dữ liệu ủng hộ $$M_1$$ hơn $$M_0$$.
-- $$BF_{10}<1$$: dữ liệu nghiêng về $$M_0$$.
-
-Bayes factor bổ sung cho ROC/AUC: ROC nói về năng lực phân biệt nhãn, còn Bayes factor nói về mức bằng chứng tương đối cho mô hình/giả thuyết.
+Khi $$BF_{10}>1$$, dữ liệu ủng hộ $$M_1$$ nhiều hơn $$M_0$$; khi $$BF_{10}<1$$, bằng chứng lại nghiêng về $$M_0$$. Vì vậy, Bayes factor bổ sung cho ROC/AUC theo một cách rất khác: ROC nói về năng lực phân biệt nhãn, còn Bayes factor nói về mức bằng chứng tương đối cho mô hình hay giả thuyết.
 
 ### 1.2. ROC Curve
 
-**ROC (Receiver Operating Characteristic)**: Plot Sensitivity vs (1 - Specificity) for all thresholds.
-
-**AUC (Area Under Curve)**: Summary metric (0.5 = random, 1.0 = perfect).
+**ROC curve** là đồ thị biểu diễn **Sensitivity** theo $$1-\text{Specificity}$$ khi ta quét qua mọi ngưỡng phân lớp có thể. Thay vì chốt sớm ở một ngưỡng cụ thể, ROC cho ta cái nhìn toàn cục về sự đánh đổi giữa việc bắt đúng ca dương tính và việc tránh báo động giả. **AUC** (Area Under the Curve) là bản tóm tắt của toàn bộ đường cong đó; giá trị gần 0.5 gợi ý mô hình gần như ngẫu nhiên, còn giá trị tiến gần 1 cho thấy năng lực phân biệt rất mạnh.
 
 ```python
 # Compute ROC curve
@@ -213,9 +201,7 @@ print("=" * 70)
 
 ### 1.3. Calibration Plot
 
-**Calibration**: Do predicted probabilities match observed frequencies?
-
-**Perfect calibration**: If model predicts p=0.7, then 70% of cases should be y=1.
+**Calibration** (hiệu chỉnh xác suất) trả lời một câu hỏi khác với ROC: khi mô hình nói xác suất là 0.7, liệu trong thực tế khoảng 70% trường hợp như vậy có thật sự xảy ra hay không. Một mô hình có thể phân biệt lớp khá tốt nhưng vẫn hiệu chỉnh kém, nghĩa là các xác suất mà nó báo cáo quá lạc quan hoặc quá dè dặt. Vì vậy, calibration plot giúp ta đánh giá chất lượng của chính các xác suất dự báo, chứ không chỉ chất lượng của quyết định phân lớp cuối cùng.
 
 ```python
 # Calibration plot
@@ -264,7 +250,7 @@ plt.show()
 
 ### 2.1. Deviance
 
-**Deviance**: Measure of fit cho GLMs (lower = better).
+**Deviance** là một thước đo mức độ khớp của mô hình trong họ GLM, và theo trực giác có thể hiểu là khoảng cách giữa mô hình đang xét với một mô hình bão hòa có khả năng khớp hoàn hảo dữ liệu. Giá trị deviance càng nhỏ thì mô hình càng gần với mức khớp lý tưởng đó.
 
 $$
 D = -2 \log \frac{L(\text{model})}{L(\text{saturated})}
@@ -440,23 +426,9 @@ plt.show()
 
 ## Tóm tắt
 
-Model evaluation cho GLMs:
+Đánh giá GLM không thể chỉ bê nguyên bộ công cụ của linear regression sang dùng. Với logistic regression, ta cần nghĩ đồng thời về confusion matrix, các thước đo phân lớp như sensitivity hay specificity, năng lực phân biệt tổng quát qua ROC/AUC, và chất lượng của các xác suất dự báo qua calibration plot. Với Poisson regression, trọng tâm lại chuyển sang deviance, dấu hiệu overdispersion, và các residual plot để xem mô hình có đang bỏ sót cấu trúc nào trong dữ liệu hay không. Còn với mọi GLM, **posterior predictive checks** vẫn là lớp kiểm tra cuối cùng và quan trọng nhất, vì chúng cho phép ta hỏi trực tiếp rằng dữ liệu mô hình sinh ra có giống dữ liệu thật ở những đặc điểm quan trọng hay không.
 
-**Logistic Regression**:
-- Confusion matrix, accuracy, sensitivity, specificity
-- ROC curve, AUC
-- Calibration plots
-
-**Poisson Regression**:
-- Deviance
-- Overdispersion checks
-- Residual plots
-
-**All GLMs**:
-- Posterior predictive checks
-- Compare observed vs predicted distributions
-
-**Key insight**: Different outcomes require different evaluation metrics. Always use PPC!
+Điểm cần giữ lại là mỗi loại biến kết quả đòi hỏi một tiêu chuẩn đánh giá riêng, và không có một chỉ số đơn lẻ nào đủ để kết luận mô hình “tốt” hay “xấu”. Thói quen đúng là luôn kết hợp metric chuyên biệt với kiểm tra hậu nghiệm để nhìn mô hình từ nhiều góc độ.
 
 **Chapter 06 Complete!** GLMs: Logistic, Poisson, Evaluation.
 

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.15: Mô hình Thống kê là gì?"
+title: "Bài 0.14: Mô hình Thống kê là gì?"
 chapter: '00'
-order: 15
+order: 14
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -13,6 +13,10 @@ lesson_type: required
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ nắm được định nghĩa thực dụng của mô hình thống kê như một mô tả xác suất cho cách dữ liệu được sinh ra, biết phân biệt dữ liệu quan sát với tham số chưa biết, và hiểu vì sao câu hỏi "mô hình này đang giả định điều gì?" luôn quan trọng hơn việc thuộc công thức.
+
+## Giới thiệu: mô hình như ngôn ngữ trung gian của suy luận
+
+Trong thống kê, dữ liệu quan sát chỉ là điểm khởi đầu. Để đi từ dữ liệu sang kết luận về cơ chế thật của thế giới, ta cần một cấu trúc trung gian có thể phát biểu giả định, tạo dự báo, và cho phép cập nhật khi có thêm thông tin. Cấu trúc đó chính là mô hình thống kê.
 
 ## 1) Động cơ: Dữ liệu không tự nói nếu thiếu mô hình
 
@@ -45,6 +49,8 @@ Ví dụ đồng xu:
 Điều quan trọng là mô hình ở đây không chỉ là công thức nhị thức, mà còn là tập giả định rằng mỗi lần tung có cùng xác suất $$\theta$$, các lần tung độc lập với nhau, và dữ liệu được tóm tắt bằng số lần ngửa trong $$n$$ phép thử.
 
 ![Mo hinh thong ke nhu cau noi giua tham so va du lieu]({{ site.baseurl }}/img/chapter_img/chapter00/statistical_model_definition_flow.png)
+
+*Cách đọc hình: Hình này minh họa mo hinh thong ke nhu cau noi giua tham so va du lieu. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Mo hinh thong ke nhu cau noi giua tham so chua biet $$\theta$$ va du lieu quan sat $$x$$ thong qua co che sinh du lieu $$p(x\mid\theta)$$, roi cap nhat ve posterior $$p(\theta\mid x)$$.*
 
 ## 3.1) Mô hình và mô phỏng khác nhau thế nào?
@@ -91,8 +97,6 @@ $$
 
 với $$\mu$$ là trung bình lớp và $$\sigma$$ là độ phân tán.
 
-Mô hình này ngầm giả định:
-
 Mô hình này ngầm giả định rằng dữ liệu gần phân phối chuẩn, các quan sát độc lập có điều kiện theo tham số, và mọi quan sát đều đến từ cùng một cơ chế sinh dữ liệu.
 
 Nhờ mô hình đó, ta có thể ước lượng và diễn giải $$\mu, \sigma$$, dự báo giá trị mới, đồng thời kiểm tra xem mô hình có đang bỏ sót cấu trúc quan trọng nào trong dữ liệu hay không.
@@ -118,4 +122,4 @@ Nhờ mô hình đó, ta có thể ước lượng và diễn giải $$\mu, \sig
 
 ---
 
-*Bài học tiếp theo: [0.16 Kỳ vọng, Phương sai, và Hiệp phương sai](/vi/chapter00/expectation-variance-covariance/)*
+*Bài học tiếp theo: [0.15 Kỳ vọng, Phương sai, và Hiệp phương sai](/vi/chapter00/expectation-variance-covariance/)*

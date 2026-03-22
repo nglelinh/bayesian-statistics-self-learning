@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.20: Log-probability và Ổn định số"
+title: "Bài 0.19: Log-probability và Ổn định số"
 chapter: '00'
-order: 20
+order: 19
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -14,7 +14,13 @@ lesson_type: required
 
 Sau bài này, bạn sẽ hiểu vì sao thực hành Bayesian gần như luôn làm việc trên log-probability, nhận diện underflow/overflow trong tính toán xác suất, và nắm kỹ thuật log-sum-exp để chuẩn hóa an toàn.
 
+## Giới thiệu: đúng về mặt toán chưa đủ, còn phải ổn định trên máy
+
+Nhiều công thức xác suất hoàn toàn đúng trên giấy nhưng thất bại khi triển khai số học dấu phẩy động. Trong Bayesian computation, lỗi underflow hay overflow có thể khiến posterior bị méo hoặc suy luận sụp đổ dù mô hình lý thuyết không sai. Vì vậy, log-probability không chỉ là mẹo kỹ thuật; đó là điều kiện cần để biến mô hình xác suất thành thuật toán đáng tin cậy.
+
 ![Log probability va on dinh so]({{ site.baseurl }}/img/chapter_img/chapter00/log_probability_numerical_stability.png)
+
+*Cách đọc hình: Hình này minh họa log probability va on dinh so. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Tich xac suat truc tiep rat de bi underflow, trong khi bieu dien tren thang log on dinh hon.*
 
 ## 1) Vì sao dùng log?
@@ -96,4 +102,4 @@ với $$m=\max_j a_j$$.
 
 ---
 
-*Bài học tiếp theo: [0.21 Kiểm tra giả định mô hình cơ bản](/vi/chapter00/basic-model-assumption-checks/)*
+*Bài học tiếp theo: [0.20 Kiểm tra giả định mô hình cơ bản](/vi/chapter00/basic-model-assumption-checks/)*

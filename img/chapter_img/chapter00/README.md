@@ -2,6 +2,40 @@
 
 ## Danh sách Hình ảnh
 
+### Bài 0.2-0.5: Cụm phân phối nền tảng (MỚI!)
+
+1. **bernoulli_binary_outcomes.png** - Một lần thử Bernoulli với hai kết quả có thể
+   - Một biểu đồ riêng cho xác suất thất bại và thành công
+   - Dùng để giới thiệu trực giác nhị phân trước khi chuyển sang Binomial
+
+2. **binomial_success_count_distribution.png** - Phân phối số lần thành công theo Binomial
+   - Hiển thị rõ ý nghĩa của $$K$$ là tổng số lần thành công sau $$n$$ lần thử
+   - Có thêm đường trung bình $$np$$ để hỗ trợ diễn giải
+
+3. **poisson_counts_timeline.png** - Số sự kiện trong các khoảng thời gian cố định
+   - Minh họa trực tiếp ý nghĩa dữ liệu đếm của Poisson
+   - Mỗi giờ có thể có số sự kiện khác nhau dù cùng một tốc độ trung bình
+
+4. **exponential_waiting_time_curve.png** - Thời gian chờ tới sự kiện kế tiếp
+   - Minh họa riêng phần Exponential thay vì ghép với Poisson
+   - Nhấn mạnh vai trò của kỳ vọng $$1/\lambda$$
+
+5. **normal_distribution_rule.png** - Quy tắc 68-95-99.7 của phân phối Normal
+   - Một ảnh riêng cho trực giác về độ phân tán quanh trung bình
+   - Hữu ích khi giải thích vai trò của $$\mu$$ và $$\sigma$$
+
+6. **clt_sample_means_overlay.png** - CLT dưới dạng các đường mật độ chồng lên nhau
+   - So sánh dữ liệu gốc với trung bình mẫu cho hai cỡ mẫu khác nhau
+   - Nhấn mạnh rằng CLT nói về phân phối của trung bình mẫu
+
+7. **beta_binomial_update_vi.png** - Cập nhật Beta-Binomial bằng tiếng Việt
+   - Tách riêng phần prior, likelihood shape, posterior cho xác suất $$p$$
+   - Giúp người học đọc rõ sự dịch chuyển của posterior
+
+8. **gamma_poisson_update_vi.png** - Cập nhật Gamma-Poisson bằng tiếng Việt
+   - Tách riêng phần prior và posterior cho rate dương $$\lambda$$
+   - Giúp người học thấy trực giác cập nhật mà không bị quá tải
+
 ### Bài 0.3: Thống kê Mô tả (MỚI!)
 
 1. **descriptive_mean_vs_median.png** - So sánh trung bình và trung vị dưới phân phối đối xứng và lệch phải
@@ -110,6 +144,7 @@
 - `generate_t_test_images.py` - Script tạo hình ảnh cho bài 0.9 (MỚI!)
 - `generate_statistical_model_definition_image.py` - Script tạo hình ảnh cho bài 0.12 (MỚI!)
 - `generate_foundational_concepts_images.py` - Script tạo hình ảnh cho bài 0.13-0.19 (MỚI!)
+- `generate_distribution_story_images.py` - Script tạo hình minh họa cho bài 0.2-0.5 (MỚI!)
 
 ## Usage
 
@@ -118,6 +153,9 @@
 ```bash
 # Bài 0.3: Thống kê mô tả
 python3 generate_descriptive_statistics_images.py
+
+# Bài 0.2-0.5: Cụm phân phối nền tảng
+python3 generate_distribution_story_images.py
 
 # Bài 0.8: P-values
 python3 generate_images_professional.py

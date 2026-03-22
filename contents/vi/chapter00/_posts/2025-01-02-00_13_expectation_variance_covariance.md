@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Bài 0.16: Kỳ vọng, Phương sai, và Hiệp phương sai"
+title: "Bài 0.15: Kỳ vọng, Phương sai, và Hiệp phương sai"
 chapter: '00'
-order: 16
+order: 15
 owner: Nguyen Le Linh
 lang: vi
 categories:
@@ -14,7 +14,13 @@ lesson_type: required
 
 Sau bài này, bạn sẽ hiểu kỳ vọng như "mức trung bình dài hạn", phương sai như "độ phân tán quanh trung bình", hiệp phương sai như "mức thay đổi cùng chiều hay ngược chiều" giữa hai biến, và biết vì sao ba khái niệm này xuất hiện liên tục trong mọi mô hình Bayesian.
 
+## Giới thiệu: ba đại lượng mô tả trung tâm và bất định
+
+Trong suy luận xác suất, không phải lúc nào ta cũng cần biết toàn bộ phân phối chi tiết. Nhiều quyết định thực hành bắt đầu từ ba câu hỏi cơ bản: giá trị điển hình nằm ở đâu, mức dao động lớn đến mức nào, và các biến có cùng biến thiên hay không. Kỳ vọng, phương sai, và hiệp phương sai là ba đại lượng trả lời trực tiếp ba câu hỏi đó.
+
 ![Ky vong phuong sai hiep phuong sai truc quan]({{ site.baseurl }}/img/chapter_img/chapter00/expectation_variance_covariance_visual.png)
+
+*Cách đọc hình: Hình này minh họa ky vong phuong sai hiep phuong sai truc quan. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
 *Hinh 1: Minh hoa truc quan cho ky vong (trong tam phan phoi) va hiep phuong sai duong/am giua hai bien.*
 
 ## 1) Kỳ vọng: giá trị trung bình theo phân phối
@@ -80,9 +86,7 @@ Tính chất (4) chỉ đi một chiều: cov bằng 0 chưa chắc độc lập
 
 ## 5) Liên hệ với Bayes
 
-Trong Bayesian inference:
-
-Posterior mean chính là kỳ vọng theo posterior, độ không chắc chắn thường được báo bằng posterior SD hoặc posterior variance, và khi có nhiều tham số thì covariance matrix cho biết mức phụ thuộc giữa các tham số đó.
+Trong Bayesian inference, posterior mean chính là kỳ vọng theo posterior, độ không chắc chắn thường được báo bằng posterior SD hoặc posterior variance, và khi có nhiều tham số thì covariance matrix cho biết mức phụ thuộc giữa các tham số đó.
 
 Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp phương sai thì rất khó diễn giải kết quả.
 
@@ -106,4 +110,4 @@ Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp 
 
 ---
 
-*Bài học tiếp theo: [0.17 Luật số lớn và Định lý giới hạn trung tâm](/vi/chapter00/law-large-numbers-clt/)*
+*Bài học tiếp theo: [0.16 Luật số lớn và Định lý giới hạn trung tâm](/vi/chapter00/law-large-numbers-clt/)*

@@ -228,7 +228,23 @@ $$
 
 trong tham số hóa shape-rate. Điểm chính cần nhớ: hàm Gamma là "keo nối" giúp các phân phối này chuẩn hóa đúng và cập nhật tham số gọn trong các cặp liên hợp.
 
-### 6.6. Nhắc nhanh miền tham số và tham số hóa
+### 6.6. Bảng nhanh hằng số chuẩn hóa của các họ thường gặp
+
+Trong thực hành, ta thường viết trước dạng "hạt nhân" (kernel) rồi thêm hằng số chuẩn hóa để thành phân phối hợp lệ.
+
+| Họ phân phối | Miền giá trị | Dạng chuẩn hóa | Hằng số chuẩn hóa chính |
+|---|---|---|---|
+| Bernoulli$$(p)$$ | $$x\in\{0,1\}$$ | $$P(X=x)=p^x(1-p)^{1-x}$$ | Tổng trên $$x=0,1$$ tự bằng 1 |
+| Binomial$$(n,p)$$ | $$k=0,\dots,n$$ | $$P(K=k)=\binom{n}{k}p^k(1-p)^{n-k}$$ | $$\binom{n}{k}$$ (đếm số cách) |
+| Poisson$$(\lambda)$$ | $$k=0,1,2,\dots$$ | $$P(Y=k)=\frac{\lambda^k e^{-\lambda}}{k!}$$ | $$e^{-\lambda}$$ và $$k!$$ |
+| Normal$$(\mu,\sigma^2)$$ | $$x\in\mathbb{R}$$ | $$f(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$ | $$\frac{1}{\sigma\sqrt{2\pi}}$$ |
+| Exponential$$(\lambda)$$ | $$t\ge 0$$ | $$f(t)=\lambda e^{-\lambda t}$$ | $$\lambda$$ |
+| Gamma$$(\alpha,\beta)$$ (shape-rate) | $$\lambda>0$$ | $$f(\lambda)=\frac{\beta^\alpha}{\Gamma(\alpha)}\lambda^{\alpha-1}e^{-\beta\lambda}$$ | $$\frac{\beta^\alpha}{\Gamma(\alpha)}$$ |
+| Beta$$(\alpha,\beta)$$ | $$\theta\in(0,1)$$ | $$f(\theta)=\frac{1}{B(\alpha,\beta)}\theta^{\alpha-1}(1-\theta)^{\beta-1}$$ | $$\frac{1}{B(\alpha,\beta)}$$, với $$B=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}$$ |
+
+Ghi nhớ ngắn: khi chỉ viết dấu $$\propto$$, bạn đang làm việc với phần chưa chuẩn hóa; khi cần xác suất/mật độ hợp lệ để tích phân (hoặc tổng) bằng 1, phải thêm hằng số chuẩn hóa.
+
+### 6.7. Nhắc nhanh miền tham số và tham số hóa
 
 Để tránh nhầm khi đọc công thức liên hợp:
 
@@ -244,7 +260,7 @@ $$
 
 Nếu một nguồn khác dùng shape-scale thì kết quả số có thể khác nếu bạn không đổi tham số về cùng hệ.
 
-### 6.7. Lưu ý xấp xỉ Normal: khi nào hợp lý, khi nào không
+### 6.8. Lưu ý xấp xỉ Normal: khi nào hợp lý, khi nào không
 
 Trong thực hành, ta hay nghe "xấp xỉ Normal" cho tổng nhiều biến ngẫu nhiên hoặc cho posterior khá tập trung. Gợi ý nhanh:
 

@@ -24,6 +24,12 @@ t:
     switch_language: "Switch to Vietnamese"
     required: "Required"
     optional: "Optional"
+    access_gate_title: "Private Course Site"
+    access_gate_description: "Enter the shared password to continue."
+    access_gate_password_label: "Password"
+    access_gate_submit: "Unlock"
+    access_gate_error: "Incorrect password. Please try again."
+    access_gate_js_required: "JavaScript must be enabled to use this login gate."
   vi:
     title: "Tiêu đề Khóa học của bạn"
     description: "Mô tả khóa học của bạn"
@@ -33,6 +39,12 @@ t:
     switch_language: "Chuyển sang tiếng Anh"
     required: "Bắt buộc"
     optional: "Tùy chọn"
+    access_gate_title: "Trang Học Riêng Tư"
+    access_gate_description: "Nhập mật khẩu dùng chung để tiếp tục."
+    access_gate_password_label: "Mật khẩu"
+    access_gate_submit: "Mở khóa"
+    access_gate_error: "Mật khẩu chưa đúng. Vui lòng thử lại."
+    access_gate_js_required: "Cần bật JavaScript để sử dụng lớp đăng nhập này."
 # About/contact
 author:
   name:              Your Name
@@ -70,3 +82,10 @@ exclude:
 
 # Analytics
 google_analytics_id: ""
+
+# Lightweight site-wide password gate for static GitHub Pages hosting.
+# This is not server-side HTTP Basic Auth.
+access_gate:
+  enabled: true
+  password: "iuh"
+  session_key: "bayesian-statistics-self-learning-access"
