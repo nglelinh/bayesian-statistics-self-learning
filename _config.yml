@@ -16,8 +16,8 @@ parallel_localization: true
 # Language-specific configurations
 t:
   en:
-    title: "Your Course Title"
-    description: "Your Course Description"
+    title: "Bayesian Statistics Self-Learning"
+    description: "Bayesian Statistics Self-Learning"
     home: "Home"
     chapters: "Chapters"
     language: "Language"
@@ -31,8 +31,8 @@ t:
     access_gate_error: "Incorrect password. Please try again."
     access_gate_js_required: "JavaScript must be enabled to use this login gate."
   vi:
-    title: "Tiêu đề Khóa học của bạn"
-    description: "Mô tả khóa học của bạn"
+    title: "Bayesian Statistics Self-Learning"
+    description: "Bayesian Statistics Self-Learning"
     home: "Trang chủ"
     chapters: "Các chương"
     language: "Ngôn ngữ"

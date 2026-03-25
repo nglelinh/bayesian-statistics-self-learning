@@ -44,11 +44,23 @@ T-value đo lường **số lượng standard errors** mà trung bình mẫu cá
 
 Nếu **$$|t|$$ lớn**, trung bình mẫu cách xa $$\mu_0$$ một số lượng standard errors đáng kể, và điều đó tạo bằng chứng chống lại $$H_0$$; ngược lại, nếu **$$|t|$$ nhỏ**, trung bình mẫu nằm gần $$\mu_0$$ nên dữ liệu chưa tạo được nhiều sức nặng để chống lại giả thuyết không.
 
-![Diễn giải T-value]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_interpretation.png)
+*Cách đọc hình: Bốn hình dưới đây tách riêng từng mức độ cực đoan của t-value để bạn nhìn rõ p-value thay đổi thế nào.*
 
-*Cách đọc hình: Hình này minh họa diễn giải t-value. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+![T-value nhỏ với bằng chứng yếu chống lại H0]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_small_example.png)
 
-Hình trên minh họa cách diễn giải các t-value khác nhau với df = 15. Ở panel 1 với $$t = 0.5$$, p-value lớn khoảng 0.62 nên dữ liệu rất phù hợp với $$H_0$$; ở panel 2 với $$t = 2.0$$, p-value khoảng 0.064 nên kết quả ở trạng thái lưng chừng, sát ngưỡng 0.05; ở panel 3 với $$t = 3.0$$, p-value nhỏ khoảng 0.009 nên bằng chứng chống lại $$H_0$$ mạnh hơn nhiều; còn panel 4 với $$t = -0.70$$ là ví dụ chocolate thực tế, nơi p = 0.495 cho thấy chưa có đủ bằng chứng để chống lại giả thuyết không.
+*Hình 1a: Với $$t = 0.5$$ và $$df = 15$$, p-value lớn khoảng 0.62 nên dữ liệu khá phù hợp với $$H_0$$.*
+
+![T-value ở vùng lưng chừng gần ngưỡng 0.05]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_borderline_example.png)
+
+*Hình 1b: Với $$t = 2.0$$, p-value khoảng 0.064 nên kết quả ở trạng thái lưng chừng, sát ngưỡng 0.05.*
+
+![T-value lớn với bằng chứng mạnh hơn chống lại H0]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_large_example.png)
+
+*Hình 1c: Với $$t = 3.0$$, p-value nhỏ khoảng 0.009 nên bằng chứng chống lại $$H_0$$ mạnh hơn rõ rệt.*
+
+![Ví dụ chocolate với t âm nhỏ về độ lớn]({{ site.baseurl }}/img/chapter_img/chapter00/t_value_chocolate_example.png)
+
+*Hình 1d: Ở ví dụ chocolate với $$t = -0.70$$, p = 0.495 cho thấy chưa có đủ bằng chứng để chống lại giả thuyết không.*
 
 Vùng được tô màu trong mỗi panel thể hiện "vùng cực đoan" dùng để tính p-value (two-tailed test).
 
@@ -82,11 +94,9 @@ Lưu ý cách các critical values thay đổi: với df = 2 và $$\alpha = 0.05
 
 Có ba loại t-test phổ biến, tùy thuộc vào thiết kế nghiên cứu:
 
-![Ba Loại T-test]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_types.png)
+![Bảng tóm tắt ba loại t-test]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_type_summary_table.png)
 
-*Cách đọc hình: Hình này minh họa ba loại t-test. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-
-Hình trên minh họa trực quan ba loại t-test với ví dụ cụ thể: (1) One-sample test với dữ liệu chocolate - so sánh trung bình mẫu với giá trị giả thuyết, (2) Independent two-sample test - so sánh chiều cao giữa hai khoa khác nhau, và (3) Paired test - so sánh cân nặng trước và sau khi dùng thuốc của cùng nhóm bệnh nhân. Mỗi loại có công thức và degrees of freedom riêng.
+*Hình 2: Bảng tóm tắt nhanh mục đích, công thức và bậc tự do của ba loại t-test phổ biến.*
 
 ### 1. One-sample T-test
 
@@ -99,6 +109,10 @@ $$t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}}$$
 **Degrees of freedom:** $$df = n - 1$$
 
 **Ví dụ:** Kiểm tra xem chiều cao trung bình của nam sinh viên có khác 170 cm không.
+
+![One-sample t-test so sánh một mẫu với giá trị giả thuyết]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_type_one_sample.png)
+
+*Hình 2a: One-sample t-test so sánh trung bình của một mẫu với một giá trị đã biết hoặc được giả thuyết trước.*
 
 ### 2. Independent Two-sample T-test (Unpaired)
 
@@ -116,6 +130,10 @@ $$s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}}$$
 
 **Ví dụ:** So sánh chiều cao trung bình của nam sinh viên khoa A và khoa B.
 
+![Independent two-sample t-test so sánh hai nhóm độc lập]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_type_independent.png)
+
+*Hình 2b: Independent two-sample t-test so sánh hai nhóm độc lập, ví dụ chiều cao giữa hai khoa khác nhau.*
+
 ### 3. Paired T-test (Dependent)
 
 **Mục đích:** So sánh trung bình của hai phép đo trên cùng một nhóm đối tượng (before-after, matched pairs).
@@ -130,6 +148,10 @@ Trong đó:
 **Degrees of freedom:** $$df = n - 1$$
 
 **Ví dụ:** So sánh cân nặng của bệnh nhân trước và sau khi dùng thuốc giảm cân.
+
+![Paired t-test so sánh trước và sau trên cùng một nhóm]({{ site.baseurl }}/img/chapter_img/chapter00/t_test_type_paired.png)
+
+*Hình 2c: Paired t-test theo dõi cùng một nhóm ở hai thời điểm, nên trọng tâm nằm ở hiệu số của từng cặp đo.*
 
 ## Giả Định của T-test
 

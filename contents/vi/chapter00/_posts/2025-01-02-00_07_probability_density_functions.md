@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Bài 0.10: Hàm Mật độ Xác suất (PDF) - Chi tiết"
+title: "Bài 0.10: Hàm Mật độ Xác suất (Probability Density Function - PDF) - Chi tiết"
 chapter: '00'
 order: 10
 owner: Nguyen Le Linh
@@ -12,7 +12,7 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Bài học này trình bày một cách hệ thống về hàm mật độ xác suất (PDF), sự khác biệt bản chất giữa PDF và hàm khối xác suất (PMF), cũng như cách diễn giải đúng PDF trong các mô hình liên tục. Sau khi học xong, bạn sẽ hiểu vì sao $$f(x)$$ không phải là xác suất điểm, vì sao $$f(x)$$ có thể lớn hơn 1 mà vẫn hợp lệ, và vì sao tư duy "xác suất là diện tích" là điều kiện nền tảng để đọc prior, likelihood và posterior trong Bayesian.
+Bài học này trình bày một cách hệ thống về **hàm mật độ xác suất (PDF), sự khác biệt bản chất giữa PDF và hàm khối xác suất (PMF)**, cũng như cách diễn giải đúng PDF trong các mô hình liên tục. 
 
 ## 1. Từ Rời rạc đến Liên tục
 
@@ -22,16 +22,21 @@ Với biến ngẫu nhiên **rời rạc** $$X$$, chúng ta có **Probability Ma
 
 **Tính chất của PMF** có thể được tóm lại ngắn gọn như sau: $$P(X = x) \geq 0$$ với mọi $$x$$, tổng của tất cả các xác suất $$\sum_{\text{all } x} P(X = x)$$ bằng 1, và quan trọng nhất là $$P(X = x)$$ trong trường hợp rời rạc thực sự là một xác suất với ý nghĩa trực tiếp.
 
+![PMF của xúc xắc công bằng]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_pmf_dice.png)
+
+*Cách đọc hình: Hãy nhìn từng cột riêng lẻ, vì ở PMF mỗi cột chính là xác suất tại một giá trị cụ thể.*
+*Hình 1: PMF của xúc xắc công bằng. Mỗi giá trị 1 đến 6 mang đúng xác suất $$1/6$$, và tổng tất cả các cột bằng 1.*
+
 ### 1.2. Vấn đề với Biến Liên tục
 
 Bây giờ hãy xem xét một biến ngẫu nhiên liên tục. Giả sử chiều cao người trưởng thành tuân theo phân phối chuẩn $$X \sim \mathcal{N}(170, 10^2)$$ cm. Một câu hỏi tự nhiên là: $$P(X = 170)$$ bằng bao nhiêu?
 
 Câu trả lời đáng ngạc nhiên là **bằng 0**! Thực tế, $$P(X = k)$$ bằng 0 với **mọi** giá trị cụ thể $$k$$, dù là 170, 170.5, hay 170.000001. Lý do là có **vô số** giá trị có thể mà chiều cao có thể nhận. Giữa 170 cm và 171 cm, có vô hạn các giá trị khác nhau: 170.1, 170.01, 170.001, và cứ thế tiếp tục đến vô cùng. Nếu mỗi giá trị có xác suất dương, thì tổng tất cả các xác suất sẽ là vô hạn, vi phạm nguyên tắc cơ bản rằng tổng phải bằng 1.
 
-![PMF vs Biến Liên tục]({{ site.baseurl }}/img/chapter_img/chapter00/pmf_vs_continuous.png)
+![Biến liên tục và xác suất tại một điểm]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_continuous_height.png)
 
-*Cách đọc hình: Hình này minh họa pmf vs biến liên tục. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 1: So sánh PMF với biến liên tục. Bên trái: PMF của xúc xắc, $$P(X=x)$$ là xác suất có ý nghĩa. Bên phải: Với biến liên tục như chiều cao, $$P(X=170)=0$$ vì có vô số giá trị có thể. Thay vào đó, chúng ta cần hỏi về xác suất trong một khoảng.*
+*Cách đọc hình: Hãy phân biệt chấm đỏ với cả đường cong. Chấm đỏ cho thấy giá trị mật độ tại 170 cm, còn xác suất vẫn phải được hiểu bằng diện tích trên một khoảng.*
+*Hình 2: Với biến liên tục như chiều cao, $$P(X=170)=0$$ dù $$f(170)$$ khác 0. Điều có ý nghĩa là xác suất trên một khoảng chiều cao, không phải tại một điểm đơn lẻ.*
 
 **Giải pháp**: Thay vì hỏi xác suất tại một điểm, chúng ta hỏi xác suất trong một **khoảng**:
 
@@ -57,12 +62,15 @@ $$P(a \leq X \leq b) = \int_a^b f(x) \, dx$$
 
 Khái niệm "mật độ" trong thống kê tương tự **mật độ khối lượng** trong vật lý. Trong vật lý, mật độ khối lượng $$\rho(x)$$ (đơn vị: kg/m³) không phải là khối lượng, mà chỉ cho biết khối lượng phân bố như thế nào trong không gian. Để tính khối lượng thực tế, chúng ta phải lấy tích phân: $$\text{Khối lượng} = \int \rho(x) \, dx$$.
 
+![Mật độ khối lượng trong vật lý]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_mass_density_analogy.png)
+
+*Hình 3: Trong vật lý, $$\rho(x)$$ chỉ là mật độ khối lượng; khối lượng thực sự đến từ diện tích dưới đường $$\rho(x)$$ trên đoạn quan tâm.*
+
 Tương tự trong thống kê, mật độ xác suất $$f(x)$$ không phải là xác suất, mà cho biết xác suất được "tập trung" quanh $$x$$ như thế nào; muốn có xác suất thực tế, ta phải lấy tích phân $$\int f(x)\,dx$$, tức diện tích dưới đường cong trên khoảng quan tâm.
 
-![Tương tự Mật độ]({{ site.baseurl }}/img/chapter_img/chapter00/density_analogy.png)
+![Mật độ xác suất trong thống kê]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_probability_density_analogy.png)
 
-*Cách đọc hình: Hình này minh họa tương tự mật độ. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 2: Tương tự giữa mật độ khối lượng (vật lý) và mật độ xác suất (thống kê). Trong cả hai trường hợp, mật độ không phải là đại lượng cuối cùng (khối lượng hoặc xác suất), mà chỉ có tích phân của mật độ mới cho ta đại lượng cần tìm.*
+*Hình 4: Trong thống kê cũng vậy, $$f(x)$$ không phải xác suất; xác suất chỉ xuất hiện khi ta lấy diện tích dưới đường cong trên một khoảng, chẳng hạn $$[-1,1]$$.*
 
 Khi $$f(x)$$ cao tại một điểm $$x$$, điều đó có nghĩa là xác suất "tập trung" quanh điểm đó - nói cách khác, trong một khoảng nhỏ xung quanh $$x$$, có nhiều xác suất hơn. Khi $$f(x)$$ thấp, xác suất "thưa thớt" hơn quanh điểm đó.
 
@@ -82,12 +90,23 @@ Tổng diện tích dưới toàn bộ đường cong PDF phải bằng 1, vì t
 
 Đây là điểm quan trọng và thường gây nhầm lẫn. Vì $$f(x)$$ không phải là xác suất, nó hoàn toàn có thể lớn hơn 1. Miễn là tích phân (diện tích tổng) vẫn bằng 1, thì PDF hợp lệ.
 
-![PDF có thể > 1]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_can_exceed_one.png)
+Một ví dụ đầu tiên là phân phối chuẩn rất hẹp. Khi độ lệch chuẩn đủ nhỏ, đỉnh của đường cong sẽ vượt qua mức 1 mà vẫn hợp lệ vì diện tích tổng thể vẫn bằng 1.
 
-*Cách đọc hình: Hình này minh họa pdf có thể > 1. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 3: Các ví dụ cho thấy PDF có thể lớn hơn 1. Bên trái: Phân phối chuẩn với độ lệch chuẩn nhỏ (0.3) có $$f(0) > 1$$. Giữa: Phân phối đều trên [0, 0.5] có $$f(x) = 2 > 1$$. Phải: Phân phối Beta(0.5, 0.5) có $$f(x)$$ tiến đến vô cùng tại đầu mút. Trong tất cả các trường hợp, tích phân vẫn bằng 1.*
+![Phân phối chuẩn hẹp có thể có đỉnh lớn hơn 1]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_exceeds_one_normal.png)
 
-Hãy xem xét phân phối đều trên khoảng $$[0, 0.5]$$. PDF của phân phối này là $$f(x) = 2$$ trên khoảng này và $$f(x) = 0$$ ở ngoài. Rõ ràng $$f(x) = 2 > 1$$, nhưng tích phân là $$\int_0^{0.5} 2 \, dx = 2 \times 0.5 = 1$$, hoàn toàn hợp lệ. Phân phối chuẩn với độ lệch chuẩn rất nhỏ cũng có giá trị PDF lớn hơn 1 tại đỉnh, và một số phân phối Beta thậm chí có PDF tiến đến vô cùng tại một số điểm!
+*Hình 5: Với $$X \sim \mathcal{N}(0, 0.3^2)$$, đỉnh $$f(0)$$ vượt quá 1, nhưng toàn bộ diện tích dưới đường cong vẫn bằng 1.*
+
+Một ví dụ thứ hai là phân phối đều trên khoảng $$[0, 0.5]$$. Ở đây PDF bằng đúng 2 trên toàn bộ khoảng, nên chiều cao lớn hơn 1 nhưng diện tích vẫn chỉ là $$2 \times 0.5 = 1$$.
+
+![Phân phối đều trên [0, 0.5] có mật độ bằng 2]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_exceeds_one_uniform.png)
+
+*Hình 6: Phân phối đều trên $$[0, 0.5]$$ có $$f(x)=2>1$$. Điều làm nó hợp lệ không phải chiều cao, mà là diện tích toàn phần vẫn bằng 1.*
+
+Cuối cùng, có những phân phối như Beta(0.5, 0.5) còn đi xa hơn: mật độ có thể tăng vọt ở gần đầu mút 0 và 1. Dù vậy, miễn là tích phân toàn phần hữu hạn và bằng 1 thì đây vẫn là một PDF hợp lệ.
+
+![Phân phối Beta có mật độ tăng rất mạnh ở đầu mút]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_exceeds_one_beta.png)
+
+*Hình 7: Với Beta(0.5, 0.5), mật độ tiến rất cao ở gần 0 và 1. Điều này càng nhắc lại rằng $$f(x)$$ không phải xác suất điểm.*
 
 ## 3. Hiểu Sâu về PDF
 
@@ -95,10 +114,31 @@ Hãy xem xét phân phối đều trên khoảng $$[0, 0.5]$$. PDF của phân p
 
 Một cách trực quan để hiểu PDF là thông qua histogram. Khi chúng ta vẽ histogram của dữ liệu với số lượng mẫu tăng lên và độ rộng của các bin giảm xuống, histogram sẽ dần dần tiến gần đến đường cong PDF lý thuyết. Về mặt toán học, khi số lượng mẫu $$n \to \infty$$ và độ rộng bin $$\Delta x \to 0$$, histogram hội tụ về PDF.
 
-![Histogram tiến đến PDF]({{ site.baseurl }}/img/chapter_img/chapter00/histogram_to_pdf.png)
+*Cách đọc chuỗi hình dưới đây: đi từ $$n$$ nhỏ đến $$n$$ lớn và quan sát histogram màu xanh dần ôm sát đường PDF lý thuyết màu đỏ.*
 
-*Cách đọc hình: Hình này minh họa histogram tiến đến pdf. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 4: Minh họa histogram tiến đến PDF khi số lượng mẫu tăng. Với n = 100, histogram còn rất thô. Khi n tăng lên 50,000, histogram khớp gần như hoàn hảo với đường cong PDF lý thuyết (màu đỏ). Điều này cho thấy PDF là "giới hạn lý tưởng" của histogram khi có vô hạn dữ liệu.*
+![Histogram với n = 100]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n100.png)
+
+*Hình 8: Với $$n=100$$, histogram vẫn còn thô và dao động mạnh quanh đường cong lý thuyết.*
+
+![Histogram với n = 500]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n500.png)
+
+*Hình 9: Khi $$n=500$$, hình dạng chuông bắt đầu rõ hơn nhưng vẫn còn sai khác đáng kể ở từng bin.*
+
+![Histogram với n = 1,000]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n1000.png)
+
+*Hình 10: Với $$n=1{,}000$$, histogram đã mô phỏng khá tốt đường PDF, dù nhiễu lấy mẫu vẫn còn thấy rõ.*
+
+![Histogram với n = 5,000]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n5000.png)
+
+*Hình 11: Ở $$n=5{,}000$$, đường bao chung của histogram đã gần với PDF lý thuyết.*
+
+![Histogram với n = 10,000]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n10000.png)
+
+*Hình 12: Khi $$n=10{,}000$$, khác biệt chủ yếu chỉ còn ở các dao động nhỏ do lấy mẫu.*
+
+![Histogram với n = 50,000]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_histogram_n50000.png)
+
+*Hình 13: Với $$n=50{,}000$$, histogram gần như trùng với PDF lý thuyết, cho thấy PDF là giới hạn lý tưởng khi dữ liệu rất nhiều.*
 
 Quan sát này rất quan trọng vì nó kết nối PDF lý thuyết với dữ liệu thực tế. Trong thực tế, chúng ta không bao giờ có vô hạn dữ liệu, vì vậy chúng ta làm việc với histogram hoặc các ước lượng khác của PDF. Nhưng khi có nhiều dữ liệu hơn, ước lượng của chúng ta sẽ gần với PDF thực tế hơn.
 
@@ -116,21 +156,33 @@ $$f(x) = \lim_{\Delta x \to 0} \frac{P(x \leq X \leq x + \Delta x)}{\Delta x}$$
 
 Công thức này cho thấy PDF là "đạo hàm" của xác suất theo biến $$x$$. Nói cách khác, $$f(x)$$ đo tốc độ thay đổi của xác suất khi chúng ta di chuyển dọc theo trục $$x$$.
 
-![Xấp xỉ Khoảng Nhỏ]({{ site.baseurl }}/img/chapter_img/chapter00/small_interval_approximation.png)
+*Cách đọc chuỗi hình dưới đây: so sánh hình chữ nhật nét đứt màu xanh lá với phần diện tích màu cam khi $$\Delta x$$ ngày càng nhỏ.*
 
-*Cách đọc hình: Hình này minh họa xấp xỉ khoảng nhỏ. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 5: Xấp xỉ $$P(x \leq X \leq x+\Delta x) \approx f(x) \cdot \Delta x$$. Với $$\Delta x = 0.5$$, sai số rõ rệt. Với $$\Delta x = 0.1$$, xấp xỉ tốt hơn. Với $$\Delta x = 0.01$$, xấp xỉ gần như hoàn hảo. Hình chữ nhật màu xanh lá (xấp xỉ) gần như khớp với diện tích màu cam (xác suất thực) khi $$\Delta x$$ nhỏ.*
+![Xấp xỉ với delta x bằng 0.5]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_small_interval_dx_05.png)
+
+*Hình 14: Với $$\Delta x = 0.5$$, hình chữ nhật xấp xỉ còn khá thô nên sai số vẫn nhìn thấy rõ.*
+
+![Xấp xỉ với delta x bằng 0.1]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_small_interval_dx_01.png)
+
+*Hình 15: Khi $$\Delta x = 0.1$$, hình chữ nhật đã bám sát hơn nhiều vào diện tích thực.*
+
+![Xấp xỉ với delta x bằng 0.01]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_small_interval_dx_001.png)
+
+*Hình 16: Với $$\Delta x = 0.01$$, xấp xỉ $$f(x)\Delta x$$ gần như trùng với xác suất thực trên khoảng rất nhỏ.*
 
 ### 3.3. Đơn vị của PDF
 
-Một khía cạnh quan trọng nhưng thường bị bỏ qua của PDF là đơn vị của nó. Nếu biến ngẫu nhiên $$X$$ có đơn vị, chẳng hạn cm, kg, hay giây, thì $$f(x)$$ sẽ có đơn vị là **1/(đơn vị của X)**, còn $$f(x)\cdot dx$$ sẽ trở thành một đại lượng không đơn vị, và სწორედ vì thế mới có thể được diễn giải như xác suất.
+Một khía cạnh quan trọng nhưng thường bị bỏ qua của PDF là đơn vị của nó. Nếu biến ngẫu nhiên $$X$$ có đơn vị, chẳng hạn cm, kg, hay giây, thì $$f(x)$$ sẽ có đơn vị là **1/(đơn vị của X)**, còn $$f(x)\cdot dx$$ sẽ trở thành một đại lượng không đơn vị, và chính vì thế mới có thể được diễn giải như xác suất.
 
 Ví dụ, nếu $$X$$ là chiều cao tính bằng cm, thì $$f(x)$$ có đơn vị 1/cm. Nếu chúng ta chuyển đổi sang mét, $$f(x)$$ sẽ có đơn vị 1/m, và giá trị số học của nó sẽ thay đổi theo. Cụ thể, nếu $$f(170 \text{ cm}) = 0.04 \text{ (1/cm)}$$, thì $$f(1.70 \text{ m}) = 4.0 \text{ (1/m)}$$ - tăng lên 100 lần vì chúng ta chuyển từ cm sang m.
 
-![Đơn vị của PDF]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_units.png)
+![PDF khi đo chiều cao bằng cm]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_units_cm_only.png)
 
-*Cách đọc hình: Hình này minh họa đơn vị của pdf. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 6: PDF thay đổi theo đơn vị của biến ngẫu nhiên. Bên trái: Chiều cao tính bằng cm, $$f(170) = 0.04$$ (1/cm). Bên phải: Cùng phân phối nhưng tính bằng mét, $$f(1.70) = 4.0$$ (1/m). Chú ý rằng $$0.04 \times 100 = 4.0$$, phản ánh hệ số chuyển đổi. Tuy nhiên, xác suất (diện tích dưới đường cong) không thay đổi.*
+*Hình 17: Khi đo bằng cm, giá trị tại trung tâm là khoảng $$f(170)=0.04$$ với đơn vị 1/cm.*
+
+![PDF khi đo chiều cao bằng m]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_units_m_only.png)
+
+*Hình 18: Cùng phân phối nhưng đổi sang mét thì giá trị tại trung tâm tăng lên khoảng $$f(1.70)=4.0$$ với đơn vị 1/m. Hình dạng vật lý của phân phối không đổi, chỉ thang đo và đơn vị của mật độ thay đổi.*
 
 Tuy nhiên, **xác suất không phụ thuộc vào đơn vị**. $$P(160 \text{ cm} \leq X \leq 180 \text{ cm}) = P(1.60 \text{ m} \leq X \leq 1.80 \text{ m})$$. Điều này hợp lý vì xác suất là một khái niệm trừu tượng không có đơn vị đo lường vật lý.
 
@@ -140,10 +192,17 @@ Sự phụ thuộc vào đơn vị của $$f(x)$$ là một lý do quan trọng 
 
 Để củng cố hiểu biết, hãy so sánh trực tiếp PMF và PDF:
 
-![So sánh PMF và PDF]({{ site.baseurl }}/img/chapter_img/chapter00/pmf_pdf_comparison.png)
+Ở phía rời rạc, một PMF điển hình như Binomial(10, 0.5) gán xác suất trực tiếp cho từng giá trị nguyên.
 
-*Cách đọc hình: Hình này minh họa so sánh pmf và pdf. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 7: So sánh trực tiếp PMF và PDF. Trái: PMF của Binomial(10, 0.5), $$P(X=5) = 0.246$$ LÀ xác suất có ý nghĩa trực tiếp. Phải: PDF của Normal(0,1), $$f(0) = 0.399$$ KHÔNG PHẢI xác suất, và $$P(X=0) = 0$$.*
+![Ví dụ PMF của phân phối Binomial]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_binomial_pmf_example.png)
+
+*Hình 19: Ở PMF, cột tại $$x=5$$ chính là xác suất $$P(X=5)=0.246$$ và có thể đọc trực tiếp từ hình.*
+
+Ở phía liên tục, một PDF điển hình như Normal(0,1) chỉ cho ta mật độ tại từng điểm chứ không cho xác suất điểm.
+
+![Ví dụ PDF của phân phối chuẩn tắc]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_normal_density_example.png)
+
+*Hình 20: Ở PDF, giá trị $$f(0)=0.399$$ chỉ là mật độ tại điểm 0, còn $$P(X=0)=0$$ vì đây là biến liên tục.*
 
 | Đặc điểm | PMF (Rời rạc) | PDF (Liên tục) |
 |----------|---------------|----------------|
@@ -179,14 +238,17 @@ Vì $$f(x)$$ phụ thuộc vào đơn vị, việc so sánh $$f(170 \text{ cm})$
 
 Trong phân tích Bayesian, cả phân phối prior $$p(\theta)$$ và phân phối posterior $$p(\theta \mid x)$$ đều là PDF nếu tham số $$\theta$$ liên tục. Điều đó có nghĩa là $$p(\theta)$$ không phải là xác suất điểm mà là **mật độ tin cậy** (density of belief), nên biểu thức như $$p(\theta = 0.5)$$ không có diễn giải xác suất trực tiếp; điều có ý nghĩa là xác suất trên một khoảng, chẳng hạn $$P(a \leq \theta \leq b) = \int_a^b p(\theta)\,d\theta$$, và vì là mật độ nên $$p(\theta)$$ cũng có thể lớn hơn 1.
 
-![Ứng dụng Bayesian]({{ site.baseurl }}/img/chapter_img/chapter00/bayesian_pdf_application.png)
+![Prior và posterior như hai hàm mật độ]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_bayesian_prior_posterior.png)
 
-*Cách đọc hình: Hình này minh họa ứng dụng bayesian. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 8: Prior và Posterior trong Bayesian statistics đều là PDF. Trái: Prior Beta(2,2) (màu xanh) và Posterior Beta(9,5) (màu đỏ) sau khi quan sát 7 thành công trong 10 thử. Phải: Khoảng tin cậy 95% được tính bằng tích phân posterior PDF, cho $$P(0.395 \leq \theta \leq 0.827) = 0.95$$.*
+*Hình 21: Trong Bayesian, prior và posterior đều là các đường PDF trên không gian tham số. Chúng mô tả mật độ niềm tin trước và sau khi quan sát dữ liệu.*
 
 Ví dụ, giả sử chúng ta có prior $$\theta \sim \text{Beta}(2, 2)$$ cho xác suất thành công của một thử nghiệm, và quan sát 7 thành công trong 10 lần thử. Posterior sẽ là $$\theta \mid x \sim \text{Beta}(9, 5)$$. Khi chúng ta nói "khoảng tin cậy 95% là [0.395, 0.827]", ý nghĩa chính xác là:
 
 $$P(0.395 \leq \theta \leq 0.827 \mid x) = \int_{0.395}^{0.827} p(\theta \mid x) \, d\theta = 0.95$$
+
+![Khoảng tin cậy như diện tích dưới posterior]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_bayesian_credible_interval.png)
+
+*Hình 22: Khoảng tin cậy 95% là diện tích màu xanh dưới posterior PDF, không phải là chiều cao của đường cong tại một điểm nào đó.*
 
 Đây là tích phân (diện tích) của posterior PDF, không phải là giá trị của PDF tại bất kỳ điểm nào.
 
@@ -198,16 +260,6 @@ $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqr
 
 Ở đây, mỗi $$f(x_i \mid \mu)$$ là giá trị của PDF tại điểm dữ liệu $$x_i$$, với tham số $$\mu$$. Maximum Likelihood Estimate (MLE) là giá trị $$\hat{\mu}$$ làm cực đại $$L(\mu)$$.
 
-## 7. Tóm tắt Quan trọng
-
-Hãy củng cố những điểm quan trọng nhất về PDF:
-
-![Tóm tắt PDF]({{ site.baseurl }}/img/chapter_img/chapter00/pdf_summary_infographic.png)
-
-*Cách đọc hình: Hình này minh họa tóm tắt pdf. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hình 9: Bảng tóm tắt các khái niệm quan trọng về PDF. Hãy xem lại bảng này thường xuyên để củng cố hiểu biết.*
-
-**7 điểm quan trọng nhất** có thể gói lại trong một mạch lập luận ngắn như sau: $$f(x)$$ là mật độ chứ không phải xác suất; chỉ có tích phân của $$f(x)$$ trên một khoảng mới là xác suất; vì là mật độ nên $$f(x)$$ có thể lớn hơn 1; với biến liên tục thì $$P(X=x)=0$$ cho mọi điểm đơn lẻ; $$f(x)$$ mang đơn vị nghịch đảo của đơn vị đo của $$X$$ nên sẽ thay đổi khi đổi hệ đơn vị, trong khi xác suất thì không; về mặt trực giác, PDF là giới hạn lý tưởng của histogram khi dữ liệu ngày càng nhiều và bin ngày càng nhỏ; và trong Bayesian, cả prior lẫn posterior đều là các PDF nên toàn bộ suy luận phải được hiểu trên các khoảng và diện tích, không phải trên xác suất điểm.
 
 ## Bài tập
 

@@ -70,7 +70,13 @@ Bác sĩ không chỉ nhìn triệu chứng hiện tại. Họ còn dùng tần 
 
 Một startup thấy 3 khách hàng đầu tiên đều mua hàng. Không ai kết luận ngay rằng tỷ lệ mua hàng thật là 100%. Ta giữ một mức bất định hợp lý, rồi tiếp tục cập nhật khi có thêm dữ liệu.
 
-![Bayesian thinking trong đời sống hằng ngày]({{ site.baseurl }}/img/chapter_img/chapter01/bayesian_daily_life.png)
+![Nghe tiếng động lạ rồi cập nhật giả thuyết nguyên nhân]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayesian_daily_life_night_noise.png)
+
+![Đọc review nhà hàng rồi cập nhật đánh giá]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayesian_daily_life_restaurant.png)
+
+![Dự báo thời tiết như một quá trình cập nhật niềm tin]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayesian_daily_life_weather.png)
+
+![Chẩn đoán y khoa như một quá trình cập nhật niềm tin]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayesian_daily_life_medical.png)
 
 ## 5. Ví dụ trực quan: đồng xu của người bạn
 
@@ -84,7 +90,9 @@ Họ sẽ nói đại loại rằng tham số thật là một hằng số cố 
 
 Bayesian sẽ nói rằng trước dữ liệu, tôi có một prior về $$\theta$$; sau dữ liệu 8/10, tôi cập nhật prior đó thành posterior; và posterior cho biết vùng nào của $$\theta$$ đang hợp lý hơn.
 
-![So sánh trực giác đồng xu giữa Frequentist và Bayes]({{ site.baseurl }}/img/chapter_img/chapter01/coin_flip_comparison.png)
+![Cách nhà thống kê tần suất nhìn bài toán đồng xu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_coin_flip_frequentist.png)
+
+![Cách nhà thống kê Bayesian nhìn bài toán đồng xu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_coin_flip_bayesian.png)
 
 Điểm mạnh ở đây là Bayes cho phép ta nói trực tiếp về tham số chưa biết, mức độ tin tưởng hiện tại, và cách niềm tin đó thay đổi theo dữ liệu.
 
@@ -126,7 +134,9 @@ Với Bayesian, dữ liệu quan sát đã cố định, còn tham số chưa bi
 
 Điều này dẫn đến khác biệt rất lớn trong cách diễn giải kết quả.
 
-![Khác biệt triết học giữa Frequentist và Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/frequentist_vs_bayesian_philosophy.png)
+![Frequentist nhìn xác suất theo dữ liệu lặp lại]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_frequentist.png)
+
+![Bayesian nhìn xác suất như bất định về tham số]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_bayesian.png)
 
 ## 10. Vì sao chương này rất quan trọng cho phần sau?
 

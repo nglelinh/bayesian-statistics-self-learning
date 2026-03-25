@@ -26,7 +26,13 @@ Mỗi ngày, ta vẫn làm một việc rất Bayesian: ban đầu tin một đi
 
 Giả sử bác sĩ đang cân nhắc ba khả năng là cúm, COVID-19, và viêm phổi vi khuẩn. Trước khi xem kỹ các triệu chứng cụ thể của bệnh nhân, bác sĩ đã có một niềm tin ban đầu dựa trên mùa đang lưu hành bệnh nào, dịch tễ khu vực, và kinh nghiệm trước đó; đó chính là **prior**. Sau đó, bác sĩ nhìn vào dữ liệu mới như sốt, ho, mất vị giác, hình ảnh X-quang, hay kết quả test; đó là phần thông tin đi vào **likelihood**. Kết hợp hai phần này với nhau, bác sĩ có niềm tin cập nhật về chẩn đoán hợp lý nhất; đó là **posterior**.
 
-![Chẩn đoán y tế với Bayes]({{ site.baseurl }}/img/chapter_img/chapter01/doctor_diagnosis_bayes.png)
+![Triệu chứng ban đầu của bệnh nhân]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_doctor_diagnosis_symptoms.png)
+
+![Prior chẩn đoán trước khi có bằng chứng mạnh]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_doctor_diagnosis_prior.png)
+
+![Dữ liệu mới làm thay đổi mức độ hợp lý của từng giả thuyết]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_doctor_diagnosis_new_data.png)
+
+![Posterior sau khi cập nhật bằng chứng]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_doctor_diagnosis_posterior.png)
 
 ## 3. Công thức Bayes
 
@@ -112,7 +118,13 @@ Likelihood đo dữ liệu hiện tại hợp với từng giá trị tham số 
 
 Posterior là niềm tin sau khi cập nhật. Nó là đối tượng trung tâm của Bayesian inference vì từ posterior ta có thể trả lời tham số có khả năng nằm ở đâu, xác suất nó lớn hơn một ngưỡng là bao nhiêu, hay khoảng giá trị hợp lý nhất của nó là gì.
 
-![Minh họa Bayes theorem]({{ site.baseurl }}/img/chapter_img/chapter01/bayes_theorem_visualization.png)
+![Prior trước khi nhìn dữ liệu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_prior.png)
+
+![Likelihood cho biết dữ liệu ủng hộ giá trị nào của tham số]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_likelihood.png)
+
+![Posterior sau khi cập nhật bằng dữ liệu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_posterior.png)
+
+![So sánh prior và posterior để thấy dữ liệu đã kéo niềm tin đi đâu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_prior_vs_posterior.png)
 
 ## 7. Một ví dụ rất nổi tiếng: xét nghiệm y khoa
 
@@ -210,7 +222,13 @@ Một nét đẹp lớn của Bayes là tính **cập nhật tuần tự**.
 
 Ví dụ, hôm nay bạn có dữ liệu tuần 1, ngày mai thêm dữ liệu tuần 2, rồi tuần sau có thêm dữ liệu tuần 3. Bạn không cần suy nghĩ “làm lại từ đầu” theo kiểu hoàn toàn tách biệt; posterior hiện tại có thể trở thành prior cho lần cập nhật kế tiếp.
 
-![Cập nhật tuần tự trong Bayes]({{ site.baseurl }}/img/chapter_img/chapter01/sequential_updating.png)
+![Bước khởi đầu: prior ban đầu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_prior.png)
+
+![Sau đợt dữ liệu đầu tiên]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_step1.png)
+
+![Sau đợt dữ liệu thứ hai]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_step2.png)
+
+![So sánh cập nhật tuần tự với cập nhật một lần]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_batch_comparison.png)
 
 Điều này cực kỳ tự nhiên cho dashboard kinh doanh, giám sát vận hành, và mọi tình huống học tập liên tục từ dữ liệu đến theo thời gian.
 
@@ -249,7 +267,13 @@ Tức là posterior thay đổi mạnh theo bằng chứng mới: từ $$0.7 \to
 
 Nếu prior rất mạnh, dữ liệu ít có thể chưa làm posterior thay đổi quá nhiều. Nếu prior yếu, dữ liệu sẽ có ảnh hưởng lớn hơn. Đây không phải lỗi của Bayes mà chính là điều ta mong muốn: khi kiến thức trước đó rất chắc, ta không nên vứt nó đi quá dễ dàng; còn khi prior mơ hồ, dữ liệu nên được nói mạnh hơn.
 
-![So sánh prior mạnh và prior yếu]({{ site.baseurl }}/img/chapter_img/chapter01/prior_strength_comparison.png)
+![Prior yếu: niềm tin ban đầu còn khá mở]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_weak_prior.png)
+
+![Prior mạnh: niềm tin ban đầu tập trung hơn nhiều]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_strong_prior.png)
+
+![Khi prior yếu, posterior bị dữ liệu kéo mạnh hơn]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_weak_posterior.png)
+
+![Khi prior mạnh, posterior thay đổi ít hơn]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_strong_posterior.png)
 
 ## 11. Điều Bayes thực sự dạy ta
 

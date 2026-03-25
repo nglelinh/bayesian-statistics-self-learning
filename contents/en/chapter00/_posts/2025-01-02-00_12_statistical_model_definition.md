@@ -47,6 +47,36 @@ The model is not only the binomial formula. It also assumes that each trial has 
 ![Statistical model as bridge from parameters to data]({{ site.baseurl }}/img/chapter_img/chapter00/statistical_model_definition_flow.png)
 *Figure 1: A statistical model links unknown parameters $$\theta$$ to observed data $$x$$ through the data-generating mechanism $$p(x\mid\theta)$$, then updates beliefs to posterior $$p(\theta\mid x)$$.*
 
+## 3.1) How are models and simulations different?
+
+These two ideas are easy to mix up, but they play different roles: a model is a probability description of the data-generating mechanism, while a simulation is what happens when we run that description on a computer to generate fake data many times.
+
+Coin example:
+
+The model says each toss satisfies $$y_i\sim\text{Bernoulli}(\theta)$$. A simulation chooses a specific value such as $$\theta=0.6$$ and then generates many repeated datasets to see how the proportion of heads varies.
+
+Short Python simulation example:
+
+```python
+import numpy as np
+
+np.random.seed(42)
+
+theta = 0.6
+n_tosses = 20
+n_simulations = 10_000
+
+heads_counts = np.random.binomial(n_tosses, theta, size=n_simulations)
+head_rates = heads_counts / n_tosses
+
+print(heads_counts[:10])
+print(head_rates.mean(), head_rates.std())
+```
+
+In this code, the model is still $$K \sim \text{Binomial}(20, 0.6)$$. The simulation simply asks: if that model were true, how many heads would we usually see in 20 tosses, and how much variation would appear across repetitions?
+
+After many repetitions, the average of `head_rates` will be close to 0.6, but individual simulated datasets still vary around that value. That is the key point: a model does not imply one fixed outcome, but a distribution of plausible outcomes.
+
 ## 4) A model is not "the truth"
 
 A common mistake is to search for a perfectly true model. In practice:

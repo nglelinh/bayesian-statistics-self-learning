@@ -18,11 +18,6 @@ Sau bài này, bạn sẽ hiểu kỳ vọng như "mức trung bình dài hạn"
 
 Trong suy luận xác suất, không phải lúc nào ta cũng cần biết toàn bộ phân phối chi tiết. Nhiều quyết định thực hành bắt đầu từ ba câu hỏi cơ bản: giá trị điển hình nằm ở đâu, mức dao động lớn đến mức nào, và các biến có cùng biến thiên hay không. Kỳ vọng, phương sai, và hiệp phương sai là ba đại lượng trả lời trực tiếp ba câu hỏi đó.
 
-![Ky vong phuong sai hiep phuong sai truc quan]({{ site.baseurl }}/img/chapter_img/chapter00/expectation_variance_covariance_visual.png)
-
-*Cách đọc hình: Hình này minh họa ky vong phuong sai hiep phuong sai truc quan. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hinh 1: Minh hoa truc quan cho ky vong (trong tam phan phoi) va hiep phuong sai duong/am giua hai bien.*
-
 ## 1) Kỳ vọng: giá trị trung bình theo phân phối
 
 Với biến rời rạc:
@@ -38,6 +33,10 @@ $$
 $$
 
 Kỳ vọng không nhất thiết là giá trị ta quan sát trực tiếp nhiều nhất. Nó là "trọng tâm xác suất" của phân phối.
+
+![Kỳ vọng như trọng tâm của phân phối]({{ site.baseurl }}/img/chapter_img/chapter00/expectation_center_histogram.png)
+
+*Hình 1a: Kỳ vọng có thể được nhìn như trọng tâm của phân phối, chứ không nhất thiết là đỉnh cao nhất của histogram.*
 
 ## 2) Phương sai: độ bất định quanh trung bình
 
@@ -68,6 +67,14 @@ $$
 $$
 
 Khi $$\mathrm{Cov}>0$$, hai biến có xu hướng tăng cùng nhau; khi $$\mathrm{Cov}<0$$, một biến tăng thì biến kia thường giảm; còn khi hiệp phương sai gần 0, quan hệ tuyến tính giữa chúng yếu hoặc gần như không đáng kể.
+
+![Hiệp phương sai dương giữa hai biến]({{ site.baseurl }}/img/chapter_img/chapter00/covariance_positive_scatter.png)
+
+*Hình 1b: Hiệp phương sai dương xuất hiện khi hai biến có xu hướng tăng cùng nhau.*
+
+![Hiệp phương sai âm giữa hai biến]({{ site.baseurl }}/img/chapter_img/chapter00/covariance_negative_scatter.png)
+
+*Hình 1c: Hiệp phương sai âm xuất hiện khi một biến tăng thì biến kia có xu hướng giảm.*
 
 Lưu ý: hiệp phương sai phụ thuộc đơn vị đo. Vì vậy thực hành thường dùng tương quan:
 

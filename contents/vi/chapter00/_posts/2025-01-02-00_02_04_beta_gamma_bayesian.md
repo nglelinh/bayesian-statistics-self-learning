@@ -153,6 +153,126 @@ $$
 
 Khi dùng Gamma, luôn ghi rõ tham số hóa shape-rate hay shape-scale. Khi đọc tài liệu, hãy kiểm tra kỹ ký hiệu để tránh nhầm giữa rate $$\beta$$ và scale $$\theta=1/\beta$$.
 
+## 10) Mở rộng từ giai thừa sang Gamma
+
+Với số nguyên dương, ta có giai thừa:
+
+$$
+n!=1\cdot 2\cdot 3\cdots n.
+$$
+
+Hàm Gamma mở rộng ý tưởng này sang số thực dương. Vì vậy ta có thể hiểu nhanh:
+
+$$
+x!=\Gamma(x+1),\quad x>0.
+$$
+
+Ví dụ:
+
+$$
+\Gamma(1)=1,\quad \Gamma(2)=1!,\quad \Gamma(3)=2!,\quad \Gamma(6)=5!.
+$$
+
+## 11) Giá trị đặc biệt thường gặp
+
+Một giá trị nổi tiếng:
+
+$$
+\Gamma\!\left(\frac{1}{2}\right)=\sqrt{\pi}.
+$$
+
+Từ công thức đệ quy suy ra:
+
+$$
+\Gamma\!\left(\frac{3}{2}\right)=\frac{\sqrt{\pi}}{2},
+\qquad
+\Gamma\!\left(\frac{5}{2}\right)=\frac{3\sqrt{\pi}}{4}.
+$$
+
+Đây là lý do $$\pi$$ xuất hiện trong nhiều công thức phân phối liên tục.
+
+## 12) Ví dụ ngắn với hàm Beta
+
+Với $$a,b>0$$:
+
+$$
+B(a,b)=\int_0^1 t^{a-1}(1-t)^{b-1}\,dt
+=\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}.
+$$
+
+Ví dụ:
+
+$$
+B(2,3)=\frac{\Gamma(2)\Gamma(3)}{\Gamma(5)}=\frac{1!\,2!}{4!}=\frac{1}{12}.
+$$
+
+Phần này cho thấy rõ vai trò của Gamma như một công cụ tính hằng số chuẩn hóa cho Beta.
+
+## 13) Ví dụ số cho hình dạng Beta (7/10)
+
+Giả sử ta xét biểu thức theo $$\theta$$ trên đoạn $$[0,1]$$:
+
+$$
+g(\theta)=\theta^8(1-\theta)^4.
+$$
+
+Đây mới là dạng chưa chuẩn hóa. Dạng chuẩn hóa là:
+
+$$
+f(\theta)=\frac{1}{B(9,5)}\theta^8(1-\theta)^4.
+$$
+
+![Beta-Binomial update 7 over 10]({{ site.baseurl }}/img/chapter_img/chapter00/beta_binomial_update_7of10.png)
+
+*Cách đọc hình: Đường cong cho thấy dạng chưa chuẩn hóa và dạng chuẩn hóa có cùng hình dạng tương đối; hệ số $$1/B(9,5)$$ chỉ làm đường cong thành một mật độ hợp lệ (diện tích bằng 1).* 
+
+## 14) Gợi ý tính toán số ổn định
+
+Khi tham số lớn, nên dùng log-hàm thay vì tính trực tiếp:
+
+- `gammaln(z)` thay cho `log(gamma(z))`
+- `betaln(a,b)` thay cho `log(beta(a,b))`
+
+Trong SciPy, các hàm này nằm ở `scipy.special` và ổn định hơn trong tính toán.
+
+Ví dụ Python:
+
+```python
+from scipy.special import gamma, gammaln, beta, betaln
+
+print(gamma(6))      # 120.0
+print(gamma(0.5))    # ~1.7724538509 = sqrt(pi)
+print(gammaln(100))  # log(Gamma(100))
+print(beta(2, 3))    # 1/12 = 0.08333...
+print(betaln(2, 3))  # log(Beta(2,3))
+```
+
+## 15) Tóm tắt nhanh
+
+1. Beta là phân phối linh hoạt cho các đại lượng trong $$[0,1]$$.
+2. Gamma là phân phối cho các đại lượng dương.
+3. Hàm Gamma mở rộng giai thừa: $$\Gamma(n+1)=n!$$.
+4. Hàm Beta liên hệ trực tiếp với Gamma qua tỉ số $$\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$$.
+5. Hằng số chuẩn hóa biến biểu thức "đúng dạng" thành mật độ hợp lệ.
+
+## Bài tập
+
+**Bài 1.** Dùng công thức đệ quy để tính $$\Gamma(4)$$ và $$\Gamma(5)$$, sau đó đối chiếu với $$3!$$ và $$4!$$.
+
+**Bài 2.** Từ $$\Gamma\!\left(\tfrac{1}{2}\right)=\sqrt{\pi}$$, suy ra $$\Gamma\!\left(\tfrac{3}{2}\right)$$ và $$\Gamma\!\left(\tfrac{5}{2}\right)$$.
+
+**Bài 3.** Viết lại hằng số chuẩn hóa của Beta($$a,b$$) bằng Gamma và giải thích tại sao cần hằng số này để mật độ tích phân bằng 1.
+
+**Bài 4.** Trong Python, tính `gamma(10)` và `gammaln(10)`. Kiểm tra `np.log(gamma(10))` có gần `gammaln(10)` không.
+
+**Bài 5.** Chứng minh nhanh $$B(a,1)=\frac{1}{a}$$ từ định nghĩa tích phân, rồi đối chiếu với công thức tỉ số Gamma.
+
+## Tài liệu tham khảo
+
+- Gelman, A., et al. (2013). *Bayesian Data Analysis* (3rd ed.). CRC Press.
+- Kruschke, J. (2015). *Doing Bayesian Data Analysis* (2nd ed.). Academic Press.
+- SciPy Special Functions: `gamma`, `gammaln`.
+
 ## Tổng kết
 
 Beta và Gamma là hai họ phân phối nền tảng trong thống kê: Beta cho biến trong $$[0,1]$$ và Gamma cho biến dương. Điểm quan trọng nhất của bài là biết chọn đúng miền và hiểu vai trò của hằng số chuẩn hóa để biến một "hình dạng" thành một phân phối hợp lệ.
