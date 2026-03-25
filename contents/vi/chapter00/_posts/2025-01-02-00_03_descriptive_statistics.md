@@ -54,11 +54,15 @@ Mối quan hệ giữa trung bình và trung vị cho chúng ta thông tin về 
 
 Sự khác biệt này không chỉ là một chi tiết kỹ thuật. Nó cho chúng ta biết liệu phân phối chuẩn có phải là mô hình phù hợp hay không. Nếu trung bình và trung vị khác nhau đáng kể, chúng ta có thể cần xem xét các phân phối lệch như log-normal, gamma, hoặc beta, tùy thuộc vào bản chất của dữ liệu.
 
-![Trung bình và trung vị dưới phân phối đối xứng và lệch phải]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_vs_median.png)
+*Cách đọc hình: Hai hình dưới đây tách riêng hai trường hợp để bạn nhìn rõ vị trí của trung bình và trung vị trong từng kiểu phân phối.*
 
-*Cách đọc hình: Hình này minh họa trung bình và trung vị dưới phân phối đối xứng và lệch phải. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+![Phân phối đối xứng với trung bình gần trung vị]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_median_symmetric.png)
 
-*Hình 1: Ở phân phối gần đối xứng, trung bình và trung vị gần nhau. Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị. Đây là một dấu hiệu trực quan rất hữu ích để phát hiện độ lệch của phân phối trước khi chọn mô hình.*
+*Hình 1a: Ở phân phối gần đối xứng, trung bình và trung vị gần như chồng lên nhau.*
+
+![Phân phối lệch phải với trung bình bị kéo về phía đuôi]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_median_right_skewed.png)
+
+*Hình 1b: Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị. Đây là dấu hiệu trực quan rất hữu ích trước khi chọn mô hình.*
 
 ## Thống kê Phân tán: Đo lường Sự Không chắc chắn
 
@@ -92,11 +96,15 @@ IQR chứa 50% dữ liệu ở giữa và là một thống kê phân tán robus
 
 Trong phân tích Bayesian, phân vị được sử dụng rộng rãi để tóm tắt phân phối posterior. Thay vì chỉ báo cáo trung bình hoặc trung vị, chúng ta thường báo cáo **khoảng tin cậy** (credible interval), ví dụ như khoảng 95% chứa 95% xác suất posterior. Khoảng này thường được xây dựng từ các phân vị, ví dụ từ phân vị thứ 0.025 đến phân vị thứ 0.975.
 
-![Cùng trung bình nhưng khác độ phân tán, và cách box plot thể hiện IQR]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_spread_and_boxplot.png)
+*Cách đọc hình: Nhóm hình dưới đây tách riêng câu chuyện về độ phân tán và câu chuyện về IQR trong box plot.*
 
-*Cách đọc hình: Hình này minh họa cùng trung bình nhưng khác độ phân tán, và cách box plot thể hiện iqr. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+![Hai phân phối có cùng trung bình nhưng độ phân tán khác nhau]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_spread_same_mean_diff_sd.png)
 
-*Hình 2: Bên trái, hai tập dữ liệu có cùng trung bình xấp xỉ như nhau nhưng mức độ phân tán rất khác. Bên phải, box plot cho thấy hộp chứa 50% dữ liệu ở giữa, trung vị nằm trong hộp, còn các điểm đỏ là outlier tiềm năng theo quy tắc $$1.5 \times \text{IQR}$$.*
+*Hình 2a: Hai tập dữ liệu có cùng trung bình xấp xỉ như nhau nhưng mức độ phân tán rất khác.*
+
+![Box plot thể hiện IQR và outlier]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_boxplot_iqr_outliers.png)
+
+*Hình 2b: Box plot cho thấy hộp chứa 50% dữ liệu ở giữa, trung vị nằm trong hộp, còn các điểm đỏ là outlier tiềm năng theo quy tắc $$1.5 \times \text{IQR}$$.*
 
 ## Trực quan hóa: Nhìn thấy Câu chuyện trong Dữ liệu
 
@@ -132,27 +140,21 @@ Hệ số tương quan luôn nằm giữa -1 và 1. Giá trị $$r = 1$$ chỉ r
 
 Tuy nhiên, cần cẩn thận khi diễn giải tương quan. Đầu tiên, tương quan chỉ đo lường mối quan hệ **tuyến tính**. Hai biến có thể có mối quan hệ phi tuyến mạnh nhưng tương quan bằng không. Thứ hai, **tương quan không ngụ ý nhân quả**. Việc hai biến tương quan không có nghĩa là một biến gây ra biến kia; có thể có một biến thứ ba ẩn ảnh hưởng đến cả hai, hoặc mối quan hệ có thể là ngẫu nhiên.
 
-![Các mẫu hình tương quan khác nhau trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_patterns.png)
+*Cách đọc hình: Ba hình dưới đây tách riêng từng kiểu quan hệ để bạn thấy vì sao một hệ số tương quan duy nhất có thể che khuất nhiều điều quan trọng.*
 
-*Cách đọc hình: Hình này minh họa các mẫu hình tương quan khác nhau trong scatter plot. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+![Quan hệ tuyến tính dương trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_linear.png)
 
-*Hình 3: Scatter plot cho thấy ba tình huống rất khác nhau: quan hệ tuyến tính dương mà Pearson $$r$$ đo tốt, quan hệ phi tuyến mà $$r$$ có thể đánh giá thấp, và tương quan do một biến nhóm ẩn tạo ra. Đây là lý do vì sao ta nên nhìn biểu đồ trước khi tin vào một hệ số tóm tắt.*
+*Hình 3a: Quan hệ tuyến tính dương là trường hợp Pearson $$r$$ mô tả khá tốt.*
+
+![Quan hệ phi tuyến trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_nonlinear.png)
+
+*Hình 3b: Quan hệ phi tuyến có thể rất rõ bằng mắt nhưng Pearson $$r$$ lại đánh giá thấp.*
+
+![Tương quan do nhóm ẩn trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_hidden_groups.png)
+
+*Hình 3c: Tương quan có thể xuất hiện do một biến nhóm ẩn tạo ra, nên ta luôn nên nhìn biểu đồ trước khi tin vào một hệ số tóm tắt.*
 
 Trong phân tích Bayesian, chúng ta thường mô hình hóa tương quan một cách rõ ràng thông qua các tham số trong mô hình. Ví dụ, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ mã hóa mối quan hệ giữa biến dự đoán và biến phản hồi, và chúng ta có thể định lượng sự không chắc chắn về mối quan hệ này thông qua phân phối posterior của $$\beta$$.
-
-## Ý nghĩa cho Phân tích Dữ liệu Bayesian
-
-Tất cả các công cụ thống kê mô tả mà chúng ta đã thảo luận không chỉ là bước chuẩn bị cho phân tích Bayesian, mà còn là phần không thể thiếu của nó. Trước khi chúng ta xây dựng một mô hình Bayesian, chúng ta cần hiểu dữ liệu của mình thông qua thống kê mô tả và trực quan hóa. Điều này giúp chúng ta:
-
-**Lựa chọn Phân phối Phù hợp.** Histogram và box plot cho chúng ta thấy hình dạng của phân phối, giúp chúng ta quyết định liệu phân phối chuẩn, log-normal, Poisson, hay một phân phối khác có phù hợp không.
-
-**Phát hiện Outliers và Bất thường.** Các giá trị ngoại lai có thể chỉ ra lỗi đo lường, hoặc chúng có thể là các quan sát hợp lệ nhưng cực đoan. Trong phân tích Bayesian, chúng ta có thể mô hình hóa outliers một cách rõ ràng thông qua các mô hình robust (ví dụ, sử dụng phân phối Student-t thay vì chuẩn).
-
-**Xây dựng Prior Có thông tin.** Thống kê mô tả từ dữ liệu trước đó hoặc kiến thức chuyên môn có thể giúp chúng ta xây dựng prior có thông tin. Ví dụ, nếu chúng ta biết từ nghiên cứu trước rằng trung bình của một tham số nằm trong một khoảng nhất định, chúng ta có thể sử dụng thông tin này để xây dựng prior.
-
-**Kiểm tra Mô hình.** Sau khi fit một mô hình Bayesian, chúng ta sử dụng thống kê mô tả và trực quan hóa để kiểm tra xem mô hình có phù hợp với dữ liệu không. Chúng ta so sánh phân phối posterior predictive với dữ liệu quan sát, sử dụng các công cụ như histogram, scatter plot, và các thống kê tóm tắt.
-
-**Truyền đạt Kết quả.** Cuối cùng, chúng ta sử dụng thống kê mô tả và trực quan hóa để truyền đạt kết quả của phân tích Bayesian. Thay vì chỉ báo cáo các ước lượng điểm, chúng ta báo cáo phân phối posterior đầy đủ thông qua histogram, box plot, và các khoảng tin cậy.
 
 ## Bài tập
 

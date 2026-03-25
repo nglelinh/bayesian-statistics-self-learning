@@ -90,7 +90,17 @@ Divide by the total weight.
 
 Using 5 points gives a rough picture. Using 20, 100, or 1000 points gives a smoother and more accurate approximation.
 
-![Grid approximation with different resolutions]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation_basics.png)
+![A very coarse 5-point grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_5.png)
+
+![A medium 20-point grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_20.png)
+
+![A finer 100-point grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_100.png)
+
+![Comparing a 5-point grid with the exact posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_5.png)
+
+![Comparing a 20-point grid with the exact posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_20.png)
+
+![Comparing a 100-point grid with the exact posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_100.png)
 
 ![Effect of grid size]({{ site.baseurl }}/img/chapter_img/chapter02/grid_size_comparison.png)
 
@@ -114,19 +124,25 @@ $$
 E[\theta \mid D] \approx \sum_i \theta_i p(\theta_i \mid D).
 $$
 
+![Posterior mean, median, and mode on the grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_mean_median_mode.png)
+
 ### 6.2. Interval probabilities
 
 Add posterior weights over the relevant grid points.
+
+![An interval probability computed from the grid posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_interval_probability.png)
 
 ### 6.3. Credible intervals
 
 Use the cumulative posterior mass on the grid.
 
+![A credible interval extracted from the discrete posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_credible_interval.png)
+
 ### 6.4. Posterior sampling
 
 Draw grid points according to their posterior weights.
 
-![Statistics from a grid posterior]({{ site.baseurl }}/img/chapter_img/chapter02/grid_statistics_computation.png)
+![Sampling directly from the grid posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_sampling.png)
 
 ## 7. Posterior predictive with a grid
 
@@ -136,7 +152,9 @@ $$
 P(y_{\text{new}} \mid D) = \sum_i P(y_{\text{new}} \mid \theta_i)p(\theta_i \mid D).
 $$
 
-![Posterior predictive from grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_posterior_predictive.png)
+![Posterior predictive distribution obtained from the grid posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_predictive_distribution.png)
+
+![Grid posterior predictive compared with the exact solution]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_predictive_vs_exact.png)
 
 This is where the method starts to feel practically useful, not just pedagogically useful.
 
@@ -160,7 +178,9 @@ Even if you later use MCMC, grid approximation can still serve as a useful sanit
 
 If each parameter uses 100 grid points, then 1 parameter requires 100 points, 2 parameters require 10,000 points, 3 parameters require 1,000,000 points, and 4 parameters require 100,000,000 points; this explosive growth is exactly what the phrase curse of dimensionality is meant to capture.
 
-![Curse of dimensionality]({{ site.baseurl }}/img/chapter_img/chapter02/curse_of_dimensionality.png)
+![Grid size grows explosively with parameter dimension]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_dimensionality_growth.png)
+
+![A table view of the dimensionality explosion in grid methods]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_dimensionality_table.png)
 
 So grid approximation is excellent for very small models and quickly becomes impractical as dimension grows.
 

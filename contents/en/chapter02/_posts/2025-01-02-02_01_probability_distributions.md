@@ -82,7 +82,9 @@ But they say different things.
 
 Beta$$(3,9)$$ is fairly wide, which corresponds to saying, “I think $$0.25$$ is a reasonable center, but I am still quite open to nearby possibilities,” whereas Beta$$(30,90)$$ is much tighter and therefore corresponds to saying, “I think $$0.25$$ is reasonable, and I am fairly confident the true value should stay close to it.”
 
-![Wide and narrow distributions]({{ site.baseurl }}/img/chapter_img/chapter02/narrow_vs_wide.png)
+![A narrow distribution indicating high certainty]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_narrow_distribution.png)
+
+![A wide distribution indicating greater uncertainty]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_wide_distribution.png)
 
 That difference disappears if you keep only the mean. The full distribution keeps it.
 

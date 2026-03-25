@@ -28,19 +28,27 @@ $$
 
 Về mặt ý tưởng, công thức này rất đơn giản. Nhưng khi bắt tay vào tính thật, ta thường gặp một vấn đề: posterior phải được chuẩn hóa, và bước chuẩn hóa đó có thể rất khó.
 
-Thế nhưng có một số bài toán rất “ngoan”. Khi ta nhân prior với likelihood, posterior vẫn rơi vào **cùng một họ phân phối** như prior. Những trường hợp đẹp này được gọi là **prior liên hợp**.
+Thế nhưng có một số bài toán rất “đẹp”. Khi ta nhân prior với likelihood, posterior vẫn rơi vào **cùng một họ phân phối** như prior. Những trường hợp đẹp này được gọi là **prior liên hợp**.
 
 ![Giới thiệu về các cặp liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_intro.png)
 
-## 0. Bản đồ 30 giây trước khi vào công thức
+Nếu bạn thấy phần prior liên hợp dễ gây cảm giác “ngợp công thức”, cách tốt nhất không phải là cố nhớ thật nhiều biểu thức ngay từ đầu, mà là giữ trong đầu một chuỗi câu hỏi rất cơ bản nhưng đủ mạnh: 
+- tham số chưa biết thực sự là gì, 
+- dữ liệu đến dưới dạng nào, 
+- likelihood nào mô tả đúng kiểu dữ liệu ấy, 
+- và cuối cùng có prior nào có cùng cấu trúc với likelihood đến mức sau khi cập nhật thì posterior vẫn nằm trong đúng họ phân phối ban đầu hay không.
 
-Nếu bạn thấy phần prior liên hợp dễ gây cảm giác “ngợp công thức”, cách tốt nhất không phải là cố nhớ thật nhiều biểu thức ngay từ đầu, mà là giữ trong đầu một chuỗi câu hỏi rất cơ bản nhưng đủ mạnh: tham số chưa biết thực sự là gì, dữ liệu đến dưới dạng nào, likelihood nào mô tả đúng kiểu dữ liệu ấy, và cuối cùng có prior nào có cùng cấu trúc với likelihood đến mức sau khi cập nhật thì posterior vẫn nằm trong đúng họ phân phối ban đầu hay không.
-
-Chỉ cần đi theo bốn câu hỏi đó, bạn sẽ thấy các cặp liên hợp quen thuộc xuất hiện khá tự nhiên. Khi dữ liệu kể câu chuyện “đếm số thành công trong $$n$$ lần thử”, likelihood phù hợp thường là Binomial và prior tự nhiên cho xác suất thành công là Beta; khi dữ liệu là “phải chờ đến lần thử thứ mấy mới có thành công đầu tiên”, ta chuyển sang Geometric nhưng vẫn giữ được prior Beta; khi quan sát là số sự kiện xảy ra theo thời gian, Poisson thường là lựa chọn hợp lý và Gamma trở thành prior liên hợp tự nhiên cho cường độ đếm; còn khi mục tiêu là suy luận trung bình của dữ liệu liên tục dao động quanh một giá trị trung tâm, ta gặp cặp Normal-Normal. Bạn không cần học thuộc toàn bộ các cặp này ngay ở lần đọc đầu tiên; chỉ cần nhận ra mình đang đứng trước một bài toán về tỷ lệ, thời gian chờ, tốc độ đếm hay trung bình liên tục, phần còn lại sẽ trở nên dễ theo dõi hơn rất nhiều.
+Chỉ cần đi theo bốn câu hỏi đó, bạn sẽ thấy các cặp liên hợp quen thuộc xuất hiện khá tự nhiên. 
+- Khi dữ liệu kể câu chuyện “đếm số thành công trong $$n$$ lần thử”, likelihood phù hợp thường là Binomial và prior tự nhiên cho xác suất thành công là Beta; 
+- khi dữ liệu là “phải chờ đến lần thử thứ mấy mới có thành công đầu tiên”, ta chuyển sang Geometric nhưng vẫn giữ được prior Beta; 
+- khi quan sát là số sự kiện xảy ra theo thời gian, Poisson thường là lựa chọn hợp lý và Gamma trở thành prior liên hợp tự nhiên cho cường độ đếm; 
+- còn khi mục tiêu là suy luận trung bình của dữ liệu liên tục dao động quanh một giá trị trung tâm, ta gặp cặp Normal-Normal. 
+ 
+Bạn không cần học thuộc toàn bộ các cặp này ngay ở lần đọc đầu tiên; chỉ cần nhận ra mình đang đứng trước một bài toán về tỷ lệ, thời gian chờ, tốc độ đếm hay trung bình liên tục, phần còn lại sẽ trở nên dễ theo dõi hơn rất nhiều.
 
 ## 1. Prior liên hợp là gì?
 
-Ta nói prior $$p(\theta)$$ là liên hợp với likelihood $$p(y \mid \theta)$$ nếu posterior $$p(\theta \mid y)$$ thuộc cùng họ với prior.
+**Ta nói prior $$p(\theta)$$ là liên hợp với likelihood $$p(y \mid \theta)$$ nếu posterior $$p(\theta \mid y)$$ thuộc cùng họ với prior.**
 
 Ví dụ:
 
@@ -57,8 +65,6 @@ Liên hợp xuất hiện khi prior và likelihood có “cùng chất liệu đ
 Nói ngắn gọn:
 
 **Conjugacy là sự ăn khớp giữa hình dạng của prior và hình dạng của likelihood.**
-
-![Vì sao conjugacy tiện lợi]({{ site.baseurl }}/img/chapter_img/chapter02/why_conjugacy_convenient.png)
 
 ## 3. Beta-Binomial: ví dụ quan trọng nhất để bắt đầu
 
@@ -84,7 +90,42 @@ $$
 \theta \mid y \sim \text{Beta}(\alpha + y,\beta + n - y).
 $$
 
-Nếu chỉ muốn giữ lại một trực giác ngắn gọn nhưng đủ chính xác, bạn có thể đọc công thức trên như sau: số “thành công” trong posterior bằng số thành công mà prior đã mã hóa sẵn cộng với số thành công thực sự quan sát được, còn số “thất bại” trong posterior bằng số thất bại mà prior ngầm chứa cộng với số thất bại trong dữ liệu.
+Nếu muốn thấy rõ phép biến đổi đại số, ta chỉ cần nhìn phần phụ thuộc vào $$\theta$$:
+
+$$
+p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}
+$$
+
+và:
+
+$$
+p(y\mid \theta)\propto \theta^y(1-\theta)^{n-y}.
+$$
+
+Do đó:
+
+$$
+p(\theta\mid y)\propto p(y\mid \theta)p(\theta)
+\propto \theta^{\alpha+y-1}(1-\theta)^{\beta+n-y-1},
+$$
+
+nên:
+
+$$
+\theta\mid y\sim \text{Beta}(\alpha+y,\beta+n-y).
+$$
+
+Nếu dữ liệu được viết dưới dạng $$y_1,\dots,y_n$$ với mỗi quan sát là Bernoulli, đặt $$s=\sum_{i=1}^n y_i$$ thì ta cũng có:
+
+$$
+\theta\mid y_{1:n}\sim \text{Beta}(\alpha+s,\beta+n-s).
+$$
+
+Từ đó, posterior mean là:
+
+$$
+E[\theta\mid y]=\frac{\alpha+y}{\alpha+\beta+n}.
+$$
 
 ### 3.2. Ý nghĩa trực giác
 
@@ -126,6 +167,49 @@ thì posterior trở thành:
 
 $$
 \theta \mid y \sim \text{Beta}(\alpha + 1,\beta + y - 1).
+$$
+
+Với một quan sát thời gian chờ $$y$$, likelihood có thể viết lại dưới dạng:
+
+$$
+p(y\mid \theta)=\theta(1-\theta)^{y-1}\propto \theta^1(1-\theta)^{y-1}.
+$$
+
+Trong khi đó, prior Beta cho ta:
+
+$$
+p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}.
+$$
+
+Nhân hai phần này lại:
+
+$$
+p(\theta\mid y)\propto \theta^{\alpha}(1-\theta)^{\beta+y-2},
+$$
+
+nên:
+
+$$
+\theta\mid y\sim \text{Beta}(\alpha+1,\beta+y-1).
+$$
+
+Nếu có $$m$$ quan sát độc lập $$y_1,\dots,y_m$$ thì:
+
+$$
+p(y_{1:m}\mid \theta)=\prod_{i=1}^m \theta(1-\theta)^{y_i-1}
+=\theta^m(1-\theta)^{\sum_{i=1}^m y_i-m},
+$$
+
+và posterior trở thành:
+
+$$
+\theta\mid y_{1:m}\sim \text{Beta}\left(\alpha+m,\beta+\sum_{i=1}^m y_i-m\right).
+$$
+
+Posterior mean tương ứng là:
+
+$$
+E[\theta\mid y_{1:m}]=\frac{\alpha+m}{\alpha+\beta+\sum_{i=1}^m y_i}.
 $$
 
 ### 4.2. Vì sao vẫn liên hợp?
@@ -182,11 +266,55 @@ $$
 
 theo tham số hóa shape-rate.
 
+Nếu viết rõ phần phụ thuộc vào $$\lambda$$, prior Gamma có dạng:
+
+$$
+p(\lambda)\propto \lambda^{\alpha-1}e^{-\beta\lambda}.
+$$
+
+Còn likelihood Poisson cho $$n$$ quan sát là:
+
+$$
+p(y_{1:n}\mid \lambda)=\prod_{i=1}^n \frac{e^{-\lambda}\lambda^{y_i}}{y_i!}
+\propto \lambda^{\sum_{i=1}^n y_i}e^{-n\lambda}.
+$$
+
+Vì vậy:
+
+$$
+p(\lambda\mid y_{1:n})\propto p(y_{1:n}\mid \lambda)p(\lambda)
+\propto \lambda^{\alpha+\sum_i y_i-1}e^{-(\beta+n)\lambda},
+$$
+
+nên:
+
+$$
+\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+n\right).
+$$
+
+Posterior mean là:
+
+$$
+E[\lambda\mid y]=\frac{\alpha+\sum_i y_i}{\beta+n}.
+$$
+
+Nếu mỗi quan sát gắn với mức phơi nhiễm $$t_i$$ và mô hình là $$Y_i\mid \lambda \sim \text{Poisson}(t_i\lambda)$$, công thức cập nhật chỉ thay $$n$$ bằng tổng mức phơi nhiễm:
+
+$$
+\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+\sum_i t_i\right).
+$$
+
 ### 5.2. Cách đọc
 
 Gamma-Poisson tiện ở chỗ số đếm quan sát được sẽ cộng vào tham số shape, còn số khoảng thời gian hoặc số đơn vị phơi nhiễm được quan sát sẽ cộng vào rate. Cách cập nhật này rất hợp với trực giác, bởi vì càng quan sát lâu thì ta càng có nhiều thông tin về cường độ xảy ra sự kiện, và càng nhìn thấy nhiều sự kiện thì niềm tin của ta về cường độ trung bình cũng càng được kéo lên.
 
-![Minh họa Gamma-Poisson conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/gamma_poisson_conjugacy_detailed.png)
+![Prior Gamma và posterior sau khi thấy dữ liệu đếm]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_prior_posterior.png)
+
+![Tóm tắt công thức cập nhật Gamma-Poisson]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_formula_summary.png)
+
+![Posterior predictive trong mô hình Gamma-Poisson]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_posterior_predictive.png)
+
+![Cập nhật tuần tự trong Gamma-Poisson]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_sequential_updates.png)
 
 ### 5.3. Các bối cảnh rất hợp
 
@@ -251,11 +379,61 @@ $$
 
 thì posterior cho $$\mu$$ vẫn là Normal.
 
+Nếu viết mọi thứ như một hàm theo $$\mu$$, likelihood của $$n$$ quan sát có phần hạt nhân:
+
+$$
+p(y_{1:n}\mid \mu)\propto \exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n (y_i-\mu)^2\right)
+\propto \exp\left(-\frac{n}{2\sigma^2}(\mu-\bar y)^2\right),
+$$
+
+trong đó:
+
+$$
+\bar y=\frac{1}{n}\sum_{i=1}^n y_i.
+$$
+
+Còn prior Normal có dạng:
+
+$$
+p(\mu)\propto \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0^2}\right).
+$$
+
+Khi nhân prior với likelihood và hoàn thành bình phương, ta thu được:
+
+$$
+\mu\mid y_{1:n}\sim \mathcal{N}(\mu_n,\tau_n^2),
+$$
+
+với:
+
+$$
+\tau_n^2=\left(\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}\right)^{-1}
+$$
+
+và:
+
+$$
+\mu_n=\tau_n^2\left(\frac{\mu_0}{\tau_0^2}+\frac{n\bar y}{\sigma^2}\right)
+=\frac{\mu_0/\tau_0^2+n\bar y/\sigma^2}{1/\tau_0^2+n/\sigma^2}.
+$$
+
+Nói cách khác:
+
+$$
+E[\mu\mid y]=\mu_n,\qquad \mathrm{Var}(\mu\mid y)=\tau_n^2.
+$$
+
 ### 6.2. Ý nghĩa trực giác
 
 Posterior mean trong mô hình này là một dạng **trung bình có trọng số** giữa prior mean và trung bình mẫu, trong đó nguồn thông tin nào đáng tin hơn sẽ được trao trọng số lớn hơn. Trọng số cụ thể phụ thuộc vào prior có tập trung mạnh hay không, dữ liệu có nhiều hay ít, và độ nhiễu quan sát lớn đến mức nào.
 
-![Minh họa Normal-Normal conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/normal_normal_conjugacy_detailed.png)
+![Prior Normal và posterior sau khi kết hợp với dữ liệu]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_posterior.png)
+
+![Tóm tắt công thức cập nhật Normal-Normal]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_formula_summary.png)
+
+![Ảnh hưởng của kích thước mẫu trong Normal-Normal]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_sample_size_effect.png)
+
+![Trọng số tương đối của prior và dữ liệu trong Normal-Normal]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_data_weights.png)
 
 ### 6.3. Những bối cảnh gần gũi
 
@@ -323,24 +501,6 @@ Diễn giải: so với prior ban đầu, dữ liệu đã kéo ước lượng 
 
 Trong các hệ thống giám sát vận hành hoặc dashboard theo thời gian thực, đây là ưu điểm rất trực quan.
 
-## 8. Vì sao nên học conjugacy dù sau này dùng MCMC?
-
-Conjugacy vẫn rất đáng học ngay cả khi về sau ta dùng MCMC, và lý do không chỉ nằm ở sự tiện lợi tính toán.
-
-### 8.1. Nó cho trực giác cực tốt
-
-Conjugacy cho phép bạn nhìn rất trực tiếp vào cách prior và dữ liệu tương tác với nhau, bởi vì ảnh hưởng của mỗi nguồn thông tin thường được thể hiện ngay trên các tham số cập nhật thay vì bị che khuất sau một thuật toán số.
-
-### 8.2. Nó cho lời giải kiểm chứng
-
-Khi bạn học grid approximation hay MCMC, các mô hình liên hợp đóng vai trò như những bài toán chuẩn có lời giải đúng tương đối rõ ràng, nhờ đó ta có thể kiểm tra xem code của mình có đang cho kết quả hợp lý hay không.
-
-### 8.3. Nó vẫn hữu ích trong các bài toán nhỏ
-
-Với những mô hình đơn giản, prior liên hợp thường cho lời giải vừa nhanh, vừa rõ ràng, vừa dễ giải thích, và trong nhiều tình huống giảng dạy hoặc các bài toán một tham số, chừng đó đã là quá đủ để phục vụ cả trực giác lẫn thực hành.
-
-![Conjugacy so với các phương pháp tính toán khác]({{ site.baseurl }}/img/chapter_img/chapter02/conjugacy_vs_mcmc.png)
-
 ## 9. Nhưng conjugacy không phải lúc nào cũng là lựa chọn tốt nhất
 
 Đây là điểm rất quan trọng. Ta không nên chọn prior chỉ vì nó liên hợp nếu lựa chọn ấy mô tả kiến thức thực tế quá kém, khiến ta bỏ qua cấu trúc quan trọng của bài toán, hoặc đơn giản là bài toán đã đủ phức tạp để đòi hỏi một mô hình linh hoạt hơn. Chẳng hạn, prior thực tế có thể có dạng mixture hai đỉnh, tham số có thể chịu những ràng buộc phức tạp, hoặc mô hình có thể bao gồm nhiều tầng và nhiều tham số phụ thuộc lẫn nhau; trong các trường hợp như vậy, sự tiện lợi đại số không còn là tiêu chí quyết định nữa.
@@ -355,7 +515,13 @@ $$
 
 Biểu thức này vẫn hoàn toàn hợp lệ để suy luận Bayes, nhưng nó không còn là một ví dụ liên hợp “đẹp” như Beta-Binomial hay Gamma-Poisson nữa. Bài học quan trọng ở đây là conjugacy không chỉ phụ thuộc vào hình dạng đại số của mật độ, mà còn phụ thuộc vào việc posterior có còn nằm gọn trong một họ phân phối quen thuộc trên đúng support của tham số hay không.
 
-![Giới hạn của prior liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_prior_limitations.png)
+![Prior liên hợp có thể biểu diễn kém khi prior lý tưởng bị chặn miền]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_truncated_prior.png)
+
+![Tổng quan các tình huống conjugacy không còn phù hợp]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_overview.png)
+
+![Mixture prior là ví dụ điển hình khiến conjugate prior trở nên gượng ép]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_mixture_prior.png)
+
+![Cây quyết định nhanh để chọn ở lại với conjugacy hay chuyển sang MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_decision_tree.png)
 
 Khi điều kiện ấy không còn thỏa, ta thường chuyển sang grid approximation cho những bài cực nhỏ hoặc sang MCMC cho các mô hình tổng quát và linh hoạt hơn.
 

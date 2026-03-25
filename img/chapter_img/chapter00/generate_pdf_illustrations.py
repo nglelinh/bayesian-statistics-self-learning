@@ -9,11 +9,83 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from scipy import integrate
 import matplotlib.patches as mpatches
+from pathlib import Path
+from PIL import Image
 
 # Set Vietnamese font and style
 plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['axes.unicode_minus'] = False
 plt.rcParams['figure.dpi'] = 150
+
+OUTPUT_DIR = Path(__file__).resolve().parent
+
+
+def save_current_figure(filename):
+    """Save the active matplotlib figure next to this script."""
+    output_path = OUTPUT_DIR / filename
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    print(f"✓ Generated: {output_path.name}")
+
+
+def trim_whitespace(image, padding=20, threshold=245):
+    """Trim outer whitespace while keeping a small visual margin."""
+    rgba = np.asarray(image.convert("RGBA"))
+    visible_pixels = np.any(rgba[:, :, :3] < threshold, axis=2) | (rgba[:, :, 3] < 250)
+    coordinates = np.argwhere(visible_pixels)
+
+    if coordinates.size == 0:
+        return image
+
+    y0, x0 = coordinates.min(axis=0)
+    y1, x1 = coordinates.max(axis=0) + 1
+
+    x0 = max(0, x0 - padding)
+    y0 = max(0, y0 - padding)
+    x1 = min(image.width, x1 + padding)
+    y1 = min(image.height, y1 + padding)
+
+    return image.crop((x0, y0, x1, y1))
+
+
+def detect_shared_header_height(image, threshold=0.02, window=24):
+    """Detect a sparse shared title band that should be removed before splitting."""
+    rgba = np.asarray(image.convert("RGBA"))
+    visible_pixels = np.any(rgba[:, :, :3] < 245, axis=2) | (rgba[:, :, 3] < 250)
+    row_density = visible_pixels.mean(axis=1)
+    rolling_density = np.convolve(row_density, np.ones(window) / window, mode='same')
+
+    candidate_rows = np.where(rolling_density > threshold)[0]
+    if candidate_rows.size == 0:
+        return 0
+
+    return max(0, int(candidate_rows[0]) - 8)
+
+
+def split_figure_grid(filename, rows, cols, output_names, trim_shared_header=False, padding=20):
+    """Split a multi-panel figure into standalone images."""
+    if len(output_names) != rows * cols:
+        raise ValueError("Number of output names must match rows * cols.")
+
+    image = Image.open(OUTPUT_DIR / filename).convert("RGBA")
+
+    if trim_shared_header:
+        top_trim = detect_shared_header_height(image)
+        image = image.crop((0, top_trim, image.width, image.height))
+
+    cell_width = image.width / cols
+    cell_height = image.height / rows
+
+    for index, output_name in enumerate(output_names):
+        row, col = divmod(index, cols)
+        left = round(col * cell_width)
+        upper = round(row * cell_height)
+        right = round((col + 1) * cell_width)
+        lower = round((row + 1) * cell_height)
+
+        panel = image.crop((left, upper, right, lower))
+        panel = trim_whitespace(panel, padding=padding).convert("RGB")
+        panel.save(OUTPUT_DIR / output_name)
+        print(f"  -> Split: {output_name}")
 
 def generate_pmf_vs_continuous():
     """1. PMF (discrete) vs continuous variable problem"""
@@ -71,8 +143,16 @@ def generate_pmf_vs_continuous():
     axes[1].legend(fontsize=10)
     
     plt.tight_layout()
-    plt.savefig('pmf_vs_continuous.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: pmf_vs_continuous.png")
+    save_current_figure('pmf_vs_continuous.png')
+    split_figure_grid(
+        'pmf_vs_continuous.png',
+        rows=1,
+        cols=2,
+        output_names=[
+            'pdf_pmf_dice.png',
+            'pdf_continuous_height.png',
+        ],
+    )
     plt.close()
 
 
@@ -126,8 +206,16 @@ def generate_density_analogy():
                 bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
     
     plt.tight_layout()
-    plt.savefig('density_analogy.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: density_analogy.png")
+    save_current_figure('density_analogy.png')
+    split_figure_grid(
+        'density_analogy.png',
+        rows=1,
+        cols=2,
+        output_names=[
+            'pdf_mass_density_analogy.png',
+            'pdf_probability_density_analogy.png',
+        ],
+    )
     plt.close()
 
 
@@ -189,8 +277,17 @@ def generate_pdf_can_exceed_one():
                 bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.6))
     
     plt.tight_layout()
-    plt.savefig('pdf_can_exceed_one.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: pdf_can_exceed_one.png")
+    save_current_figure('pdf_can_exceed_one.png')
+    split_figure_grid(
+        'pdf_can_exceed_one.png',
+        rows=1,
+        cols=3,
+        output_names=[
+            'pdf_exceeds_one_normal.png',
+            'pdf_exceeds_one_uniform.png',
+            'pdf_exceeds_one_beta.png',
+        ],
+    )
     plt.close()
 
 
@@ -228,8 +325,21 @@ def generate_histogram_to_pdf():
     plt.suptitle('Histogram tiến đến PDF khi n → ∞', 
                 fontsize=16, fontweight='bold', y=1.00)
     plt.tight_layout()
-    plt.savefig('histogram_to_pdf.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: histogram_to_pdf.png")
+    save_current_figure('histogram_to_pdf.png')
+    split_figure_grid(
+        'histogram_to_pdf.png',
+        rows=2,
+        cols=3,
+        output_names=[
+            'pdf_histogram_n100.png',
+            'pdf_histogram_n500.png',
+            'pdf_histogram_n1000.png',
+            'pdf_histogram_n5000.png',
+            'pdf_histogram_n10000.png',
+            'pdf_histogram_n50000.png',
+        ],
+        trim_shared_header=True,
+    )
     plt.close()
 
 
@@ -282,8 +392,18 @@ def generate_small_interval_approximation():
     plt.suptitle('P(x ≤ X ≤ x+Δx) ≈ f(x)·Δx\nXấp xỉ tốt khi Δx nhỏ', 
                 fontsize=15, fontweight='bold')
     plt.tight_layout()
-    plt.savefig('small_interval_approximation.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: small_interval_approximation.png")
+    save_current_figure('small_interval_approximation.png')
+    split_figure_grid(
+        'small_interval_approximation.png',
+        rows=1,
+        cols=3,
+        output_names=[
+            'pdf_small_interval_dx_05.png',
+            'pdf_small_interval_dx_01.png',
+            'pdf_small_interval_dx_001.png',
+        ],
+        trim_shared_header=True,
+    )
     plt.close()
 
 
@@ -333,8 +453,16 @@ def generate_pdf_units():
                 facecolor='yellow', alpha=0.6))
     
     plt.tight_layout()
-    plt.savefig('pdf_units.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: pdf_units.png")
+    save_current_figure('pdf_units.png')
+    split_figure_grid(
+        'pdf_units.png',
+        rows=1,
+        cols=2,
+        output_names=[
+            'pdf_units_cm_only.png',
+            'pdf_units_m_only.png',
+        ],
+    )
     plt.close()
 
 
@@ -384,8 +512,16 @@ def generate_pmf_pdf_comparison():
                 bbox=dict(boxstyle='round', facecolor='yellow', alpha=0.7))
     
     plt.tight_layout()
-    plt.savefig('pmf_pdf_comparison.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: pmf_pdf_comparison.png")
+    save_current_figure('pmf_pdf_comparison.png')
+    split_figure_grid(
+        'pmf_pdf_comparison.png',
+        rows=1,
+        cols=2,
+        output_names=[
+            'pdf_binomial_pmf_example.png',
+            'pdf_normal_density_example.png',
+        ],
+    )
     plt.close()
 
 
@@ -439,8 +575,16 @@ def generate_bayesian_pdf_application():
     axes[1].grid(alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('bayesian_pdf_application.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: bayesian_pdf_application.png")
+    save_current_figure('bayesian_pdf_application.png')
+    split_figure_grid(
+        'bayesian_pdf_application.png',
+        rows=1,
+        cols=2,
+        output_names=[
+            'pdf_bayesian_prior_posterior.png',
+            'pdf_bayesian_credible_interval.png',
+        ],
+    )
     plt.close()
 
 
@@ -510,8 +654,7 @@ NHỚ: f(x) giống như "mật độ khối lượng" trong vật lý
                     alpha=0.4, edgecolor='darkblue', linewidth=3))
     
     plt.tight_layout()
-    plt.savefig('pdf_summary_infographic.png', dpi=150, bbox_inches='tight')
-    print("✓ Generated: pdf_summary_infographic.png")
+    save_current_figure('pdf_summary_infographic.png')
     plt.close()
 
 

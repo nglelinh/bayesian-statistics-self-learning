@@ -76,6 +76,43 @@ $$
 \theta \mid y \sim \text{Beta}(\alpha+y,\beta+n-y).
 $$
 
+To see the algebra directly, keep only the parts that depend on $$\theta$$:
+
+$$
+p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}
+$$
+
+and:
+
+$$
+p(y\mid \theta)\propto \theta^y(1-\theta)^{n-y}.
+$$
+
+Therefore:
+
+$$
+p(\theta\mid y)\propto p(y\mid \theta)p(\theta)
+\propto \theta^{\alpha+y-1}(1-\theta)^{\beta+n-y-1},
+$$
+
+so:
+
+$$
+\theta\mid y\sim \text{Beta}(\alpha+y,\beta+n-y).
+$$
+
+If the data are written as Bernoulli observations $$y_1,\dots,y_n$$ and $$s=\sum_{i=1}^n y_i$$, then the same update becomes:
+
+$$
+\theta\mid y_{1:n}\sim \text{Beta}(\alpha+s,\beta+n-s).
+$$
+
+The posterior mean is:
+
+$$
+E[\theta\mid y]=\frac{\alpha+y}{\alpha+\beta+n}.
+$$
+
 If you want a one-line memory rule, read the update this way: the posterior success count equals the prior success count plus the observed successes, and the posterior failure count equals the prior failure count plus the observed failures.
 
 ### 3.2. Interpretation
@@ -118,6 +155,49 @@ $$
 \theta \mid y \sim \text{Beta}(\alpha+1,\beta+y-1).
 $$
 
+For one waiting-time observation $$y$$, the likelihood can be written as:
+
+$$
+p(y\mid \theta)=\theta(1-\theta)^{y-1}\propto \theta^1(1-\theta)^{y-1}.
+$$
+
+The Beta prior contributes:
+
+$$
+p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}.
+$$
+
+Multiplying them gives:
+
+$$
+p(\theta\mid y)\propto \theta^{\alpha}(1-\theta)^{\beta+y-2},
+$$
+
+so:
+
+$$
+\theta\mid y\sim \text{Beta}(\alpha+1,\beta+y-1).
+$$
+
+If we have $$m$$ independent waiting times $$y_1,\dots,y_m$$, then:
+
+$$
+p(y_{1:m}\mid \theta)=\prod_{i=1}^m \theta(1-\theta)^{y_i-1}
+=\theta^m(1-\theta)^{\sum_{i=1}^m y_i-m},
+$$
+
+which leads to:
+
+$$
+\theta\mid y_{1:m}\sim \text{Beta}\left(\alpha+m,\beta+\sum_{i=1}^m y_i-m\right).
+$$
+
+The corresponding posterior mean is:
+
+$$
+E[\theta\mid y_{1:m}]=\frac{\alpha+m}{\alpha+\beta+\sum_{i=1}^m y_i}.
+$$
+
 ### 4.2. Interpretation
 
 The logic is that the observation contributes one realized success together with $$y-1$$ realized failures, so the Beta prior still works because the likelihood is still built from powers of $$\theta$$ and $$1-\theta$$.
@@ -150,11 +230,55 @@ $$
 \lambda \mid y_{1:n} \sim \text{Gamma}\left(\alpha + \sum_i y_i,\beta + n\right).
 $$
 
+Under the shape-rate parameterization, the prior kernel is:
+
+$$
+p(\lambda)\propto \lambda^{\alpha-1}e^{-\beta\lambda}.
+$$
+
+For $$n$$ Poisson observations, the likelihood kernel is:
+
+$$
+p(y_{1:n}\mid \lambda)=\prod_{i=1}^n \frac{e^{-\lambda}\lambda^{y_i}}{y_i!}
+\propto \lambda^{\sum_{i=1}^n y_i}e^{-n\lambda}.
+$$
+
+Therefore:
+
+$$
+p(\lambda\mid y_{1:n})\propto p(y_{1:n}\mid \lambda)p(\lambda)
+\propto \lambda^{\alpha+\sum_i y_i-1}e^{-(\beta+n)\lambda},
+$$
+
+which is why:
+
+$$
+\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+n\right).
+$$
+
+The posterior mean is:
+
+$$
+E[\lambda\mid y]=\frac{\alpha+\sum_i y_i}{\beta+n}.
+$$
+
+If each observation has exposure $$t_i$$ and $$Y_i\mid \lambda\sim \text{Poisson}(t_i\lambda)$$, the same logic gives:
+
+$$
+\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+\sum_i t_i\right).
+$$
+
 ### 5.2. Interpretation
 
 The observed counts add to the shape parameter, while the number of observation periods adds to the rate parameter, so the update simultaneously reflects how much activity was seen and how long the process was observed.
 
-![Gamma-Poisson conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/gamma_poisson_conjugacy_detailed.png)
+![Gamma prior and posterior after count data are observed]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_prior_posterior.png)
+
+![A compact formula summary for the Gamma-Poisson update]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_formula_summary.png)
+
+![Posterior predictive reasoning in the Gamma-Poisson model]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_posterior_predictive.png)
+
+![Sequential updating in the Gamma-Poisson model]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_sequential_updates.png)
 
 ### 5.3. Typical applications
 
@@ -184,11 +308,61 @@ $$
 
 then the posterior for $$\mu$$ is also Normal.
 
+Writing everything as a function of $$\mu$$, the likelihood kernel for $$n$$ observations is:
+
+$$
+p(y_{1:n}\mid \mu)\propto \exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n (y_i-\mu)^2\right)
+\propto \exp\left(-\frac{n}{2\sigma^2}(\mu-\bar y)^2\right),
+$$
+
+where:
+
+$$
+\bar y=\frac{1}{n}\sum_{i=1}^n y_i.
+$$
+
+The Normal prior contributes:
+
+$$
+p(\mu)\propto \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0^2}\right).
+$$
+
+After multiplying the prior and likelihood and completing the square, we get:
+
+$$
+\mu\mid y_{1:n}\sim \mathcal{N}(\mu_n,\tau_n^2),
+$$
+
+with:
+
+$$
+\tau_n^2=\left(\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}\right)^{-1}
+$$
+
+and:
+
+$$
+\mu_n=\tau_n^2\left(\frac{\mu_0}{\tau_0^2}+\frac{n\bar y}{\sigma^2}\right)
+=\frac{\mu_0/\tau_0^2+n\bar y/\sigma^2}{1/\tau_0^2+n/\sigma^2}.
+$$
+
+Equivalently:
+
+$$
+E[\mu\mid y]=\mu_n,\qquad \mathrm{Var}(\mu\mid y)=\tau_n^2.
+$$
+
 ### 6.2. Interpretation
 
 The posterior mean becomes a weighted compromise between the prior mean and the sample mean, and the balance between the two depends on the strength of the prior, the size of the sample, and the amount of observation noise.
 
-![Normal-Normal conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/normal_normal_conjugacy_detailed.png)
+![Normal prior and posterior after combining with continuous data]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_posterior.png)
+
+![A compact formula summary for the Normal-Normal update]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_formula_summary.png)
+
+![How sample size changes the Normal-Normal posterior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_sample_size_effect.png)
+
+![Relative prior and data weights in the Normal-Normal model]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_data_weights.png)
 
 ### 6.3. Quick memory rule
 
@@ -214,7 +388,13 @@ Conjugacy is about convenience, not truth. We should not force a conjugate prior
 
 Support matters too. Sometimes the algebra looks familiar, but the posterior no longer fits a standard family on the correct parameter domain. In those cases the model can still be valid, but it is no longer a clean “same family in, same family out” conjugate case.
 
-![Limits of conjugate priors]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_prior_limitations.png)
+![A conjugate prior can poorly represent a truncated or constrained ideal prior]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_truncated_prior.png)
+
+![A compact overview of when conjugacy stops being a good fit]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_overview.png)
+
+![Mixture priors are a common case where conjugate families become too restrictive]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_mixture_prior.png)
+
+![A quick decision tree for staying with conjugacy or moving to MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_decision_tree.png)
 
 In such cases, we turn to grid approximation or MCMC.
 

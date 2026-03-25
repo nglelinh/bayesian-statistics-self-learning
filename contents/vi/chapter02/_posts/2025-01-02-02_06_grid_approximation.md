@@ -114,9 +114,19 @@ Chia cho tổng toàn bộ trọng số để thu được posterior rời rạc
 
 Một lưới 5 điểm giúp ta nắm ý tưởng, nhưng để xấp xỉ tốt hơn, ta thường phải dùng lưới mịn hơn, chẳng hạn 20 điểm, 100 điểm, hay 1000 điểm, tùy độ chính xác mà ta mong muốn.
 
-![So sánh grid với các độ mịn khác nhau]({{ site.baseurl }}/img/chapter_img/chapter02/grid_approximation_basics.png)
+![Grid rất thô với 5 điểm]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_5.png)
+
+![Grid trung bình với 20 điểm]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_20.png)
+
+![Grid mịn với 100 điểm]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_resolution_100.png)
 
 Khi grid mịn hơn, posterior rời rạc sẽ nhìn giống posterior liên tục hơn và các thống kê như posterior mean hay credible interval cũng trở nên chính xác hơn.
+
+![So sánh grid 5 điểm với posterior chính xác]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_5.png)
+
+![So sánh grid 20 điểm với posterior chính xác]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_20.png)
+
+![So sánh grid 100 điểm với posterior chính xác]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_vs_exact_100.png)
 
 ![Ảnh hưởng của kích thước grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_size_comparison.png)
 
@@ -144,6 +154,8 @@ $$
 E[\theta \mid D] \approx \sum_i \theta_i p(\theta_i \mid D).
 $$
 
+![Posterior mean cùng median và mode trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_mean_median_mode.png)
+
 ### 6.2. Tính xác suất của một khoảng
 
 Ví dụ:
@@ -154,15 +166,19 @@ $$
 
 chỉ là tổng các trọng số posterior của những điểm nằm trong khoảng đó.
 
+![Xác suất posterior của một khoảng trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_interval_probability.png)
+
 ### 6.3. Tính credible interval
 
 Ta cộng dồn xác suất posterior trên grid để lấy các quantile mong muốn.
+
+![Credible interval được lấy từ posterior rời rạc]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_credible_interval.png)
 
 ### 6.4. Lấy mẫu từ posterior
 
 Ta có thể lấy mẫu các điểm grid theo trọng số posterior rồi dùng chúng cho các bước tiếp theo.
 
-![Tính các thống kê từ posterior trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/grid_statistics_computation.png)
+![Lấy mẫu trực tiếp từ posterior trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_stat_sampling.png)
 
 Grid approximation rất hay ở chỗ tất cả các khái niệm Bayes trở nên hữu hình bằng các phép cộng và nhân đơn giản.
 
@@ -178,7 +194,9 @@ $$
 P(y_{\text{new}} \mid D) = \sum_i P(y_{\text{new}} \mid \theta_i)p(\theta_i \mid D).
 $$
 
-![Posterior predictive từ grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_posterior_predictive.png)
+![Phân phối posterior predictive lấy từ posterior trên grid]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_predictive_distribution.png)
+
+![So sánh posterior predictive từ grid với công thức chính xác]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_predictive_vs_exact.png)
 
 Đây là bước rất quan trọng vì nó nối posterior của tham số với những dự báo thực tế mà người dùng cuối quan tâm.
 
@@ -204,7 +222,9 @@ Vấn đề xuất hiện khi số tham số tăng.
 
 Nếu mỗi tham số dùng 100 điểm grid, thì một tham số tương ứng với 100 điểm, hai tham số đã nhảy lên 10,000 điểm, ba tham số thành 1,000,000 điểm, và bốn tham số lập tức vọt lên 100,000,000 điểm; chính tốc độ bùng nổ này tạo nên cái gọi là curse of dimensionality.
 
-![Curse of dimensionality]({{ site.baseurl }}/img/chapter_img/chapter02/curse_of_dimensionality.png)
+![Số điểm grid tăng bùng nổ theo số chiều tham số]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_dimensionality_growth.png)
+
+![Bảng tóm tắt vì sao grid approximation nhanh chóng mất khả thi ở nhiều chiều]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_grid_dimensionality_table.png)
 
 Đó là lý do grid approximation rất tuyệt cho bài toán một tham số, còn có thể chấp nhận được cho một số bài hai tham số nhỏ, nhưng lại nhanh chóng trở nên không khả thi khi ta bước sang những mô hình thực tế có nhiều tham số hơn.
 

@@ -61,6 +61,28 @@ Ví dụ đồng xu:
 
 Mô hình nói rằng mỗi lần tung $$y_i\sim\text{Bernoulli}(\theta)$$, còn mô phỏng là bước chọn một giá trị cụ thể của $$\theta$$, chẳng hạn 0.6, rồi sinh 10,000 lần tung để xem tỷ lệ ngửa dao động như thế nào.
 
+Ví dụ mô phỏng ngắn bằng Python:
+
+```python
+import numpy as np
+
+np.random.seed(42)
+
+theta = 0.6
+n_tosses = 20
+n_simulations = 10_000
+
+heads_counts = np.random.binomial(n_tosses, theta, size=n_simulations)
+head_rates = heads_counts / n_tosses
+
+print(heads_counts[:10])
+print(head_rates.mean(), head_rates.std())
+```
+
+Trong đoạn code này, mô hình vẫn là $$K \sim \text{Binomial}(20, 0.6)$$. Phần mô phỏng chỉ trả lời câu hỏi: nếu mô hình đó đúng, ta thường thấy bao nhiêu mặt ngửa sau 20 lần tung, và mức dao động giữa các lần lặp lớn đến đâu.
+
+Khi chạy nhiều lần, trung bình của `head_rates` sẽ gần 0.6 nhưng từng mẫu riêng lẻ vẫn dao động quanh giá trị đó. Chính sự dao động này giúp ta thấy mô hình không sinh ra một con số cố định, mà sinh ra một phân phối các kết quả có thể xảy ra.
+
 Vì vậy, mô phỏng không thay thế mô hình; nó là công cụ để kiểm tra trực giác và hệ quả của mô hình.
 
 ## 4) Mô hình không phải "sự thật" mà là xấp xỉ có ích

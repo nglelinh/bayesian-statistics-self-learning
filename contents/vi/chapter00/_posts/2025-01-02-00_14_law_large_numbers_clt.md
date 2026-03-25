@@ -18,11 +18,6 @@ Sau bài này, bạn sẽ hiểu vì sao trung bình mẫu ổn định khi số
 
 Một trong những ý tưởng nền tảng của thống kê là: từng quan sát riêng lẻ có thể rất nhiễu, nhưng khi tổng hợp đủ nhiều quan sát, ta lại thấy cấu trúc quy luật rõ ràng. LLN và CLT là hai định lý mô tả chính xác hiện tượng này, đồng thời giải thích vì sao các ước lượng mẫu có thể dùng để suy luận về quần thể.
 
-![LLN va CLT truc quan]({{ site.baseurl }}/img/chapter_img/chapter00/lln_clt_convergence.png)
-
-*Cách đọc hình: Hình này minh họa lln va clt truc quan. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hinh 1: Ben trai la hoi tu trung binh chay (LLN); ben phai la phan phoi trung binh mau gan dang chuan (CLT).* 
-
 ## 1) Luật số lớn (LLN): trung bình mẫu hội tụ
 
 Gọi $$X_1,\dots,X_n$$ độc lập cùng phân phối, có kỳ vọng $$\mu$$. Trung bình mẫu:
@@ -34,6 +29,10 @@ $$
 LLN nói rằng khi $$n\to\infty$$, $$\bar X_n$$ tiến gần $$\mu$$ (theo xác suất).
 
 Trực giác: nhiễu ngẫu nhiên "triệt tiêu dần" khi lấy trung bình trên nhiều quan sát.
+
+![Trung bình chạy hội tụ dần về kỳ vọng]({{ site.baseurl }}/img/chapter_img/chapter00/lln_running_mean_convergence.png)
+
+*Hình 1a: Luật số lớn cho thấy trung bình chạy dần ổn định và hội tụ về giá trị kỳ vọng khi số quan sát tăng lên.*
 
 ## 2) CLT: phân phối của trung bình mẫu gần chuẩn
 
@@ -50,6 +49,10 @@ $$
 $$
 
 ngay cả khi phân phối gốc không chuẩn (n đủ lớn).
+
+![Phân phối của trung bình mẫu gần chuẩn]({{ site.baseurl }}/img/chapter_img/chapter00/clt_sample_means_histogram.png)
+
+*Hình 1b: Định lý giới hạn trung tâm cho thấy phân phối của trung bình mẫu tiến gần dạng chuẩn dù dữ liệu gốc không nhất thiết chuẩn.*
 
 ## 3) LLN và CLT khác nhau thế nào?
 

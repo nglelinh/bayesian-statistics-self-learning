@@ -96,7 +96,9 @@ Nhưng chúng không mang cùng một ý nghĩa.
 
 Beta$$(3,9)$$ khá rộng, nên nó giống với phát biểu “tôi nghĩ trung tâm là $$0.25$$, nhưng tôi vẫn còn khá mở với nhiều khả năng lân cận”; ngược lại, Beta$$(30,90)$$ hẹp hơn nhiều, nên nó giống với phát biểu “tôi không chỉ nghĩ trung tâm là $$0.25$$, tôi còn tin khá chắc là giá trị thật không đi quá xa”.
 
-![Phân phối hẹp và rộng thể hiện mức chắc chắn khác nhau]({{ site.baseurl }}/img/chapter_img/chapter02/narrow_vs_wide.png)
+![Phân phối hẹp thể hiện mức chắc chắn cao]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_narrow_distribution.png)
+
+![Phân phối rộng thể hiện mức chưa chắc chắn cao hơn]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_wide_distribution.png)
 
 Một con số trung bình không cho bạn thấy sự khác biệt này. Phân phối thì có.
 
