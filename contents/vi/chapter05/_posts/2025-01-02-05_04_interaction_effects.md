@@ -42,11 +42,17 @@ $$
 
 Thành phần mới $$\beta_3 (x_1 x_2)$$ là interaction term (hạng tương tác). Nếu $$\beta_3$$ khác 0 một cách đáng kể, điều đó gợi ý rằng slope (độ dốc) của $$x_1$$ thay đổi khi $$x_2$$ thay đổi, hoặc nhìn ngược lại, slope của $$x_2$$ thay đổi khi $$x_1$$ thay đổi.
 
-![Interaction effects]({{ site.baseurl }}/img/chapter_img/chapter05/interaction_effects.png)
+![Trường hợp không có interaction: các đường gần song song]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_no_interaction_parallel_lines.png)
+
+![Trường hợp có interaction: slope thay đổi theo nhóm]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_with_interaction_different_slopes.png)
+
+![So sánh mô hình có và không có interaction]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_interaction_model_comparison.png)
 
 ## 3. Nhìn bằng hình sẽ dễ hiểu hơn nhìn bằng công thức
 
-![Interaction demo]({{ site.baseurl }}/img/chapter_img/chapter05/interaction_demo.png)
+![Mô hình additive với các đường gần song song]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_additive_model_demo.png)
+
+![Mô hình interactive với các slope khác nhau]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_interactive_model_demo.png)
 
 Hãy so sánh hai tình huống:
 
@@ -98,7 +104,41 @@ Nếu $$x_2$$ là biến nhóm, trong đó $$x_2 = 0$$ là nhóm đối chứng 
 
 Nghĩa là interaction cho ta biết mức độ mà intervention làm mạnh hơn hoặc yếu đi ảnh hưởng của $$x_1$$.
 
-![Conditional effects]({{ site.baseurl }}/img/chapter_img/chapter05/conditional_effects.png)
+![Conditional effects của x₁ theo từng nhóm x₂]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_conditional_effects_by_group.png)
+
+![Interaction như chênh lệch giữa hai conditional effects]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_interaction_difference_distribution.png)
+
+### 5.1. Một ví dụ bằng con số để đọc interaction không bị lạc
+
+Giả sử ta mô hình hóa điểm cuối kỳ như sau:
+
+$$
+\text{Điểm} = 4 + 0.2 \cdot \text{Giờ học} + 1.0 \cdot \text{Nền tảng tốt} + 0.25 \cdot (\text{Giờ học} \times \text{Nền tảng tốt}).
+$$
+
+Trong đó:
+
+- `Nền tảng tốt = 0` là nhóm mất gốc,
+- `Nền tảng tốt = 1` là nhóm đã có kiến thức nền ổn.
+
+Khi đó:
+
+- với nhóm mất gốc, thêm 1 giờ học làm điểm tăng trung bình khoảng **0.2 điểm**,
+- với nhóm có nền tảng tốt, thêm 1 giờ học làm điểm tăng trung bình khoảng  
+  $$0.2 + 0.25 = 0.45$$ điểm.
+
+Ta có thể nhìn ra điều này rõ hơn qua vài dự đoán cụ thể:
+
+- học sinh mất gốc học 2 giờ:  
+  $$4 + 0.2 \times 2 = 4.4$$
+- học sinh có nền tảng tốt học 2 giờ:  
+  $$4 + 0.2 \times 2 + 1 + 0.25 \times 2 = 5.9$$
+- học sinh mất gốc học 6 giờ:  
+  $$4 + 0.2 \times 6 = 5.2$$
+- học sinh có nền tảng tốt học 6 giờ:  
+  $$4 + 0.2 \times 6 + 1 + 0.25 \times 6 = 7.7$$
+
+Điểm mấu chốt là chênh lệch giữa 2 giờ và 6 giờ học không giống nhau giữa hai nhóm. Đó chính là interaction, viết ra bằng con số thay vì chỉ nói bằng lời.
 
 ## 6. Interaction không chỉ dành cho biến nhị phân
 
@@ -106,7 +146,11 @@ Interaction cũng rất thường gặp giữa hai biến liên tục.
 
 Ví dụ, nhiệt độ và độ ẩm cùng ảnh hưởng đến mức tiêu thụ điện, thu nhập và tuổi cùng ảnh hưởng đến hành vi chi tiêu, còn thời gian học và chất lượng giấc ngủ cùng ảnh hưởng đến điểm thi.
 
-![Continuous interaction]({{ site.baseurl }}/img/chapter_img/chapter05/continuous_interaction.png)
+![Các đường hiệu ứng khi cả hai biến đều liên tục]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_interaction_continuous_lines.png)
+
+![Góc nhìn 3D của tương tác giữa hai biến liên tục]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_continuous_interaction_3d.png)
+
+![Contour plot của tương tác giữa hai biến liên tục]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_continuous_interaction_contour.png)
 
 Trong trường hợp continuous x continuous, hình ảnh như contour plot hoặc surface plot thường trực quan hơn bảng hệ số rất nhiều. Vì thế, interaction là một chủ đề mà **visualization (trực quan hóa) gần như bắt buộc**.
 
@@ -159,6 +203,8 @@ Mô hình có interaction sẽ hợp lý hơn:
 $$
 \text{Giảm cân} = \alpha + \beta_1 \cdot \text{Tập luyện} + \beta_2 \cdot \text{Chế độ ăn} + \beta_3 \cdot (\text{Tập luyện} \times \text{Chế độ ăn}) + \epsilon
 $$
+
+Nếu $$\beta_3 > 0$$, điều đó có nghĩa là cùng thêm 1 buổi tập, người tuân thủ ăn uống tốt sẽ hưởng lợi nhiều hơn. Nếu $$\beta_3 < 0$$, ta sẽ đọc theo hướng ngược lại: tác dụng của việc tăng tập luyện yếu đi khi chế độ ăn đã ở mức rất tốt hoặc khi hai yếu tố phần nào thay thế lẫn nhau. Vì vậy, dấu của interaction giúp ta hiểu hai yếu tố đang **khuếch đại** nhau hay **bù trừ** nhau.
 
 ## 10. Cách báo cáo interaction cho người không chuyên
 

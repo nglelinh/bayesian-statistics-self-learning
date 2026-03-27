@@ -40,9 +40,15 @@ $$
 
 Trong đó, $$y$$ là outcome (biến kết quả), $$x_1, x_2, \ldots, x_k$$ là các predictors (biến dự báo), $$\alpha$$ là intercept (hệ số chặn), còn mỗi $$\beta_j$$ là hệ số của predictor thứ $$j$$. Ý tưởng của mô hình này rất tự nhiên: ta cộng đóng góp của từng predictor rồi cộng thêm phần nhiễu $$\epsilon$$, bởi vì dữ liệu thật luôn dao động quanh xu hướng trung bình chứ không bao giờ nằm chính xác trên một công thức cứng.
 
-![Multiple predictors visualization]({{ site.baseurl }}/img/chapter_img/chapter05/multiple_predictors_visualization.png)
+Ba góc nhìn dưới đây cho thấy cùng một outcome có thể được nhìn như nhiều lát cắt hai chiều hoặc như một bề mặt nhiều chiều.
 
-Hình trên giúp ta thấy một outcome có thể thay đổi theo **nhiều chiều cùng lúc**. Khi nhìn từng đồ thị hai chiều riêng lẻ, ta chỉ thấy một lát cắt của vấn đề. Multiple regression cố gắng ghép các lát cắt đó lại thành một mô hình chung.
+![Cân nặng theo chiều cao, tô màu theo tuổi]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_weight_vs_height_colored_by_age.png)
+
+![Cân nặng theo tuổi, tô màu theo chiều cao]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_weight_vs_age_colored_by_height.png)
+
+![Góc nhìn 3D của cân nặng theo chiều cao và tuổi]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_weight_height_age_3d.png)
+
+Ba hình trên giúp ta thấy một outcome có thể thay đổi theo **nhiều chiều cùng lúc**. Khi nhìn từng đồ thị hai chiều riêng lẻ, ta chỉ thấy một lát cắt của vấn đề. Multiple regression cố gắng ghép các lát cắt đó lại thành một mô hình chung.
 
 ## 3. Ý nghĩa quan trọng nhất: "giữ các biến khác cố định"
 
@@ -77,6 +83,36 @@ $$
 $$
 
 thì $$\beta_1$$ nói về ảnh hưởng của chiều cao giữa những người cùng độ tuổi, còn $$\beta_2$$ nói về ảnh hưởng của tuổi giữa những người cùng chiều cao. Nói ngắn gọn, multiple regression luôn so sánh theo kiểu "**mọi thứ khác như nhau, chỉ thay đổi một biến**".
+
+### 3.1. Một ví dụ bằng con số để đọc hệ số cho đúng
+
+Giả sử ta fit được mô hình lương theo kinh nghiệm và học vấn như sau:
+
+$$
+\text{Lương} = 8 + 0.6 \cdot \text{Kinh nghiệm} + 2.5 \cdot \text{Sau đại học}.
+$$
+
+Ở đây:
+
+- `Kinh nghiệm` được tính bằng số năm,
+- `Sau đại học = 1` nếu có bằng sau đại học, và `= 0` nếu không,
+- lương tính bằng triệu đồng mỗi tháng.
+
+Khi đó:
+
+- nếu hai người có **cùng học vấn**, người nhiều hơn 1 năm kinh nghiệm có mức lương kỳ vọng cao hơn khoảng **0.6 triệu/tháng**,
+- nếu hai người có **cùng số năm kinh nghiệm**, người có bằng sau đại học có mức lương kỳ vọng cao hơn khoảng **2.5 triệu/tháng**.
+
+Ví dụ cụ thể:
+
+- Người A: 5 năm kinh nghiệm, không có bằng sau đại học  
+  $$8 + 0.6 \times 5 + 2.5 \times 0 = 11$$
+- Người B: 6 năm kinh nghiệm, không có bằng sau đại học  
+  $$8 + 0.6 \times 6 + 2.5 \times 0 = 11.6$$
+- Người C: 5 năm kinh nghiệm, có bằng sau đại học  
+  $$8 + 0.6 \times 5 + 2.5 \times 1 = 13.5$$
+
+So sánh A với B cho ta cách đọc hệ số kinh nghiệm. So sánh A với C cho ta cách đọc hệ số học vấn. Đây chính là logic "giữ các biến khác cố định" được viết ra thành con số.
 
 ## 4. Vì sao hệ số trong simple regression và multiple regression có thể khác nhau?
 
@@ -113,6 +149,30 @@ $$
 Diễn giải đúng ở đây là: $$\beta_1$$ cho biết giữa hai căn nhà có cùng số phòng ngủ và cùng khoảng cách tới trung tâm, căn rộng hơn 1 mét vuông thì giá kỳ vọng chênh bao nhiêu; $$\beta_2$$ cho biết giữa hai căn có cùng diện tích và vị trí, thêm 1 phòng ngủ thì giá kỳ vọng đổi thế nào; còn $$\beta_3$$ cho biết giữa hai căn có cùng diện tích và số phòng, căn xa trung tâm hơn 1 km thì giá kỳ vọng chênh bao nhiêu.
 
 Nếu không nói rõ "giữ các biến khác cố định", người đọc rất dễ hiểu nhầm hệ số.
+
+### 5.1. Vì sao cùng thêm 1 phòng ngủ mà không phải lúc nào giá cũng tăng như nhau?
+
+Giả sử mô hình ước lượng được:
+
+$$
+\text{Giá nhà} = 1.2 + 0.035 \cdot \text{Diện tích} + 0.18 \cdot \text{Số phòng ngủ} - 0.25 \cdot \text{Khoảng cách},
+$$
+
+trong đó giá tính bằng **tỷ đồng**, diện tích tính bằng **m²**, còn khoảng cách tới trung tâm tính bằng **km**.
+
+Khi đó, nếu so sánh hai căn nhà có cùng số phòng ngủ và cùng vị trí, căn rộng hơn 10 m² sẽ có giá kỳ vọng cao hơn khoảng:
+
+$$
+0.035 \times 10 = 0.35\ \text{tỷ đồng}.
+$$
+
+Nếu so sánh hai căn có cùng diện tích và cùng vị trí, căn nhiều hơn 1 phòng ngủ sẽ có giá kỳ vọng cao hơn khoảng:
+
+$$
+0.18\ \text{tỷ đồng}.
+$$
+
+Nhưng chú ý: hệ số `0.18` này không có nghĩa là "ở mọi hoàn cảnh, cứ thêm 1 phòng ngủ là giá tăng 180 triệu". Nó chỉ đúng cho phép so sánh giữa những căn **đã được giữ cố định diện tích và vị trí**. Trong dữ liệu thật, một phòng ngủ thêm thường cũng đi kèm nhà rộng hơn, nên nếu quên điều kiện này ta sẽ đọc hệ số sai rất nhanh.
 
 ## 6. Multiple regression giúp gì cho ta?
 

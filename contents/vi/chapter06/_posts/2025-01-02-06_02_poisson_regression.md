@@ -51,7 +51,7 @@ $$
 
 Điểm đặc trưng của phân phối này là giá trị trung bình và phương sai đều bằng $$\lambda$$; tính chất đó thường được gọi là **equidispersion** (đồng phương sai theo nghĩa mean bằng variance).
 
-![Exponential Function Parameters](../../../img/chapter_img/chapter06/exponential_function_parameters.png)
+![Exponential Function Parameters]({{ site.baseurl }}/img/chapter_img/chapter06/exponential_function_parameters.png)
 
 Hình minh họa giúp ta đọc hàm mũ theo cách trực quan hơn. Ở panel bên trái, hàm cơ bản $$\lambda=e^\eta$$ luôn dương và đi qua điểm $$\lambda=1$$ khi $$\eta=0$$, nên có thể xem đó là mức tốc độ nền. Ở panel giữa, thay đổi $$\alpha$$, tức **intercept** (hệ số chặn), chủ yếu làm dịch chuyển toàn bộ đường cong lên hoặc xuống, qua đó thay đổi mức nền của tốc độ. Ở panel bên phải, thay đổi $$\beta$$, tức **slope** (độ dốc), làm tốc độ tăng nhanh hơn hoặc chậm hơn theo $$x$$, vì vậy nó phản ánh sức mạnh của mối quan hệ giữa biến dự báo và cường độ xảy ra sự kiện.
 
@@ -131,6 +131,22 @@ $$
 $$
 
 Khi quay trở về thang gốc, điều đó có nghĩa là tốc độ kỳ vọng được nhân với $$e^\beta$$. Đại lượng $$e^\beta$$ này chính là **rate ratio** (tỷ số tốc độ), và đây là cách diễn giải tự nhiên nhất cho hệ số của Poisson regression.
+
+### 4.2. Một ví dụ cụ thể: số lượt ghé quán tăng ra sao
+
+Giả sử posterior mean của mô hình là:
+
+$$
+\log(\lambda)=2.30 + 0.25x
+$$
+
+trong đó $$x$$ là số chiến dịch quảng cáo đang chạy trong tuần. Khi đó:
+
+- Nếu $$x=0$$ thì $$\lambda=e^{2.30}\approx 10$$, nghĩa là quán kỳ vọng khoảng 10 lượt ghé mỗi ngày.
+- Nếu $$x=1$$ thì $$\lambda=e^{2.55}\approx 12.8$$.
+- Nếu $$x=2$$ thì $$\lambda=e^{2.80}\approx 16.4$$.
+
+Ở đây $$e^{0.25}\approx 1.28$$, nên mỗi khi thêm 1 chiến dịch quảng cáo, số lượt ghé kỳ vọng được nhân khoảng 1.28 lần, tức tăng gần 28%. Điều này không có nghĩa là luôn tăng cố định thêm 0.25 lượt hay luôn tăng đúng 2.8 lượt. Vì tác động của Poisson regression là **nhân** chứ không phải **cộng**, mức tăng tuyệt đối sẽ phụ thuộc vào nền ban đầu: từ 10 lên 12.8 là tăng khoảng 2.8 lượt, còn từ 12.8 lên 16.4 là tăng khoảng 3.6 lượt.
 
 ```python
 # Compute rate ratios

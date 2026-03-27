@@ -24,7 +24,13 @@ Multicollinearity xảy ra khi hai hoặc nhiều predictors (biến dự báo) 
 
 Vấn đề không phải là dữ liệu sai. Vấn đề là các predictors quá giống nhau về mặt thông tin.
 
-![Multicollinearity demo]({{ site.baseurl }}/img/chapter_img/chapter05/multicollinearity_demo.png)
+Ba góc nhìn dưới đây tóm tắt trực giác cơ bản nhất của multicollinearity.
+
+![Tương quan rất cao giữa hai predictors]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_multicollinearity_predictor_correlation.png)
+
+![Cả hai predictors đều liên quan mạnh đến outcome]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_multicollinearity_both_predict_y.png)
+
+![Tóm tắt vì sao multicollinearity làm khó diễn giải]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_multicollinearity_problem_summary.png)
 
 Hình trên cho thấy tình huống rất điển hình: cả hai predictors đều liên quan đến outcome, nhưng chúng cũng quá giống nhau nên mô hình khó tách biệt ai đóng góp bao nhiêu.
 
@@ -48,7 +54,35 @@ Nếu hỏi:
 
 Kết quả thường là credible interval (khoảng khả tín) của các hệ số rộng hơn, dấu của hệ số có thể đổi chiều bất ngờ, và các hệ số trở nên rất nhạy với việc thêm bớt chỉ vài quan sát.
 
-![Multicollinearity effects]({{ site.baseurl }}/img/chapter_img/chapter05/multicollinearity_effects.png)
+So sánh dưới đây cho thấy khác biệt giữa bối cảnh predictor ít tương quan và predictor gần như trùng lặp.
+
+![Trường hợp predictors chỉ tương quan nhẹ]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_low_predictor_correlation.png)
+
+![Trường hợp predictors tương quan rất cao]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_high_predictor_correlation.png)
+
+![Posterior khi predictors ít tương quan]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_low_correlation_posterior.png)
+
+![Posterior khi predictors tương quan cao]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_high_correlation_posterior.png)
+
+### 2.1. Một ví dụ bằng con số: mô hình tổng thể ổn nhưng hệ số riêng lúng túng
+
+Giả sử ta dự đoán giá nhà bằng `diện tích` và `số phòng ngủ`, và hai biến này có tương quan rất cao, chẳng hạn khoảng $$0.92$$.
+
+Nếu fit riêng từng mô hình đơn, ta có thể thấy:
+
+- mô hình chỉ có `diện tích`: thêm 1 m² đi kèm tăng khoảng **35 triệu đồng**,
+- mô hình chỉ có `số phòng ngủ`: thêm 1 phòng đi kèm tăng khoảng **700 triệu đồng**.
+
+Hai kết quả này đều nghe hợp lý vì mỗi biến đang đại diện cho gần như cùng một gói thông tin về "độ lớn của căn nhà".
+
+Nhưng khi đưa cả hai vào cùng một mô hình, kết quả có thể chuyển thành:
+
+- `diện tích`: khoảng **32 triệu đồng/m²** với interval khá ổn,
+- `số phòng ngủ`: khoảng **40 triệu đồng/phòng** nhưng interval rất rộng, chẳng hạn từ **-180** đến **260 triệu**.
+
+Ở đây model chưa chắc dự đoán tệ. Điều nó đang nói là: "tôi vẫn biết nhà lớn hơn thường đắt hơn, nhưng dữ liệu này chưa đủ tách thật rõ giá trị riêng của số phòng ngủ sau khi diện tích đã được giữ cố định".
+
+Đây là kiểu tình huống rất điển hình của multicollinearity: thông tin tổng thể về nhóm biến vẫn hữu ích, nhưng việc chia công cho từng biến trở nên bất ổn.
 
 ## 3. Dấu hiệu nhận biết trong thực tế
 
@@ -81,6 +115,17 @@ Khi đó, câu trả lời thành thật hơn sẽ là:
 > Bộ biến về nền tảng học thuật và chuyên môn liên quan mạnh đến lương, nhưng dữ liệu hiện tại không đủ tách bạch rõ đóng góp riêng của từng thành phần.
 
 Đây là kiểu diễn giải trưởng thành hơn là cố ép mỗi coefficient thành một "sự thật chắc chắn".
+
+### 5.1. Dấu hiệu Bayes rất hay gặp: các posterior kéo thành dải chéo
+
+Nếu bạn vẽ joint posterior của `số năm đi học` và `điểm kỹ năng chuyên môn`, bạn có thể thấy các mẫu không tạo thành một đám mây tròn gọn mà thành một dải chéo đi xuống.
+
+Điều đó thường có nghĩa là:
+
+- khi posterior gán ảnh hưởng lớn hơn cho học vấn, nó sẽ gán ảnh hưởng nhỏ hơn cho kỹ năng,
+- và ngược lại, nhiều tổ hợp khác nhau vẫn giải thích dữ liệu gần như tốt ngang nhau.
+
+Vì vậy, điều nên đọc đầu tiên không phải chỉ là posterior mean của từng hệ số, mà còn là **cấu trúc phụ thuộc giữa các hệ số** trong posterior chung.
 
 ## 6. Vì sao posterior của các hệ số thường dính chặt với nhau?
 

@@ -41,13 +41,13 @@ $$
 
 ### 1.2. Intuitive Understanding
 
-![Bias-Variance Demonstration](../../../img/chapter_img/chapter07/bias_variance_demonstration.png)
+![Bias-Variance Demonstration]({{ site.baseurl }}/img/chapter_img/chapter07/bias_variance_demonstration.png)
 
 Hình minh họa cho trực giác này rất rõ. Với mô hình bậc 1, các đường fit từ nhiều tập dữ liệu khác nhau khá gần nhau, nghĩa là variance thấp, nhưng hầu hết đều lệch xa quy luật thật, nghĩa là bias cao; đây là trạng thái underfitting điển hình. Với mô hình bậc 3, mức độ linh hoạt vừa đủ để bám sát quy luật thật hơn mà chưa dao động quá nhiều giữa các mẫu, nên bias giảm xuống trong khi variance vẫn còn kiểm soát được; đó là vùng cân bằng tốt nhất của trade-off. Với mô hình bậc 10, đường trung bình có thể đã gần quy luật thật hơn, tức bias thấp hơn, nhưng từng mô hình riêng lẻ lại dao động mạnh theo từng mẫu huấn luyện, nghĩa là variance tăng vọt. Vì vậy, việc nhìn 50 training sets khác nhau như 50 phiên bản khác nhau của cùng một bài toán là cách trực quan nhất để hiểu variance: nó đo mức “rung lắc” của dự đoán khi dữ liệu thay đổi.
 
 ## 2. Decomposition: MSE = Bias² + Variance + Noise
 
-![MSE Decomposition](../../../img/chapter_img/chapter07/mse_decomposition.png)
+![MSE Decomposition]({{ site.baseurl }}/img/chapter_img/chapter07/mse_decomposition.png)
 
 Khi nhìn vào decomposition của MSE, ta thấy ngay vì sao việc chọn mô hình không thể dựa trên một tiêu chí đơn lẻ. Ở vùng độ phức tạp thấp, chẳng hạn bậc 1 hoặc 2, thành phần $$\text{Bias}^2$$ còn lớn vì mô hình quá đơn giản để mô tả dữ liệu, dù variance khi đó khá thấp. Khi độ phức tạp tăng lên vùng trung gian, hai thành phần này bắt đầu cân bằng hơn và tổng MSE đạt mức nhỏ nhất; đó là “sweet spot” thực sự của mô hình. Nhưng khi tiếp tục tăng độ phức tạp, bias có thể giảm thêm một chút trong khi variance tăng rất mạnh, làm MSE tăng trở lại. Biểu đồ stacked ở bên phải đặc biệt hữu ích vì nó cho thấy trực quan rằng mục tiêu không phải là tối thiểu hóa riêng bias hay riêng variance, mà là tối thiểu hóa tổng sai số dự báo.
 
@@ -55,7 +55,7 @@ Khi nhìn vào decomposition của MSE, ta thấy ngay vì sao việc chọn mô
 
 Regularization chính là chiếc núm điều khiển trade-off này. Khi regularization yếu, tức $$\lambda$$ nhỏ, mô hình được phép linh hoạt hơn nên bias có xu hướng thấp nhưng variance lại cao. Khi regularization mạnh, tức $$\lambda$$ lớn, mô hình bị ép đơn giản hơn nên variance giảm, nhưng bias lại tăng.
 
-![Regularization Bias-Variance](../../../img/chapter_img/chapter07/regularization_bias_variance.png)
+![Regularization Bias-Variance]({{ site.baseurl }}/img/chapter_img/chapter07/regularization_bias_variance.png)
 
 Ví dụ với polynomial bậc 10 cho thấy điểm này rất rõ. Khi $$\lambda=0.001$$, regularization quá yếu nên mô hình dao động mạnh, biểu hiện ở variance rất lớn và hiện tượng overfitting rõ rệt. Khi tăng dần lên $$0.1$$ rồi $$1$$, variance giảm xuống đáng kể và mô hình bước vào vùng cân bằng tốt hơn. Nếu tiếp tục tăng lên $$10$$ hay $$100$$, mô hình bắt đầu bị bó quá mạnh, các dự đoán trở nên gần như phẳng, variance thấp nhưng bias tăng cao, tức quay lại vùng underfitting. Bài học ở đây là $$\lambda$$ không phải tham số “càng lớn càng an toàn”; nó phải được chọn sao cho bias và variance đạt một mức cân bằng tốt nhất cho mục tiêu dự báo.
 
@@ -130,13 +130,83 @@ plt.tight_layout()
 plt.show()
 ```
 
+## 5. Validation Strategy va Learning Curves trong thuc chien
+
+Bias-variance tradeoff chi tro thanh cong cu ra quyet dinh khi ta do no tren du lieu ngoai mau.
+
+- **Train score** giup kiem soat kha nang hoc tren du lieu da thay.
+- **Validation score** cho biet muc do kha quat hoa de tune do phuc tap/prior scale.
+- **Test score** la bao cao cuoi cung, chi dung mot lan sau khi da khoa lua chon mo hinh.
+
+Mot cach doc nhanh learning curves:
+
+1. Train tot, validation kem va khoang cach lon -> **high variance** (can regularization manh hon hoac them du lieu).
+2. Train va validation deu kem -> **high bias** (can mo hinh linh hoat hon, bo sung features hop ly).
+3. Validation on dinh quanh diem tot nhat khi tang regularization -> day la vung can bang phu hop.
+
+## 6. Applied Case Study (Phan 2): tune complexity bang validation
+
+Tiep noi data setup tu bai 7.1, ta dung ridge closed-form de quet regularization strengths va chon muc can bang bias-variance bang validation RMSE.
+
+```python
+import numpy as np
+
+def ridge_fit(X, y, lam):
+    p = X.shape[1]
+    eye = np.eye(p)
+    return np.linalg.solve(X.T @ X + lam * eye, X.T @ y)
+
+def rmse(y_true, y_pred):
+    return np.sqrt(np.mean((y_true - y_pred) ** 2))
+
+lambdas = np.logspace(-3, 2, 30)
+val_scores = []
+train_scores = []
+coefs = []
+
+for lam in lambdas:
+    beta_hat = ridge_fit(X_train_z, y_train_z, lam)
+    coefs.append(beta_hat)
+    train_scores.append(rmse(y_train_z, X_train_z @ beta_hat))
+    val_scores.append(rmse(y_val_z, X_val_z @ beta_hat))
+
+best_idx = int(np.argmin(val_scores))
+best_lambda = float(lambdas[best_idx])
+best_beta = coefs[best_idx]
+
+test_rmse = rmse(y_test_z, X_test_z @ best_beta)
+
+print(f"Best lambda (validation): {best_lambda:.4f}")
+print(f"Train RMSE (z-scale): {train_scores[best_idx]:.3f}")
+print(f"Validation RMSE (z-scale): {val_scores[best_idx]:.3f}")
+print(f"Test RMSE (z-scale): {test_rmse:.3f}")
+```
+
+![Applied ML Workflow Tradeoffs](../../../img/chapter_img/chapter07/applied_ml_workflow_tradeoffs.png)
+
+Hinh tren tom tat ba quyet dinh chinh trong workflow ap dung: (1) chon regularization bang validation RMSE, (2) kiem tra do lon he so sau shrinkage, va (3) danh gia do on dinh chon bien qua bootstrap frequencies.
+
+**Decision checkpoint 2**:
+- Neu ban chi toi uu train RMSE, ket qua thuong day mo hinh ve vung overfit.
+- Neu ban toi uu validation RMSE va giu test cho buoc cuoi, ban moi co co so danh gia kha quat hoa dang tin cay.
+
+## 7. Tuning checklist: tu tradeoff den hanh dong
+
+Khi can chon do phuc tap mo hinh trong bai toan hoi quy/phan lop:
+
+1. Chon metric phu hop muc tieu kinh doanh/bai toan (khong dung metric cho co).
+2. Dung grid hop ly cho regularization/prior scale thay vi quet qua rong.
+3. Theo doi ca train-validation gap va do on dinh qua folds.
+4. Ket hop performance ngoai mau voi posterior predictive checks de phat hien model misspecification.
+5. Chot mo hinh bang ly do co the giai thich duoc (khong chi "diem so cao nhat").
+
 ## Tóm tắt
 
 Bias-variance tradeoff cho thấy sai số dự báo không thể được hiểu chỉ bằng một thước đo đơn giản về “độ khớp”. **Bias** phản ánh cái giá của việc dùng một mô hình quá đơn giản, còn **variance** phản ánh cái giá của việc dùng một mô hình quá nhạy với dữ liệu huấn luyện. Công thức $$\text{MSE}=\text{Bias}^2+\text{Variance}+\text{Irreducible Error}$$ nhắc ta rằng mô hình tốt là mô hình cân bằng được hai lực đối nghịch này. Regularization là công cụ thực hành để điều chỉnh điểm cân bằng đó, còn trong Bayesian statistics, chính độ mạnh của prior đảm nhiệm vai trò ấy.
 
 Điểm cần nhớ nhất là một mô hình fit training data thật đẹp chưa chắc là một mô hình tốt; mô hình tốt là mô hình khái quát hóa tốt trên dữ liệu mới.
 
-Bài tiếp theo: **Feature Selection**.
+Bai tiep theo: **Feature Selection** (hoan tat case study bang stability selection va uncertainty-aware interpretation).
 
 ## Bài tập
 

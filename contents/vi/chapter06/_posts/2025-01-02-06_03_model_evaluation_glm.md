@@ -137,7 +137,17 @@ Nếu thêm hành động reject với chi phí $$C_R$$, ta chỉ phân lớp kh
 
 Điểm thực hành quan trọng là confusion matrix không nên được trình bày như một bảng đếm trung tính về mặt ngữ cảnh. Một ngưỡng chỉ có ý nghĩa khi gắn với chi phí của từng loại sai lầm, bởi trong nhiều bài toán ứng dụng, false negative có thể nghiêm trọng hơn rất nhiều so với false positive, hoặc ngược lại.
 
-### 1.1.2. Bayes factor như thước đo bằng chứng ở mức mô hình
+### 1.1.2. Một ví dụ cụ thể: threshold 0.5 có thể làm ta bỏ sót ca quan trọng
+
+Giả sử đây là bài toán sàng lọc bệnh hiếm, trong đó bỏ sót một ca bệnh nặng hơn báo động giả khoảng 9 lần. Khi đó:
+
+$$
+\text{threshold tối ưu}=\frac{C_{FP}}{C_{FP}+C_{FN}}=\frac{1}{1+9}=0.1
+$$
+
+Nghĩa là chỉ cần $$P(y=1\mid x)>0.1$$ thì đã nên nghiêng về quyết định "gửi đi kiểm tra thêm". Nếu mô hình trả về ba xác suất $$0.18$$, $$0.32$$ và $$0.65$$ cho ba bệnh nhân, thì cả ba đều nên được xếp vào nhóm cần theo dõi tiếp. Nếu ta giữ threshold 0.5 một cách máy móc, hai người đầu sẽ bị xếp là âm tính dù rủi ro của việc bỏ sót là rất lớn. Ví dụ này cho thấy logistic regression không chỉ là chuyện dự đoán nhãn, mà còn là chuyện dùng posterior probability đúng với chi phí quyết định của bài toán.
+
+### 1.1.3. Bayes factor như thước đo bằng chứng ở mức mô hình
 
 Ngoài metric phân lớp theo nhãn, có thể so sánh bằng chứng giữa hai mô hình/giả thuyết bằng Bayes factor:
 
@@ -202,6 +212,12 @@ print("=" * 70)
 ### 1.3. Calibration Plot
 
 **Calibration** (hiệu chỉnh xác suất) trả lời một câu hỏi khác với ROC: khi mô hình nói xác suất là 0.7, liệu trong thực tế khoảng 70% trường hợp như vậy có thật sự xảy ra hay không. Một mô hình có thể phân biệt lớp khá tốt nhưng vẫn hiệu chỉnh kém, nghĩa là các xác suất mà nó báo cáo quá lạc quan hoặc quá dè dặt. Vì vậy, calibration plot giúp ta đánh giá chất lượng của chính các xác suất dự báo, chứ không chỉ chất lượng của quyết định phân lớp cuối cùng.
+
+### 1.3.1. Một ví dụ cụ thể: AUC tốt nhưng xác suất vẫn lệch
+
+Hãy tưởng tượng mô hình dự đoán cho 10 bệnh nhân với xác suất quanh mức $$0.8$$, nhưng cuối cùng chỉ có 5 người thật sự dương tính. Khi đó mô hình vẫn có thể có ROC/AUC khá ổn nếu 5 người mắc bệnh nhận xác suất cao hơn phần lớn người không mắc bệnh. Tuy nhiên, về calibration thì mô hình đang quá tự tin: nói "80%" nhưng thực tế chỉ xảy ra khoảng "50%".
+
+Tương tự, nếu một nhóm khác được dự đoán quanh mức $$0.2$$ nhưng thực tế có đến $$0.35$$ số ca xảy ra, mô hình lại đang đánh giá thấp rủi ro. Điểm cốt lõi là ROC trả lời câu hỏi "mô hình có xếp hạng đúng người rủi ro cao hơn không?", còn calibration trả lời câu hỏi "con số xác suất mà mô hình đưa ra có đáng tin như một xác suất thật hay không?".
 
 ```python
 # Calibration plot
@@ -305,6 +321,12 @@ else:
     print("  → Poisson assumption reasonable")
 print("=" * 70)
 ```
+
+### 2.1.1. Một ví dụ cụ thể: mean khớp nhưng variance vẫn báo động
+
+Giả sử số cuộc gọi hỗ trợ trong 7 ngày liên tiếp là: $$2, 3, 4, 2, 3, 4, 18$$. Trung bình của chuỗi này vào khoảng $$5.1$$, nên một mô hình Poisson với $$\lambda$$ quanh mức 5 có thể nhìn qua tưởng là "không tệ". Nhưng trực giác đã cho thấy có điều gì đó bất thường: sáu ngày đầu khá thấp, còn một ngày vọt lên 18.
+
+Trong tình huống như vậy, mean một mình không đủ để kết luận mô hình tốt. Nếu posterior predictive distribution tạo ra các bộ dữ liệu có mean gần 5 nhưng variance và giá trị cực đại nhỏ hơn dữ liệu thật rất nhiều, thì deviance, residual plots, và PPC đều sẽ cùng chỉ về một hướng: mô hình đang quá hẹp so với dữ liệu. Đây chính là dấu hiệu rất điển hình của overdispersion hoặc của một nguồn biến thiên chưa được mô hình hóa.
 
 ### 2.2. Residual Plots
 

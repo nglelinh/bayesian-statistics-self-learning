@@ -143,7 +143,7 @@ Vì log là phép biến đổi đơn điệu, việc tối đa hóa posterior t
 
 Nếu $$P(x\mid c_i)$$ là Gaussian đa biến, thì hình dạng của biên quyết định phụ thuộc vào cấu trúc covariance. Khi các lớp dùng **covariance chung** với $$\Sigma_i=\Sigma$$, biên quyết định sẽ là tuyến tính, gần với trực giác của LDA. Ngược lại, khi mỗi lớp có covariance riêng, tức $$\Sigma_i$$ khác nhau, biên quyết định thường trở thành bậc hai, gần với trực giác của QDA. Cách nhìn này đặc biệt hữu ích vì nó nối quy tắc posterior ở mức xác suất với hình học của biên phân lớp trong không gian đặc trưng.
 
-![Logistic Function Parameters](../../../img/chapter_img/chapter06/logistic_function_parameters.png)
+![Logistic Function Parameters]({{ site.baseurl }}/img/chapter_img/chapter06/logistic_function_parameters.png)
 
 Hình này giúp ta đọc logistic function một cách trực quan hơn. Ở panel bên trái, hàm $$p=\frac{1}{1+e^{-\eta}}$$ có dạng chữ S quen thuộc, đi qua điểm $$p=0.5$$ khi $$\eta=0$$ và tiệm cận dần về 0 và 1 ở hai đầu. Ở panel giữa, thay đổi $$\alpha$$, tức **intercept** (hệ số chặn), chủ yếu làm đường cong dịch sang trái hoặc sang phải, nên có thể hiểu như việc thay đổi mức xác suất nền. Ở panel bên phải, thay đổi $$\beta$$, tức **slope** (độ dốc), làm đường cong thoải hơn hoặc dốc hơn, qua đó phản ánh độ mạnh của mối liên hệ giữa biến dự báo và xác suất của biến kết quả.
 
@@ -212,7 +212,7 @@ plt.show()
 
 Để diễn giải logistic regression đúng cách, ta cần phân biệt **probability** (xác suất) với **odds**. Xác suất được viết là $$p=P(y=1)$$, còn odds được định nghĩa bởi $$\text{odds}=\frac{p}{1-p}$$. Khi $$p=0.5$$ thì odds bằng 1, nghĩa là hai khả năng cân bằng nhau; khi $$p=0.8$$ thì odds bằng 4, tức khả năng xảy ra biến cố lớn gấp bốn lần khả năng không xảy ra; còn khi $$p=0.2$$ thì odds chỉ bằng 0.25, nghĩa là khả năng không xảy ra biến cố cao hơn nhiều.
 
-![Odds vs Probability](../../../img/chapter_img/chapter06/odds_probability_relationship.png)
+![Odds vs Probability]({{ site.baseurl }}/img/chapter_img/chapter06/odds_probability_relationship.png)
 
 Hình minh họa cho thấy mối liên hệ giữa probability, odds, và **log-odds** (log của odds). Ở panel bên trái, khi probability tăng từ 0.2 lên 0.5 rồi 0.8 thì odds thay đổi theo cách phi tuyến từ 0.25 lên 1 rồi 4. Điều này nhắc ta rằng odds nhỏ hơn 1 tương ứng với biến cố ít có khả năng xảy ra hơn, còn odds lớn hơn 1 tương ứng với biến cố có khả năng xảy ra hơn. Ở panel bên phải, khi lấy log của odds, điểm $$p=0.5$$ trở thành 0, các xác suất nhỏ hơn 0.5 cho log-odds âm, và các xác suất lớn hơn 0.5 cho log-odds dương. Chính trên thang log-odds này mà logistic regression trở lại dạng tuyến tính quen thuộc: $$\text{logit}(p)=\alpha+\beta x$$.
 
@@ -231,6 +231,22 @@ $$
 $$
 
 Nếu quay trở lại thang odds, ta thấy mỗi lần $$x$$ tăng 1 đơn vị thì odds sẽ được nhân với $$e^\beta$$. Đây chính là **odds ratio** (tỷ số odds), và cũng là cách diễn giải thực tế nhất cho hệ số của logistic regression.
+
+### 4.3. Một ví dụ cụ thể: từ log-odds sang xác suất dự đoán
+
+Giả sử posterior mean của mô hình cho ta phương trình:
+
+$$
+\log\left(\frac{p}{1-p}\right) = -0.4 + 1.1x
+$$
+
+trong đó $$x$$ là điểm đánh giá đã được standardize. Ta có thể đọc mô hình theo từng bước:
+
+- Nếu $$x=0$$ thì log-odds bằng $$-0.4$$, suy ra odds là $$e^{-0.4}\approx 0.67$$, nên xác suất là $$p=\frac{0.67}{1+0.67}\approx 0.40$$.
+- Nếu $$x=1$$ thì log-odds bằng $$0.7$$, suy ra odds là $$e^{0.7}\approx 2.01$$, nên xác suất tăng lên khoảng $$0.67$$.
+- Nếu $$x=2$$ thì log-odds bằng $$1.8$$, suy ra odds là $$e^{1.8}\approx 6.05$$, nên xác suất lên khoảng $$0.86$$.
+
+Điểm rất hay bị đọc nhầm là hệ số $$\beta=1.1$$ không có nghĩa là xác suất tăng cố định 1.1 đơn vị hay tăng 110 điểm phần trăm. Ý đúng là: mỗi khi $$x$$ tăng thêm 1 đơn vị thì **odds** được nhân với $$e^{1.1}\approx 3$$. Vì logistic regression là tuyến tính trên thang log-odds nhưng phi tuyến trên thang xác suất, nên cùng tăng 1 đơn vị của $$x$$ có thể làm xác suất nhảy khác nhau tùy điểm xuất phát: từ $$0.40$$ lên $$0.67$$ là tăng khoảng 27 điểm phần trăm, còn từ $$0.67$$ lên $$0.86$$ là tăng khoảng 19 điểm phần trăm.
 
 ```python
 # Compute odds ratios

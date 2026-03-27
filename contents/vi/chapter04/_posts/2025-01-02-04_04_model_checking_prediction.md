@@ -56,6 +56,18 @@ Nếu dữ liệu giả có hình dạng, độ phân tán, và các pattern tư
 
 ![Tóm tắt workflow của posterior predictive check]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_summary.png)
 
+### 3.1. Một ví dụ cụ thể: slope trông đẹp nhưng model vẫn sai
+
+Giả sử bạn mô hình hóa mối quan hệ giữa số giờ học và điểm thi bằng một đường thẳng. Posterior của slope ra rất đẹp: dương rõ rệt, interval hẹp, và xác suất $$\beta > 0$$ gần như bằng 1.
+
+Nếu dừng ở đây, nhiều người sẽ kết luận model tốt. Nhưng hãy tưởng tượng quan hệ thật của dữ liệu là: tăng giờ học giúp điểm tăng nhanh ở giai đoạn đầu, sau đó hiệu ứng dần bão hòa khi học quá nhiều. Khi đó một đường thẳng sẽ thường tạo ra ba dấu hiệu cảnh báo:
+
+- PPC sinh ra quá nhiều điểm dự đoán cao một cách phi thực tế ở vùng học rất nhiều giờ,
+- residual ở vùng giữa có xu hướng âm còn residual ở hai đầu có xu hướng dương, tạo pattern cong,
+- mean prediction nhìn có vẻ ổn tổng thể nhưng sai có hệ thống ở những vùng $$x$$ quan trọng.
+
+Ý nghĩa của ví dụ này là: posterior của tham số có thể "đẹp" vì model đã fit rất chắc vào một cấu trúc sai. PPC và residual analysis tồn tại chính để lật mặt kiểu sai lệch đó.
+
 ## 4. PPC nên nhìn những gì?
 
 Không có một kiểm tra duy nhất phù hợp cho mọi bài toán. Bạn nên nhìn nhiều góc:
@@ -151,6 +163,19 @@ Ngay cả nếu biết tham số hoàn hảo, quan sát mới vẫn dao động 
 Prediction interval vì vậy luôn rộng hơn uncertainty chỉ của mean response (giá trị trung bình phản hồi).
 
 Đây là điều rất quan trọng khi báo cáo dự báo cho người dùng cuối.
+
+### 7.3. Một ví dụ ngắn để tránh nhầm hai loại khoảng
+
+Giả sử với học sinh học 6 giờ, mô hình cho:
+
+- khoảng hậu nghiệm cho mean score là từ 7.4 đến 8.2,
+- khoảng dự đoán cho một học sinh mới là từ 6.0 đến 9.3.
+
+Khoảng thứ nhất trả lời câu hỏi: "nếu lấy rất nhiều học sinh đều học 6 giờ, điểm trung bình của họ nằm ở đâu?"
+
+Khoảng thứ hai trả lời câu hỏi: "một học sinh cụ thể học 6 giờ có thể đạt điểm trong vùng nào?"
+
+Nếu bạn vô tình dùng khoảng thứ nhất để giao tiếp về một cá nhân cụ thể, bạn sẽ tạo cảm giác chắc chắn quá mức. Đây là lỗi diễn giải rất phổ biến trong prediction.
 
 ## 8. Model checking không phải để “bắt model hoàn hảo”
 

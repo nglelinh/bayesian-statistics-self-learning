@@ -53,6 +53,34 @@ Ví dụ, cm so với m, hoặc kg so với pound, có thể làm prior “cùng
 
 Khi các biến cùng scale tương đối giống nhau, posterior thường thân thiện hơn với HMC/NUTS, tức các thuật toán lấy mẫu Hamiltonian thường dùng trong Bayes hiện đại.
 
+### 2.1. Một ví dụ cụ thể: cùng một prior trước và sau standardize
+
+Giả sử $$x$$ là chiều cao tính bằng cm, nằm chủ yếu trong khoảng 150 đến 190, còn $$y$$ là cân nặng tính bằng kg, nằm khoảng 45 đến 90.
+
+Nếu bạn chưa standardize mà đặt luôn:
+
+$$
+\alpha \sim \mathcal{N}(0,1), \qquad \beta \sim \mathcal{N}(0,1),
+$$
+
+thì hai prior này nghe có vẻ "đẹp" nhưng thực ra lại khó chấp nhận về mặt ngữ nghĩa.
+
+- Prior $$\alpha \sim \mathcal{N}(0,1)$$ đang ngầm nói rằng khi $$x=0$$ cm, cân nặng trung bình sẽ quanh 0 kg, điều này rõ ràng vô nghĩa trong bối cảnh chiều cao - cân nặng.
+- Prior $$\beta \sim \mathcal{N}(0,1)$$ có khoảng 95% xấp xỉ từ $$-2$$ đến $$2$$ kg/cm. Điều đó có nghĩa chỉ cần chênh 20 cm chiều cao, mô hình đã sẵn sàng chấp nhận chênh lệch trung bình từ $$-40$$ đến $$40$$ kg, thường là quá rộng cho nhiều bài toán thực tế.
+
+Nhưng nếu bạn standardize cả $$x$$ lẫn $$y$$ thành $$x_{std}, y_{std}$$ rồi mới đặt:
+
+$$
+\alpha \sim \mathcal{N}(0,1), \qquad \beta \sim \mathcal{N}(0,1),
+$$
+
+thì ý nghĩa đổi hẳn:
+
+- $$\alpha$$ quanh 0 giờ có nghĩa là giá trị trung bình của $$y$$ tại mức $$x$$ trung tâm cũng nằm quanh mức trung bình của dữ liệu, rất tự nhiên.
+- $$\beta$$ quanh 0 với độ lệch chuẩn 1 giờ có nghĩa là khi $$x$$ tăng 1 độ lệch chuẩn, $$y$$ thường thay đổi trong vùng cỡ vài độ lệch chuẩn, tức vẫn đủ linh hoạt nhưng không còn "bay khỏi mặt đất".
+
+Đây là lý do standardization không chỉ là mẹo kỹ thuật. Nó biến prior từ chỗ khó hiểu thành một phát biểu có thể đọc được bằng trực giác.
+
 ## 3. Prior cho intercept $$\alpha$$
 
 Sau khi chuẩn hóa, intercept thường nên nằm quanh 0 với độ bất định vừa phải. Vì vậy một prior kiểu:
@@ -142,6 +170,38 @@ Ví dụ, nếu prior của slope cho ra các đường dốc phi lý, hoặc si
 Giả sử bạn mô hình hóa $$x$$ là chi phí quảng cáo còn $$y$$ là doanh thu. Nếu prior cho slope quá rộng, mô hình có thể ngầm chấp nhận rằng tăng rất ít ngân sách nhưng doanh thu tăng bùng nổ một cách vô lý, hoặc ngược lại, chỉ tăng quảng cáo một chút mà doanh thu lại sụp xuống rất mạnh.
 
 Trước khi nhìn dữ liệu, bạn đã biết nhiều kịch bản trong số đó là phi thực tế. Prior cần phản ánh điều đó.
+
+### 8.1. Prior predictive đọc bằng con số ra sao?
+
+Giả sử bạn đã standardize dữ liệu quảng cáo và doanh thu, rồi đang phân vân giữa hai prior cho slope:
+
+$$
+\beta \sim \mathcal{N}(0,3)
+$$
+
+hoặc
+
+$$
+\beta \sim \mathcal{N}(0,0.5).
+$$
+
+Với prior đầu tiên, khoảng 95% cho $$\beta$$ xấp xỉ là $$[-6,6]$$. Nếu một chiến dịch mới nằm ở mức $$x_{std}=2$$, tức cao hơn trung bình 2 độ lệch chuẩn, thì riêng phần trung bình dự đoán:
+
+$$
+\mu = \alpha + \beta x_{std}
+$$
+
+đã có thể bị kéo ra vùng cỡ $$-12$$ đến $$12$$ độ lệch chuẩn của $$y$$, còn chưa tính thêm noise. Với nhiều bài toán kinh doanh, đây là dấu hiệu quá rộng đến mức phi thực tế.
+
+Ngược lại, với
+
+$$
+\beta \sim \mathcal{N}(0,0.5),
+$$
+
+khoảng 95% cho slope chỉ còn xấp xỉ $$[-1,1]$$. Ở cùng mức $$x_{std}=2$$, mô hình chủ yếu cho phép giá trị trung bình dự đoán nằm trong vùng cỡ $$-2$$ đến $$2$$ độ lệch chuẩn quanh trung tâm. Đó vẫn là một không gian đủ mở, nhưng đã gần với trực giác thực tế hơn nhiều.
+
+Ví dụ này cho thấy vì sao prior predictive check mạnh hơn việc chỉ nhìn đồ thị prior trên tham số: nó ép ta đọc prior bằng ngôn ngữ của dữ liệu mà model sẽ sinh ra.
 
 ## 9. Prior sensitivity analysis (phân tích độ nhạy của prior)
 

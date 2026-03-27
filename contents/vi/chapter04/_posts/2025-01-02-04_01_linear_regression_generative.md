@@ -217,7 +217,84 @@ Regression Bayes không chỉ cho một con số duy nhất. Nó cho một giá 
 
 Đây là một điểm rất mạnh: ta không chỉ dự đoán, mà còn biết nên tự tin đến đâu vào dự đoán đó.
 
-## 8.1. Cầu nối từ hồi quy 1 biến sang nhiều biến (dạng ma trận)
+### 8.1. Một ví dụ cụ thể: dự đoán cân nặng ở 175 cm
+
+Giả sử sau khi fit mô hình trên dữ liệu chiều cao - cân nặng, posterior của ta cho thấy các giá trị điển hình như sau:
+
+$$
+\alpha \approx -55,\qquad \beta \approx 0.75,\qquad \sigma \approx 6.
+$$
+
+Ta có thể hiểu ba con số này theo ngôn ngữ đời thường như sau:
+
+- intercept khoảng $$-55$$ giúp xác định vị trí của đường trung bình,
+- slope khoảng $$0.75$$ nghĩa là cao thêm 1 cm thì cân nặng trung bình tăng khoảng 0.75 kg,
+- noise khoảng $$6$$ kg nghĩa là ngay cả ở cùng một chiều cao, cân nặng thực tế của từng người vẫn còn dao động khá đáng kể quanh mức trung bình.
+
+Với một người mới có chiều cao $$x_{\text{new}}=175$$, trung bình dự đoán của mô hình là:
+
+$$
+\mu_{\text{new}} = \alpha + \beta x_{\text{new}}
+\approx -55 + 0.75 \times 175 = 76.25.
+$$
+
+Nếu chỉ nhìn vào một bộ tham số đại diện, ta có thể nói: "với người cao 175 cm, cân nặng trung bình hợp lý theo mô hình là khoảng 76.25 kg". Nhưng Bayesian regression không dừng ở đó, vì nó không giả vờ rằng $$\alpha$$ và $$\beta$$ đã được biết chính xác.
+
+Hãy tưởng tượng posterior cho ta một vài mẫu tham số như sau:
+
+| Mẫu posterior | $$\alpha$$ | $$\beta$$ | $$\sigma$$ | $$\mu_{\text{new}} = \alpha + \beta \cdot 175$$ |
+|---|---:|---:|---:|---:|
+| 1 | -52 | 0.73 | 5.8 | 75.75 |
+| 2 | -58 | 0.77 | 6.1 | 76.75 |
+| 3 | -50 | 0.72 | 5.5 | 76.00 |
+| 4 | -57 | 0.76 | 6.4 | 76.00 |
+
+Bảng này cho thấy một ý rất quan trọng: ngay cả trước khi tính đến noise cá thể, chỉ riêng việc chưa chắc về intercept và slope cũng đã tạo ra một **phân phối của giá trị trung bình dự đoán**. Nói cách khác, mô hình không nói "chắc chắn là 76.25 kg", mà nói "vùng hợp lý cho giá trị trung bình ở chiều cao 175 cm nằm quanh khoảng 75 đến 77 kg".
+
+Đây là lúc cần tách rất rõ hai câu hỏi khác nhau:
+
+**Câu hỏi 1.** Trung bình cân nặng của những người cao 175 cm là bao nhiêu?
+
+Câu hỏi này nhắm vào $$\mu_{\text{new}}$$. Nếu lấy rất nhiều mẫu từ posterior rồi tính $$\mu_{\text{new}}$$ cho từng mẫu, ta sẽ có một posterior distribution cho giá trị trung bình. Giả sử sau bước này ta thu được khoảng hậu nghiệm 89% xấp xỉ:
+
+$$
+\mu_{\text{new}} \in [74,\ 78.5]\ \text{kg}.
+$$
+
+Khoảng này phản ánh **bất định tham số**: ta chưa biết hoàn toàn chính xác đường hồi quy nằm ở đâu.
+
+**Câu hỏi 2.** Một cá nhân cụ thể cao 175 cm sẽ nặng bao nhiêu?
+
+Câu hỏi này khó hơn, vì ngoài bất định tham số còn có thêm dao động cá thể quanh đường trung bình. Khi đó ta phải dùng posterior predictive distribution:
+
+$$
+y_{\text{new}} \sim \mathcal{N}(\mu_{\text{new}}, \sigma).
+$$
+
+Nếu tiếp tục lan truyền cả bất định của $$\alpha,\beta,\sigma$$ lẫn noise mới này, ta có thể nhận được một khoảng dự đoán 89% rộng hơn, chẳng hạn:
+
+$$
+y_{\text{new}} \in [66,\ 87]\ \text{kg}.
+$$
+
+Khoảng này rộng hơn nhiều so với khoảng cho $$\mu_{\text{new}}$$ vì nó trả lời cho **một người cụ thể**, không phải cho trung bình của cả nhóm người cùng chiều cao.
+
+Đó chính là điểm mà nhiều người mới học regression hay bỏ qua:
+
+- khoảng cho $$\mu_{\text{new}}$$ trả lời về xu hướng trung bình,
+- khoảng cho $$y_{\text{new}}$$ trả lời về một quan sát mới thực sự,
+- khoảng thứ hai luôn rộng hơn vì nó giữ lại cả biến thiên cá thể.
+
+Nhìn theo tinh thần generative, quy trình dự đoán Bayes thực chất là:
+
+1. Lấy một mẫu từ posterior của $$\alpha,\beta,\sigma$$.
+2. Tính $$\mu_{\text{new}}^{(s)} = \alpha^{(s)} + \beta^{(s)} x_{\text{new}}$$.
+3. Sinh một giá trị mới $$y_{\text{new}}^{(s)} \sim \mathcal{N}(\mu_{\text{new}}^{(s)}, \sigma^{(s)})$$.
+4. Lặp lại rất nhiều lần để tạo posterior predictive distribution.
+
+Vì vậy, regression Bayes cho dự đoán không phải bằng cách "cắm số vào một đường thẳng duy nhất", mà bằng cách tạo ra cả một phân phối của những giá trị mới hợp lý sau khi đã nhìn dữ liệu.
+
+### 8.2. Cầu nối từ hồi quy 1 biến sang nhiều biến (dạng ma trận)
 
 Với nhiều biến giải thích, ta viết:
 

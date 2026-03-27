@@ -38,6 +38,49 @@ Trong PyMC, bạn chỉ đang viết lại câu chuyện đó bằng code.
 
 Điều quan trọng là code nên phản ánh mô hình, chứ không phải mô hình bị bóp méo chỉ để khớp với một API cụ thể.
 
+### 2.1. Một ví dụ PyMC tối thiểu nhưng chạy được
+
+Giả sử bạn có một dataset rất nhỏ về chiều cao và cân nặng:
+
+```python
+import numpy as np
+import pymc as pm
+import arviz as az
+
+height = np.array([150, 155, 160, 165, 170, 175, 180, 185], dtype=float)
+weight = np.array([50, 54, 57, 62, 66, 70, 76, 82], dtype=float)
+
+x_z = (height - height.mean()) / height.std()
+y_z = (weight - weight.mean()) / weight.std()
+
+with pm.Model() as reg_model:
+    alpha = pm.Normal("alpha", 0, 1)
+    beta = pm.Normal("beta", 0, 1)
+    sigma = pm.HalfNormal("sigma", 1)
+
+    mu = alpha + beta * x_z
+    y_obs = pm.Normal("y_obs", mu=mu, sigma=sigma, observed=y_z)
+
+    idata = pm.sample(
+        draws=2000,
+        tune=2000,
+        chains=4,
+        target_accept=0.9,
+        random_seed=42,
+    )
+
+az.summary(idata, var_names=["alpha", "beta", "sigma"])
+```
+
+Điều đáng chú ý là từng khối code đều ánh xạ thẳng sang câu chuyện thống kê:
+
+- `alpha`, `beta`, `sigma` là ba prior cho ba tham số cốt lõi,
+- `mu = alpha + beta * x_z` là đường trung bình của hồi quy,
+- `y_obs = pm.Normal(...)` là likelihood, tức cách dữ liệu được sinh ra quanh đường trung bình đó,
+- `pm.sample(...)` là bước lấy mẫu từ posterior thay vì tìm một ước lượng điểm duy nhất.
+
+Nếu bạn còn giữ được mối liên hệ một-một giữa mô hình trên giấy và đoạn code này, bạn đang đi đúng hướng.
+
 ## 3. Vì sao nên chuẩn hóa dữ liệu trước khi fit?
 
 Regression Bayes thường chạy ổn hơn khi biến được scale tốt.
@@ -97,6 +140,43 @@ Khoảng này không cắt 0, nên bằng chứng hậu nghiệm ủng hộ quan
 Regression Bayes không chỉ để biết slope là bao nhiêu. Nó còn để dự đoán. Chẳng hạn, với một giá trị $$x$$ mới, ta muốn biết cân nặng hoặc điểm thi dự đoán sẽ ở đâu, và khoảng bất định đi kèm với dự đoán đó rộng đến mức nào.
 
 Đây là nơi PyMC rất tiện, vì sau khi đã có posterior draws (các mẫu rút ra từ posterior), ta có thể chuyển thẳng sang posterior predictive (dự báo hậu nghiệm) tương đối tự nhiên.
+
+### 6.1. Một ví dụ cụ thể: dự đoán cho người cao 175 cm
+
+Với model ở trên, giả sử bạn muốn dự đoán cho một người cao 175 cm. Ta có thể lấy trực tiếp posterior draws rồi lan truyền chúng sang dự đoán:
+
+```python
+posterior = az.extract(idata, group="posterior")
+
+alpha_draws = posterior["alpha"].values
+beta_draws = posterior["beta"].values
+sigma_draws = posterior["sigma"].values
+
+x_new_z = (175 - height.mean()) / height.std()
+
+mu_new_z = alpha_draws + beta_draws * x_new_z
+y_new_z = np.random.default_rng(42).normal(mu_new_z, sigma_draws)
+
+mu_new = mu_new_z * weight.std() + weight.mean()
+y_new = y_new_z * weight.std() + weight.mean()
+```
+
+Hai đối tượng ở đây phục vụ hai câu hỏi khác nhau:
+
+- `mu_new` là phân phối cho **giá trị trung bình dự đoán**, tức trung bình cân nặng của nhóm người cao 175 cm theo mô hình.
+- `y_new` là phân phối cho **một quan sát mới**, tức cân nặng của một cá nhân cụ thể cao 175 cm.
+
+Giả sử sau khi tóm tắt các mẫu này, bạn thấy:
+
+- trung bình của `mu_new` vào khoảng 71 kg với khoảng 89% khoảng từ 69 đến 73 kg,
+- còn `y_new` có khoảng dự đoán 89% rộng hơn, chẳng hạn từ 63 đến 79 kg.
+
+Lúc đó bạn nên đọc kết quả theo đúng ngôn ngữ Bayes:
+
+- mô hình khá chắc về **xu hướng trung bình** ở vùng chiều cao 175 cm,
+- nhưng vẫn thành thật rằng **một cá nhân mới** có thể lệch khỏi trung bình khá nhiều.
+
+Đây chính là nơi posterior inference chuyển thành prediction một cách rất tự nhiên: ta không đổi mô hình, chỉ tiếp tục kể câu chuyện sinh dữ liệu thêm một bước nữa.
 
 ## 7. Một workflow tối thiểu lành mạnh khi dùng PyMC cho regression
 
