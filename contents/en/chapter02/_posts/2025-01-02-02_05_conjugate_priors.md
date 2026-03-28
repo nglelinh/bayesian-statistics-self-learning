@@ -121,6 +121,15 @@ If the prior is Beta$$(2,2)$$ and the data are 31 passes out of 40, the posterio
 
 The intuition is simple but important: the prior acts like a small amount of pseudo-data, the real observations are added on top of it, and the posterior is the combined result of both sources of information.
 
+### 3.2.1. A very direct sequential update example
+
+We can also see the beauty of conjugacy through step-by-step updating. Start with the prior Beta$$(2,2)$$:
+
+- After batch 1, if we observe 3 passes out of 4 students, the posterior is Beta$$(5,3)$$.
+- After batch 2, if we then observe 28 more passes out of 36 students, the new posterior is Beta$$(33,11)$$.
+
+This is exactly the same result we would get by updating once with the full dataset 31/40. That is why conjugate priors are so convenient: we do not need to solve the whole problem again from scratch; we can just keep adding new information into the distribution parameters.
+
 ![Beta-Binomial conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/beta_binomial_conjugacy_visual.png)
 
 ### 3.3. Typical applications

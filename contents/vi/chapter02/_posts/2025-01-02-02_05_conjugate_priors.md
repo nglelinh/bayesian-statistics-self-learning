@@ -133,6 +133,15 @@ Nếu prior là Beta$$(2,2)$$ và dữ liệu là 31/40, posterior thành Beta$$
 
 Đọc bằng lời, prior giống như đang mang sẵn một lượng thông tin ban đầu có thể được hiểu như vài “lần thành công giả tưởng” và vài “lần thất bại giả tưởng”; khi dữ liệu thật xuất hiện, ta chỉ việc cộng thông tin mới đó vào, và posterior là kết quả tổng hợp giữa niềm tin ban đầu với bằng chứng quan sát được.
 
+### 3.2.1. Một ví dụ cập nhật tuần tự rất trực tiếp
+
+Ta cũng có thể thấy vẻ đẹp của conjugacy qua cập nhật từng đợt. Bắt đầu với prior Beta$$(2,2)$$:
+
+- Sau đợt 1, nếu thấy 3 sinh viên qua môn trên 4 em, posterior là Beta$$(5,3)$$.
+- Sau đợt 2, nếu quan sát thêm 28 sinh viên qua môn trên 36 em, posterior mới là Beta$$(33,11)$$.
+
+Kết quả cuối cùng đúng bằng việc cập nhật một lần với toàn bộ dữ liệu 31/40. Đây là lý do prior liên hợp rất thuận tiện: ta không cần giải lại bài toán từ đầu, mà chỉ việc cộng thêm thông tin mới vào các tham số của phân phối.
+
 ![Minh họa Beta-Binomial conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/beta_binomial_conjugacy_visual.png)
 
 ### 3.3. Ví dụ đời thường khác

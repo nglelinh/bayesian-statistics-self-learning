@@ -60,6 +60,28 @@ Evaluate that expression at each grid point, multiply by the prior, and normaliz
 
 The main lesson is not the exact numbers themselves, but the workflow: we score candidate values, compare them, and then normalize the resulting weights into a proper posterior approximation.
 
+### 2.1. Reading the grid posterior numerically
+
+The sum of the three nonzero weights above is approximately:
+
+$$
+0.000103 + 0.001953 + 0.002781 = 0.004837.
+$$
+
+After normalization, the discrete posterior on this grid is approximately:
+
+- $$P(\theta=0.25 \mid D) \approx 0.021$$
+- $$P(\theta=0.50 \mid D) \approx 0.404$$
+- $$P(\theta=0.75 \mid D) \approx 0.575$$
+
+So even on a very coarse grid, we can already answer questions like:
+
+$$
+P(\theta \ge 0.5 \mid D) \approx 0.404 + 0.575 = 0.979.
+$$
+
+This is one of the nicest things about grid approximation: it turns the posterior into concrete probabilities that we can add, compare, and interpret directly.
+
 ## 3. The grid algorithm
 
 ![Grid approximation algorithm steps]({{ site.baseurl }}/img/chapter_img/chapter02/grid_algorithm_steps.png)

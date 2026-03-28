@@ -56,6 +56,16 @@ $$
 
 where $$w_k$$ = weight for model $$k$$.
 
+### 2.1. Một ví dụ cụ thể: selection và averaging cho cùng một điểm dự báo
+
+Giả sử tại một giá trị predictor mới, mô hình Quadratic dự đoán $$52$$, còn mô hình Cubic dự đoán $$56$$. Nếu `az.compare` cho stacking weights lần lượt là $$0.55$$ và $$0.45$$, thì dự báo model averaging sẽ là:
+
+$$
+0.55 \times 52 + 0.45 \times 56 = 53.8.
+$$
+
+Nếu ta ép phải chọn một mô hình duy nhất, kết quả báo cáo sẽ là 52 hoặc 56 tùy mô hình thắng. Còn khi trung bình theo trọng số, ta thừa nhận rằng bất định về lựa chọn mô hình vẫn còn đáng kể. Chính vì vậy, model averaging thường cho dự báo ổn định hơn khi nhiều mô hình có predictive accuracy rất sát nhau.
+
 ```python
 # Model averaging with stacking weights
 weights = comp['weight'].values

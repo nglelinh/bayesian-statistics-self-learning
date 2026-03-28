@@ -76,6 +76,28 @@ Kết quả cho thấy vùng quanh $$0.75$$ là nơi được dữ liệu ủng 
 
 Ví dụ này cực kỳ quan trọng vì nó cho ta thấy Bayes không bắt buộc phải bắt đầu bằng tích phân phức tạp. Ta có thể hiểu nó như một quy trình chấm điểm và chuẩn hóa.
 
+### 2.1. Một cách đọc posterior trên grid bằng số
+
+Tổng của ba trọng số khác 0 ở trên xấp xỉ:
+
+$$
+0.000103 + 0.001953 + 0.002781 = 0.004837.
+$$
+
+Sau khi chuẩn hóa, posterior rời rạc trên grid này xấp xỉ:
+
+- $$P(\theta=0.25 \mid D) \approx 0.021$$
+- $$P(\theta=0.50 \mid D) \approx 0.404$$
+- $$P(\theta=0.75 \mid D) \approx 0.575$$
+
+Từ đó, ngay trên một grid rất thô, ta đã có thể trả lời câu hỏi như:
+
+$$
+P(\theta \ge 0.5 \mid D) \approx 0.404 + 0.575 = 0.979.
+$$
+
+Đây là điểm rất hay của grid approximation: nó biến posterior thành các xác suất cụ thể mà ta có thể cộng, so sánh, và diễn giải trực tiếp.
+
 ## 3. Thuật toán grid approximation
 
 ![Các bước của thuật toán grid approximation]({{ site.baseurl }}/img/chapter_img/chapter02/grid_algorithm_steps.png)

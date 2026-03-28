@@ -263,6 +263,16 @@ $$
 
 **Decision rule**: Collect data if VOI > Cost of data collection.
 
+### 4.1. Một ví dụ cụ thể: xét nghiệm thêm có đáng tiền không
+
+Giả sử nếu ra quyết định ngay bây giờ thì expected loss tối ưu của ta là 12. Một xét nghiệm bổ sung có thể giúp expected loss sau cập nhật giảm xuống còn 5, nên:
+
+$$
+\text{VOI} = 12 - 5 = 7.
+$$
+
+Nếu chi phí làm xét nghiệm là 4, lợi ích ròng là $$7 - 4 = 3$$, nên đáng làm. Nhưng nếu cùng xét nghiệm đó lại tốn 10, lợi ích ròng trở thành âm, và khi ấy lựa chọn hợp lý hơn là quyết định ngay với thông tin hiện có. Ví dụ này nhấn mạnh rằng “thu thêm dữ liệu” không phải lúc nào cũng tốt; nó chỉ tốt khi dữ liệu mới đủ giá trị để thay đổi quyết định theo cách bù được chi phí thu thập.
+
 ```python
 # Example: Value of additional test
 # Current posterior: P(disease) = 0.7

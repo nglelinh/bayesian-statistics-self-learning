@@ -130,6 +130,16 @@ print("\n→ Lower WAIC = Better!")
 print("=" * 70)
 ```
 
+### 2.1. Một ví dụ cụ thể: chênh lệch nhỏ chưa đủ để tuyên bố thắng
+
+Giả sử ba mô hình cho kết quả gần như sau:
+
+- Linear: WAIC = 128, SE = 6
+- Quadratic: WAIC = 122, SE = 5
+- Cubic: WAIC = 121, SE = 5.5
+
+Từ đây ta có thể nói khá tự tin rằng mô hình Linear đang kém hơn hai mô hình còn lại về predictive accuracy. Nhưng giữa Quadratic và Cubic, chênh lệch chỉ là 1 điểm, nhỏ hơn rất nhiều so với mức bất định đi kèm. Trong tình huống như vậy, sẽ là quá mạnh nếu tuyên bố Cubic “thắng rõ ràng”. Cách đọc trưởng thành hơn là: hai mô hình này đang gần như ngang nhau về năng lực dự báo, nên lúc đó ta có thể ưu tiên mô hình đơn giản hơn để diễn giải, hoặc giữ cả hai cho bước model averaging.
+
 ## 3. LOO-CV: Leave-One-Out Cross-Validation
 
 **LOO-CV** thường được xem là chuẩn tham chiếu cho predictive accuracy vì nó trực tiếp hỏi: nếu bỏ một điểm dữ liệu ra ngoài, mô hình còn lại dự đoán điểm đó tốt đến mức nào. Về nguyên tắc, ta phải lần lượt bỏ từng quan sát $$y_i$$, fit mô hình trên $$n-1$$ điểm còn lại, rồi đánh giá log probability của chính điểm bị bỏ ra. Cách làm này rất thuyết phục về mặt khái niệm nhưng lại quá đắt về mặt tính toán. Vì vậy, trong thực hành Bayesian, người ta thường dùng **PSIS-LOO** để xấp xỉ LOO mà không cần refit mô hình nhiều lần.
