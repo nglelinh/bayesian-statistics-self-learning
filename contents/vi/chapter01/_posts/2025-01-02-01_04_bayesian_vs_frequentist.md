@@ -110,6 +110,18 @@ Người ta hỏi trực tiếp hơn: sau khi có kết quả dương tính, xá
 
 Trong y khoa, rõ ràng câu hỏi thứ hai gần với nhu cầu của bác sĩ và bệnh nhân hơn.
 
+### Một ví dụ bằng con số
+
+Giả sử tỷ lệ mắc bệnh trong dân số chỉ là $$1\%$$, xét nghiệm có độ nhạy $$99\%$$, và tỷ lệ dương tính giả là $$5\%$$. Khi một bệnh nhân có kết quả dương tính, Bayesian sẽ tính:
+
+$$
+P(\text{bệnh}\mid +)
+=\frac{0.99\times 0.01}{0.99\times 0.01 + 0.05\times 0.99}
+\approx 0.167.
+$$
+
+Nghĩa là sau kết quả dương tính, xác suất thật sự mắc bệnh mới chỉ khoảng $$16.7\%$$, chứ không phải gần $$99\%$$. Ví dụ này cho thấy rất rõ sự khác biệt: frequentist thường báo đặc tính của xét nghiệm dưới giả thuyết, còn Bayesian trả lời thẳng câu hỏi mà bác sĩ và bệnh nhân thật sự quan tâm.
+
 ![Phân tích thử nghiệm lâm sàng theo Frequentist]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_frequentist.png)
 
 ![Phân tích thử nghiệm lâm sàng theo Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_bayesian.png)

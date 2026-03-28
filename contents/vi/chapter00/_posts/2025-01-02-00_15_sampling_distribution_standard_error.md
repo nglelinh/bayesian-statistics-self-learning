@@ -56,6 +56,15 @@ Nếu $$n$$ lớn hơn thì SE nhỏ hơn và ước lượng ổn định hơn,
 
 *Hình 1b: Khi tăng cỡ mẫu lên $$n = 200$$, sampling distribution hẹp lại rõ rệt, tương ứng với standard error nhỏ hơn.*
 
+### 3.1) Một ví dụ SD và SE rất dễ bị lẫn
+
+Giả sử cân nặng của một nhóm người có độ lệch chuẩn khoảng 12 kg.
+
+- Nếu lấy mẫu $$n=25$$ người, sai số chuẩn của trung bình là $$12/\sqrt{25}=2.4$$ kg.
+- Nếu lấy mẫu $$n=100$$ người, sai số chuẩn của trung bình là $$12/\sqrt{100}=1.2$$ kg.
+
+Điều quan trọng là SD của dữ liệu cá nhân vẫn là 12 kg trong cả hai trường hợp. Thứ thay đổi là độ bất định của **ước lượng trung bình**. Đây là lý do SD và SE không thể dùng thay nhau, dù nhiều người mới học rất hay lẫn hai đại lượng này.
+
 ## 4) SE liên quan gì đến khoảng tin cậy/credible?
 
 Trong tư duy xấp xỉ chuẩn, khoảng bất định thường có dạng:

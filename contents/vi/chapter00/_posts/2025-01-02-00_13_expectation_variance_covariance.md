@@ -82,6 +82,15 @@ $$
 \rho_{XY}=\frac{\mathrm{Cov}(X,Y)}{\mathrm{SD}(X)\mathrm{SD}(Y)}
 $$
 
+### 3.1) Một ví dụ quyết định rất ngắn
+
+Giả sử có hai tuyến xe buýt đều có thời gian đi làm kỳ vọng là 30 phút.
+
+- Tuyến A có các thời gian điển hình quanh $$28, 30, 32$$ phút.
+- Tuyến B có các thời gian điển hình quanh $$20, 30, 40$$ phút.
+
+Hai tuyến có thể có cùng kỳ vọng, nhưng tuyến B có phương sai lớn hơn nhiều nên rủi ro đi trễ cũng cao hơn hẳn. Nếu thêm vào đó ta thấy hôm nào mưa lớn thì thời gian đi làm cũng tăng mạnh, ta đang mô tả một hiệp phương sai dương giữa lượng mưa và thời gian di chuyển. Ví dụ này nhắc rằng chỉ nhìn trung bình là chưa đủ; quyết định thực tế thường phụ thuộc cả vào độ phân tán và cách các biến cùng biến thiên.
+
 ## 4) Các tính chất cần nhớ
 
 1. $$\mathbb{E}[aX+b]=a\mathbb{E}[X]+b$$

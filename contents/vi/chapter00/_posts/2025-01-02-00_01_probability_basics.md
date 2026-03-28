@@ -80,6 +80,15 @@ $$P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{P(\{SS\})}{P(\{SS, SN, NS\})} =
 
 Lưu ý rằng xác suất tăng từ $$1/4$$ lên $$1/3$$ khi chúng ta biết thêm thông tin. Đây là một ví dụ đơn giản của việc cập nhật niềm tin dựa trên bằng chứng mới, một ý tưởng trung tâm trong suy diễn Bayesian.
 
+### Một biến thể rất dễ nhầm
+
+Vẫn với hai lần tung đồng xu, hãy so sánh hai điều kiện khác nhau:
+
+- Nếu biết **ít nhất một lần ra Sấp**, xác suất cả hai lần đều Sấp là $$1/3$$.
+- Nhưng nếu biết **lần tung đầu tiên ra Sấp**, xác suất cả hai lần đều Sấp lại là $$1/2$$.
+
+Hai bài toán nghe khá giống nhau, nhưng thông tin điều kiện không giống nhau nên xác suất có điều kiện cũng khác. Đây là bài học rất quan trọng: trong xác suất, ý nghĩa của “biết thêm thông tin” phụ thuộc hoàn toàn vào việc biến cố điều kiện đã loại bỏ những khả năng nào khỏi không gian mẫu.
+
 Từ định nghĩa xác suất có điều kiện, chúng ta có thể suy ra **quy tắc nhân** (multiplication rule):
 
 $$P(A \cap B) = P(A \mid B) \cdot P(B) = P(B \mid A) \cdot P(A)$$

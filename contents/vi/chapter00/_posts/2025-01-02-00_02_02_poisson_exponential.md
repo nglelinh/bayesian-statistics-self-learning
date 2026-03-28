@@ -118,6 +118,21 @@ $$
 \mathbb{E}[T]=\frac{1}{6}\text{ giờ}=10\text{ phút}.
 $$
 
+### 5.1) Cùng một $$\lambda$$, trả lời được hai câu hỏi khác nhau
+
+Vẫn với $$\lambda = 6$$ cuộc gọi mỗi giờ:
+
+- Trong 30 phút, số cuộc gọi kỳ vọng là $$6 \times 0.5 = 3$$, nên ta có thể hỏi "liệu có quá tải không?" bằng Poisson.
+- Trong 5 phút, xác suất có ít nhất một cuộc gọi là:
+
+$$
+P(T \leq 5\text{ phút}) = 1 - e^{-6\times(5/60)} = 1 - e^{-0.5} \approx 0.393.
+$$
+
+Nghĩa là trong 5 phút đầu, xác suất tổng đài nhận được ít nhất một cuộc gọi chỉ khoảng 39.3%.
+
+Điểm quan trọng là: Poisson giúp trả lời câu hỏi đếm trong một khoảng thời gian, còn Exponential giúp trả lời câu hỏi chờ bao lâu tới sự kiện tiếp theo. Cả hai đều dùng chung đúng một tốc độ nền $$\lambda$$.
+
 ## 6) Cảnh báo mô hình hóa
 
 Nếu dữ liệu đếm có phương sai lớn hơn trung bình quá nhiều (overdispersion), Poisson thường quá "chặt". Khi đó có thể cần Negative Binomial hoặc mô hình phân cấp.

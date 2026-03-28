@@ -235,6 +235,16 @@ $$\bar{x} \pm t_{0.025, 15} \times \frac{s}{\sqrt{n}} = 99.69 \pm 2.131 \times 0
 
 Khoảng tin cậy này chứa 100g, phù hợp với kết luận không bác bỏ $$H_0$$.
 
+### Một cách đọc thêm bằng effect size
+
+Ta cũng có thể chuẩn hóa độ lệch trung bình bằng độ lệch chuẩn mẫu:
+
+$$
+d=\frac{99.69-100}{1.78}\approx -0.17
+$$
+
+Đây là một effect size rất nhỏ. Nghĩa là không chỉ p-value không đủ nhỏ để bác bỏ $$H_0$$, mà ngay cả độ lệch quan sát được cũng nhỏ theo nghĩa thực hành. Ví dụ này nhắc ta rằng một kết quả thống kê nên được đọc đồng thời qua ít nhất ba lớp: dấu của hiệu ứng, độ lớn của hiệu ứng, và độ bất định quanh nó.
+
 ## So sánh T-test với Z-test
 
 | Đặc điểm | Z-test | T-test |

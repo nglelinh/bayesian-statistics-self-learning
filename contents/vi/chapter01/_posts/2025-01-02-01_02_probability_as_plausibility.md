@@ -96,6 +96,16 @@ Bayesian sẽ nói rằng trước dữ liệu, tôi có một prior về $$\the
 
 Điểm mạnh ở đây là Bayes cho phép ta nói trực tiếp về tham số chưa biết, mức độ tin tưởng hiện tại, và cách niềm tin đó thay đổi theo dữ liệu.
 
+### Một cách đọc bằng con số
+
+Nếu ta bắt đầu với prior đều Beta$$(1,1)$$ và quan sát 8 mặt ngửa trong 10 lần tung, posterior sẽ là Beta$$(9,3)$$. Posterior mean lúc này là:
+
+$$
+\frac{9}{9+3}=0.75.
+$$
+
+Ta thậm chí còn có thể hỏi trực tiếp những câu như “xác suất đồng xu thiên về ngửa nhiều hơn công bằng là bao nhiêu?”, tức $$P(\theta>0.5\mid D)$$, và giá trị đó lúc này vào khoảng $$0.97$$. Đây chính là tinh thần “xác suất là độ hợp lý”: nó cho phép ta nói thẳng mức độ hợp lý của các giá trị tham số sau khi đã nhìn dữ liệu.
+
 ## 6. “Chủ quan” có phải là điểm yếu không?
 
 Nhiều người nghe đến “degree of belief” thì lo rằng Bayes quá chủ quan. Nhưng cần phân biệt giữa **chủ quan có nguyên tắc** và tùy tiện. Trong Bayes, bạn không được gán xác suất một cách vô lý; các xác suất vẫn phải nhất quán, tuân theo các quy tắc của xác suất, và có thể bị dữ liệu sửa lại. Nói cách khác, Bayes cho phép niềm tin cá nhân xuất hiện, nhưng buộc niềm tin đó phải có cấu trúc logic và phải chịu trách nhiệm trước dữ liệu.

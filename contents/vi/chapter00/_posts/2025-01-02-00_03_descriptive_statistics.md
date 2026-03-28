@@ -64,6 +64,21 @@ Sự khác biệt này không chỉ là một chi tiết kỹ thuật. Nó cho c
 
 *Hình 1b: Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị. Đây là dấu hiệu trực quan rất hữu ích trước khi chọn mô hình.*
 
+### Một ví dụ rất ngắn: trung bình và trung vị kể hai câu chuyện khác nhau
+
+Giả sử thu nhập tháng (triệu đồng) của 10 người là:
+
+$$
+30,\ 31,\ 32,\ 33,\ 34,\ 35,\ 36,\ 37,\ 38,\ 120
+$$
+
+Khi đó:
+
+- Trung bình là $$42.6$$
+- Trung vị là $$34.5$$
+
+Nếu chỉ báo cáo trung bình, ta dễ tưởng nhóm này có mức thu nhập “điển hình” hơn 40 triệu. Nhưng thực ra 9/10 người đều nằm trong khoảng 30 đến 38 triệu, còn một giá trị cực lớn đã kéo trung bình lên mạnh. Ví dụ này cho thấy vì sao descriptive statistics luôn nên được đọc cùng nhau, thay vì chỉ nhìn một con số duy nhất.
+
 ## Thống kê Phân tán: Đo lường Sự Không chắc chắn
 
 Biết giá trị trung tâm là không đủ. Hai tập dữ liệu có thể có cùng trung bình nhưng rất khác nhau về độ phân tán. Một tập có thể tập trung chặt chẽ xung quanh trung bình, trong khi tập kia có thể phân tán rộng. Các thống kê phân tán giúp chúng ta định lượng sự biến thiên này.

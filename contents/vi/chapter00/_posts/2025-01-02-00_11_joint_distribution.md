@@ -128,6 +128,17 @@ Tổng các ô bằng 1 nên bảng là hợp lệ. Từ đó ta có biên của
 
 So với $$p_Y(1)=0.55$$, ta thấy biết $$X=1$$ làm xác suất qua môn tăng rõ rệt, tức là có phụ thuộc.
 
+### 6.1) Đọc câu chuyện từ bảng bằng con số
+
+Nếu quy đổi bảng trên thành 100 sinh viên, ta có thể đọc nó rất đời thường:
+
+- 45 em vừa đi học vừa qua môn
+- 15 em đi học nhưng không qua
+- 10 em không đi học vẫn qua
+- 30 em không đi học và không qua
+
+Từ đây, tỷ lệ qua môn trong nhóm đi học là $$45/(45+15)=75\%$$, còn trong nhóm không đi học chỉ là $$10/(10+30)=25\%$$. Chính cách đọc này giúp ta thấy joint distribution không phải bảng ký hiệu trừu tượng; nó là nơi ta nhìn thấy mối liên hệ giữa hai biến bằng những câu chuyện có thể kể được.
+
 ## 7) Liên hệ thực hành Bayesian
 
 Trong mô hình Bayesian, ta làm việc thường xuyên với phân phối đồng thời:

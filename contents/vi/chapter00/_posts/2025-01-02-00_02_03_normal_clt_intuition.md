@@ -76,6 +76,21 @@ Chẳng hạn như chất lượng ngủ, mức ôn tập, độ khó từng câ
 
 Mỗi yếu tố biến thiên nhỏ, nhưng tổng hợp của chúng thường cho phân phối điểm gần dạng chuông. Đây là lý do dùng mô hình Normal cho sai số hoặc cho điểm tổng là hợp lý trong nhiều bối cảnh.
 
+### 4.1) Một cách đọc nhanh bằng độ lệch chuẩn
+
+Giả sử chiều cao của một nhóm người có thể được xấp xỉ bởi:
+
+$$
+X \sim \mathcal{N}(170, 6^2).
+$$
+
+Khi đó ta có thể đọc rất nhanh:
+
+- Khoảng $$164$$ đến $$176$$ cm là $$\mu \pm 1\sigma$$, thường chứa xấp xỉ 68% quan sát.
+- Khoảng $$158$$ đến $$182$$ cm là $$\mu \pm 2\sigma$$, thường chứa xấp xỉ 95% quan sát.
+
+Vì vậy, một người cao $$182$$ cm không phải là "bất thường đến mức không thể có", mà chỉ đang nằm gần rìa trên của vùng khoảng 95%. Đây là một cách trực giác để đọc Normal mà chưa cần tra bảng hay tính tích phân.
+
 ## 5) Khi nào không nên dùng Normal?
 
 Normal không còn là lựa chọn tốt khi dữ liệu bị chặn miền, chẳng hạn xác suất chỉ nằm trong $$[0,1]$$ hoặc thời gian chờ luôn dương, khi dữ liệu là số đếm nguyên không âm, hoặc khi phân phối bị lệch mạnh, có đuôi dày, hay chứa nhiều outlier. Trong những trường hợp này, giả định Normal có thể làm cho khoảng bất định bị sai lệch đáng kể.

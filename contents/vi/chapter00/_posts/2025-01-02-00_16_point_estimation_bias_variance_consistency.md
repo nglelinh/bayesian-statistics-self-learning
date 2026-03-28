@@ -63,6 +63,23 @@ $$
 
 Đây là nền cho tư duy regularization: chấp nhận một ít bias để giảm variance và cải thiện tổng sai số dự báo.
 
+### 4.1) Một ví dụ rất cụ thể về bias-variance trade-off
+
+Giả sử cần ước lượng một tham số thật $$\theta = 10$$, và ta có hai estimator:
+
+- Estimator A: không chệch, nên $$\mathrm{Bias}=0$$, nhưng variance bằng $$9$$.
+- Estimator B: hơi chệch lên 1 đơn vị, nên $$\mathrm{Bias}=1$$, nhưng variance chỉ bằng $$4$$.
+
+Khi đó:
+
+$$
+\mathrm{MSE}(A) = 0^2 + 9 = 9,
+\qquad
+\mathrm{MSE}(B) = 1^2 + 4 = 5.
+$$
+
+Dù estimator B có bias, nó vẫn tốt hơn theo MSE vì đổi lại được một mức giảm variance lớn hơn. Đây chính là logic đằng sau nhiều kỹ thuật shrinkage và regularization: chấp nhận lệch nhẹ để đổi lấy dự đoán ổn định hơn.
+
 ## 5) Consistency
 
 Estimator $$\hat\theta_n$$ gọi là consistent nếu:

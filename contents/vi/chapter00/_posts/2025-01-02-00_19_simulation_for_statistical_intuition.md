@@ -52,6 +52,15 @@ Ta có thể giả sử giá trị thật $$p=0.2$$, mô phỏng nhiều mẫu B
 
 Bạn sẽ thấy ngay vì sao dữ liệu nhỏ dễ dao động lớn và vì sao prior có thể quan trọng trong bối cảnh ít dữ liệu.
 
+### 4.1) Nếu nhìn 5 lần mô phỏng cụ thể, ta sẽ thấy gì?
+
+Với cùng giá trị thật $$p=0.2$$, một kết quả mô phỏng điển hình có thể trông như sau:
+
+- Nếu $$n=20$$: $$\hat p = 0.10, 0.15, 0.20, 0.30, 0.35$$
+- Nếu $$n=200$$: $$\hat p = 0.17, 0.19, 0.20, 0.22, 0.24$$
+
+Cả hai nhóm đều xoay quanh giá trị thật 0.2, nhưng nhóm $$n=20$$ dao động rộng hơn rất nhiều. Chỉ cần nhìn vài lần mô phỏng như vậy, ta đã có trực giác rất rõ về vì sao dữ liệu ít thường làm kết luận bất ổn hơn.
+
 ## 5) Liên hệ trực tiếp với Bayes
 
 Mô phỏng là "phòng thí nghiệm" của Bayesian workflow:

@@ -142,6 +142,12 @@ Những con số đó nên được đọc như sau:
 
 Nếu `price` thật sự gần Gaussian trên thang gốc, ta kỳ vọng histogram tương đối đối xứng quanh một vùng trung tâm và hai đuôi không quá chênh nhau. Dữ liệu thực không có hình dạng đó. Ngay từ bước này, ta đã có lý do để nghi ngờ rằng baseline Gaussian trên thang giá gốc sẽ gặp khó khăn.
 
+### Một quyết định thực hành rất cụ thể từ những con số này
+
+Với `min=326`, `median=2401`, `max=18823`, và `skewness=1.618`, một phản ứng hợp lý là thử mô hình hóa trên thang `log(price)` trước khi nhảy vào các mô hình phức tạp hơn. Lý do không phải vì log luôn “đúng”, mà vì phép biến đổi này thường nén phần đuôi phải và làm phương sai ổn định hơn, từ đó cho ta một baseline hợp lý hơn để kiểm tra tiếp.
+
+Nói ngắn gọn: các con số mô tả ở bước đầu không chỉ để “nhận xét cho vui”. Chúng phải dẫn tới một hành động mô hình hóa cụ thể.
+
 ![Diamonds price distribution]({{ site.baseurl }}/img/chapter_img/chapter00/basic_model_assumption_diamonds_distribution.png)
 
 *Cách đọc hình: Hình này minh họa diamonds price distribution. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*

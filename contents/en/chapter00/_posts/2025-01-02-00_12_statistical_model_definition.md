@@ -115,6 +115,12 @@ This model implicitly assumes approximately normal data, conditional independenc
 
 With this model, we can estimate and interpret $$\mu, \sigma$$, make predictions, and check whether the model is missing important structure.
 
+### 6.1) A very short example: same data idea, different model story
+
+Suppose the data are not heights but the number of support calls arriving each hour: $$0, 1, 3, 2, 4, \dots$$. For this kind of data, a Poisson model usually tells a more sensible story because it respects the counting structure and only produces nonnegative predictions. If we force a Normal model onto the same setting, we may still get a mean and a variance, but the model also quietly allows negative predicted counts that make no practical sense.
+
+The key point is that choosing a model is not just choosing a convenient formula. It is choosing a story about how the data are generated, and that story determines which conclusions become reasonable.
+
 ## Quick recap
 
 1. A statistical model is a family $$\{p(x\mid\theta)\}$$ for data.

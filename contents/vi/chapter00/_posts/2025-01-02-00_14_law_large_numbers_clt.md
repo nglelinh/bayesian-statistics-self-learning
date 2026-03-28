@@ -66,6 +66,20 @@ Muốn sai số giảm 2 lần, ta thường phải tăng cỡ mẫu lên khoả
 
 Đây là trực giác quan trọng khi thiết kế thí nghiệm và đánh giá độ tin cậy của ước lượng.
 
+### 4.1) Một ví dụ bằng con số: tăng mẫu 4 lần thì sao?
+
+Giả sử ta đang ước lượng một tỷ lệ thật quanh mức $$0.6$$. Khi đó sai số chuẩn của tần suất mẫu xấp xỉ:
+
+$$
+\mathrm{SE}(\hat p)\approx \sqrt{\frac{0.6\times 0.4}{n}}.
+$$
+
+- Nếu $$n=25$$ thì $$\mathrm{SE}\approx 0.098$$.
+- Nếu $$n=100$$ thì $$\mathrm{SE}\approx 0.049$$.
+- Nếu $$n=400$$ thì $$\mathrm{SE}\approx 0.024$$.
+
+Nghĩa là khi tăng cỡ mẫu từ 25 lên 100, rồi từ 100 lên 400, bất định giảm đi khoảng một nửa mỗi lần chứ không giảm theo kiểu “thêm gấp đôi dữ liệu thì sai số giảm gấp đôi”. Đây là cách rất trực tiếp để nhớ vì sao LLN và CLT dẫn tới quy luật $$1/\sqrt{n}$$ trong thực hành.
+
 ## 5) Liên hệ với Bayes và mô phỏng
 
 Trong Bayes, Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu: số mẫu posterior càng tăng thì estimate càng ổn định hơn, và nhiều chẩn đoán về uncertainty thực chất đều dựa trên trực giác của LLN và CLT.

@@ -123,6 +123,12 @@ Mô hình này ngầm giả định rằng dữ liệu gần phân phối chuẩ
 
 Nhờ mô hình đó, ta có thể ước lượng và diễn giải $$\mu, \sigma$$, dự báo giá trị mới, đồng thời kiểm tra xem mô hình có đang bỏ sót cấu trúc quan trọng nào trong dữ liệu hay không.
 
+### 6.1) Một ví dụ rất ngắn: cùng là dữ liệu, nhưng mô hình kể khác câu chuyện
+
+Giả sử dữ liệu không phải là chiều cao mà là số cuộc gọi đến tổng đài trong từng giờ: $$0, 1, 3, 2, 4, \dots$$. Với loại dữ liệu này, một mô hình Poisson thường kể câu chuyện hợp lý hơn vì nó tôn trọng bản chất đếm và luôn cho dự đoán không âm. Nếu ta cố ép một mô hình Normal vào đây, mô hình vẫn có thể cho ra trung bình và độ lệch chuẩn, nhưng lại ngầm cho phép cả những giá trị âm không có nghĩa thực tế.
+
+Điểm cốt lõi là: chọn mô hình không chỉ là chọn công thức tiện tay. Nó là chọn một câu chuyện về cơ chế sinh dữ liệu, và câu chuyện đó quyết định loại kết luận nào trở nên hợp lý.
+
 ## Tóm tắt nhanh
 
 1. Mô hình thống kê là họ phân phối $$\{p(x\mid\theta)\}$$ cho dữ liệu.

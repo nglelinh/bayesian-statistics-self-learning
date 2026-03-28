@@ -112,6 +112,27 @@ $$
 
 Diễn giải: dù rate lỗi chỉ 5%, khả năng một lô 40 request hoàn toàn không lỗi chỉ khoảng 12.9%.
 
+### 5.1) Cùng kỳ vọng 2, nhưng độ bất định không giống nhau
+
+Giả sử ta so sánh hai tình huống sau:
+
+- Bài quiz có 4 câu, mỗi câu đúng với xác suất $$0.5$$.
+- Chiến dịch email có 20 khách, mỗi khách phản hồi với xác suất $$0.1$$.
+
+Cả hai đều cho số thành công kỳ vọng bằng 2:
+
+$$
+4 \times 0.5 = 2, \qquad 20 \times 0.1 = 2.
+$$
+
+Nhưng variance lại khác:
+
+$$
+4 \times 0.5 \times 0.5 = 1, \qquad 20 \times 0.1 \times 0.9 = 1.8.
+$$
+
+Diễn giải: dù cùng "trung bình 2 thành công", chiến dịch email có độ dao động lớn hơn rõ rệt. Vì vậy, chỉ đọc $$np$$ là chưa đủ; ta còn phải nhìn cả $$np(1-p)$$ để hiểu kết quả có ổn định hay không.
+
 ## 6) Các lỗi mô hình hóa hay gặp
 
 Những sai lầm phổ biến nhất là dùng Binomial trong khi $$p$$ thật ra thay đổi theo thời gian nhưng vẫn bị giả định là cố định, giả định độc lập dù dữ liệu có phụ thuộc theo nhóm hoặc theo phiên truy cập, và đồng nhất luôn "xác suất quan sát" với "xác suất thật" mà không xét đến độ bất định. Khi gặp các tình huống này, ta cần mở rộng mô hình sang các dạng giàu cấu trúc hơn như hierarchical model, mixture model, hay logistic regression có covariate.

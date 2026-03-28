@@ -267,6 +267,15 @@ Tức là posterior thay đổi mạnh theo bằng chứng mới: từ $$0.7 \to
 
 Nếu prior rất mạnh, dữ liệu ít có thể chưa làm posterior thay đổi quá nhiều. Nếu prior yếu, dữ liệu sẽ có ảnh hưởng lớn hơn. Đây không phải lỗi của Bayes mà chính là điều ta mong muốn: khi kiến thức trước đó rất chắc, ta không nên vứt nó đi quá dễ dàng; còn khi prior mơ hồ, dữ liệu nên được nói mạnh hơn.
 
+### 10.1. Một ví dụ cụ thể: cùng dữ liệu, prior khác nhau
+
+Giả sử ta quan sát 6 ca dương tính trong 10 trường hợp.
+
+- Nếu prior yếu là Beta$$(1,1)$$, posterior sẽ là Beta$$(7,5)$$ với posterior mean khoảng $$0.583$$.
+- Nếu prior mạnh hơn và nghiêng sẵn về tỷ lệ cao, chẳng hạn Beta$$(20,5)$$, posterior sẽ là Beta$$(26,9)$$ với posterior mean khoảng $$0.743$$.
+
+Cùng một dữ liệu nhưng posterior khác nhau vì prior mang thông tin thật sự vào bài toán. Đây không phải “Bayes tùy hứng”, mà là cách Bayes nói rõ một điều vốn luôn tồn tại trong thực tế: dữ liệu mới luôn được đọc trong bối cảnh của những gì ta đã biết từ trước.
+
 ![Prior yếu: niềm tin ban đầu còn khá mở]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_weak_prior.png)
 
 ![Prior mạnh: niềm tin ban đầu tập trung hơn nhiều]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_strong_prior.png)

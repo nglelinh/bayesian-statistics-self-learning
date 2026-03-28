@@ -124,6 +124,17 @@ As a quick check, the total probability is 1. We also get $$p_X(1)=0.15+0.45=0.6
 
 Since $$0.75 \ne 0.55$$, knowing $$X=1$$ changes the probability of passing, so the variables are dependent.
 
+### 6.1) Reading the story from the table
+
+If we translate the table into 100 students, we can read it in a very concrete way:
+
+- 45 students attend and pass
+- 15 attend but do not pass
+- 10 do not attend but still pass
+- 30 neither attend nor pass
+
+From this, the pass rate in the attending group is $$45/(45+15)=75\%$$, while in the non-attending group it is only $$10/(10+30)=25\%$$. This makes the point tangible: a joint distribution is not just a symbolic table, but a compact way to describe how two variables move together in an interpretable story.
+
 ## 7) Bayesian connection in practice
 
 In Bayesian modeling, we repeatedly use:

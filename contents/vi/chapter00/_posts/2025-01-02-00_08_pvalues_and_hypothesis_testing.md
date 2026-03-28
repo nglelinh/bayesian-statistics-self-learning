@@ -137,6 +137,12 @@ Với $$n - 1 = 24$$ bậc tự do, chúng ta tra bảng phân phối t (hoặc 
 
 P-value này không cho biết xác suất $$H_0$$ đúng là 5.4%, cũng không cho biết xác suất $$H_1$$ đúng là 94.6%; nó cũng không nói trực tiếp kích thước hiệu ứng là bao nhiêu hay nghiên cứu có ý nghĩa thực tiễn đến mức nào.
 
+### Một cách đọc đúng hơn cho $$p = 0.054$$
+
+Con số $$0.054$$ thường gây khó chịu vì nó nằm rất sát ngưỡng 0.05. Cách đọc hợp lý hơn không phải là “thất bại hoàn toàn”, mà là: dữ liệu này tạo ra mức mâu thuẫn vừa phải với $$H_0$$, nhưng chưa đủ mạnh để đưa ra kết luận dứt khoát theo quy ước truyền thống. Nếu một nghiên cứu gần như y hệt cho ra $$p=0.049$$, về mặt bằng chứng thực tế hai kết quả này gần như không khác nhau.
+
+Đây là lý do nhiều nhà thống kê khuyên không nên biến p-value thành công tắc nhị phân kiểu bật/tắt. Điều quan trọng hơn là nhìn thêm effect size, confidence interval, chất lượng thiết kế nghiên cứu, và bối cảnh khoa học của câu hỏi đang xét.
+
 ## Ngưỡng Ý nghĩa và Quyết định: Quy ước $$\alpha = 0.05$$
 
 Trong thực hành, p-values thường được so sánh với một **mức ý nghĩa** (significance level) được định trước, thường ký hiệu là $$\alpha$$. Quy ước phổ biến nhất là $$\alpha = 0.05$$, mặc dù các giá trị khác như 0.01 hoặc 0.10 cũng đôi khi được sử dụng.
