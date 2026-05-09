@@ -10,253 +10,90 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu **information criteria** như những thước đo dùng để so sánh mô hình dựa trên năng lực dự báo ngoài mẫu, chứ không phải chỉ dựa trên độ khớp với dữ liệu huấn luyện. Bài học sẽ giải thích WAIC, LOO-CV, cách tính chúng với ArviZ, và quan trọng hơn là cách diễn giải kết quả sao cho không rơi vào lối dùng chỉ số một cách máy móc. Đây là công cụ then chốt cho **model selection** (chọn mô hình) trong Bayesian workflow.
+Sau bài học này, bạn cần hiểu WAIC và LOO như các công cụ xấp xỉ năng lực dự báo ngoài mẫu của mô hình Bayes, đồng thời biết đọc kết quả theo bất định ước lượng thay vì theo tư duy "xếp hạng cứng". Trọng tâm của bài là lập luận phương pháp: vì sao phải ưu tiên tiêu chí dự báo ngoài mẫu, khi nào chênh lệch giữa các mô hình đủ lớn để kết luận, và khi nào nên chuyển từ model selection sang model averaging.
 
-## Giới thiệu: The Problem of Model Selection
+## 1. Từ training fit sang out-of-sample prediction
 
-Giả sử bạn có ba mô hình ứng viên, từ một mô hình tuyến tính đơn giản đến một mô hình đa thức phức tạp hơn nhiều. Câu hỏi “mô hình nào là tốt nhất?” thoạt nhìn có vẻ dễ trả lời bằng cách chọn mô hình có training error nhỏ nhất, nhưng đó chính là câu trả lời sai cổ điển vì nó mở đường cho overfitting. Câu trả lời đúng phải xoay quanh **out-of-sample predictive accuracy** (độ chính xác dự báo ngoài mẫu), tức khả năng dự đoán dữ liệu mới mà mô hình chưa từng nhìn thấy.
-
-## 1. Predictive Accuracy: The Gold Standard
-
-Mục tiêu thật sự của model comparison là ước lượng xem mô hình dự đoán **new data** tốt đến mức nào. Vì vậy, predictive accuracy mới là “gold standard”, còn training fit chỉ là một tín hiệu phụ rất dễ gây hiểu lầm nếu đứng một mình.
-
-**Log Pointwise Predictive Density (lppd)**:
-$$
-\text{lppd} = \sum_{i=1}^n \log p(y_i | y_{-i})
-$$
-
-where $$y_{-i}$$ = all data except $$i$$.
-
-Vấn đề là nếu làm điều này một cách ngây thơ bằng leave-one-out thực thụ, ta phải fit lại mô hình tới $$n$$ lần, thường là quá tốn kém. Information criteria xuất hiện như những xấp xỉ có cơ sở lý thuyết cho bài toán đó.
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pymc as pm
-import arviz as az
-
-# Generate data
-np.random.seed(42)
-n = 50
-x = np.random.uniform(0, 10, n)
-y_true = 2 + 0.5*x + 0.1*x**2 + np.random.normal(0, 1, n)
-
-# Standardize
-x_z = (x - x.mean()) / x.std()
-y_z = (y_true - y_true.mean()) / y_true.std()
-
-print("=" * 70)
-print("MODEL SELECTION PROBLEM")
-print("=" * 70)
-print("\nWe have data generated from: y = 2 + 0.5x + 0.1x²")
-print("\nWhich model fits best?")
-print("  Model 1: Linear (y ~ x)")
-print("  Model 2: Quadratic (y ~ x + x²)")
-print("  Model 3: Cubic (y ~ x + x² + x³)")
-print("=" * 70)
-```
-
-## 2. WAIC: Watanabe-Akaike Information Criterion
-
-**WAIC** có thể được xem như phiên bản Bayesian của AIC, nhưng cần hiểu nó không đơn thuần là một công thức thay tên đổi họ. Nó cố gắng cân bằng giữa mức độ khớp của mô hình với dữ liệu và độ phức tạp hiệu dụng của mô hình.
+Vấn đề cổ điển của model comparison là mô hình càng linh hoạt càng dễ đạt training fit tốt, nhưng chính tính linh hoạt đó lại có thể làm giảm năng lực dự báo trên dữ liệu mới. Vì vậy, đại lượng đáng quan tâm không phải lỗi trong mẫu mà là log predictive density ngoài mẫu. Trong ngôn ngữ pointwise, ta quan tâm tổng
 
 $$
-\text{WAIC} = -2(\text{lppd} - p_{\text{WAIC}})
+\text{elpd} = \sum_{i=1}^n \log p(y_i\mid y_{-i}),
 $$
 
-where $$p_{\text{WAIC}}$$ = effective number of parameters (penalty).
+trong đó mỗi quan sát được đánh giá như một điểm chưa từng thấy khi mô hình đã học từ phần dữ liệu còn lại.
 
-Giá trị WAIC càng thấp thì predictive accuracy ước lượng càng tốt.
+Ý tưởng này rất mạnh về mặt khái niệm nhưng đắt đỏ về tính toán nếu phải refit mô hình nhiều lần; WAIC và PSIS-LOO xuất hiện như hai lối đi thực dụng để xấp xỉ cùng mục tiêu.
 
-```python
-# Fit 3 models
-models = {}
-traces = {}
+## 2. WAIC: một xấp xỉ Bayes hoàn toàn cho predictive accuracy
 
-# Model 1: Linear
-with pm.Model() as model_linear:
-    alpha = pm.Normal('alpha', 0, 1)
-    beta1 = pm.Normal('beta1', 0, 1)
-    sigma = pm.HalfNormal('sigma', 1)
-    
-    mu = alpha + beta1 * x_z
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y_z)
-    
-    traces['Linear'] = pm.sample(1000, tune=500, chains=2, random_seed=42,
-                                 return_inferencedata=True, progressbar=False)
+WAIC có thể viết dưới dạng
 
-# Model 2: Quadratic
-with pm.Model() as model_quad:
-    alpha = pm.Normal('alpha', 0, 1)
-    beta1 = pm.Normal('beta1', 0, 1)
-    beta2 = pm.Normal('beta2', 0, 1)
-    sigma = pm.HalfNormal('sigma', 1)
-    
-    mu = alpha + beta1 * x_z + beta2 * x_z**2
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y_z)
-    
-    traces['Quadratic'] = pm.sample(1000, tune=500, chains=2, random_seed=42,
-                                    return_inferencedata=True, progressbar=False)
+$$
+\text{WAIC}=-2\,(\text{lppd}-p_{\text{WAIC}}),
+$$
 
-# Model 3: Cubic
-with pm.Model() as model_cubic:
-    alpha = pm.Normal('alpha', 0, 1)
-    beta1 = pm.Normal('beta1', 0, 1)
-    beta2 = pm.Normal('beta2', 0, 1)
-    beta3 = pm.Normal('beta3', 0, 1)
-    sigma = pm.HalfNormal('sigma', 1)
-    
-    mu = alpha + beta1 * x_z + beta2 * x_z**2 + beta3 * x_z**3
-    y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y_z)
-    
-    traces['Cubic'] = pm.sample(1000, tune=500, chains=2, random_seed=42,
-                                return_inferencedata=True, progressbar=False)
+trong đó lppd phản ánh độ khớp dự báo pointwise, còn $$p_{\text{WAIC}}$$ đóng vai trò độ phức tạp hiệu dụng để phạt overfitting. Khi so sánh nhiều mô hình trên cùng dữ liệu, WAIC thấp hơn tương ứng với predictive performance tốt hơn (hoặc, tương đương, elpd lớn hơn).
 
-# Compute WAIC
-print("\n" + "=" * 70)
-print("WAIC COMPARISON")
-print("=" * 70)
+Điều cần nhấn mạnh là WAIC không phải một "điểm số tuyệt đối" của mô hình; nó chỉ có ý nghĩa trong tương quan với các mô hình cạnh tranh và phải đi kèm sai số chuẩn của chênh lệch.
 
-for name, trace in traces.items():
-    waic = az.waic(trace)
-    print(f"\n{name}:")
-    print(f"  WAIC: {waic.waic:.2f}")
-    print(f"  pWAIC: {waic.p_waic:.2f} (effective parameters)")
-    print(f"  SE: {waic.waic_se:.2f}")
+## 3. PSIS-LOO: gần chuẩn tham chiếu hơn cho thực hành
 
-print("\n→ Lower WAIC = Better!")
-print("=" * 70)
-```
+LOO-CV lý tưởng yêu cầu bỏ từng quan sát rồi refit mô hình, còn PSIS-LOO dùng importance sampling được Pareto-smoothed để xấp xỉ quy trình đó mà không cần refit toàn bộ. Vì gần với định nghĩa ngoài mẫu trực tiếp hơn, LOO thường được ưu tiên trong workflow hiện đại, với điều kiện diagnostic Pareto $$k$$ cho thấy xấp xỉ đủ tin cậy.
 
-### 2.1. Một ví dụ cụ thể: chênh lệch nhỏ chưa đủ để tuyên bố thắng
+Một cách đọc ngắn gọn nhưng đúng bản chất là: WAIC thường nhanh và tiện; PSIS-LOO thường đáng tin hơn; cả hai đều phải được diễn giải cùng bất định ước lượng.
 
-Giả sử ba mô hình cho kết quả gần như sau:
+![WAIC and LOO comparison with uncertainty]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_waic_loo_comparison.png)
 
-- Linear: WAIC = 128, SE = 6
-- Quadratic: WAIC = 122, SE = 5
-- Cubic: WAIC = 121, SE = 5.5
+## 4. Đọc bảng so sánh mô hình: chênh lệch và độ bất định
 
-Từ đây ta có thể nói khá tự tin rằng mô hình Linear đang kém hơn hai mô hình còn lại về predictive accuracy. Nhưng giữa Quadratic và Cubic, chênh lệch chỉ là 1 điểm, nhỏ hơn rất nhiều so với mức bất định đi kèm. Trong tình huống như vậy, sẽ là quá mạnh nếu tuyên bố Cubic “thắng rõ ràng”. Cách đọc trưởng thành hơn là: hai mô hình này đang gần như ngang nhau về năng lực dự báo, nên lúc đó ta có thể ưu tiên mô hình đơn giản hơn để diễn giải, hoặc giữ cả hai cho bước model averaging.
+Giả sử ba mô hình cho kết quả theo thang elpd như sau (giá trị càng cao càng tốt):
 
-## 3. LOO-CV: Leave-One-Out Cross-Validation
+- Mô hình A: elpd = -221, SE = 5
+- Mô hình B: elpd = -220, SE = 5.5
+- Mô hình C: elpd = -229, SE = 6
 
-**LOO-CV** thường được xem là chuẩn tham chiếu cho predictive accuracy vì nó trực tiếp hỏi: nếu bỏ một điểm dữ liệu ra ngoài, mô hình còn lại dự đoán điểm đó tốt đến mức nào. Về nguyên tắc, ta phải lần lượt bỏ từng quan sát $$y_i$$, fit mô hình trên $$n-1$$ điểm còn lại, rồi đánh giá log probability của chính điểm bị bỏ ra. Cách làm này rất thuyết phục về mặt khái niệm nhưng lại quá đắt về mặt tính toán. Vì vậy, trong thực hành Bayesian, người ta thường dùng **PSIS-LOO** để xấp xỉ LOO mà không cần refit mô hình nhiều lần.
+Kết luận hợp lý là C kém hơn rõ rệt so với A và B, nhưng A và B gần như hòa vì chênh lệch 1 điểm nhỏ hơn đáng kể so với mức bất định đi kèm. Trong tình huống này, việc tuyên bố "B thắng" là diễn giải quá tay; lựa chọn trưởng thành hơn là xem A và B như một tập mô hình cạnh tranh gần ngang nhau, rồi cân nhắc averaging hoặc ưu tiên mô hình dễ diễn giải hơn nếu mục tiêu truyền thông quan trọng.
 
-```python
-# Compute LOO
-print("\n" + "=" * 70)
-print("LOO-CV COMPARISON")
-print("=" * 70)
+## 5. Pareto k: điều kiện tin cậy của PSIS-LOO
 
-for name, trace in traces.items():
-    loo = az.loo(trace)
-    print(f"\n{name}:")
-    print(f"  LOO: {loo.loo:.2f}")
-    print(f"  pLOO: {loo.p_loo:.2f} (effective parameters)")
-    print(f"  SE: {loo.loo_se:.2f}")
-    
-    # Check Pareto k diagnostic
-    if hasattr(loo, 'pareto_k'):
-        bad_k = np.sum(loo.pareto_k > 0.7)
-        if bad_k > 0:
-            print(f"  ⚠️  Warning: {bad_k} observations with high Pareto k")
+Với PSIS-LOO, chỉ số Pareto $$k$$ trả lời câu hỏi: trọng số importance sampling có ổn định không. Một ngưỡng thực hành thường dùng là:
 
-print("\n→ Lower LOO = Better!")
-print("=" * 70)
-```
+- $$k<0.5$$: rất ổn,
+- $$0.5\le k\le 0.7$$: dùng được nhưng cần cẩn trọng,
+- $$k>0.7$$: xấp xỉ có thể kém tin cậy, cần kiểm tra kỹ và cân nhắc biện pháp thay thế.
 
-## 4. Model Comparison with az.compare
+Điểm quan trọng là Pareto $$k$$ không phải một chi tiết phụ. Nếu diagnostic thất bại, bảng xếp hạng LOO có thể nhìn đẹp nhưng không còn nền tảng đủ vững để ra quyết định.
 
-Trong thực hành, cách gọn và đáng tin cậy nhất là dùng `az.compare` để so sánh tất cả các mô hình cùng lúc, thay vì đọc WAIC hay LOO của từng mô hình một cách rời rạc.
+## 6. Ví dụ phương pháp luận: khi nào "đủ bằng chứng" để chọn mô hình
 
-```python
-# Compare all models
-comp = az.compare(traces, ic='loo')
+Giả sử mô hình tốt nhất có elpd cao hơn mô hình đứng thứ hai 6 điểm, trong khi sai số chuẩn của chênh lệch khoảng 2. Khi đó ta có thể xem là có khoảng cách đủ thuyết phục để chọn mô hình tốt nhất cho mục tiêu dự báo. Ngược lại, nếu chênh lệch chỉ 1.5 với sai số chuẩn 2.2, kết luận khoa học nên là "chưa phân biệt được rõ", và chiến lược hợp lý hơn thường là averaging hoặc giữ nhiều mô hình cho các mục tiêu khác nhau.
 
-print("\n" + "=" * 70)
-print("MODEL COMPARISON TABLE")
-print("=" * 70)
-print(comp)
-print("=" * 70)
+Nói cách khác, model comparison trong Bayes là bài toán suy luận dưới bất định, không phải cuộc thi điểm số với một con số duy nhất.
 
-# Visualize
-az.plot_compare(comp, figsize=(10, 4))
-plt.title('Model Comparison (LOO)', fontsize=14, fontweight='bold')
-plt.tight_layout()
-plt.show()
+## 7. Thực hành tốt khi dùng WAIC/LOO
 
-print("\n" + "=" * 70)
-print("INTERPRETING RESULTS")
-print("=" * 70)
-print("\nColumns:")
-print("  rank: 0 = best model")
-print("  loo: LOO score (higher = better)")
-print("  p_loo: Effective number of parameters")
-print("  d_loo: Difference from best model")
-print("  weight: Stacking weights for model averaging")
-print("  se: Standard error")
-print("  dse: SE of difference")
+Thực hành tốt có thể tóm lược thành ba nguyên tắc. Thứ nhất, luôn so sánh trên cùng một dữ liệu và cùng biến mục tiêu để đảm bảo ý nghĩa của chênh lệch. Thứ hai, đọc đồng thời estimate và SE thay vì chỉ nhìn rank. Thứ ba, nếu nhiều mô hình sát nhau, chuyển từ logic "winner-takes-all" sang logic kết hợp dự báo.
 
-best_model = comp.index[0]
-print(f"\n→ Best model: {best_model}")
-print("=" * 70)
-```
+Từ góc nhìn workflow, WAIC/LOO không thay thế PPC: một mô hình có điểm dự báo tốt hơn vẫn có thể sai cơ chế ở những vùng mà bài toán quan tâm đặc biệt, do đó model criticism và model comparison phải được dùng bổ sung, không dùng thay thế.
 
-## 5. Pareto k Diagnostic
+## 8. Kết luận bài 8.2
 
-**Pareto k** là diagnostic dùng để kiểm tra xem xấp xỉ PSIS-LOO có đáng tin hay không. Khi $$k<0.5$$, ta thường có thể yên tâm rằng xấp xỉ hoạt động tốt; khi $$k$$ nằm giữa 0.5 và 0.7, kết quả vẫn có thể chấp nhận được nhưng cần cẩn trọng hơn; còn khi $$k>0.7$$, dấu hiệu cảnh báo đã đủ mạnh để nghi ngờ rằng LOO hiện tại không còn ổn định và có thể cần những biện pháp khác.
+WAIC và LOO cung cấp ngôn ngữ định lượng để so sánh mô hình theo năng lực dự báo ngoài mẫu, nhưng giá trị lớn nhất của chúng nằm ở cách diễn giải có kỷ luật: luôn đọc chênh lệch cùng bất định, luôn kiểm tra diagnostic của phép xấp xỉ, và luôn gắn quyết định chọn mô hình với mục tiêu dự báo cụ thể thay vì với thói quen chọn hạng nhất.
 
-```python
-# Plot Pareto k
-fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+Bài tiếp theo: **Model Comparison Strategies**, nơi ta đi sâu vào lựa chọn giữa selection, averaging, và expansion.
 
-for idx, (name, trace) in enumerate(traces.items()):
-    loo = az.loo(trace, pointwise=True)
-    k_values = loo.pareto_k.values
-    
-    axes[idx].scatter(range(len(k_values)), k_values, s=50, alpha=0.6,
-                     edgecolors='black')
-    axes[idx].axhline(0.5, color='orange', linestyle='--', linewidth=2,
-                     label='Threshold 0.5')
-    axes[idx].axhline(0.7, color='red', linestyle='--', linewidth=2,
-                     label='Threshold 0.7')
-    axes[idx].set_xlabel('Data Point', fontsize=12, fontweight='bold')
-    axes[idx].set_ylabel('Pareto k', fontsize=12, fontweight='bold')
-    axes[idx].set_title(f'{name}\nMax k = {k_values.max():.3f}',
-                       fontsize=13, fontweight='bold')
-    axes[idx].legend(fontsize=10)
-    axes[idx].grid(alpha=0.3)
+## Câu hỏi tự luyện
 
-plt.tight_layout()
-plt.show()
-```
+1. Vì sao chênh lệch WAIC/LOO nhỏ hơn sai số chuẩn của chênh lệch không đủ để tuyên bố mô hình thắng?
+2. Nếu một mô hình đứng hạng nhất nhưng có nhiều điểm Pareto $$k>0.7$$, bạn sẽ xử lý kết quả đó thế nào?
+3. Khi nào bạn ưu tiên model averaging thay vì chọn một mô hình duy nhất?
 
-## Tóm tắt
+## Tài liệu tham khảo
 
-Information criteria cho ta một ngôn ngữ nhất quán để so sánh mô hình theo mục tiêu dự báo ngoài mẫu. WAIC cung cấp một xấp xỉ nhanh và hoàn toàn Bayesian cho năng lực dự báo, còn LOO-CV gần với chuẩn tham chiếu hơn và trong thực hành thường được tính qua PSIS-LOO. Khi dùng các chỉ số này, điều quan trọng không phải là thuộc lòng tên viết tắt, mà là luôn nhớ rằng mô hình nên được chọn theo **predictive accuracy**, không phải theo training fit. Diagnostic Pareto k đóng vai trò nhắc ta rằng ngay cả một tiêu chí tốt cũng cần được kiểm tra độ tin cậy trước khi ra quyết định.
-
-Bài tiếp theo: **Model Comparison** strategies.
-
-## Bài tập
-
-**Bài tập 1**: Fit 4 polynomial models (degree 1-4). Compute WAIC and LOO. Which is best?
-
-**Bài tập 2**: Check Pareto k. If k > 0.7, what does it mean? How to fix?
-
-**Bài tập 3**: Use `az.compare`. Interpret all columns. What is "weight"?
-
-**Bài tập 4**: Compare GLMs (Logistic, Poisson) using LOO. Which fits better?
-
-**Bài tập 5**: Real data. Fit multiple models. Use information criteria to select best.
-
-## Tài liệu Tham khảo
-
-**Vehtari, A., Gelman, A., & Gabry, J. (2017).** "Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC." *Statistics and Computing*, 27(5), 1413-1432.
-
-**Gelman, A., et al. (2013).** *Bayesian Data Analysis* (3rd Edition). CRC Press.
-- Chapter 7: Evaluating, comparing, and expanding models
+- Vehtari, A., Gelman, A., & Gabry, J. (2017). "Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC." *Statistics and Computing*.
+- Gelman, A., et al. (2013). *Bayesian Data Analysis* (3rd Edition), Chapter 7.
 
 ---
 

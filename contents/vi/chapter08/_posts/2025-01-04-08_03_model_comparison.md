@@ -10,184 +10,76 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu các chiến lược khác nhau cho **model comparison**, bao gồm **model selection** (chọn một mô hình tốt nhất), **model averaging** (trung bình hóa dự báo từ nhiều mô hình), và **model expansion** (mở rộng sang một mô hình lớn hơn bao trùm các lựa chọn nhỏ hơn). Bài học cũng sẽ giải thích cách dùng `az.compare` một cách hiệu quả và cách diễn giải **stacking weights** sao cho đúng tinh thần dự báo Bayesian.
+Sau bài học này, bạn cần phân biệt rõ ba chiến lược so sánh mô hình trong Bayes: chọn một mô hình (selection), kết hợp nhiều mô hình (averaging), và mở rộng mô hình theo hướng bao trùm (expansion). Điểm trọng tâm là không xem model comparison như một thủ tục xếp hạng cơ học, mà như một bài toán ra quyết định dưới bất định mô hình, nơi lựa chọn chiến lược phụ thuộc vào độ tách biệt về predictive performance và mục tiêu ứng dụng.
 
-## Giới thiệu: Three Approaches
+## 1. So sánh mô hình không phải lúc nào cũng là chọn kẻ thắng
 
-Khi có nhiều mô hình cạnh tranh, ta không nhất thiết chỉ có một lựa chọn duy nhất là “chọn ra kẻ thắng cuộc”. Trong thực hành, có ba chiến lược lớn. Một là **model selection**, tức chọn mô hình có năng lực dự báo tốt nhất theo tiêu chí đang dùng. Hai là **model averaging**, tức kết hợp dự báo từ nhiều mô hình bằng các trọng số thích hợp để phản ánh bất định mô hình. Ba là **model expansion**, tức xây dựng một mô hình lớn hơn bao quát các lựa chọn con thay vì buộc phải loại trừ lẫn nhau.
+Khi nhiều mô hình cạnh tranh có năng lực dự báo rất sát nhau, việc buộc phải chọn đúng một mô hình dễ tạo cảm giác chắc chắn giả tạo. Ngược lại, khi một mô hình vượt trội rõ rệt và ổn định qua các kiểm tra, việc giữ nhiều mô hình chỉ làm tăng độ phức tạp mà không mang thêm giá trị dự báo. Vì vậy, câu hỏi đúng không phải là "model nào hạng nhất", mà là "chiến lược nào tạo dự báo hữu ích nhất với mức bất định trung thực nhất".
 
-## 1. Model Selection
+## 2. Strategy A - Model selection
 
-Ý tưởng của model selection là chọn mô hình có LOO hay WAIC tốt nhất, tức mô hình được kỳ vọng dự báo ngoài mẫu tốt nhất trong tập ứng viên. Ưu điểm của cách này là đơn giản và dễ diễn giải. Nhược điểm của nó là thường bỏ qua độ bất định về chính lựa chọn mô hình, đặc biệt khi nhiều mô hình có hiệu năng rất sát nhau.
+Model selection phù hợp khi khoảng cách dự báo ngoài mẫu giữa mô hình tốt nhất và phần còn lại đủ lớn so với bất định ước lượng. Khi đó, chi phí nhận thức của việc duy trì nhiều mô hình thường cao hơn lợi ích, và một mô hình duy nhất cho phép diễn giải, giao tiếp, và triển khai đơn giản hơn.
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pymc as pm
-import arviz as az
+Tuy nhiên, điều kiện ngầm của selection là sự tách biệt đủ mạnh. Nếu chênh lệch chỉ số dự báo nhỏ và không ổn định, selection có thể khiến toàn bộ pipeline phụ thuộc vào dao động mẫu ngẫu nhiên thay vì tín hiệu cấu trúc thật.
 
-# Example: Compare 3 models (from Bài 8.2)
-# Assume traces = {'Linear': trace1, 'Quadratic': trace2, 'Cubic': trace3}
+## 3. Strategy B - Model averaging
 
-# Model selection
-comp = az.compare(traces, ic='loo')
-best_model_name = comp.index[0]
-
-print("=" * 70)
-print("MODEL SELECTION")
-print("=" * 70)
-print(f"\nBest model: {best_model_name}")
-print(f"LOO: {comp.loc[best_model_name, 'loo']:.2f}")
-print("\n→ Use this model for predictions")
-print("=" * 70)
-```
-
-## 2. Model Averaging
-
-Model averaging đi theo hướng khác: thay vì cưỡng bức một quyết định chọn duy nhất, nó lấy trung bình có trọng số của các dự báo từ nhiều mô hình.
-
-Các trọng số này thường được xây dựng từ predictive accuracy, chẳng hạn qua **stacking weights**, để mô hình dự báo tốt hơn đóng góp nhiều hơn vào kết quả cuối cùng.
+Model averaging đi theo nguyên tắc "bảo toàn bất định mô hình" bằng cách kết hợp predictive distributions:
 
 $$
-\hat{y} = \sum_{k=1}^K w_k \hat{y}_k
+p(\tilde y\mid y)=\sum_{k=1}^{K} w_k\,p_k(\tilde y\mid y),\qquad \sum_k w_k=1,\; w_k\ge 0.
 $$
 
-where $$w_k$$ = weight for model $$k$$.
+Trong thực hành hiện đại, trọng số stacking thường được ưu tiên vì chúng tối ưu trực tiếp năng lực dự báo của phân phối kết hợp, thay vì cố gán một xác suất "đúng/sai" tuyệt đối cho từng mô hình.
 
-### 2.1. Một ví dụ cụ thể: selection và averaging cho cùng một điểm dự báo
+### 3.1. Ví dụ định lượng ngắn
 
-Giả sử tại một giá trị predictor mới, mô hình Quadratic dự đoán $$52$$, còn mô hình Cubic dự đoán $$56$$. Nếu `az.compare` cho stacking weights lần lượt là $$0.55$$ và $$0.45$$, thì dự báo model averaging sẽ là:
+Giả sử ở một điểm dự báo mới, mô hình A cho trung bình 52, mô hình B cho 56, và stacking weights lần lượt là 0.58 và 0.42. Khi đó dự báo trung bình của mô hình kết hợp là
 
 $$
-0.55 \times 52 + 0.45 \times 56 = 53.8.
+0.58\times 52 + 0.42\times 56 = 53.68.
 $$
 
-Nếu ta ép phải chọn một mô hình duy nhất, kết quả báo cáo sẽ là 52 hoặc 56 tùy mô hình thắng. Còn khi trung bình theo trọng số, ta thừa nhận rằng bất định về lựa chọn mô hình vẫn còn đáng kể. Chính vì vậy, model averaging thường cho dự báo ổn định hơn khi nhiều mô hình có predictive accuracy rất sát nhau.
+Giá trị này phản ánh cả tín hiệu của hai mô hình lẫn bất định cấu trúc đang tồn tại giữa chúng, thay vì cưỡng bức chọn 52 hoặc 56 như hai kịch bản loại trừ nhau.
 
-```python
-# Model averaging with stacking weights
-weights = comp['weight'].values
-model_names = comp.index.tolist()
+![Selection vs Stacking predictive distributions]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_selection_vs_stacking.png)
 
-print("\n" + "=" * 70)
-print("MODEL AVERAGING (Stacking)")
-print("=" * 70)
-print("\nWeights:")
-for name, weight in zip(model_names, weights):
-    print(f"  {name}: {weight:.3f}")
+## 4. Strategy C - Model expansion
 
-print("\n→ Prediction = weighted average")
-print("=" * 70)
+Model expansion phù hợp khi các mô hình ứng viên đại diện cho các mảnh khác nhau của cùng một cơ chế sinh dữ liệu và có thể được hợp nhất vào một mô hình lớn hơn, ví dụ bằng cách thêm thành phần phi tuyến, hiệu ứng nhóm phân cấp, hoặc tương tác có regularization. Lợi điểm của expansion là tạo một khung suy luận nhất quán thay vì duy trì nhiều mô hình rời rạc; rủi ro là tăng độ phức tạp tính toán và đòi hỏi kiểm tra mạnh hơn để tránh overfitting.
 
-# Visualize weights
-fig, ax = plt.subplots(figsize=(10, 6))
-ax.barh(model_names, weights, alpha=0.7, edgecolor='black')
-ax.set_xlabel('Stacking Weight', fontsize=12, fontweight='bold')
-ax.set_ylabel('Model', fontsize=12, fontweight='bold')
-ax.set_title('MODEL AVERAGING WEIGHTS\nHigher weight = Better model',
-            fontsize=14, fontweight='bold')
-ax.grid(alpha=0.3, axis='x')
-plt.tight_layout()
-plt.show()
-```
+Một cách đọc hữu ích là: selection giải quyết cạnh tranh giữa mô hình; averaging giải quyết bất định giữa mô hình; expansion giải quyết thiếu hụt cấu trúc của tập mô hình hiện có.
 
-## 3. Making Predictions
+## 5. Quy tắc lựa chọn chiến lược trong thực hành
 
-### 3.1. Model Selection Approach
+Một quy tắc làm việc có thể được phát biểu như sau. Nếu chênh lệch predictive performance đủ lớn và ổn định, ưu tiên selection. Nếu nhiều mô hình gần ngang nhau, ưu tiên averaging để bảo toàn bất định. Nếu tất cả mô hình đều bộc lộ sai lệch cơ chế trong PPC, ưu tiên expansion thay vì tiếp tục tranh luận ai là "ít sai nhất".
 
-```python
-# Use best model only
-best_trace = traces[best_model_name]
+Điểm quan trọng là quy tắc này phải luôn đi cùng kiểm tra diagnostic (ví dụ Pareto $$k$$ trong LOO) và kết quả model criticism. Một bảng rank đẹp không thể thay thế bằng chứng rằng mô hình còn bỏ sót cấu trúc dữ liệu quan trọng.
 
-# Posterior predictive
-with pm.Model() as best_model:
-    # ... (redefine model)
-    ppc = pm.sample_posterior_predictive(best_trace, random_seed=42)
+## 6. Ví dụ tổng hợp: cùng dữ liệu, ba quyết định khác nhau
 
-y_pred_best = ppc.posterior_predictive['y_obs'].values.reshape(-1, len(y_z))
-y_pred_mean = y_pred_best.mean(axis=0)
+Giả sử ta có ba mô hình M1, M2, M3 và kết quả LOO cho thấy M1 và M2 sát nhau trong sai số chuẩn, còn M3 kém hơn rõ rệt. Khi mục tiêu là dự báo ngắn hạn ổn định, averaging giữa M1 và M2 thường hợp lý hơn selection. Nếu mục tiêu là giải thích cơ chế và M1 đơn giản hơn đáng kể, selection có thể vẫn được chọn với điều kiện báo cáo rõ bất định mô hình còn lại. Ngược lại, nếu PPC chỉ ra cả M1 lẫn M2 đều sai ở tail, quyết định tốt nhất không phải chọn hoặc trộn, mà là expansion để sửa đúng cơ chế sinh dữ liệu.
 
-print("\n" + "=" * 70)
-print("PREDICTIONS: Model Selection")
-print("=" * 70)
-print(f"\nUsing: {best_model_name}")
-print(f"Prediction shape: {y_pred_best.shape}")
-print("=" * 70)
-```
+Qua ví dụ này, ta thấy model comparison là một quyết định đa mục tiêu: dự báo, diễn giải, chi phí triển khai, và trung thực với bất định.
 
-### 3.2. Model Averaging Approach
+## 7. Kết luận bài 8.3
 
-```python
-# Combine predictions from all models
-all_predictions = []
+Không có một chiến lược so sánh mô hình đúng cho mọi bối cảnh. Selection, averaging, và expansion là ba công cụ bổ sung nhau trong cùng một workflow Bayesian. Năng lực của người phân tích không nằm ở việc nhớ tên công cụ, mà ở chỗ biết khi nào nên giảm bất định bằng chọn mô hình, khi nào nên giữ bất định bằng kết hợp mô hình, và khi nào phải tái thiết kế mô hình để sửa sai lệch cơ chế.
 
-for name in model_names:
-    trace = traces[name]
-    # ... generate predictions
-    # all_predictions.append(pred)
+Bài tiếp theo: **Bayesian Decision Analysis**, nơi kết quả mô hình được chuyển thành lựa chọn hành động tối ưu dưới loss cụ thể.
 
-# Weighted average
-y_pred_avg = sum(w * pred for w, pred in zip(weights, all_predictions))
+## Câu hỏi tự luyện
 
-print("\n" + "=" * 70)
-print("PREDICTIONS: Model Averaging")
-print("=" * 70)
-print("\nCombining all models with weights")
-print("→ More robust to model uncertainty")
-print("=" * 70)
-```
+1. Trong tình huống hai mô hình chênh lệch LOO rất nhỏ so với SE, vì sao selection có thể kém trung thực hơn averaging?
+2. Khi nào expansion tốt hơn cả selection lẫn averaging?
+3. Nếu mục tiêu chính là diễn giải nhân quả, bạn sẽ thay đổi ưu tiên chiến lược thế nào so với mục tiêu dự báo thuần túy?
 
-## 4. Khi nào Dùng Approach Nào?
+## Tài liệu tham khảo
 
-| Approach | When to Use | Pros | Cons |
-|----------|-------------|------|------|
-| **Selection** | Clear best model (Δ LOO > 4) | Simple, interpretable | Ignores uncertainty |
-| **Averaging** | Multiple good models (Δ LOO < 4) | Robust, accounts for uncertainty | More complex |
-| **Expansion** | Models nested, theory-driven | Single coherent model | Can be complex |
-
-```python
-# Decision rule based on LOO difference
-comp = az.compare(traces, ic='loo')
-d_loo = comp['d_loo'].values
-
-print("\n" + "=" * 70)
-print("DECISION RULE")
-print("=" * 70)
-print(f"\nΔ LOO (best vs 2nd): {d_loo[1]:.2f}")
-
-if d_loo[1] > 4:
-    print("\n→ Clear winner! Use MODEL SELECTION")
-    print(f"   Best model: {comp.index[0]}")
-elif d_loo[1] < 2:
-    print("\n→ Models similar! Use MODEL AVERAGING")
-    print("   Combine predictions with stacking weights")
-else:
-    print("\n→ Moderate difference. Either approach OK")
-    print("   Consider context and interpretability")
-print("=" * 70)
-```
-
-## Tóm tắt
-
-Model comparison không phải lúc nào cũng đồng nghĩa với việc chọn ra một mô hình duy nhất. Khi một mô hình thắng rõ ràng, model selection là cách làm tự nhiên và dễ truyền đạt. Khi nhiều mô hình gần ngang nhau, model averaging thường hợp lý hơn vì nó phản ánh đúng bất định về cấu trúc mô hình và thường cho dự báo ổn định hơn. Stacking weights cung cấp một cơ chế thực dụng để hiện thực hóa ý tưởng đó, còn `az.compare` gom hầu hết thông tin cần thiết vào cùng một bảng. Điểm quan trọng nhất là chiến lược so sánh mô hình nên được chọn theo mục tiêu dự báo và mức độ bất định mô hình, chứ không chỉ theo thói quen “chọn hạng nhất”.
-
-Bài tiếp theo: **Decision Analysis** - from inference to action.
-
-## Bài tập
-
-**Bài tập 1**: Fit 3 models. Use az.compare. Should you select or average?
-
-**Bài tập 2**: Implement model averaging manually. Compare with single best model.
-
-**Bài tập 3**: Vary data size. How does Δ LOO change? Selection vs averaging?
-
-**Bài tập 4**: Real data. Compare models. Make predictions using both approaches.
-
-## Tài liệu Tham khảo
-
-**Yao, Y., et al. (2018).** "Using stacking to average Bayesian predictive distributions." *Bayesian Analysis*, 13(3), 917-1007.
+- Yao, Y., et al. (2018). "Using stacking to average Bayesian predictive distributions." *Bayesian Analysis*.
+- Gelman, A., et al. (2013). *Bayesian Data Analysis* (3rd Edition).
 
 ---
 

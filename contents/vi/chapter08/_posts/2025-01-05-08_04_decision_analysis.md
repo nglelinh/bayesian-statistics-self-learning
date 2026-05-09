@@ -10,389 +10,115 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu cách nối Bayesian inference với **decision-making** (ra quyết định), tức cách đi từ niềm tin hậu nghiệm về thế giới tới một hành động cụ thể dưới bất định. Bài học sẽ trình bày các khái niệm như loss function, utility function, expected loss, và tiêu chuẩn chọn hành động tối ưu khi thông tin luôn không hoàn hảo. Đây là bước cuối cùng của Bayesian workflow: từ dữ liệu sang suy luận, rồi từ suy luận sang hành động.
+Sau bài học này, bạn cần chuyển được kết quả suy luận Bayes thành hành động cụ thể dưới bất định, thông qua loss function, expected loss và value of information. Trọng tâm của bài là hiểu rằng posterior trả lời câu hỏi "ta tin điều gì", còn decision theory trả lời câu hỏi khác hẳn: "ta nên làm gì" khi mỗi lựa chọn mang chi phí không đối xứng.
 
-## Giới thiệu: Inference ≠ Decision
+## 1. Inference không đồng nghĩa với decision
 
-Bayesian inference cho ta posterior distributions, các phân phối dự báo, và một cách định lượng độ bất định của tri thức hiện tại. Nhưng trong thế giới thực, biết posterior thôi chưa đủ; cuối cùng ta vẫn phải **làm gì đó**, chẳng hạn điều trị hay không điều trị, cảnh báo hay không cảnh báo, tung phiên bản A hay phiên bản B. **Bayesian decision theory** chính là khung lý thuyết biến tri thức bất định đó thành một nguyên tắc lựa chọn hành động tối ưu.
+Một posterior rất sắc nét vẫn chưa tự động sinh ra quyết định đúng, bởi quyết định luôn phụ thuộc thêm vào hệ quả của sai lầm. Cùng một mức xác suất hậu nghiệm có thể dẫn đến hai hành động khác nhau nếu cấu trúc thiệt hại thay đổi. Đây là lý do decision analysis là chặng cuối bắt buộc của Bayesian workflow, không phải phần phụ trang trí sau suy luận.
 
-## 1. Decision Theory Framework
-
-### 1.1. Components
-
-Khung quyết định Bayesian có bốn thành phần nền tảng. Thứ nhất là **actions** ($$a$$), tức các lựa chọn mà ta thực sự có thể thực hiện. Thứ hai là **states** ($$\theta$$), tức trạng thái chưa biết của thế giới hay các tham số liên quan. Thứ ba là **loss function** $$L(a,\theta)$$, mô tả cái giá phải trả nếu chọn hành động $$a$$ khi sự thật là $$\theta$$. Thứ tư là **posterior** $$p(\theta\mid y)$$, tức niềm tin hiện tại của ta về trạng thái chưa biết sau khi đã thấy dữ liệu.
-
-Mục tiêu của decision analysis là chọn hành động $$a$$ sao cho **expected loss** nhỏ nhất:
-$$
-\mathbb{E}[L(a, \theta) | y] = \int L(a, \theta) p(\theta \mid y) d\theta
-$$
-
-### 1.2. Example: Medical Decision
-
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-import pymc as pm
-import arviz as az
-
-# Scenario: Disease diagnosis
-# Posterior: P(disease \mid test) = 0.7
-
-# Actions:
-# a1: No treatment
-# a2: Treatment
-# a3: More tests
-
-# Loss function (in "utility units")
-# Rows: True state (disease=1, healthy=0)
-# Cols: Actions (no_treat, treat, more_tests)
-
-loss_matrix = np.array([
-    [0, 10, 5],      # Healthy: no harm, treatment cost, test cost
-    [100, 5, 20]     # Disease: death, cure, delay+test
-])
-
-# Posterior probabilities
-p_disease = 0.7
-p_healthy = 0.3
-posterior = np.array([p_healthy, p_disease])
-
-# Expected loss for each action
-expected_losses = loss_matrix.T @ posterior
-
-actions = ['No Treatment', 'Treatment', 'More Tests']
-
-print("=" * 70)
-print("MEDICAL DECISION ANALYSIS")
-print("=" * 70)
-print(f"\nPosterior: P(disease \mid test) = {p_disease}")
-print("\nExpected Loss:")
-for action, exp_loss in zip(actions, expected_losses):
-    print(f"  {action}: {exp_loss:.1f}")
-
-optimal_action = actions[np.argmin(expected_losses)]
-print(f"\n→ Optimal action: {optimal_action}")
-print("=" * 70)
-
-# Visualize
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Loss matrix
-im = axes[0].imshow(loss_matrix, cmap='RdYlGn_r', aspect='auto')
-axes[0].set_xticks(range(3))
-axes[0].set_xticklabels(actions, rotation=45, ha='right')
-axes[0].set_yticks(range(2))
-axes[0].set_yticklabels(['Healthy', 'Disease'])
-axes[0].set_title('LOSS MATRIX\nL(action, state)',
-                 fontsize=14, fontweight='bold')
-
-for i in range(2):
-    for j in range(3):
-        axes[0].text(j, i, f'{loss_matrix[i, j]}',
-                    ha='center', va='center', fontsize=14, fontweight='bold')
-
-plt.colorbar(im, ax=axes[0])
-
-# Expected losses
-axes[1].barh(actions, expected_losses, alpha=0.7, edgecolor='black')
-axes[1].axvline(expected_losses.min(), color='red', linestyle='--',
-               linewidth=2, label='Minimum')
-axes[1].set_xlabel('Expected Loss', fontsize=12, fontweight='bold')
-axes[1].set_ylabel('Action', fontsize=12, fontweight='bold')
-axes[1].set_title('EXPECTED LOSS\nChoose minimum',
-                 fontsize=14, fontweight='bold')
-axes[1].legend(fontsize=11)
-axes[1].grid(alpha=0.3, axis='x')
-
-plt.tight_layout()
-plt.show()
-```
-
-## 2. Common Loss Functions
-
-### 2.1. Point Estimation
-
-Trong bài toán point estimation, dạng của loss function quyết định trực tiếp điểm ước lượng nào là tối ưu. Với **squared error loss**, tức $$L(\hat{\theta},\theta)=(\hat{\theta}-\theta)^2$$, điểm tối ưu là **posterior mean**. Với **absolute error loss**, tức $$L(\hat{\theta},\theta)=|\hat{\theta}-\theta|$$, điểm tối ưu trở thành **posterior median**. Còn với **0-1 loss**, tức chỉ quan tâm đúng hay sai theo nghĩa rời rạc, lựa chọn tối ưu là **posterior mode**. Vì vậy, ngay cả một câu hỏi tưởng như đơn giản là “nên báo cáo mean hay median?” cũng không thể trả lời tách rời khỏi loss function.
-
-```python
-# Example: Estimate parameter with different loss functions
-np.random.seed(42)
-
-# Generate skewed posterior (Beta distribution)
-from scipy import stats
-alpha, beta = 2, 5
-theta_samples = stats.beta.rvs(alpha, beta, size=10000)
-
-# Optimal estimates under different losses
-mean_est = theta_samples.mean()  # Squared loss
-median_est = np.median(theta_samples)  # Absolute loss
-mode_est = stats.beta.mode(alpha, beta)[0]  # 0-1 loss
-
-# Visualize
-fig, ax = plt.subplots(figsize=(12, 6))
-
-ax.hist(theta_samples, bins=50, density=True, alpha=0.6,
-       edgecolor='black', label='Posterior')
-ax.axvline(mean_est, color='blue', linewidth=3, label=f'Mean = {mean_est:.3f}')
-ax.axvline(median_est, color='green', linewidth=3, label=f'Median = {median_est:.3f}')
-ax.axvline(mode_est, color='red', linewidth=3, label=f'Mode = {mode_est:.3f}')
-ax.set_xlabel('θ', fontsize=12, fontweight='bold')
-ax.set_ylabel('Density', fontsize=12, fontweight='bold')
-ax.set_title('OPTIMAL ESTIMATES\nDepend on loss function!',
-            fontsize=14, fontweight='bold')
-ax.legend(fontsize=11)
-ax.grid(alpha=0.3, axis='y')
-
-plt.tight_layout()
-plt.show()
-
-print("\n" + "=" * 70)
-print("OPTIMAL ESTIMATES UNDER DIFFERENT LOSSES")
-print("=" * 70)
-print(f"\nSquared loss → Mean: {mean_est:.3f}")
-print(f"Absolute loss → Median: {median_est:.3f}")
-print(f"0-1 loss → Mode: {mode_est:.3f}")
-print("\n→ Different losses → different optimal actions!")
-print("=" * 70)
-```
-
-### 2.2. Ví dụ Session 6: MAP detection nhị phân
-
-Giả sử ta cần quyết định giữa hai trạng thái $$H_0$$ (an toàn) và $$H_1$$ (sự cố), với quan sát nhiễu $$x$$. Quy tắc MAP:
+Khung chuẩn gồm bốn thành phần: tập hành động $$a\in\mathcal A$$, trạng thái thế giới $$\theta$$, posterior $$p(\theta\mid y)$$ và loss $$L(a,\theta)$$. Quy tắc Bayes action là chọn
 
 $$
-\text{chọn }H_1 \text{ nếu } p(H_1\mid x)>p(H_0\mid x)
-\iff p(x\mid H_1)P(H_1)>p(x\mid H_0)P(H_0).
+a^*(y)=\arg\min_{a\in\mathcal A} \mathbb E[L(a,\theta)\mid y]
+=\arg\min_{a\in\mathcal A}\int L(a,\theta)p(\theta\mid y)\,d\theta.
 $$
 
-Trong ví dụ số này, ta giả sử $$P(H_1)=0.2,\;P(H_0)=0.8$$ và $$p(x\mid H_1)=0.30,\;p(x\mid H_0)=0.05$$.
+## 2. Quy tắc ngưỡng từ chi phí bất đối xứng
 
-So sánh:
-
-$$
-0.30\times0.2=0.06 \;>\; 0.05\times0.8=0.04.
-$$
-
-Nên MAP chọn $$H_1$$. Đây là dạng quyết định nhị phân xuất hiện trong phát hiện tín hiệu/cảnh báo lỗi.
-
-### 2.3. Ví dụ Session 6: quyết định cảnh báo với chi phí bất đối xứng
-
-Xét hai hành động: cảnh báo ($$a_1$$) hoặc không cảnh báo ($$a_0$$). Gọi $$q=P(H_1\mid x)$$ là xác suất hậu nghiệm có sự cố.
-
-Ta giả sử chi phí của **báo động giả** là $$L_{FP}=5$$, còn chi phí của **bỏ sót sự cố** là $$L_{FN}=40$$, tức bất đối xứng rất mạnh theo hướng coi việc bỏ sót là nghiêm trọng hơn nhiều.
-
-Expected loss:
+Xét bài toán cảnh báo rủi ro với hai hành động: cảnh báo ($$a_1$$) và không cảnh báo ($$a_0$$). Gọi $$q=P(H_1\mid y)$$ là xác suất hậu nghiệm có sự cố, $$L_{FP}$$ là chi phí báo động giả, và $$L_{FN}$$ là chi phí bỏ sót sự cố. Khi đó
 
 $$
-R(a_1\mid x)=L_{FP}(1-q),\qquad R(a_0\mid x)=L_{FN}q.
+R(a_1\mid y)=L_{FP}(1-q),\qquad R(a_0\mid y)=L_{FN}q.
 $$
 
-Chọn cảnh báo khi $$R(a_1\mid x)<R(a_0\mid x)$$, tương đương:
+Ta chọn cảnh báo nếu $$R(a_1\mid y)<R(a_0\mid y)$$, tương đương
 
 $$
-q>\frac{L_{FP}}{L_{FP}+L_{FN}}=\frac{5}{45}\approx 0.111.
+q>\frac{L_{FP}}{L_{FP}+L_{FN}}.
 $$
 
-Nghĩa là chỉ cần posterior vượt 11.1% đã nên cảnh báo, vì chi phí bỏ sót lớn hơn nhiều chi phí báo động giả.
+Với $$L_{FP}=5$$ và $$L_{FN}=40$$, ngưỡng quyết định chỉ là $$q^*=5/45\approx 0.111$$. Điều này cho thấy một điểm quan trọng về mặt phương pháp: quyết định tối ưu có thể rất "nhạy" theo chi phí, ngay cả khi posterior không thay đổi.
 
-### 2.4. Cầu nối với prior hỗn hợp từ Chapter 2
+![Expected loss threshold rule]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_expected_loss_threshold.png)
 
-Nếu prior là hỗn hợp kịch bản $$M_k$$:
+### 2.1. Ví dụ ý nghĩa nghiệp vụ
 
-$$
-p(\theta)=\sum_k w_k p_k(\theta),
-$$
+Nếu bỏ sót sự cố gây tổn thất lớn hơn nhiều lần so với cảnh báo nhầm, tổ chức hợp lý sẽ cảnh báo sớm hơn, tức dùng ngưỡng posterior thấp hơn. Ngược lại, nếu cảnh báo nhầm rất đắt đỏ, ngưỡng posterior cần cao hơn để tránh hành động quá mức. Quy tắc tối ưu vì vậy không bao giờ là một con số "phổ quát"; nó là hàm của cấu trúc mất mát trong bối cảnh cụ thể.
 
-thì sau dữ liệu:
+## 3. Loss function và điểm tóm tắt posterior
 
-$$
-p(\theta\mid D)=\sum_k \tilde w_k p_k(\theta\mid D),
-\quad
-\tilde w_k\propto w_k p(D\mid M_k).
-$$
+Trong bài toán ước lượng điểm, lựa chọn mean, median hay mode không phải sở thích trình bày, mà được quyết định bởi loss:
 
-Các trọng số hậu nghiệm $$\tilde w_k$$ chính là đầu vào cho expected loss ở bước quyết định. Tức là dữ liệu không chỉ cập nhật tham số mà còn cập nhật "độ tin" vào từng kịch bản prior.
+- squared loss $$L(\hat\theta,\theta)=(\hat\theta-\theta)^2$$ -> tối ưu là posterior mean,
+- absolute loss $$L(\hat\theta,\theta)=|\hat\theta-\theta|$$ -> tối ưu là posterior median,
+- 0-1 loss (rời rạc) -> tối ưu là posterior mode.
 
-## 3. Bayesian hypothesis testing và Bayes factor
+Kết luận phương pháp ở đây là: bất kỳ báo cáo "điểm ước lượng đại diện" nào cũng ngầm chứa một quan điểm về chi phí sai số, dù ta có ý thức điều đó hay không.
 
-### 3.1. Bayes factor là gì?
+## 4. Từ bằng chứng đến hành động: vai trò của Bayes factor
 
-Với hai giả thuyết $$H_0$$ và $$H_1$$:
+Với hai giả thuyết $$H_0,H_1$$, Bayes factor được định nghĩa:
 
 $$
 BF_{10}=\frac{p(D\mid H_1)}{p(D\mid H_0)}.
 $$
 
-Khi $$BF_{10}>1$$, dữ liệu nghiêng về $$H_1$$ hơn $$H_0$$; khi $$BF_{10}<1$$, bằng chứng lại nghiêng về $$H_0$$. Khi kết hợp với prior odds, Bayes factor trở thành cầu nối trực tiếp từ bằng chứng dữ liệu sang posterior odds:
+Nó cập nhật odds thông qua
 
 $$
 \frac{P(H_1\mid D)}{P(H_0\mid D)}=BF_{10}\times\frac{P(H_1)}{P(H_0)}.
 $$
 
-### 3.2. One-sided vs two-sided trong Bayes
+Tuy nhiên, ngay cả khi $$BF_{10}$$ nghiêng mạnh về $$H_1$$, hành động cuối cùng vẫn phải đi qua expected loss. Bayes factor trả lời câu hỏi "dữ liệu ủng hộ giả thuyết nào"; decision analysis trả lời câu hỏi khác: "trong cấu trúc chi phí hiện tại, hành động nào tối ưu".
 
-Trong Bayes, việc đặt giả thuyết **one-sided** hay **two-sided** không chỉ là vấn đề hình thức. One-sided, chẳng hạn $$H_1:\theta>\theta_0$$ và $$H_0:\theta\le\theta_0$$, thường gắn với những câu hỏi hành động rất cụ thể như “có vượt chuẩn tối thiểu hay không”. Two-sided, chẳng hạn $$H_1:\theta\neq\theta_0$$, lại phù hợp hơn khi mục tiêu là phát hiện mọi sai khác theo cả hai hướng mà không ưu tiên hướng nào từ trước. Cách đóng khung giả thuyết vì vậy nên đi theo câu hỏi quyết định thực tế, chứ không chỉ theo thói quen trình bày.
+## 5. Value of Information: khi nào nên thu thập thêm dữ liệu
 
-### 3.3. Ví dụ tích hợp: posterior inference + loss + Bayes factor
-
-Giả sử từ phân tích posterior ta có $$P(H_1\mid D)=0.7,\;P(H_0\mid D)=0.3$$ và Bayes factor $$BF_{10}=3$$.
-
-Quyết định hành động với loss bất đối xứng như mục 2.3. Nếu $$q=0.7$$ thì:
+Không phải lúc nào thêm dữ liệu cũng đáng. Giá trị thông tin được đo bằng mức giảm expected loss:
 
 $$
-R(a_1\mid D)=5(1-0.7)=1.5,
-\quad
-R(a_0\mid D)=40(0.7)=28.
+\text{VOI}=\mathbb E[L\mid \text{quyết định ngay}] - \mathbb E[L\mid \text{có thêm thông tin}].
 $$
 
-Nên chọn hành động cảnh báo $$a_1$$.
-
-Đây là workflow đầy đủ của Buổi 6: dữ liệu -> posterior/Bayes factor -> expected loss -> hành động.
-
-## 4. Value of Information
-
-**Question**: Should we collect more data before deciding?
-
-**Value of Information (VOI)**: Expected reduction in loss from additional data.
+Quy tắc hành động rất rõ:
 
 $$
-\text{VOI} = \mathbb{E}[\text{Loss without data}] - \mathbb{E}[\text{Loss with data}]
+\text{Thu thập thêm dữ liệu nếu } \text{VOI} > \text{chi phí thu thập}.
 $$
 
-**Decision rule**: Collect data if VOI > Cost of data collection.
+Ví dụ, nếu expected loss hiện tại là 12 và sau khi bổ sung thông tin có thể giảm xuống 5, ta có VOI = 7. Nếu chi phí lấy thêm thông tin là 4, lợi ích ròng dương và nên thu thập; nếu chi phí là 10, lợi ích ròng âm và nên quyết định ngay với thông tin hiện có.
 
-### 4.1. Một ví dụ cụ thể: xét nghiệm thêm có đáng tiền không
+![Value of information decision curve]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_voi_decision_curve.png)
 
-Giả sử nếu ra quyết định ngay bây giờ thì expected loss tối ưu của ta là 12. Một xét nghiệm bổ sung có thể giúp expected loss sau cập nhật giảm xuống còn 5, nên:
+## 6. Ví dụ tổng hợp: quyết định A/B testing
 
-$$
-\text{VOI} = 12 - 5 = 7.
-$$
+Giả sử hai phiên bản sản phẩm A và B có posterior conversion rates $$p_A$$ và $$p_B$$. Phần suy luận cho ta xác suất $$P(p_B>p_A\mid D)$$, nhưng quyết định triển khai không nên dựa trên xác suất này một cách cơ học. Ta cần mô hình hóa utility/loss kinh doanh: giá trị mỗi conversion, chi phí triển khai, rủi ro tổn thất nếu chọn sai, và thời gian cần phản ứng. Khi đó hành động tối ưu là hành động có expected utility cao nhất (hoặc expected loss thấp nhất), không nhất thiết là hành động có posterior probability cao nhất theo một ngưỡng cố định.
 
-Nếu chi phí làm xét nghiệm là 4, lợi ích ròng là $$7 - 4 = 3$$, nên đáng làm. Nhưng nếu cùng xét nghiệm đó lại tốn 10, lợi ích ròng trở thành âm, và khi ấy lựa chọn hợp lý hơn là quyết định ngay với thông tin hiện có. Ví dụ này nhấn mạnh rằng “thu thêm dữ liệu” không phải lúc nào cũng tốt; nó chỉ tốt khi dữ liệu mới đủ giá trị để thay đổi quyết định theo cách bù được chi phí thu thập.
+Đây là điểm giao quan trọng giữa thống kê và quản trị: cùng một posterior, doanh nghiệp có cấu trúc chi phí khác nhau sẽ có quyết định tối ưu khác nhau.
 
-```python
-# Example: Value of additional test
-# Current posterior: P(disease) = 0.7
-# Test cost: 20 units
+## 7. Khuôn mẫu workflow cho decision analysis
 
-# Expected loss with current information
-current_exp_loss = expected_losses.min()
+Một quy trình thực hành chặt chẽ thường đi qua bốn bước: (i) xác định tập hành động có thể thực thi, (ii) định nghĩa loss/utility rõ ràng và có khả năng bảo vệ về nghiệp vụ, (iii) tính expected loss dựa trên posterior/predictive, và (iv) kiểm tra độ nhạy của quyết định khi thay đổi loss assumptions. Bước (iv) đặc biệt quan trọng vì nhiều quyết định có thể đảo chiều khi chi phí được đánh giá lại.
 
-# If we do test, posterior will update
-# Simulate: If test positive, P(disease) = 0.95
-# If test negative, P(disease) = 0.3
+Từ góc nhìn khoa học, một quyết định Bayes tốt không phải quyết định "chắc chắn đúng", mà là quyết định tối ưu theo thông tin hiện có và cấu trúc mất mát đã khai báo minh bạch.
 
-p_positive = 0.6  # P(test positive)
-p_negative = 0.4
+## 8. Kết luận bài 8.4
 
-# Expected loss after test
-posterior_if_pos = np.array([0.05, 0.95])
-posterior_if_neg = np.array([0.7, 0.3])
+Bayesian decision analysis hoàn tất chu trình của chapter 08: PPC giúp phát hiện mô hình sai ở đâu, WAIC/LOO giúp so sánh năng lực dự báo, model comparison strategies giúp xử lý bất định mô hình, và decision theory biến toàn bộ thông tin đó thành hành động cụ thể. Nếu inference là khoa học của niềm tin dưới bất định, thì decision analysis là kỷ luật biến niềm tin đó thành lựa chọn có trách nhiệm.
 
-exp_loss_if_pos = (loss_matrix.T @ posterior_if_pos).min()
-exp_loss_if_neg = (loss_matrix.T @ posterior_if_neg).min()
+**Chapter 08 Complete**: model criticism -> model comparison -> decision.
 
-exp_loss_with_test = (p_positive * exp_loss_if_pos + 
-                      p_negative * exp_loss_if_neg)
+## Câu hỏi tự luyện
 
-# Value of information
-test_cost = 20
-voi = current_exp_loss - exp_loss_with_test
-net_benefit = voi - test_cost
+1. Vì sao hai tổ chức có cùng posterior về rủi ro có thể đưa ra hai hành động tối ưu khác nhau?
+2. Nếu chi phí báo động giả tăng gấp đôi, ngưỡng $$q^*$$ thay đổi theo hướng nào?
+3. Khi VOI dương nhưng rất gần chi phí thu thập, bạn cần kiểm tra gì trước khi quyết định thu thêm dữ liệu?
 
-print("\n" + "=" * 70)
-print("VALUE OF INFORMATION")
-print("=" * 70)
-print(f"\nCurrent expected loss: {current_exp_loss:.1f}")
-print(f"Expected loss with test: {exp_loss_with_test:.1f}")
-print(f"Value of information: {voi:.1f}")
-print(f"Test cost: {test_cost}")
-print(f"Net benefit: {net_benefit:.1f}")
+## Tài liệu tham khảo
 
-if net_benefit > 0:
-    print("\n→ DO the test! (VOI > cost)")
-else:
-    print("\n→ DON'T do the test (VOI < cost)")
-print("=" * 70)
-```
-
-## 5. Practical Example: A/B Testing
-
-```python
-# A/B test: Which version better?
-# Version A: 120/1000 conversions
-# Version B: 140/1000 conversions
-
-# Bayesian analysis
-with pm.Model() as ab_model:
-    # Priors
-    p_A = pm.Beta('p_A', 1, 1)
-    p_B = pm.Beta('p_B', 1, 1)
-    
-    # Likelihoods
-    y_A = pm.Binomial('y_A', n=1000, p=p_A, observed=120)
-    y_B = pm.Binomial('y_B', n=1000, p=p_B, observed=140)
-    
-    # Sample
-    trace = pm.sample(2000, tune=500, chains=2, random_seed=42,
-                     return_inferencedata=True, progressbar=False)
-
-# Extract posteriors
-p_A_samples = trace.posterior['p_A'].values.flatten()
-p_B_samples = trace.posterior['p_B'].values.flatten()
-
-# Decision: Choose B if P(p_B > p_A) > threshold
-prob_B_better = np.mean(p_B_samples > p_A_samples)
-
-# Loss function: Cost of wrong choice
-# If choose A but B better: lose (p_B - p_A) * future_users
-# If choose B but A better: lose (p_A - p_B) * future_users
-
-future_users = 100000
-expected_gain_B = future_users * (p_B_samples - p_A_samples).mean()
-
-print("\n" + "=" * 70)
-print("A/B TESTING DECISION")
-print("=" * 70)
-print(f"\nP(B better than A): {prob_B_better:.3f}")
-print(f"Expected gain from choosing B: {expected_gain_B:.0f} conversions")
-
-if prob_B_better > 0.95:
-    print("\n→ Choose B (high confidence)")
-elif prob_B_better < 0.05:
-    print("\n→ Choose A")
-else:
-    print("\n→ Uncertain! Consider collecting more data")
-print("=" * 70)
-```
-
-## Tóm tắt
-
-Bayesian decision analysis hoàn tất logic của suy luận Bayes bằng cách biến posterior thành hành động. Khung cơ bản luôn gồm actions, states, loss function, và posterior; từ đó ta chọn hành động có expected loss nhỏ nhất. Bayes factor và các cách đóng khung giả thuyết one-sided hay two-sided giúp định lượng bằng chứng, nhưng quyết định cuối cùng vẫn phụ thuộc vào loss function và bối cảnh hành động cụ thể. Những ví dụ như MAP detection, cảnh báo với chi phí bất đối xứng, value of information, hay A/B testing đều cho thấy một điểm chung: posterior cho ta biết ta tin gì, còn decision theory cho ta biết nên làm gì với niềm tin đó.
-
-**Chapter 08 Complete!** PPC, Information Criteria, Model Comparison, Decision Analysis.
-
-## Bài tập
-
-**Bài tập 1**: Define custom loss function. Compute optimal action.
-
-**Bài tập 2**: Medical decision với different loss matrices. How does optimal action change?
-
-**Bài tập 3**: Compute VOI for additional data. When is it worth collecting?
-
-**Bài tập 4**: A/B testing. Compute expected gain. Make decision.
-
-**Bài tập 5**: Real business problem. Define losses. Use Bayesian decision theory.
-
-## Tài liệu Tham khảo
-
-**Berger, J. O. (1985).** *Statistical Decision Theory and Bayesian Analysis* (2nd Edition). Springer.
-
-**Gelman, A., et al. (2013).** *Bayesian Data Analysis* (3rd Edition). CRC Press.
-- Chapter 9: Decision analysis
+- Berger, J. O. (1985). *Statistical Decision Theory and Bayesian Analysis*.
+- Gelman, A., et al. (2013). *Bayesian Data Analysis* (3rd Edition), Chapter 9.
 
 ---
 

@@ -44,6 +44,25 @@ $$
 
 Đây chính là cầu nối giữa estimation và prediction.
 
+*Đọc công thức trên*:
+
+- $$\tilde y$$ là dữ liệu mới (hoặc dữ liệu giả lập) mà ta muốn dự đoán,
+- $$\theta$$ là tham số mô hình,
+- $$p(\theta \mid y)$$ là mức độ ta tin vào từng giá trị tham số sau khi thấy dữ liệu,
+- $$p(\tilde y \mid \theta)$$ là cách mô hình sinh ra dữ liệu mới nếu tham số được cố định ở $$\theta$$.
+
+Vậy tích phân chính là một phép "trung bình có trọng số" trên mọi khả năng của tham số. Trọng số ở đây là posterior $$p(\theta \mid y)$$: **tham số nào posterior cho là hợp lý hơn thì đóng góp nhiều hơn vào dự báo cuối cùng**.
+
+Nói ngắn gọn, posterior predictive không dùng một bộ tham số duy nhất, mà gộp dự báo từ nhiều bộ tham số theo mức độ tin cậy của chúng.
+
+Trong thực hành MCMC, ta thường xấp xỉ tích phân bằng tổng:
+
+$$
+p(\tilde y \mid y) \approx \frac{1}{S}\sum_{s=1}^{S} p(\tilde y \mid \theta^{(s)}), \quad \theta^{(s)} \sim p(\theta \mid y).
+$$
+
+Quy trình tính rất trực quan: lấy nhiều mẫu $$\theta^{(s)}$$ từ posterior, từ mỗi mẫu sinh $$\tilde y^{(s)}$$, rồi ghép tất cả lại thành phân phối dự báo hậu nghiệm.
+
 ## 3. Posterior predictive check (PPC, kiểm tra dự báo hậu nghiệm) là gì?
 
 PPC hỏi một câu rất thực tế:
@@ -248,4 +267,4 @@ Nếu không có bước checking và prediction, Bayesian regression mới ch�
 
 ---
 
-*Kết thúc Chapter 4. Bài học tiếp theo: [Chapter 5 - Multiple Predictors và Causal Thinking](/vi/chapter05/)*
+*Bài học tiếp theo: [Bài 4.5 - Case Study Model Checking & Prediction](/vi/chapter04/2025/01/02/04_05_case_study_model_checking_prediction.html)*
