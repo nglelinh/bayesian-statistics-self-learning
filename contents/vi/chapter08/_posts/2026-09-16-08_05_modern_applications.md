@@ -67,7 +67,7 @@ SBC tốn nhiều lần khớp mô hình. LOO giả định các quan sát đón
 1. Phân biệt, trên một mô hình giá, một thất bại PPC ở đuôi phải với một thất bại SBC. Cái nào buộc bạn sửa *mã suy luận*, cái nào buộc bạn sửa *câu chuyện sinh*?
 2. Hai mô hình có $$\Delta\mathrm{ELPD}=1.2$$ và sai số 1.5. Dựa trên Sivula et al. (2025), bạn sẽ viết gì trên slide cho giám đốc sản phẩm?
 3. Viết loss của một vòng Bayesian optimization khi mỗi thí nghiệm tốn một ngân sách cố định và bạn còn năm lần đánh giá. Hành động là gì, trạng thái thế giới là gì?
-4. Một bandit nội dung khai thác sớm một tiêu đề.clickbait. PPC nào sẽ tố cáo mô hình thưởng, và decision rule nào sẽ thận trọng hơn Thompson sampling thuần?
+4. Một bandit nội dung khai thác sớm một tiêu đề clickbait. PPC nào sẽ tố cáo mô hình thưởng, và decision rule nào sẽ thận trọng hơn Thompson sampling thuần?
 
 ## Tài liệu tham khảo
 
