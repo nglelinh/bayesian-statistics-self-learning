@@ -228,6 +228,12 @@ Multiple regression là cánh cửa mở sang ba câu hỏi rất thực tế, �
 
 > **3 ý cần nhớ.** Multiple regression cho phép mô tả outcome bằng nhiều predictors cùng lúc, nên phù hợp hơn với các bài toán thực tế; mỗi hệ số trong multiple regression luôn phải được đọc kèm điều kiện "giữ các biến khác cố định"; và khi hệ số thay đổi sau khi thêm predictor mới, đó thường là dấu hiệu mô hình đang tách bạch ảnh hưởng tốt hơn chứ không phải dấu hiệu mô hình sai.
 
+## Video tham khảo
+
+- [Multiple Regression, Clearly Explained!!!](https://www.youtube.com/watch?v=EkAQAi3a4js) — StatQuest with Josh Starmer, English. **xem trước**. Xem mỗi hệ số là đóng góp khi các predictor còn lại đã có trong mô hình, đúng cách đọc multiple regression của bài.
+- [Statistical Rethinking 2023 - 05 - Elemental Confounds](https://www.youtube.com/watch?v=mBEA7PKDmiY) — Richard McElreath, English. Xem vì sao thêm một biến làm đổi nghĩa hệ số của biến kia, hỗ trợ phần ảnh hưởng có điều kiện.
+- [Covariance and the regression line | Regression | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=ualmyZiPs9w) — Khan Academy, English. Xem hiệp phương sai đi vào đường hồi quy thế nào, dùng khi bài giải thích predictor không đứng một mình.
+
 ## Câu hỏi tự luyện
 
 1. Trong bài toán dự đoán giá nhà, vì sao chỉ dùng diện tích thường là chưa đủ?

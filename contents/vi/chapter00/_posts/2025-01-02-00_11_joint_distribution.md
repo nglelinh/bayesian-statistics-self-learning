@@ -164,6 +164,12 @@ Vì vậy, nắm chắc joint/marginal/conditional là bước đệm bắt bu�
 5. Độc lập tương đương với $$p(x,y)=p(x)p(y)$$.
 6. Bayes dựa trực tiếp trên cấu trúc joint-marginal-conditional.
 
+## Video tham khảo
+
+- [Joint Probability Distributions: Marginal and Conditional Densities](https://www.youtube.com/watch?v=pribJ8bUBzo) — Steve Brunton, English. **xem trước**. Xem mật độ đồng thời rồi lấy phân phối biên và có điều kiện, đúng ba thao tác mà bài xây cho suy luận Bayes.
+- [Marginal distribution and conditional distribution | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=CAXQvTKP8sg) — Khan Academy, English. Xem bản rời rạc của phân phối biên và có điều kiện, hỗ trợ phần đi từ bảng đồng thời sang một biến.
+- [Covariance, Clearly Explained!!!](https://www.youtube.com/watch?v=qtaqvPAeEJY) — StatQuest with Josh Starmer, English. Xem hiệp phương sai như một tóm tắt của cấu trúc đồng thời, nối bài này với độ phụ thuộc giữa hai biến.
+
 ## Bài tập
 
 **Bài 1.** Cho bảng joint ở Mục 6, hãy tính:

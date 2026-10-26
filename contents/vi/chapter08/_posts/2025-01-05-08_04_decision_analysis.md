@@ -109,6 +109,12 @@ Bayesian decision analysis hoàn tất chu trình của chapter 08: PPC giúp ph
 
 **Chapter 08 Complete**: model criticism -> model comparison -> decision.
 
+## Video tham khảo
+
+- [(ML 11.3) Frequentist risk, Bayesian expected loss, and Bayes risk](https://www.youtube.com/watch?v=b1GxZdFN6cY) — mathematicalmonk, English. **xem trước**. Xem mất mát kỳ vọng và rủi ro Bayes, đúng bước bài đi từ posterior sang hành động dưới một loss.
+- [Decision Analysis 2: EMV & EVPI - Expected Value & Perfect Information](https://www.youtube.com/watch?v=tbv9E9D2BRQ) — Joshua Emmanuel, English. Xem giá trị kỳ vọng của thông tin hoàn hảo, hỗ trợ phần value of information.
+- [Decision Theory: Loss Functions & Bayes Criterion (Worked Example 3)](https://www.youtube.com/watch?v=c7_L0-0Bvs8) — StatsResource, English. Xem một bài toán quyết định với hàm mất mát cụ thể, dùng để thấy cùng một xác suất có thể dẫn tới hai hành động.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao hai tổ chức có cùng posterior về rủi ro có thể đưa ra hai hành động tối ưu khác nhau?

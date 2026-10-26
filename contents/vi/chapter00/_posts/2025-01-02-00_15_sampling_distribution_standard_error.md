@@ -88,6 +88,12 @@ Nếu bạn quen tư duy sampling distribution + SE, việc đọc posterior int
 3. SD dữ liệu và SE là hai thứ khác nhau.
 4. Cỡ mẫu tăng làm SE giảm theo $$1/\sqrt{n}$$.
 
+## Video tham khảo
+
+- [Standard Deviation vs Standard Error, Clearly Explained!!!](https://www.youtube.com/watch?v=A82brFpdr9g) — StatQuest with Josh Starmer, English. **xem trước**. Xem để không trộn độ phân tán của dữ liệu với độ bất định của ước lượng, đúng phân biệt độ lệch chuẩn và sai số chuẩn.
+- [Introduction to sampling distributions | Sampling distributions | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=z0Ry_3_qhDw) — Khan Academy, English. Xem phân phối lấy mẫu của một thống kê, hỗ trợ câu hỏi bài đặt ra nếu quy trình lấy mẫu được lặp lại.
+- [Standard error of the mean | Inferential statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=J1twbrHel3o) — Khan Academy, English. Xem sai số chuẩn của trung bình mẫu giảm theo cỡ mẫu, dùng cho phần đọc độ ổn định của estimator.
+
 ## Câu hỏi tự luyện
 
 1. Hãy giải thích vì sao SD lớn không đồng nghĩa SE lớn trong mọi trường hợp.

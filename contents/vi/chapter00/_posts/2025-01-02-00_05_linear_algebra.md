@@ -553,6 +553,12 @@ print(f"\nR² = {r_squared:.4f}")
 | Determinant | $$\det(\mathbf{A})$$ | Scalar value |
 | Eigenvalue | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
 
+## Video tham khảo
+
+- [Vectors | Chapter 1, Essence of linear algebra](https://www.youtube.com/watch?v=fNk_zzaMoSs) — 3Blue1Brown, English. **xem trước**. Xem để nhìn vector như một đối tượng hình học, đúng phần bài gom dữ liệu và tham số thành vector.
+- [Matrix multiplication as composition | Chapter 4, Essence of linear algebra](https://www.youtube.com/watch?v=XkY2DOUCWMU) — 3Blue1Brown, English. Xem nhân ma trận như phép biến đổi, hỗ trợ đoạn viết hồi quy thành một toán tử tuyến tính.
+- [Eigenvectors and eigenvalues | Chapter 14, Essence of linear algebra](https://www.youtube.com/watch?v=PFDu9oVAE-g) — 3Blue1Brown, English. Xem trị riêng và vector riêng, dùng cho mục eigenvalues trong bài khi nói về cấu trúc của ma trận.
+
 ## Bài tập
 
 1. **Vectors**: Cho $$\mathbf{v} = [2, 3, -1]$$ và $$\mathbf{w} = [1, -2, 4]$$. Tính:

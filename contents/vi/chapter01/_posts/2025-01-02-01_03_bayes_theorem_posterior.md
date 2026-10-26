@@ -292,6 +292,12 @@ Một khi chấp nhận điều này, bạn sẽ thấy prior và posterior khô
 
 > **3 ý cần nhớ.** Định lý Bayes là quy tắc cập nhật niềm tin khi có thêm bằng chứng mới; prior, likelihood và posterior không phải ba khái niệm rời nhau mà là ba phần của cùng một quy trình suy luận; và sức mạnh của Bayes nằm ở chỗ nó cho phép ta kết hợp kiến thức cũ với dữ liệu mới một cách minh bạch.
 
+## Video tham khảo
+
+- [P01.007 — Định lý Bayes cập nhật niềm tin của mô hình ra sao?](https://www.youtube.com/watch?v=zXtcZ-2adK0) — Phạm Thông, Tiếng Việt. **xem trước**. Xem bằng tiếng Việt cách prior và dữ liệu cùng viết lại niềm tin, đúng cách bài muốn đọc định lý Bayes.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Xem từng thành phần prior, likelihood và hằng số chuẩn hóa trên hình, hỗ trợ phần gọi tên vai trò của chúng.
+- [Statistical Rethinking 2023 - 02 - The Garden of Forking Data](https://www.youtube.com/watch?v=R1vcdhPBlXA) — Richard McElreath, English. Xem ví dụ quả địa cầu nước và đất, nơi định lý Bayes trở thành việc đếm các cách dữ liệu có thể sinh ra.
+
 ## Câu hỏi tự luyện
 
 1. Trong ví dụ bác sĩ chẩn đoán bệnh, prior đến từ đâu và likelihood đến từ đâu?

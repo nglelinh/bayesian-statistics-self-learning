@@ -234,6 +234,12 @@ Nếu không suy nghĩ nhân quả trước, hồi quy có thể chạy rất đ
 
 > **3 ý cần nhớ.** Confounder là biến ảnh hưởng đồng thời tới treatment và outcome, nên nếu bỏ qua nó ta dễ ước lượng sai hiệu quả mình quan tâm; DAG là công cụ để vẽ cấu trúc nhân quả trước khi chạy mô hình, nhờ đó quyết định biến nào nên và không nên điều chỉnh; và không nên "control cho mọi thứ", vì confounders thường cần điều chỉnh, còn mediators và colliders thì phải xử lý cẩn thận tùy câu hỏi.
 
+## Video tham khảo
+
+- [Statistical Rethinking 2023 - 05 - Elemental Confounds](https://www.youtube.com/watch?v=mBEA7PKDmiY) — Richard McElreath, English. **xem trước**. Xem confounding được vẽ thành mũi tên chung, đúng phần bài tách tương quan khỏi quan hệ nhân quả trực tiếp.
+- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Xem kiểm soát đúng và kiểm soát sai, hỗ trợ quyết định khi nào nên điều chỉnh một biến.
+- [4.6 - The Backdoor Adjustment](https://www.youtube.com/watch?v=U1S8Rq8IcrY) — Brady Neal - Causal Inference, English. Xem backdoor adjustment, dùng cho đoạn bài biến DAG thành quy tắc có điều chỉnh hay không.
+
 ## Câu hỏi tự luyện
 
 1. Trong nghiên cứu hiệu quả học thêm lên điểm thi, biến nào có thể là confounder?

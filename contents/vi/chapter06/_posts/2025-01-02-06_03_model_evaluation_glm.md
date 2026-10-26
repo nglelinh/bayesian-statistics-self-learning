@@ -454,6 +454,12 @@ plt.show()
 
 **Chapter 06 Complete!** GLMs: Logistic, Poisson, Evaluation.
 
+## Video tham khảo
+
+- [Machine Learning Fundamentals: The Confusion Matrix](https://www.youtube.com/watch?v=Kdsp6soqA7o) — StatQuest with Josh Starmer, English. **xem trước**. Xem ma trận nhầm lẫn trước khi tính accuracy, đúng phần bài đổi tiêu chí khi kết quả là nhị phân.
+- [Probability Calibration : Data Science Concepts](https://www.youtube.com/watch?v=AunotauS5yI) — ritvikmath, English. Xem hiệu chuẩn xác suất, hỗ trợ lập luận rằng một điểm phân loại đúng chưa cho biết xác suất có đáng tin.
+- [Deviance Residuals](https://www.youtube.com/watch?v=JC56jS2gVUE) — StatQuest with Josh Starmer, English. Xem deviance residual, dùng khi bài đánh giá GLM đếm hoặc logistic ngoài các chỉ số phân loại.
+
 ## Bài tập
 
 **Bài tập 1**: Fit logistic regression. Compute ROC, AUC. Interpret.

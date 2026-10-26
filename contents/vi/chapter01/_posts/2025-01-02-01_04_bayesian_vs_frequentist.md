@@ -171,6 +171,12 @@ Nếu phải nhớ thật ngắn, thì frequentist thường đánh giá dữ li
 > 2. Frequentist thường trả lời câu hỏi về dữ liệu giả định dưới một giả thuyết, còn Bayesian trả lời trực tiếp về tham số hoặc giả thuyết sau khi thấy dữ liệu.
 > 3. Trong nhiều bài toán thực tế, câu trả lời Bayesian thường gần hơn với câu hỏi mà người dùng thật sự muốn hỏi.
 
+## Video tham khảo
+
+- [Bayesian vs. Frequentist Statistics ... MADE EASY!!!](https://www.youtube.com/watch?v=qJcv7VHwqcA) — Stats with Brian, English. **xem trước**. Xem hai trường phái đặt hai câu hỏi khác nhau trên cùng một dữ liệu, đúng phân biệt mà bài theo đuổi.
+- [Are you Bayesian or Frequentist?](https://www.youtube.com/watch?v=GEFxFVESQXc) — Cassie Kozyrkov, English. Xem một cách chọn ngôn ngữ xác suất theo quyết định cần ra, hỗ trợ phần bài không biến khác biệt thành phe phái.
+- [Bayesian Statistics: Credible vs Confidence Intervals](https://www.youtube.com/watch?v=YPceDssQFWo) — Academia Elevated, English. Xem khoảng tin cậy và khoảng tin cậy Bayes không đọc cùng một câu, dùng cho đoạn so sánh diễn giải kết quả.
+
 ## Câu hỏi tự luyện
 
 1. Hãy giải thích bằng lời sự khác nhau giữa confidence interval và credible interval.

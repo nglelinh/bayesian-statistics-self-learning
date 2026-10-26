@@ -302,6 +302,12 @@ Poisson regression là mô hình tự nhiên cho dữ liệu đếm vì nó gi�
 
 Bài tiếp theo: **Model Evaluation for GLMs**.
 
+## Video tham khảo
+
+- [Poisson regression - clearly explained](https://www.youtube.com/watch?v=Obpz_Uvo2rQ) — TileStats, English. **xem trước**. Xem hồi quy Poisson cho dữ liệu đếm và vì sao đường thẳng không giữ được số không âm.
+- [Regression with Count Data: Poisson and Negative Binomial](https://www.youtube.com/watch?v=uGKnoAw-PFQ) — Matthew E. Clapham, English. Xem mô hình đếm Poisson cạnh Negative Binomial, hỗ trợ phần bài khi phương sai lớn hơn trung bình.
+- [Statistical Rethinking 2023 - 10 - Counts & Hidden Confounds](https://www.youtube.com/watch?v=jokxu18egu0) — Richard McElreath, English. Xem mô hình đếm đi cùng các confound bị che, dùng cho đoạn viết Poisson như một GLM Bayes.
+
 ## Bài tập
 
 **Bài tập 1**: Generate count data. Fit Poisson regression. Interpret rate ratio.

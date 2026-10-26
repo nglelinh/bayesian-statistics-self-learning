@@ -312,6 +312,12 @@ Mỗi khi thấy một bài toán regression, hãy tự ép mình đi qua một 
 
 > **3 ý cần nhớ.** Bayesian linear regression là một generative model trong đó dữ liệu được sinh quanh một xu hướng trung bình có nhiễu; intercept, slope và noise đều là các đại lượng chưa biết cần được suy luận chứ không chỉ ước lượng bằng một con số điểm; và điểm mạnh của regression Bayes nằm ở chỗ nó giữ lại bất định của cả tham số lẫn dự đoán thay vì chỉ đưa ra một đường thẳng duy nhất.
 
+## Video tham khảo
+
+- [The Essence of Linear Regression!!!](https://www.youtube.com/watch?v=aFDOzpTeg0s) — StatQuest with Josh Starmer, English. **xem trước**. Xem hồi quy như một câu chuyện về trung bình có điều kiện cộng nhiễu, đúng cách bài từ chối bắt đầu từ bình phương tối thiểu.
+- [Linear Regression, Clearly Explained!!!](https://www.youtube.com/watch?v=7ArmBVF2dCs) — StatQuest with Josh Starmer, English. Xem hệ số chặn, hệ số dốc và phần dư trên một đường thẳng, hỗ trợ phần gọi tên α, β và σ.
+- [Statistical Rethinking 2023 - 03 - Geocentric Models](https://www.youtube.com/watch?v=tNOu-SEacNU) — Richard McElreath, English. Xem mô hình hồi quy được viết như mô hình sinh rồi mới được ước lượng, cùng trình tự với bài.
+
 ## Câu hỏi tự luyện
 
 1. Hãy kể generative story cho mối quan hệ giữa số giờ học và điểm thi.

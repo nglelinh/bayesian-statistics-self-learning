@@ -558,6 +558,12 @@ Không. Nó vẫn là nền tảng trực giác và là bộ ví dụ chuẩn đ
 
 **Prior liên hợp là những prior khiến posterior vẫn nằm trong cùng họ phân phối sau khi cập nhật.** Chính đặc điểm này làm cho suy luận Bayes trong các ví dụ đơn giản trở nên dễ tính tay hơn, dễ diễn giải hơn, dễ cập nhật tuần tự hơn, và đặc biệt hữu ích cho việc xây trực giác trước khi chuyển sang những phương pháp tính toán tổng quát hơn. Bốn cặp cơ bản mà bạn nên nhớ đầu tiên trong bài này là Beta-Binomial, Beta-Geometric, Gamma-Poisson, và Normal-Normal; tuy nhiên, điều cần giữ lại lâu dài hơn chính là nguyên tắc rằng sự thuận tiện về mặt tính toán không tự động đồng nghĩa với một lựa chọn mô hình hóa tốt nhất. Nói gọn lại trong ba ý, conjugacy xuất hiện khi prior và likelihood ăn khớp với nhau về đại số nên posterior vẫn ở trong cùng một họ phân phối, các cặp liên hợp giúp cho việc cập nhật Bayes vừa nhanh vừa sáng sủa về mặt trực giác, nhưng prior liên hợp vẫn chỉ là một lựa chọn thuận tiện chứ không nên bị ép dùng nếu nó mô tả kiến thức thực tế quá kém.
 
+## Video tham khảo
+
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Xem định nghĩa prior liên hợp là cặp khiến posterior còn trong cùng họ, đúng ý bài không coi liên hợp là mẹo thuộc lòng.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Xem cập nhật Bayes trên vài cặp liên hợp quen, hỗ trợ phần ý nghĩa thực tế của các cặp đó.
+- [20 - Beta conjugate prior to Binomial and Bernoulli likelihoods](https://www.youtube.com/watch?v=hKYvZF9wXkk) — Ox educ, English. Xem Beta cập nhật bằng số thành công và thất bại của Binomial, dùng cho cặp liên hợp trung tâm của bài.
+
 ## Câu hỏi tự luyện
 
 1. Hãy nêu một ví dụ thực tế phù hợp với Beta-Binomial.

@@ -62,6 +62,12 @@ Chấm điểm bảng, phát hiện out-of-distribution, và bất định của
 
 Laplace là địa phương. VBLL giả định lớp cuối tuyến tính trên đặc trưng cố định. Ensemble cần nhân chi phí huấn luyện. Không phương pháp nào xóa nhu cầu kiểm tra mô hình ở Chương 8. Bài này cố ý không mở một chương học sâu riêng; nó chỉ cho thấy prior của bài 7.1 đã đi vào các mạng hiện đại bằng những cửa hẹp.
 
+## Video tham khảo
+
+- [The Bayesian interpretation of weight decay 43 Machine Learning](https://www.youtube.com/watch?v=RckG_kNv1Kc) — Professor tutorials, English. **xem trước**. Xem weight decay được đọc như một prior trên trọng số, đúng cầu nối bài vẽ từ regularization sang mạng nơ-ron.
+- [Uncertainty estimation and Bayesian Neural Networks - Marcin Możejko](https://www.youtube.com/watch?v=dj-FKXxy7HQ) — PyData, Tiếng Việt. Xem ước lượng bất định bằng Bayesian neural network, hỗ trợ phần mô hình quá linh hoạt cần một prior.
+- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem các cách học sâu báo bất định, trong đó có họ ensemble, dùng cho đoạn bài về deep ensemble.
+
 ## Bài tập
 
 1. Viết lại weight decay như một prior. Nếu bạn giảm $$\tau$$, bạn đang tuyên bố điều gì về hàm sinh dữ liệu, và bạn chấp nhận bias kiểu gì?

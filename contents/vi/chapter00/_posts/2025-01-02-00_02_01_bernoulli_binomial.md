@@ -144,3 +144,9 @@ Trong Bayes, ta thường đặt prior cho $$p$$ rồi cập nhật bằng dữ 
 ---
 
 *Bài học tiếp theo: [0.3 Poisson và Exponential](/vi/chapter00/00_02_02_poisson_exponential/)*
+
+## Video tham khảo
+
+- [Bernoulli and Binomial Random Variables](https://www.youtube.com/watch?v=Tc6g-Y-l0Rg) — Steve Brunton, English. **xem trước**. Xem để tách một phép thử nhị phân khỏi số lần thành công trên nhiều phép thử, đúng trọng tâm Bernoulli và Binomial của bài.
+- [The Binomial Distribution and Test, Clearly Explained!!!](https://www.youtube.com/watch?v=J8jNoF-K8E8) — StatQuest with Josh Starmer, English. Xem ví dụ đếm số lần thành công và công thức tổ hợp, hỗ trợ phần đọc tham số theo ngôn ngữ dữ liệu thật.
+- [Binomial distributions | Probabilities of probabilities, part 1](https://www.youtube.com/watch?v=8idr1WZ1A7Q) — 3Blue1Brown, English. Xem để thấy Binomial là mô hình sinh của dữ liệu nhị phân lặp lại, cầu nối sang cách Bayes dùng phân phối này ở các bài sau.

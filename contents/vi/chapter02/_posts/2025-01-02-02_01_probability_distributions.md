@@ -321,6 +321,12 @@ Nếu nắm chắc vai trò của phân phối, các bài sau về likelihood, p
 
 > **3 ý cần nhớ.** Phân phối luôn giàu thông tin hơn một ước lượng điểm vì nó giữ lại cả mức độ bất định; cùng một giá trị trung tâm chưa chắc nói cùng một điều nếu độ rộng của phân phối khác nhau; và trong Bayes, prior, likelihood, và posterior đều là những phân phối đóng các vai trò khác nhau trong suy luận.
 
+## Video tham khảo
+
+- [The Main Ideas behind Probability Distributions](https://www.youtube.com/watch?v=oI3hZJqXJuc) — StatQuest with Josh Starmer, English. **xem trước**. Xem các ý chính của một phân phối xác suất, đúng yêu cầu bài về việc đọc phân phối như một câu chuyện.
+- [Random variables and probability distributions.](https://www.youtube.com/watch?v=pvkhK03aFDM) — Ben Lambert, English. Xem biến ngẫu nhiên rời rạc và liên tục được phân biệt thế nào, hỗ trợ phần chọn họ phân phối.
+- [Why “probability of 0” does not mean “impossible” | Probabilities of probabilities, part 2](https://www.youtube.com/watch?v=ZA4JkHKZM50) — 3Blue1Brown, English. Xem vì sao phải giữ cả hình của phân phối chứ không chỉ một điểm, nối với lập luận bài về việc Bayes giữ full distribution.
+
 ## Câu hỏi tự luyện
 
 1. Một lớp có 8 sinh viên và 6 người qua môn. Một lớp khác có 800 sinh viên và 600 người qua môn. Vì sao cùng tỷ lệ $$75\%$$ nhưng mức chắc chắn lại khác nhau?

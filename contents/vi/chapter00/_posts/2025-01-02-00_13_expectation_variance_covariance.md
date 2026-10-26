@@ -113,6 +113,12 @@ Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp 
 3. Hiệp phương sai đo mức thay đổi cùng chiều/ngược chiều của hai biến.
 4. Ba đại lượng này là ngôn ngữ cơ bản để diễn giải posterior.
 
+## Video tham khảo
+
+- [Expected Values, Main Ideas!!!](https://www.youtube.com/watch?v=KLs_7b7SKi4) — StatQuest with Josh Starmer, English. **xem trước**. Xem kỳ vọng như trung bình dài hạn của một biến ngẫu nhiên, đúng định nghĩa mở đầu của bài.
+- [Covariance, Clearly Explained!!!](https://www.youtube.com/watch?v=qtaqvPAeEJY) — StatQuest with Josh Starmer, English. Xem hiệp phương sai dương, âm và bằng không nghĩa là gì, hỗ trợ phần hai biến cùng chiều hay ngược chiều.
+- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Xem sự khác giữa tham số quần thể và ước lượng từ mẫu, dùng khi bài nối kỳ vọng với phương sai mẫu.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao kỳ vọng không luôn nằm ở đỉnh của phân phối?

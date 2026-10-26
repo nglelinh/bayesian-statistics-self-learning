@@ -136,6 +136,12 @@ Giả sử dữ liệu không phải là chiều cao mà là số cuộc gọi �
 3. Mô hình luôn đi kèm giả định; hiểu giả định quan trọng hơn nhớ công thức.
 4. Trong Bayes, mô hình cung cấp likelihood để cập nhật từ prior sang posterior.
 
+## Video tham khảo
+
+- [What is a statistical model?](https://www.youtube.com/watch?v=3d5ivs_8amQ) — Very Normal, English. **xem trước**. Xem định nghĩa mô hình thống kê như một mô tả xác suất của cách dữ liệu được sinh ra, đúng câu hỏi trung tâm của bài.
+- [Statistical Rethinking 2023 - 01 - The Golem of Prague](https://www.youtube.com/watch?v=FdnMWdICdRs) — Richard McElreath, English. Xem lập luận rằng mô hình là một golem cần được giám sát, hỗ trợ phần vì sao giả định quan trọng hơn một công thức khớp số.
+- [Regression and Other Stories: Generative models and statistical inference (ros02 4)](https://www.youtube.com/watch?v=kn8fyNzvcPo) — Data Science Learning Community Videos, English. Xem mô hình sinh và suy luận thống kê đi cùng nhau thế nào, dùng cho đoạn tách dữ liệu quan sát khỏi tham số chưa biết.
+
 ## Câu hỏi tự luyện
 
 1. Với ví dụ đồng xu, hãy liệt kê ba giả định ngầm của mô hình Binomial.

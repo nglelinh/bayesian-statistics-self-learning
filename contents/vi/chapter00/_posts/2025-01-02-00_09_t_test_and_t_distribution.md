@@ -265,6 +265,12 @@ Mặc dù t-test rất hữu ích, nó vẫn mang những hạn chế gần vớ
 
 Trong các chương sau, bạn sẽ thấy cách phương pháp Bayesian giải quyết những hạn chế này. **Bayesian estimation** cung cấp phân phối đầy đủ của tham số thay vì chỉ một t-value đơn lẻ, **credible intervals** có diễn giải trực tiếp hơn confidence intervals, **Bayes factors** cho phép so sánh bằng chứng giữa các giả thuyết, và **priors** cho phép đưa kiến thức trước đó vào suy luận một cách minh bạch.
 
+## Video tham khảo
+
+- [Introduction to the t Distribution (non-technical)](https://www.youtube.com/watch?v=Uv6nGIgZMVw) — jbstatistics, English. **xem trước**. Xem vì sao phải dùng phân phối t khi độ lệch chuẩn chỉ được ước lượng từ mẫu, đúng lý do bài thay Normal bằng t.
+- [Introduction to t statistics | Confidence intervals | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=a2rd4Qy8yNI) — Khan Academy, English. Xem thống kê t và khoảng tin cậy tương ứng, hỗ trợ ví dụ so sánh trung bình mẫu với một giá trị cho trước.
+- [StatQuickie: Which t test to use](https://www.youtube.com/watch?v=nnBJeb_I-q8) — StatQuest with Josh Starmer, English. Xem cách chọn dạng t-test theo thiết kế mẫu, dùng cho phần bài phân biệt các tình huống kiểm định.
+
 ## Bài tập
 
 **Bài tập 1: Tính T-statistic thủ công.** Một nghiên cứu đo điểm kiểm tra của 10 sinh viên sau khi học bằng phương pháp mới. Điểm trung bình quốc gia là 75. Dữ liệu: 78, 82, 75, 80, 77, 83, 79, 81, 76, 84. (a) Tính $$\bar{x}$$ và $$s$$. (b) Tính t-statistic để kiểm định $$H_0: \mu = 75$$. (c) Với $$\alpha = 0.05$$ (two-tailed), tra bảng t và quyết định bác bỏ $$H_0$$ hay không.

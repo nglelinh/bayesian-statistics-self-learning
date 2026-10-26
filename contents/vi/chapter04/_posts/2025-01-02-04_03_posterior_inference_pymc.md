@@ -363,6 +363,12 @@ Mục tiêu không phải là nhớ từng dòng API PyMC. Mục tiêu là nhìn
 
 > **3 ý cần nhớ.** PyMC giúp triển khai regression Bayes theo đúng cấu trúc prior + likelihood + posterior mà bạn đã học; sau khi fit model, diagnostics luôn phải đi trước việc diễn giải posterior; và giá trị thật của posterior inference không chỉ nằm ở ước lượng tham số mà còn ở khả năng chuyển sang dự đoán và kiểm tra mô hình.
 
+## Video tham khảo
+
+- [[114] Getting Started with PyMC (Chris Fonnesbeck)](https://www.youtube.com/watch?v=jrU0UBr2z3k) — Data Umbrella, English. **xem trước**. Xem một mô hình PyMC được khai báo rồi lấy mẫu, đúng bước bài đi từ câu chuyện sinh sang code.
+- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Xem hồi quy tuyến tính trong PyMC và cách đọc hệ số, hỗ trợ workflow chuẩn hóa, prior và likelihood của bài.
+- [Chris Fonnesbeck - Probabilistic Python: An Introduction to Bayesian Modeling with PyMC](https://www.youtube.com/watch?v=911d4A1U0BE) — PyData, English. Xem bản giới thiệu dài hơn về mô hình hóa Bayes bằng PyMC, dùng khi cần thấy cả prior lẫn kiểm tra sau khi sample.
+
 ## Câu hỏi tự luyện
 
 1. Hãy liệt kê 5 bước tối thiểu của một workflow regression Bayes với PyMC.

@@ -122,3 +122,9 @@ $$h'(x) = \frac{\partial f}{\partial x} \cdot 1 + \frac{\partial f}{\partial y} 
 Setting $$h'(x) = 0$$ gives $$x = 1/2$$, so the optimal point is $$(1/2, 1/2)$$.
 
 This demonstrates how multivariable calculus concepts work together to solve optimization problems systematically.
+
+## Video tham khảo
+
+- [The paradox of the derivative | Chapter 2, Essence of calculus](https://www.youtube.com/watch?v=9vKqVkMQHKk) — 3Blue1Brown, English. **xem trước**. Watch the derivative as a local linear approximation, the rate-of-change idea in the first section of the lesson.
+- [Partial derivatives, introduction](https://www.youtube.com/watch?v=AXqhWeUEtQU) — Khan Academy, English. Watch a partial derivative hold every variable but one fixed, supporting the multivariable section.
+- [Multivariable chain rule](https://www.youtube.com/watch?v=NO3AqAaAE6o) — Khan Academy, English. Watch the multivariable chain rule, the last section of the lesson on composed functions of several inputs.

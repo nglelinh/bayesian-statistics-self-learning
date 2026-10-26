@@ -165,6 +165,12 @@ Quan trọng hơn, chúng ta sẽ áp dụng quan điểm Bayesian về xác su�
 
 Khi bạn tiến xa hơn trong khóa học này, bạn sẽ thấy rằng mọi công cụ Bayesian, từ định lý Bayes đơn giản đến các mô hình phân cấp phức tạp, đều được xây dựng từ các nguyên tắc xác suất cơ bản mà chúng ta đã thảo luận ở đây. Việc hiểu sâu sắc những nền tảng này sẽ giúp bạn không chỉ áp dụng các phương pháp Bayesian một cách chính xác, mà còn hiểu được tại sao chúng hoạt động và khi nào chúng có thể thất bại.
 
+## Video tham khảo
+
+- [The Main Ideas behind Probability Distributions](https://www.youtube.com/watch?v=oI3hZJqXJuc) — StatQuest with Josh Starmer, English. **xem trước**. Xem để đọc một phân phối như câu chuyện về mức độ chắc chắn, đúng phần mở đầu khi bài coi xác suất là ngôn ngữ của sự không chắc chắn.
+- [Conditional Probabilities, Clearly Explained!!!](https://www.youtube.com/watch?v=_IgyaD7vOOA) — StatQuest with Josh Starmer, English. Xem phần xác suất có điều kiện, vì đó là phép tính mà bài dùng để đi từ không gian mẫu sang suy luận khi đã có thông tin mới.
+- [Random variables | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=3v9w79NhsfI) — Khan Academy, English. Xem cách biến ngẫu nhiên được định nghĩa, hỗ trợ đoạn bài phân biệt kết quả quan sát với đại lượng còn chưa biết.
+
 ## Bài tập
 
 **Bài tập 1: Xác suất Cơ bản.** Một hộp chứa 5 viên bi đỏ, 3 viên bi xanh, và 2 viên bi vàng. Chúng ta rút ngẫu nhiên một viên bi. (a) Xác định không gian mẫu. (b) Tính xác suất rút được viên bi đỏ. (c) Tính xác suất rút được viên bi không phải màu vàng. Giải thích suy luận của bạn bằng lời, không chỉ công thức.

@@ -146,3 +146,9 @@ Trong Bayes, prior Gamma cho $$\lambda$$ kết hợp với likelihood Poisson t�
 ---
 
 *Bài học tiếp theo: [0.4 Normal và trực giác CLT](/vi/chapter00/00_02_03_normal_clt_intuition/)*
+
+## Video tham khảo
+
+- [An Introduction to the Poisson Distribution](https://www.youtube.com/watch?v=jmqZG6roVqU) — jbstatistics, English. **xem trước**. Xem để nắm Poisson như mô hình đếm số sự kiện trong một khoảng cố định, đúng nửa đầu của bài.
+- [Understanding Exponential vs Poisson Distributions](https://www.youtube.com/watch?v=n7K8s4vryCQ) — Explained by Michael, English. Xem chỗ đối chiếu thời gian chờ với số lần đếm, hỗ trợ luận điểm Exponential và Poisson là hai mặt của cùng một quá trình.
+- [The Exponential Distribution](https://www.youtube.com/watch?v=wtLQUjfomig) — StatQuest with Josh Starmer, English. Xem hình dạng và tham số của Exponential, dùng khi bài chuyển từ đếm sự kiện sang thời gian chờ.

@@ -68,6 +68,12 @@ Quảng cáo, xếp hạng, độ tin cậy hệ thống, và thí nghiệm tu�
 
 Empirical Bayes ước lượng điểm các siêu tham số nên thường đánh giá thấp bất định về chính prior. Bayes phân cấp đầy đủ, vốn được tư duy đa mức ở Chương 5 bắt đầu thúc đẩy, đặt posterior lên $$(\alpha,\beta)$$. Xấp xỉ lưới chết khi số chiều lớn hơn vài đơn vị. Công cụ trung thực tiếp theo không phải bảng liên hợp dày hơn mà là một sampler, điều Chương 4 xây dựng.
 
+## Video tham khảo
+
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Xem lại khi nào liên hợp còn là một lựa chọn tính toán gọn, đúng cách bài đọc prior liên hợp như quyết định thiết kế.
+- [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Xem Gamma–Poisson ước lượng một tỷ lệ sự kiện, hỗ trợ ví dụ giám sát tần suất trong bài.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Xem cập nhật liên hợp được lặp lại khi dữ liệu tới dần, dùng cho phần bài về hệ thống phải cập nhật liên tục.
+
 ## Bài tập
 
 1. Hai mục có dữ liệu nhấp $$(y,n)=(1,2)$$ và $$(40,100)$$. Với prior $$\mathrm{Beta}(2,98)$$, trung bình hậu nghiệm nào dịch nhiều hơn, và quyết định sản phẩm nào được biện minh?

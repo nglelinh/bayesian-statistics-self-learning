@@ -199,6 +199,12 @@ Một bên là vấn đề **trùng lặp thông tin**, một bên là vấn đ�
 
 > **3 ý cần nhớ.** Multicollinearity xảy ra khi predictors mang thông tin quá giống nhau, khiến mô hình khó tách riêng ảnh hưởng của từng biến; đây là vấn đề đặc biệt nghiêm trọng khi mục tiêu là diễn giải coefficients, nhưng có thể ít nghiêm trọng hơn nếu mục tiêu chỉ là prediction; và cách xử lý luôn phụ thuộc vào mục tiêu, từ bỏ bớt biến, gộp biến, dùng prior ổn định hơn, thu thập dữ liệu đa dạng hơn cho đến chấp nhận giới hạn diễn giải.
 
+## Video tham khảo
+
+- [Multicollinearity (in Regression Analysis)](https://www.youtube.com/watch?v=G1WX5GiFSWQ) — numiqo, English. **xem trước**. Xem đa cộng tuyến làm hệ số khó tách phần tín hiệu của từng biến, đúng hiện tượng bài định nghĩa.
+- [Multicollinearity](https://www.youtube.com/watch?v=O4jDva9B3fw) — Ben Lambert, English. Xem multicollinearity trong diễn giải hồi quy, hỗ trợ phần phân biệt dự báo với việc đọc hệ số.
+- [Variance Inflation Factors: testing for multicollinearity](https://www.youtube.com/watch?v=0SBIXgPVex8) — Ben Lambert, English. Xem hệ số phóng đại phương sai, dùng khi bài cần một dấu hiệu chẩn đoán predictors đi cùng nhau.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao diện tích và số phòng ngủ dễ tạo ra multicollinearity?

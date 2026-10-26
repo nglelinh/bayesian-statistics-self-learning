@@ -160,6 +160,12 @@ Không phải một bên hoàn toàn sai và bên kia hoàn toàn đúng trong m
 
 > **3 ý cần nhớ.** Frequentist và Bayesian khác nhau trước hết ở cách định nghĩa xác suất, không chỉ ở kỹ thuật tính toán; quan điểm Bayes xem xác suất như độ hợp lý nên áp dụng tự nhiên cho giả thuyết, tham số và các sự kiện chỉ xảy ra một lần; và “chủ quan” trong Bayes không có nghĩa là tùy tiện, vì niềm tin vẫn phải tuân theo các quy tắc nhất quán của xác suất.
 
+## Video tham khảo
+
+- [The Bayesian Trap](https://www.youtube.com/watch?v=R13BD8qKeTg) — Veritasium, English. **xem trước**. Xem xác suất được dùng như mức độ tin vào một giả thuyết, đúng chuyển nghĩa từ tần suất dài hạn sang độ hợp lý.
+- [Bayes' Theorem (with Example!)](https://www.youtube.com/watch?v=akClB1J6b28) — Steve Brunton, English. Xem định lý Bayes như bài toán ngược từ triệu chứng về nguyên nhân, hỗ trợ các tình huống chỉ xảy ra một lần trong bài.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Xem niềm tin được cập nhật bằng diện tích, dùng khi bài cần một hình ảnh cho xác suất như plausibility.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao dự báo “70% khả năng mưa ngày mai” là ví dụ rất tự nhiên cho cách hiểu Bayesian về xác suất?

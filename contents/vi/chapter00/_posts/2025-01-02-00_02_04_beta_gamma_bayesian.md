@@ -255,6 +255,12 @@ print(betaln(2, 3))  # log(Beta(2,3))
 4. Hàm Beta liên hệ trực tiếp với Gamma qua tỉ số $$\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$$.
 5. Hằng số chuẩn hóa biến biểu thức "đúng dạng" thành mật độ hợp lệ.
 
+## Video tham khảo
+
+- [The Beta distribution in 12 minutes!](https://www.youtube.com/watch?v=juF3r12nM5A) — Luis Serrano Academy, English. **xem trước**. Xem để đọc α và β như số lần thành công và thất bại đã biết trước, đúng phần Beta trên đoạn từ 0 đến 1.
+- [The Gamma Distribution](https://www.youtube.com/watch?v=9IIcHAJlcWc) — Steve Brunton, English. Xem hình dạng Gamma cho đại lượng dương, hỗ trợ nửa bài về tham số tỷ lệ và thời gian chờ.
+- [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Xem cặp Gamma–Poisson khi ước lượng một tỷ lệ sự kiện, nối phân phối trong bài với cập nhật Bayes ở phần liên hệ cuối.
+
 ## Bài tập
 
 **Bài 1.** Dùng công thức đệ quy để tính $$\Gamma(4)$$ và $$\Gamma(5)$$, sau đó đối chiếu với $$3!$$ và $$4!$$.

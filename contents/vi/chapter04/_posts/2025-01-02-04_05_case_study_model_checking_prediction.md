@@ -316,6 +316,12 @@ Một Bayesian workflow trưởng thành luôn đi theo vòng lặp:
 
 Case `tips` cho thấy ngay cả bài toán nhỏ cũng cần đầy đủ vòng lặp này để kết luận có trách nhiệm.
 
+## Video tham khảo
+
+- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Xem câu hỏi của một posterior predictive check trước khi làm workflow trên dữ liệu tips.
+- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Xem một hồi quy Bayes được fit và diễn giải hệ số, hỗ trợ nửa xây mô hình của case study.
+- [Simple Linear Regression:  Checking Assumptions with Residual Plots](https://www.youtube.com/watch?v=iMdtTCX2Q70) — jbstatistics, English. Xem cách đọc residual plot khi kiểm tra giả định, dùng cho phần phân tích phần dư trong bài.
+
 ## Câu hỏi tự luyện
 
 1. Với dataset `tips`, bạn sẽ chọn statistic nào cho PPC ngoài mean/variance, và vì sao?

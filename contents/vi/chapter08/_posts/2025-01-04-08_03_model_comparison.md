@@ -70,6 +70,12 @@ Không có một chiến lược so sánh mô hình đúng cho mọi bối cản
 
 Bài tiếp theo: **Bayesian Decision Analysis**, nơi kết quả mô hình được chuyển thành lựa chọn hành động tối ưu dưới loss cụ thể.
 
+## Video tham khảo
+
+- [Statistical Rethinking 2023 - 20 - Horoscopes](https://www.youtube.com/watch?v=qwF-st2NGTU) — Richard McElreath, English. **xem trước**. Xem vì sao bảng xếp hạng mô hình không phải một lời tiên tri, đúng lập luận bài từ chối chọn kẻ thắng bằng mọi giá.
+- [16a Prediction and Model Averaging](https://www.youtube.com/watch?v=707hT6qYghw) — Philip Ramsey, English. Xem model averaging khi các mô hình cùng dự báo, hỗ trợ chiến lược kết hợp thay vì chọn một mô hình.
+- [Statistical Rethinking 2026 - Lecture B02 - Multilevel Model Expansion](https://www.youtube.com/watch?v=Nv2rm1s9q6I) — Richard McElreath, English. Xem mở rộng mô hình nhiều tầng, dùng cho chiến lược expansion mà bài đặt cạnh selection và averaging.
+
 ## Câu hỏi tự luyện
 
 1. Trong tình huống hai mô hình chênh lệch LOO rất nhỏ so với SE, vì sao selection có thể kém trung thực hơn averaging?

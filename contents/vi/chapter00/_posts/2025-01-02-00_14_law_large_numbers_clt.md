@@ -91,6 +91,12 @@ Trong Bayes, Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu
 3. LLN nói về hội tụ; CLT nói về dao động quanh điểm hội tụ.
 4. Cả hai là nền tảng cho suy luận và mô phỏng thống kê.
 
+## Video tham khảo
+
+- [Law of Large Numbers - Explained and Visualized](https://www.youtube.com/watch?v=MntX3zWNWec) — Jeremy Blitz-Jones, English. **xem trước**. Xem trung bình mẫu ổn định khi số quan sát tăng, đúng luật số lớn ở nửa đầu bài.
+- [But what is the Central Limit Theorem?](https://www.youtube.com/watch?v=zeJD6dqJ5lo) — 3Blue1Brown, English. Xem hình dạng của phân phối trung bình tiến tới chuông, hỗ trợ phần định lý giới hạn trung tâm.
+- [Định lý giới hạn trung tâm (Central limit theorem)](https://www.youtube.com/watch?v=Sm2yBx3Jn6c) — Bài Học 10 Phút, Tiếng Việt. Xem lại cùng định lý bằng tiếng Việt, để đối chiếu với lập luận bài về ước lượng và mô phỏng.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao LLN không đủ để suy ra khoảng bất định của $$\bar X$$?
