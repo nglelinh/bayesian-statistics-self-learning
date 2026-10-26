@@ -2,7 +2,7 @@
 layout: post
 title: "Bài 4.4: Model Checking và Prediction - Đảm bảo Model Tốt"
 chapter: '04'
-order: 4
+order: 5
 owner: Nguyen Le Linh
 lang: vi
 categories:

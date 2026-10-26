@@ -79,6 +79,7 @@ exclude:
   - .sass-cache/
   - .jekyll-cache/
   - gemfiles/
+  - contents/vi/chapter02/_posts/2025-01-02-02_03_prior.md.backup
 
 # Analytics
 google_analytics_id: ""

@@ -2,7 +2,7 @@
 layout: post
 title: "Bài 4.6: Case Study Nâng Cao - Model Checking & Prediction Trên Dataset Phức Tạp"
 chapter: '04'
-order: 6
+order: 7
 owner: Nguyen Le Linh
 lang: vi
 categories:

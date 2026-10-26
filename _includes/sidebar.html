@@ -8,62 +8,115 @@
     <p>{% if page.lang %}{{ site.t[page.lang].description }}{% else %}{{ site.description }}{% endif %}</p>
   </div>
 
-  <nav class="sidebar-nav">
-    <a class="sidebar-nav-item{% if page.title == 'Home' %} active{% endif %}" href="{{ '/' | relative_url }}">{% t home %}</a>
+  {% assign current_lang = page.lang | default: site.default_lang %}
+  <nav class="sidebar-nav" aria-label="{% if current_lang == 'vi' %}Mục lục khóa học{% else %}Course menu{% endif %}">
+    <a class="sidebar-nav-item{% if page.title == 'Home' %} active{% endif %}" href="{{ '/' | relative_url }}">{% t home %}
+    {% assign lang_posts = site.posts | where: "lang", current_lang %}
+    {% assign chapter_groups = lang_posts | group_by: "chapter" | sort: "name" %}
 
-    {% assign current_lang = page.lang | default: site.default_lang %}
-    
-    <!-- Manually define chapters to ensure they all appear -->
-    {% assign chapter_list = "00,01,02,03,04,05,06,07,08,12" | split: "," %}
-    
-    {% for chapter_num in chapter_list %}
-      <!-- Find chapter page -->
+    {% comment %}
+      group_by runs chapter ids through a numeric sort, so "04" becomes "4".
+      Pad them back to the zero-padded ids used in front matter and chapter pages.
+    {% endcomment %}
+    {% assign page_chapter = page.chapter | append: "" | strip %}
+    {% assign page_chapter_size = page_chapter | size %}
+    {% if page_chapter_size == 1 %}
+      {% assign page_chapter = "0" | append: page_chapter %}
+    {% endif %}
+
+    {% for chapter_group in chapter_groups %}
+      {% assign chapter_num = chapter_group.name | strip %}
+      {% assign chapter_num_size = chapter_num | size %}
+      {% if chapter_num_size == 1 %}
+        {% assign chapter_num = "0" | append: chapter_num %}
+      {% endif %}
+      {% if chapter_num == nil or chapter_num == "" %}
+        {% continue %}
+      {% endif %}
+
       {% assign chapter_page = nil %}
       {% for p in site.pages %}
-        {% if p.lang == current_lang and p.layout == "page" and p.chapter == chapter_num %}
+        {% assign candidate_chapter = p.chapter | append: "" | strip %}
+        {% assign candidate_chapter_size = candidate_chapter | size %}
+        {% if candidate_chapter_size == 1 %}
+          {% assign candidate_chapter = "0" | append: candidate_chapter %}
+        {% endif %}
+        {% if p.lang == current_lang and p.layout == "page" and candidate_chapter == chapter_num %}
           {% assign chapter_page = p %}
           {% break %}
         {% endif %}
       {% endfor %}
-      
-      {% if chapter_page %}
-        {% assign is_hidden = chapter_page.hidden | default: false %}
-        {% unless is_hidden %}
-          <!-- Chapter header with dropdown -->
-          <div class="sidebar-chapter-group">
-            <a class="sidebar-nav-item sidebar-chapter-header{% if page.chapter == chapter_num %} active{% endif %}" 
-               href="{{ chapter_page.url | relative_url }}"
-               data-chapter="{{ chapter_num }}">
-              {{chapter_num}}. {{ chapter_page.title }}
-              <span class="dropdown-arrow">▼</span>
-            </a>
-            
-            <!-- Lessons submenu -->
-            <div class="sidebar-lessons-submenu" id="submenu-{{ chapter_num }}">
-              {% assign chapter_lessons = "" | split: "" %}
-              {% for lesson in site.posts %}
-                {% if lesson.lang == current_lang %}
-                  {% assign lesson_chapter = lesson.chapter | strip %}
-                  {% assign compare_chapter = chapter_num | strip %}
-                  {% if lesson_chapter == compare_chapter and lesson.title %}
-                    {% assign chapter_lessons = chapter_lessons | push: lesson %}
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-              
-              {% assign sorted_lessons = chapter_lessons | sort: "order" %}
-              {% for lesson in sorted_lessons %}
-                <a class="sidebar-nav-item sidebar-lesson-item{% if page.url == lesson.url %} active{% endif %}" 
-                   href="{{ lesson.url | relative_url }}">
-                  {{ lesson.title }}
-                </a>
-              {% endfor %}
-            </div>
-          </div>
-        {% endunless %}
+
+      {% if chapter_page and chapter_page.hidden %}
+        {% continue %}
       {% endif %}
+
+      {% assign sorted_lessons = chapter_group.items | sort: "order" %}
+      {% assign chapter_href = "" %}
+      {% assign lesson_count = 0 %}
+      {% if chapter_page %}
+        {% assign chapter_href = chapter_page.url %}
+      {% endif %}
+      {% for lesson in sorted_lessons %}
+        {% assign lesson_path = lesson.path | append: lesson.relative_path | append: lesson.url %}
+        {% if lesson_path contains ".backup" or lesson.url contains ".md/" %}
+          {% continue %}
+        {% endif %}
+        {% assign lesson_count = lesson_count | plus: 1 %}
+        {% if chapter_href == "" %}
+          {% assign chapter_href = lesson.url %}
+        {% endif %}
+      {% endfor %}
+      {% if lesson_count == 0 or chapter_href == "" %}
+        {% continue %}
+      {% endif %}
+
+      {% if chapter_page %}
+        {% assign chapter_label = chapter_num | append: ". " | append: chapter_page.title %}
+      {% elsif current_lang == "vi" %}
+        {% assign chapter_label = "Chương " | append: chapter_num %}
+      {% else %}
+        {% assign chapter_label = "Chapter " | append: chapter_num %}
+      {% endif %}
+
+      {% assign chapter_open = false %}
+      {% if page_chapter == chapter_num %}
+        {% assign chapter_open = true %}
+      {% endif %}
+
+      <div class="sidebar-chapter-group">
+        <div class="sidebar-chapter-row{% if chapter_open %} current-chapter{% endif %}">
+          <a class="sidebar-nav-item sidebar-chapter-link{% if chapter_open %} active{% endif %}"
+             href="{{ chapter_href | relative_url }}">
+            {{ chapter_label }}
+          </a>
+          <button type="button"
+                  class="sidebar-chapter-toggle{% if chapter_open %} expanded{% endif %}"
+                  data-chapter="{{ chapter_num }}"
+                  aria-expanded="{% if chapter_open %}true{% else %}false{% endif %}"
+                  aria-controls="submenu-{{ chapter_num }}"
+                  aria-label="{% if current_lang == 'vi' %}Hiện hoặc ẩn bài của {{ chapter_label }}{% else %}Show or hide lessons in {{ chapter_label }}{% endif %}">
+            <span class="dropdown-arrow" aria-hidden="true">▼</span>
+          </button>
+        </div>
+
+        <div class="sidebar-lessons-submenu{% if chapter_open %} open{% endif %}" id="submenu-{{ chapter_num }}">
+          <div class="sidebar-lessons-inner">
+            {% for lesson in sorted_lessons %}
+              {% assign lesson_path = lesson.path | append: lesson.relative_path | append: lesson.url %}
+              {% if lesson_path contains ".backup" or lesson.url contains ".md/" %}
+                {% continue %}
+              {% endif %}
+              <a class="sidebar-nav-item sidebar-lesson-item{% if page.url == lesson.url %} active{% endif %}"
+                 href="{{ lesson.url | relative_url }}">
+                {{ lesson.title }}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     {% endfor %}
-    
+
     <span class="sidebar-nav-item">Currently v{{ site.version }}</span>
   </nav>
 
@@ -73,3 +126,13 @@
     </p>
   </div>
 </div>
+
+<noscript>
+  <style>
+    .sidebar-lessons-submenu {
+      grid-template-rows: 1fr !important;
+      opacity: 1 !important;
+      border-left-color: rgba(255, 255, 255, 0.14);
+    }
+  </style>
+</noscript>

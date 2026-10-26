@@ -2,7 +2,7 @@
 layout: post
 title: "Bài 4.3: Posterior Inference với PyMC - Từ Theory đến Practice"
 chapter: '04'
-order: 3
+order: 4
 owner: Nguyen Le Linh
 lang: vi
 categories:
