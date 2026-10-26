@@ -276,6 +276,12 @@ Ngược lại. Grid là cách rất tốt để xây trực giác Bayes, hiểu
 
 **Grid approximation là cách xấp xỉ posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm.** Ưu thế lớn nhất của phương pháp này là nó rất trực quan, dễ triển khai, không đòi hỏi prior liên hợp, và đặc biệt phù hợp cho những bài toán nhỏ nơi ta muốn nhìn rõ từng bước Bayes đang diễn ra như thế nào. Hạn chế cốt lõi của nó nằm ở chỗ phương pháp này chỉ phù hợp cho rất ít tham số, bởi vì khi số chiều tăng thì số điểm lưới tăng bùng nổ và nhanh chóng làm chi phí tính toán trở nên không thể chấp nhận được. Nếu conjugacy dạy ta Bayes giải tay, thì grid approximation dạy ta Bayes tính toán. Nói gọn lại, điều cần nhớ là grid approximation biến bài toán posterior liên tục thành một bài toán rời rạc trên các điểm ứng viên, nó đặc biệt mạnh cho các mô hình nhỏ và cho những prior không liên hợp, nhưng nó không mở rộng tốt do curse of dimensionality.
 
+## Video tham khảo
+
+- [Introduction to the elements of Bayesian statistics. Week 3. Video 2. Grid approx. & probability.](https://www.youtube.com/watch?v=w4fKaBCX02Q) — Peter Blenis, English. **xem trước**. Xem posterior được tính trên một lưới điểm rồi chuẩn hóa bằng tổng, đúng thuật toán bài muốn bạn tự làm được.
+- [Bayes Week 2, Lecture 1: Grid Approximation](https://www.youtube.com/watch?v=2BhfFLATx8c) — Kevin James, English. Xem thêm một lượt xây lưới, nhân prior với likelihood và đọc phân phối rời rạc thu được.
+- [Statistical Rethinking 2023 - 02 - The Garden of Forking Data](https://www.youtube.com/watch?v=R1vcdhPBlXA) — Richard McElreath, English. Xem phép đếm các cách dữ liệu có thể xảy ra, nền cho việc hiểu lưới chỉ là cách rời rạc hóa phép đếm ấy.
+
 ## Câu hỏi tự luyện
 
 1. Hãy giải thích bằng lời tại sao grid 5 điểm chỉ cho một xấp xỉ thô.

@@ -584,6 +584,12 @@ print(f"Laplace std: {std_laplace:.4f}")
 print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2 * (alpha_post + beta_post + 1))):.4f}")
 ```
 
+## Video tham khảo
+
+- [The paradox of the derivative | Chapter 2, Essence of calculus](https://www.youtube.com/watch?v=9vKqVkMQHKk) — 3Blue1Brown, English. **xem trước**. Xem đạo hàm như độ nhạy khi đầu vào nhích một chút, đúng phần bài dùng đạo hàm để đọc log-posterior.
+- [Integration and the fundamental theorem of calculus | Chapter 8, Essence of calculus](https://www.youtube.com/watch?v=rfG8ce4nNh0) — 3Blue1Brown, English. Xem tích phân như lũy tích những thay đổi nhỏ, hỗ trợ đoạn chuẩn hóa phân phối và tính xác suất trên miền liên tục.
+- [Gradient descent, how neural networks learn | Deep Learning Chapter 2](https://www.youtube.com/watch?v=IHZwWFHWa-w) — 3Blue1Brown, English. Xem gradient descent như đi ngược hướng dốc nhất; bối cảnh là mạng nơ-ron, nhưng cơ chế đúng phần tối ưu hóa của bài.
+
 ## Bài tập
 
 1. **Đạo hàm**: Tính đạo hàm của:

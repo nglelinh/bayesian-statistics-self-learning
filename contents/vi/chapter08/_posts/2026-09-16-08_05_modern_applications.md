@@ -62,6 +62,12 @@ Kiểm thử mô hình trước khi lên production, chọn mô hình dự báo 
 
 SBC tốn nhiều lần khớp mô hình. LOO giả định các quan sát đóng góp gần như nhân tử hóa được. Bayesian optimization phụ thuộc mạnh vào prior trên $$f$$ và sẽ nhẹ dạ nếu nhiễu bị hiểu sai. Khóa học không có chương Gaussian process riêng, nên bài này chỉ dùng GP như một posterior phục vụ quyết định. Nếu chương sau mở nonparametric, bạn sẽ thấy nhân của BO chính là mô hình ấy.
 
+## Video tham khảo
+
+- [#164 Bayesian Workflow, with Andrew Gelman, Aki Vehtari & Richard McElreath](https://www.youtube.com/watch?v=ysITaNRUQUU) — Learning Bayesian Statistics, English. **xem trước**. Xem Andrew Gelman, Aki Vehtari và Richard McElreath bàn Bayesian workflow, đúng cách bài ghép kiểm tra mô hình với so sánh và quyết định.
+- [BITESIZE | Understanding Simulation-Based Calibration, with Teemu Säilynoja](https://www.youtube.com/watch?v=EC1bvP65rjs) — Learning Bayesian Statistics, English. Xem simulation-based calibration, hỗ trợ đoạn bài nối posterior predictive với việc kiểm tra chính thuật toán suy luận.
+- [Uncertainty in Bayesian leave-one-out cross-validation based model comparison](https://www.youtube.com/watch?v=vLx6lUlZ0fc) — Aki Vehtari, English. Xem bất định của so sánh mô hình bằng LOO, dùng cho phần bài không đọc một hiệu chênh ELPD như một xếp hạng cứng.
+
 ## Bài tập
 
 1. Phân biệt, trên một mô hình giá, một thất bại PPC ở đuôi phải với một thất bại SBC. Cái nào buộc bạn sửa *mã suy luận*, cái nào buộc bạn sửa *câu chuyện sinh*?

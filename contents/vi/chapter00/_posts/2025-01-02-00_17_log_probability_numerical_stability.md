@@ -323,6 +323,12 @@ Nếu phải nhớ đúng một câu sau bài này, hãy nhớ câu sau:
 4. Khi cần cộng hoặc chuẩn hóa xác suất ở log-domain, phải dùng log-sum-exp hoặc kỹ thuật trừ `max`.
 5. `-inf`, `inf`, và `nan` không phải chi tiết phụ; chúng là tín hiệu chẩn đoán rất quan trọng.
 
+## Video tham khảo
+
+- [Logs (logarithms), Clearly Explained!!!](https://www.youtube.com/watch?v=VSi0Z04fWj0) — StatQuest with Josh Starmer, English. **xem trước**. Xem quy tắc log của tích và của tổng, nền đại số cho phần bài chuyển likelihood sang log-likelihood.
+- [Why Log Probabilities Are Everywhere in AI - Underflow Error in HMMs and Viterbi Algorithm](https://www.youtube.com/watch?v=HghZrdnrNQY) — Algorithms and AI, English. Xem underflow khi nhân nhiều xác suất nhỏ, đúng sự cố số mà bài minh họa bằng tích xác suất.
+- [The log-sum-exp trick (NLP817 5.12)](https://www.youtube.com/watch?v=MZ2VM32h37g) — Herman Kamper, English. Xem mẹo log-sum-exp, hỗ trợ mục bài về chuẩn hóa mà không quay lại thang xác suất quá sớm.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao hai giá trị likelihood khác nhau có thể cùng hiện thành `0.0` trên máy, nhưng hai log-likelihood tương ứng vẫn so sánh được?

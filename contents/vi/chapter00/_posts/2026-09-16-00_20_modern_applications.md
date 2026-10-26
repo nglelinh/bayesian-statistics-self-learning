@@ -62,6 +62,12 @@ Bốn bối cảnh trên đã phủ xếp hạng, ngôn ngữ, mô hình bảng,
 
 Bài này không thay một học phần deep learning hay probabilistic programming. Hiệu chỉnh có thể hỏng khi phân phối chuyển dịch; số học log không sửa một likelihood sai đặc tả; và kiểm tra bằng mô phỏng chỉ kiểm tra đúng phép tính bạn đã chạy. Các chương tiếp theo bắt đầu cập nhật Bayes.
 
+## Video tham khảo
+
+- [Naive Bayes, Clearly Explained!!!](https://www.youtube.com/watch?v=O2L2Uv9pdDA) — StatQuest with Josh Starmer, English. **xem trước**. Xem Naive Bayes như một bộ phân loại viết bằng xác suất có điều kiện, đúng ví dụ classifier ở phần ứng dụng của bài.
+- [Why Log Probabilities Are Everywhere in AI - Underflow Error in HMMs and Viterbi Algorithm](https://www.youtube.com/watch?v=HghZrdnrNQY) — Algorithms and AI, English. Xem vì sao mô hình ngôn ngữ làm việc trên log-probability, hỗ trợ đoạn bài nối log-probability với hệ thống thật.
+- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem bất định trong học sâu; video không chứng minh một định lý của bài, nhưng cho thấy kỳ vọng và phân phối rời lớp học để vào mô hình hiện đại.
+
 ## Bài tập
 
 1. Một mô hình gian lận xuất $$0.99$$ trên mười giao dịch, trong đó ba giao dịch sau đó được xác nhận là gian lận. Trong một đoạn, hãy nói “sai hiệu chỉnh” nghĩa là gì ở đây và bạn sẽ vẽ đối tượng nào của Chương 0.

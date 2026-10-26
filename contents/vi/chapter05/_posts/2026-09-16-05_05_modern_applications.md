@@ -62,6 +62,12 @@ Thử nghiệm marketplace, nâng hạng có kiểm soát, điều trị cá nh�
 
 Học DAG từ quan sát không giải được tính không nhận diện khi thiếu giả định. Causal Transformer cần giả định về tuần tự thời gian và về khả năng cân bằng biểu diễn. Bài này không thay thế một học phần suy luận nhân quả. Chương 6 sẽ đổi họ likelihood khi $$y$$ không còn Gaussian, nhưng bài toán confounding vẫn đi theo.
 
+## Video tham khảo
+
+- [A Crash Course in Good and Bad Controls with Carlos Cinelli](https://www.youtube.com/watch?v=IFgHw_E521U) — Spark: a centre for social research innovation, English. **xem trước**. Xem khóa ngắn về kiểm soát đúng và sai, đúng cách bài đọc một hệ số như tuyên bố nhân quả có điều kiện.
+- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Xem các đồ thị good và bad controls, hỗ trợ phần confounding không phải là lỗi của phần mềm hồi quy.
+- [Causality: Closing Back Doors](https://www.youtube.com/watch?v=IajzIKW518M) — Econometrics, Causality, and Coding with Dr. HK, English. Xem đóng backdoor trên DAG, dùng khi bài nối đa cộng tuyến và tương tác với câu hỏi nhân quả.
+
 ## Bài tập
 
 1. Vẽ một DAG ba nút cho “hiển thị quảng cáo → nhấp → mua”. Nếu mục tiêu là hiệu ứng của hiển thị lên mua, việc hồi quy có điều kiện trên nhấp là good hay bad control, và vì sao?

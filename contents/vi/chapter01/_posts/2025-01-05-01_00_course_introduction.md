@@ -105,3 +105,9 @@ Bạn chỉ cần đủ kiên nhẫn để chấp nhận rằng bất định l�
 Bài tiếp theo là [1.1 Replication Crisis & P-values](/vi/chapter01/replication-crisis-pvalues/). Đây là nơi Chapter 1 bắt đầu đặt câu hỏi: nếu cách suy luận thống kê truyền thống có quá nhiều giới hạn, ta có lựa chọn nào tốt hơn không?
 
 Nếu cần ôn lại nền tảng trước khi vào chương, bạn có thể xem [Chapter 00: Prerequisites](/vi/chapter00/).
+
+## Video tham khảo
+
+- [The Bayesian Trap](https://www.youtube.com/watch?v=R13BD8qKeTg) — Veritasium, English. **xem trước**. Xem bẫy của tỷ lệ nền khi cập nhật niềm tin, đúng lời mời của bài về việc nghĩ bằng xác suất thay vì thuộc công thức.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Xem hình học của định lý Bayes, hỗ trợ lộ trình bài hứa sẽ đi từ prior, likelihood đến posterior.
+- [Statistical Rethinking 2023 - 01 - The Golem of Prague](https://www.youtube.com/watch?v=FdnMWdICdRs) — Richard McElreath, English. Xem bài giảng mở của Statistical Rethinking về mô hình như công cụ cần được giám sát, cùng tinh thần khóa học này.

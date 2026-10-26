@@ -171,6 +171,12 @@ Tuy nhiên, cần cẩn thận khi diễn giải tương quan. Đầu tiên, tư
 
 Trong phân tích Bayesian, chúng ta thường mô hình hóa tương quan một cách rõ ràng thông qua các tham số trong mô hình. Ví dụ, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ mã hóa mối quan hệ giữa biến dự đoán và biến phản hồi, và chúng ta có thể định lượng sự không chắc chắn về mối quan hệ này thông qua phân phối posterior của $$\beta$$.
 
+## Video tham khảo
+
+- [StatQuest: Histograms, Clearly Explained](https://www.youtube.com/watch?v=qBigTkBLU6g) — StatQuest with Josh Starmer, English. **xem trước**. Xem để thấy histogram là cách kể hình dạng dữ liệu trước khi tính một con số tóm tắt, đúng tinh thần mở đầu của bài.
+- [Finding mean, median, and mode | Descriptive statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=k3aKKasOmIw) — Khan Academy, English. Xem cách trung bình, trung vị và yếu vị trả lời những câu hỏi khác nhau, hỗ trợ phần thống kê vị trí.
+- [Pearson's Correlation, Clearly Explained!!!](https://www.youtube.com/watch?v=xZ_z8KWkhXE) — StatQuest with Josh Starmer, English. Xem hệ số tương quan Pearson và giới hạn của nó, dùng cho đoạn bài đo mối quan hệ tuyến tính.
+
 ## Bài tập
 
 **Bài tập 1: Tính toán Thống kê Mô tả.** Cho dữ liệu điểm thi của 20 sinh viên: [45, 67, 78, 82, 55, 90, 88, 76, 95, 20, 85, 72, 68, 91, 77, 83, 65, 89, 74, 80]. (a) Tính trung bình, trung vị, và mode. (b) Tính phương sai, độ lệch chuẩn, và IQR. (c) Phát hiện outliers sử dụng quy tắc $$1.5 \times \text{IQR}$$. (d) Giải thích tại sao trung bình và trung vị khác nhau, và điều này nói gì về phân phối của dữ liệu.

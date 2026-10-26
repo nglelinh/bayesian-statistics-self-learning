@@ -226,6 +226,12 @@ Kiểu diễn giải này giúp người đọc hiểu bản chất hiện tư�
 
 > **3 ý cần nhớ.** Interaction xảy ra khi ảnh hưởng của một predictor thay đổi theo mức của predictor khác, nên không thể luôn diễn giải hiệu ứng như một con số cố định cho mọi trường hợp; khi mô hình có interaction, cách đọc tốt nhất là đọc theo conditional effects và dùng hình minh họa thay vì chỉ nhìn bảng coefficients; và interaction rất thường gặp trong đời sống thật vì hiệu quả của can thiệp, hành vi hay điều kiện hiếm khi giống nhau trong mọi bối cảnh.
 
+## Video tham khảo
+
+- [GLM Part 6: Interaction effects: How to interpret and identify them](https://www.youtube.com/watch?v=3CCkeFShB3U) — Simplistics (QuantPsych), English. **xem trước**. Xem hiệu ứng của một biến đổi theo mức của biến kia, đúng định nghĩa interaction mà bài đối lập với mô hình cộng.
+- [How to Interpret a Regression with an Interaction Term](https://www.youtube.com/watch?v=J8IHdu-oM64) — Econometrics, Causality, and Coding with Dr. HK, English. Xem cách đọc hệ số chính và hệ số tương tác trong một bảng hồi quy.
+- [Statistical Rethinking 2023 - 04 - Categories & Curves](https://www.youtube.com/watch?v=F0N4b7K_iYQ) — Richard McElreath, English. Xem đường cong và khác biệt theo nhóm được viết thành mô hình, hỗ trợ phần tương tác không chỉ là một số hạng thêm vào.
+
 ## Câu hỏi tự luyện
 
 1. Hãy nêu một ví dụ trong đời sống mà ảnh hưởng của một biến phụ thuộc rõ vào một biến khác.

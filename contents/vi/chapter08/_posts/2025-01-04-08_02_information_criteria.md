@@ -84,6 +84,12 @@ WAIC và LOO cung cấp ngôn ngữ định lượng để so sánh mô hình th
 
 Bài tiếp theo: **Model Comparison Strategies**, nơi ta đi sâu vào lựa chọn giữa selection, averaging, và expansion.
 
+## Video tham khảo
+
+- [Evaluating model fit through AIC, DIC, WAIC and LOO-CV](https://www.youtube.com/watch?v=xS4jDHQfP2o) — Ben Lambert, English. **xem trước**. Xem AIC, DIC, WAIC và LOO-CV được đặt cạnh nhau như các cách ước lượng năng lực dự báo ngoài mẫu.
+- [BDA 2019 Lecture 9.1 PSIS-LOO and K-fold cross-validation](https://www.youtube.com/watch?v=D0kVMie93Yk) — Aki Vehtari, English. Xem Aki Vehtari trình bày PSIS-LOO và K-fold, hỗ trợ phần bài ưu tiên LOO hơn điểm khớp trong mẫu.
+- [31- Pareto k diagnostics in R](https://www.youtube.com/watch?v=h4g5KUWRzyg) — Horizon 2 Reach, English. Xem chẩn đoán Pareto k, đúng điều kiện bài yêu cầu trước khi tin một ước lượng PSIS-LOO.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao chênh lệch WAIC/LOO nhỏ hơn sai số chuẩn của chênh lệch không đủ để tuyên bố mô hình thắng?

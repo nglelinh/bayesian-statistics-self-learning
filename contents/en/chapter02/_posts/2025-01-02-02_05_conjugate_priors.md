@@ -431,6 +431,12 @@ No. It is still foundational for intuition and for simple exact solutions.
 
 **Conjugate priors are priors that keep the posterior in the same family after updating.** That property makes Bayesian inference easier to compute, easier to explain, and easier to update sequentially, which is why the four basic pairs in this lesson, namely Beta-Binomial, Beta-Geometric, Gamma-Poisson, and Normal-Normal, are worth remembering. Even so, the more important principle is that computational convenience should never replace good modeling judgment. In condensed form, the lesson is this: conjugacy happens when the algebra of the prior and likelihood matches so that the posterior stays in the same family, conjugate pairs are exceptionally useful for building intuition and checking simple exact updates, and a conjugate prior remains only a convenient choice rather than an automatically superior one.
 
+## Video tham khảo
+
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Watch conjugacy defined as a prior-likelihood pair that keeps the posterior in the same family.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Watch several conjugate updates side by side, supporting the lesson's catalogue of practical pairs.
+- [20 - Beta conjugate prior to Binomial and Bernoulli likelihoods](https://www.youtube.com/watch?v=hKYvZF9wXkk) — Ox educ, English. Watch the Beta–Binomial update add successes and failures to the prior parameters.
+
 ## Practice questions
 
 1. Give one real-world example that fits Beta-Binomial.

@@ -103,6 +103,12 @@ Prior mạnh thường làm variance giảm nhưng có thể làm bias tăng, c�
 3. MSE = bias^2 + variance.
 4. Consistency nói về hành vi khi cỡ mẫu lớn.
 
+## Video tham khảo
+
+- [Unbiasedness vs consistency of estimators - an example](https://www.youtube.com/watch?v=6i7mqDJICzQ) — Ben Lambert, English. **xem trước**. Xem ví dụ tách ước lượng không chệch khỏi ước lượng nhất quán, đúng hai tiêu chí mà bài đặt cạnh nhau.
+- [[Proof] MSE = Variance + Bias²](https://www.youtube.com/watch?v=qmVT35gFW-Q) — math et al, English. Xem phép phân tích MSE thành bình phương độ lệch cộng phương sai, hỗ trợ phần đánh đổi bias–variance của estimator.
+- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Xem ước lượng tham số từ mẫu, dùng cho đoạn bài nói về hành vi của estimator khi dữ liệu tăng.
+
 ## Câu hỏi tự luyện
 
 1. Có thể có estimator bias nhỏ nhưng MSE lớn không? Vì sao?

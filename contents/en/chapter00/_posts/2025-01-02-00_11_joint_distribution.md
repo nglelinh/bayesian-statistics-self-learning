@@ -160,6 +160,12 @@ So mastering joint, marginal, and conditional distributions is essential before 
 5. Independence is exactly $$p(x,y)=p(x)p(y)$$.
 6. Bayes is built directly on joint-marginal-conditional relationships.
 
+## Video tham khảo
+
+- [Joint Probability Distributions: Marginal and Conditional Densities](https://www.youtube.com/watch?v=pribJ8bUBzo) — Steve Brunton, English. **xem trước**. Watch joint densities split into marginals and conditionals, the three operations this lesson uses as the base of Bayes.
+- [Marginal distribution and conditional distribution | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=CAXQvTKP8sg) — Khan Academy, English. Watch the discrete table version of marginal and conditional distributions before the lesson moves to densities.
+- [Covariance, Clearly Explained!!!](https://www.youtube.com/watch?v=qtaqvPAeEJY) — StatQuest with Josh Starmer, English. Watch covariance as a summary of a joint distribution, supporting the lesson's section on dependence.
+
 ## Exercises
 
 **Exercise 1.** Using the table in Section 6, compute:

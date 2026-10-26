@@ -261,6 +261,12 @@ $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqr
 Ở đây, mỗi $$f(x_i \mid \mu)$$ là giá trị của PDF tại điểm dữ liệu $$x_i$$, với tham số $$\mu$$. Maximum Likelihood Estimate (MLE) là giá trị $$\hat{\mu}$$ làm cực đại $$L(\mu)$$.
 
 
+## Video tham khảo
+
+- [Probability density and mass functions](https://www.youtube.com/watch?v=hDjcxi9p0ak) — Intelligent Systems Lab, English. **xem trước**. Xem để tách hàm khối xác suất khỏi hàm mật độ, đúng phân biệt PMF và PDF mà bài đặt làm trọng tâm.
+- [Probability Distribution Functions (PMF, PDF, CDF)](https://www.youtube.com/watch?v=YXLVjCKVP7U) — zedstatistics, English. Xem mối quan hệ giữa PMF, PDF và hàm phân phối tích lũy, hỗ trợ phần đọc xác suất trên một khoảng.
+- [Why “probability of 0” does not mean “impossible” | Probabilities of probabilities, part 2](https://www.youtube.com/watch?v=ZA4JkHKZM50) — 3Blue1Brown, English. Xem vì sao mật độ tại một điểm không phải xác suất của điểm đó, dùng khi bài diễn giải PDF của biến liên tục.
+
 ## Bài tập
 
 **Bài tập 1**: Giải thích tại sao $$P(X = 170) = 0$$ với biến liên tục, nhưng $$f(170)$$ có thể khác 0. Sự khác biệt giữa hai đại lượng này là gì?

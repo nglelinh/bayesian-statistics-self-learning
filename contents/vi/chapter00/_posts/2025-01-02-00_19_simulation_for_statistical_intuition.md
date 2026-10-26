@@ -76,6 +76,12 @@ Nói cách khác, mô phỏng giúp ta học tư duy "model implies data".
 3. Mô phỏng đặc biệt hữu ích để sanity check mô hình Bayes.
 4. Khi trực giác và mô phỏng mâu thuẫn, hãy tin dữ liệu mô phỏng trước rồi xem lại giả định.
 
+## Video tham khảo
+
+- [What is Monte Carlo Simulation?](https://www.youtube.com/watch?v=7TqhmX92P6U) — IBM Technology, English. **xem trước**. Xem mô phỏng Monte Carlo như cách phát biểu một giả định rồi sinh dữ liệu theo giả định đó, đúng vai trò bài gán cho mô phỏng.
+- [Law of Large Numbers - Explained and Visualized](https://www.youtube.com/watch?v=MntX3zWNWec) — Jeremy Blitz-Jones, English. Xem một định lý được kiểm tra bằng hình mô phỏng, hỗ trợ phần dùng mô phỏng để phát hiện trực giác sai.
+- [But what is the Central Limit Theorem?](https://www.youtube.com/watch?v=zeJD6dqJ5lo) — 3Blue1Brown, English. Xem nhiều mẫu được sinh ra để nhìn phân phối của trung bình, dùng như khuôn cho workflow sinh dữ liệu trong bài.
+
 ## Câu hỏi tự luyện
 
 1. Hãy nêu một khái niệm xác suất mà bạn thường dễ hiểu sai và đề xuất cách mô phỏng để kiểm tra.

@@ -172,6 +172,12 @@ Chapter 1 sẽ dần đưa bạn đến đúng điểm đó. Bài này chỉ có
 
 > **3 ý cần nhớ.** Khủng hoảng tái lập không chỉ là lỗi của từng nhà nghiên cứu riêng lẻ mà còn là vấn đề của cả hệ thống suy luận và khuyến khích công bố; p-value rất dễ bị hiểu sai vì nó trả lời một câu hỏi khác với câu hỏi khoa học mà ta thực sự quan tâm; và khi p-values trở thành mục tiêu phải đạt, p-hacking cùng publication bias sẽ xuất hiện gần như tất yếu.
 
+## Video tham khảo
+
+- [p-values: What they are and how to interpret them](https://www.youtube.com/watch?v=vemZtEM63GY) — StatQuest with Josh Starmer, English. **xem trước**. Xem p-value thực sự trả lời câu hỏi nào, đúng phần bài chỉ ra cách đọc sai thường gặp.
+- [p-hacking: What it is and how to avoid it!](https://www.youtube.com/watch?v=HDCOUXE3HMM) — StatQuest with Josh Starmer, English. Xem p-hacking sinh ra từ những lựa chọn phân tích linh hoạt, hỗ trợ lập luận vì sao nhiều kết quả không tái lập.
+- [The reproducibility crisis and other problems in science | John Ioannidis](https://www.youtube.com/watch?v=vY9mGJQFdyE) — The Institute of Art and Ideas, English. Xem John Ioannidis bàn về khủng hoảng tái lập, dùng cho phần bài nối lạm dụng kiểm định với niềm tin vào công bố.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao một nghiên cứu có p-value nhỏ vẫn có thể không tái lập được?

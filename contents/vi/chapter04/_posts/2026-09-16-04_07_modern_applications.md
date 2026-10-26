@@ -62,6 +62,12 @@ Hồi quy tuyến tính Bayes là xương sống của media mix, định giá, 
 
 HMC cần log-density khả vi; dữ liệu rời rạc với tham số rời rạc phải đi đường khác. Các mô hình lớn vẫn cần VI, Laplace, hoặc ensemble. Bài này cố ý không mở lại lý thuyết Markov chain. Chương 5 sẽ làm posterior khó hơn bằng cách thêm nhiều predictor và cấu trúc nhân quả.
 
+## Video tham khảo
+
+- [The intuition behind the Hamiltonian Monte Carlo algorithm](https://www.youtube.com/watch?v=a-wydhEuAm0) — Ben Lambert, English. **xem trước**. Xem trực giác HMC trước khi đọc NUTS như một cách chọn độ dài quỹ đạo, đúng bước bài đi từ Metropolis sang sampler hiện đại.
+- [Michael Betancourt: Scalable Bayesian Inference with Hamiltonian Monte Carlo](https://www.youtube.com/watch?v=jUSZboSq1zg) — London Machine Learning Meetup, English. Xem Michael Betancourt trình bày suy luận Bayes quy mô lớn bằng Hamiltonian Monte Carlo.
+- [#78 Exploring MCMC Sampler Algorithms, with Matt D. Hoffman](https://www.youtube.com/watch?v=KVpAziPblks) — Learning Bayesian Statistics, English. Xem Matt Hoffman, đồng tác giả NUTS, bàn về các sampler MCMC, hỗ trợ phần bài đọc chuỗi PyMC hoặc Stan như một xấp xỉ có kiểm soát.
+
 ## Bài tập
 
 1. Một đồng nghiệp bảo “PyMC đã hội tụ vì trace trông ổn”. Bạn sẽ xin thêm hai chẩn đoán nào, và mỗi cái đang kiểm tra giả định hình học nào?

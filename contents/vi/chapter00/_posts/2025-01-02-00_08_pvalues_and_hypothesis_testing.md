@@ -309,6 +309,12 @@ Khi bạn tiến xa hơn trong khóa học này, bạn sẽ thấy rằng phươ
 
 Tuy nhiên, phương pháp Bayesian không phải là một giải pháp ma thuật cho tất cả các vấn đề. Nó có những thách thức riêng của nó, đặc biệt là về mặt tính toán và việc lựa chọn prior. Nhưng đối với nhiều câu hỏi nghiên cứu, nó cung cấp một cách tiếp cận tự nhiên và mạch lạc hơn so với kiểm định giả thuyết truyền thống.
 
+## Video tham khảo
+
+- [p-values: What they are and how to interpret them](https://www.youtube.com/watch?v=vemZtEM63GY) — StatQuest with Josh Starmer, English. **xem trước**. Xem định nghĩa p-value như xác suất của dữ liệu cực đoan dưới giả thuyết không, đúng phần bài muốn đọc p-value đúng cách.
+- [Hypothesis Testing and The Null Hypothesis, Clearly Explained!!!](https://www.youtube.com/watch?v=0oc49DyA3hU) — StatQuest with Josh Starmer, English. Xem vai trò của giả thuyết không và quy trình kiểm định, hỗ trợ nửa đầu bài về khung frequentist.
+- [Confidence Intervals, Clearly Explained!!!](https://www.youtube.com/watch?v=TqOeMYtOc1w) — StatQuest with Josh Starmer, English. Xem khoảng tin cậy frequentist được xây từ mẫu lặp lại thế nào, để đối chiếu với phần bài nói về giới hạn của diễn giải này.
+
 ## Bài tập
 
 **Bài tập 1: Diễn giải P-values.** Một nghiên cứu so sánh hai phương pháp giảng dạy và báo cáo "$$p = 0.04$$". Viết ba diễn giải: (a) một diễn giải đúng về ý nghĩa của p-value này, (b) một diễn giải sai phổ biến, và (c) giải thích tại sao diễn giải sai là sai và tại sao sự khác biệt quan trọng.

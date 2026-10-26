@@ -68,6 +68,12 @@ Ads, ranking, site reliability, and sequential experiments are four places where
 
 Empirical Bayes point-estimates the hyperparameters and therefore understates uncertainty about the prior itself. Fully hierarchical Bayes, which Chapter 5’s multilevel thinking begins to motivate, puts a posterior on $$(\alpha,\beta)$$. Grid approximation dies in more than a few dimensions. The honest next tool is not a fancier conjugate table but a sampler, which Chapter 4 develops.
 
+## Video tham khảo
+
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Watch when conjugacy is still a computational design choice, the reading this lesson gives conjugate priors.
+- [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Watch a Gamma–Poisson model estimate an event rate, the rate-monitoring pattern in the lesson.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Watch conjugate updates applied as data arrive in sequence, supporting the lesson's live-system examples.
+
 ## Exercises
 
 1. Two items have click data $$(y,n)=(1,2)$$ and $$(40,100)$$. Under a $$\mathrm{Beta}(2,98)$$ prior, which posterior mean moves more, and what product decision does that justify?

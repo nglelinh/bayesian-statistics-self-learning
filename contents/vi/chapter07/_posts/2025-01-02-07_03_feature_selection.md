@@ -285,6 +285,12 @@ Feature selection là bài toán chọn ra những predictor thật sự liên q
 
 **Chapter 07 Complete!** Regularization, Bias-Variance, Feature Selection.
 
+## Video tham khảo
+
+- [Regularization Part 2: Lasso (L1) Regression](https://www.youtube.com/watch?v=NGf0voTMlcs) — StatQuest with Josh Starmer, English. **xem trước**. Xem L1 có thể đưa một số hệ số đúng về không, đúng hướng chọn biến mà bài đối chiếu với tìm mọi tổ hợp.
+- [Lecture 31 Bayesian Regression and Variable Selection (Part A)](https://www.youtube.com/watch?v=Mv6MSIVKEIc) — Nicholas Zabaras, English. Xem hồi quy Bayes và chọn biến trong một bài giảng, hỗ trợ các prior co hệ số khi có quá nhiều predictor.
+- [Regularized Horseshoe - Aki Vehtari](https://www.youtube.com/watch?v=EuhvfvY8ISc) — Stan, English. Xem regularized horseshoe, dùng cho phần bài về prior thưa trên hệ số chứ không chỉ phạt kiểu lasso.
+
 ## Bài tập
 
 **Bài tập 1**: Generate sparse data. Compare Lasso, Bayesian Lasso, Horseshoe. Which recovers true features best?

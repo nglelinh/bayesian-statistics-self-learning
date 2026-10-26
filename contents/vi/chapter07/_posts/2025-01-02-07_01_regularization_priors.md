@@ -294,6 +294,12 @@ Regularization ngăn overfitting bằng cách kiểm soát quy mô của các h�
 
 Bai tiep theo: **Bias-Variance Tradeoff** (di sau vao validation strategy va model-complexity tuning trong cung case study).
 
+## Video tham khảo
+
+- [Regularization Part 1: Ridge (L2) Regression](https://www.youtube.com/watch?v=Q81RR3yKn30) — StatQuest with Josh Starmer, English. **xem trước**. Xem phạt L2 kéo hệ số về không để giảm phương sai, đúng hiện tượng overfitting mà bài mở đầu bằng đa thức bậc cao.
+- [Ridge Regression is a Gaussian Prior](https://www.youtube.com/watch?v=W_SjooqeOqM) — DataMListic, English. Xem ridge là một prior chuẩn trên hệ số, hỗ trợ luận điểm prior Bayes chính là regularization.
+- [Lasso Regression is a Laplace Prior](https://www.youtube.com/watch?v=8-_hZD0BRK8) — DataMListic, English. Xem lasso tương ứng prior Laplace, dùng cho phần bài so sánh các cách co hệ số.
+
 ## Bài tập
 
 **Bài tập 1**: Generate high-dimensional data (p > n). Fit với weak và strong priors. Compare.

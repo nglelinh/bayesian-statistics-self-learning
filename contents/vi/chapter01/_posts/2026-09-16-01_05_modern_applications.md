@@ -62,6 +62,12 @@ Ba miền—thư rác/lừa đảo, gian lận, và bất định ngôn ngữ—
 
 Naive Bayes độc lập từ là một câu chuyện sinh thô. Semantic entropy cần một mô hình tương đương nghĩa, bản thân nó cũng bất định. Hiệu chỉnh trên một chuẩn đánh giá không bảo đảm hiệu chỉnh sau khi phân phối dịch chuyển. Bài này cố ý không viết lại lý thuyết cập nhật; Chương 2 sẽ biến sơ đồ ấy thành likelihood, prior và posterior tường minh.
 
+## Video tham khảo
+
+- [Naive Bayes từ A-Z: Trực Giác đến Toán Học](https://www.youtube.com/watch?v=SqW_p3311yY) — Gà AI, Tiếng Việt. **xem trước**. Xem Naive Bayes từ trực giác đến công thức, đúng phần bài đặt bộ lọc thư rác vào sơ đồ prior–likelihood–posterior.
+- [Bayes Rule Example of Spam Filter](https://www.youtube.com/watch?v=bc-SL86azrc) — Eric Walden, English. Xem một lá thư được cập nhật xác suất thư rác theo từng bằng chứng, hỗ trợ ví dụ tỷ lệ nền thay đổi.
+- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem bất định của mô hình học sâu; video không nói semantic entropy, nhưng hỗ trợ đoạn bài về việc không đọc điểm token như posterior của giả thuyết.
+
 ## Bài tập
 
 1. Tỷ lệ thư rác tăng từ 5% lên 30% trong mùa lễ. Likelihood của một từ khóa không đổi. Posterior của một email chứa từ khóa ấy đổi thế nào, và vì sao bộ lọc chỉ dùng điểm từ khóa sẽ trượt?

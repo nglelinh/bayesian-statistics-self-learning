@@ -251,6 +251,12 @@ Một prior có vẻ hợp lý nhưng vẫn nên được thử thách bằng v�
 
 > **3 ý cần nhớ.** Standardization thường là bước tốt nhất để làm prior cho regression trở nên dễ chọn và dễ diễn giải hơn; weakly informative priors giúp loại bớt các giá trị phi lý mà vẫn để dữ liệu nói mạnh; và prior predictive check cùng sensitivity analysis là hai công cụ quan trọng để đánh giá prior trong regression.
 
+## Video tham khảo
+
+- [Bayesian Priors Explained | Prior Modelling & Prior Predictive Checks](https://www.youtube.com/watch?v=G3ludfAUAng) — stats 4 good, English. **xem trước**. Xem cách phát biểu prior rồi kiểm tra bằng prior predictive, đúng thói quen bài muốn khi chọn prior cho hồi quy.
+- [Keynote 2: Weakly Informative Priors -- Andrew Gelman](https://www.youtube.com/watch?v=UH6-9FU6bRg) — AISTATS 2014, English. Xem lập luận cho prior thông tin yếu, hỗ trợ phần bài lấy weakly informative prior làm điểm xuất phát.
+- [Standardized variables in a simple regression](https://www.youtube.com/watch?v=RTFnrK5ZZ8E) — Jos Dornschneider-Elkink, English. Xem hệ số thay đổi nghĩa sau khi chuẩn hóa biến, dùng cho đoạn bài nói vì sao standardization đi trước khi đặt prior.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao standardization lại giúp prior selection dễ hơn?

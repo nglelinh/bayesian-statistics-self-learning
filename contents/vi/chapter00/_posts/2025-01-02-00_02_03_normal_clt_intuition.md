@@ -99,6 +99,12 @@ Normal không còn là lựa chọn tốt khi dữ liệu bị chặn miền, ch
 
 Trong Bayesian modeling, phân phối Normal xuất hiện ở nhiều tầng khác nhau: nó có thể đóng vai trò likelihood cho dữ liệu liên tục, làm prior cho các hệ số hồi quy, hoặc xuất hiện như một xấp xỉ thuận tiện của posterior khi cỡ mẫu đủ lớn. Tuy vậy, workflow Bayesian luôn đòi hỏi kiểm tra mô hình cẩn thận, thay vì mặc định rằng cứ dữ liệu liên tục là có thể gán Normal một cách vô điều kiện.
 
+## Video tham khảo
+
+- [The Normal Distribution, Clearly Explained!!!](https://www.youtube.com/watch?v=rzFX5NWojp0) — StatQuest with Josh Starmer, English. **xem trước**. Xem để đọc μ và σ trên đường cong chuông, đúng phần bài diễn giải tham số của phân phối Normal.
+- [But what is the Central Limit Theorem?](https://www.youtube.com/watch?v=zeJD6dqJ5lo) — 3Blue1Brown, English. Xem trực giác vì sao trung bình của nhiều biến độc lập có dạng gần chuẩn, hỗ trợ phần định lý giới hạn trung tâm.
+- [Định lý giới hạn trung tâm (Central limit theorem)](https://www.youtube.com/watch?v=Sm2yBx3Jn6c) — Bài Học 10 Phút, Tiếng Việt. Xem bản tiếng Việt ngắn về cùng định lý, để đối chiếu với lập luận bài về khi nào dữ liệu tổng hợp trông giống chuông.
+
 ## Câu hỏi tự luyện
 
 1. Nêu một đại lượng liên tục nên dùng Normal và giải thích vì sao.

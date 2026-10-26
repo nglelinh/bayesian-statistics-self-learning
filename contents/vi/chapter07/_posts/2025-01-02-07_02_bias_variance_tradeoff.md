@@ -208,6 +208,12 @@ Bias-variance tradeoff cho thấy sai số dự báo không thể được hiể
 
 Bai tiep theo: **Feature Selection** (hoan tat case study bang stability selection va uncertainty-aware interpretation).
 
+## Video tham khảo
+
+- [Machine Learning Fundamentals: Bias and Variance](https://www.youtube.com/watch?v=EuBBz3bI-aA) — StatQuest with Josh Starmer, English. **xem trước**. Xem mô hình quá đơn giản lệch hệ thống và mô hình quá linh hoạt dao động theo mẫu, đúng hai loại sai số của bài.
+- [[Proof] MSE = Variance + Bias²](https://www.youtube.com/watch?v=qmVT35gFW-Q) — math et al, English. Xem hệ thức MSE bằng bình phương bias cộng variance, hỗ trợ phần phân rã sai số.
+- [Machine Learning Fundamentals: Cross Validation](https://www.youtube.com/watch?v=fSytzGwwBVw) — StatQuest with Josh Starmer, English. Xem cross-validation như cách nhìn sai số ngoài mẫu, dùng cho mục learning curve và chọn độ phức tạp.
+
 ## Bài tập
 
 **Bài tập 1**: Implement bias-variance decomposition from scratch. Verify MSE = Bias² + Variance.

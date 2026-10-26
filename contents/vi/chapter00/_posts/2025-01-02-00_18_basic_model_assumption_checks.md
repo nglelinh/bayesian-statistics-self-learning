@@ -319,6 +319,12 @@ Mục tiêu không phải "chứng minh mô hình đúng", mà là làm mô hìn
 4. Dấu hiệu sai mô hình phải dẫn tới hành động chỉnh likelihood/cấu trúc mô hình.
 5. Misspecification là thông tin để cải thiện mô hình, không phải "thất bại".
 
+## Video tham khảo
+
+- [Quantile-Quantile Plots (QQ plots), Clearly Explained!!!](https://www.youtube.com/watch?v=okjYjClSjOg) — StatQuest with Josh Starmer, English. **xem trước**. Xem biểu đồ Q–Q như một cách đối chiếu phân phối phần dư với phân phối giả định, đúng mục kiểm tra dạng phân phối.
+- [Simple Linear Regression:  Checking Assumptions with Residual Plots](https://www.youtube.com/watch?v=iMdtTCX2Q70) — jbstatistics, English. Xem các kiểu residual plot và giả định chúng kiểm tra, hỗ trợ phần cấu trúc sai số.
+- [Lecture37 (Data2Decision) Independence of Residuals](https://www.youtube.com/watch?v=ADICTMUvPg0) — Chris Mack, English. Xem giả định độc lập của phần dư và dấu hiệu bị vi phạm, dùng cho mục tính độc lập trong bài.
+
 ## Câu hỏi tự luyện
 
 1. Nêu một tình huống vi phạm giả định độc lập trong dữ liệu thực và đề xuất cách sửa mô hình.

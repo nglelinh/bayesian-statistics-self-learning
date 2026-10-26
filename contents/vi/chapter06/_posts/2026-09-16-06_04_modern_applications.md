@@ -62,6 +62,12 @@ Phê duyệt tín dụng, phát hiện gian lận, dự báo nhu cầu, nowcasti
 
 Meridian cảnh báo rằng hold-out tốt không chứng minh hiệu ứng media đúng. Poisson sẽ vỡ với zero-inflation. Logistic tuyến tính không bắt tương tác sâu trừ khi bạn viết chúng ra. Chương 7 sẽ hỏi prior nào giữ GLM khỏi quá khớp khi số cột tăng.
 
+## Video tham khảo
+
+- [Explaining generalized linear models (GLMs) | VNT #15](https://www.youtube.com/watch?v=1fZeBafD1nw) — Very Normal, English. **xem trước**. Xem GLM được chọn theo kiểu biến kết quả, đúng thói quen bài muốn thay cho việc gọi mọi bài toán là hồi quy tuyến tính.
+- [GLM Intro - 4 - Link Function](https://www.youtube.com/watch?v=J4zNmGqttVo) — Meerkat Statistics, English. Xem link function nối trung bình của outcome với phần tuyến tính, hỗ trợ logistic và Poisson trong các hệ thống thật.
+- [Statistical Rethinking 2023 - 19 - Generalized Linear Madness](https://www.youtube.com/watch?v=zffwg0xDOgE) — Richard McElreath, English. Xem các GLM bị đẩy ra ngoài dạng sách giáo khoa, dùng cho phần bài về họ mô hình gần logistic và Poisson.
+
 ## Bài tập
 
 1. Một mô hình vỡ nợ đạt accuracy 98% vì chỉ 2% hồ sơ vỡ nợ. Posterior mean của $$\theta(x)$$ trên nhóm rủi ro cao là 0.15. Vì sao accuracy đang giấu đúng đối tượng mà GLM Bayes quan tâm?

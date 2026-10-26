@@ -356,6 +356,12 @@ Logistic regression là câu trả lời tự nhiên khi biến kết quả ch�
 
 Bài tiếp theo: **Poisson Regression** cho count data.
 
+## Video tham khảo
+
+- [StatQuest: Logistic Regression](https://www.youtube.com/watch?v=yIYKR4sgzI8) — StatQuest with Josh Starmer, English. **xem trước**. Xem logistic regression dự đoán xác suất của một kết quả nhị phân, đúng biến đầu ra 0/1 của bài.
+- [Odds and Log(Odds), Clearly Explained!!!](https://www.youtube.com/watch?v=ARfXDSkQf1Y) — StatQuest with Josh Starmer, English. Xem odds và log-odds, hỗ trợ phần đọc hệ số trên thang logit chứ không trên thang xác suất.
+- [Statistical Rethinking 2023 - 04 - Categories & Curves](https://www.youtube.com/watch?v=F0N4b7K_iYQ) — Richard McElreath, English. Xem đường cong logistic được đặt trong một mô hình Bayes, nối công thức bài với câu chuyện sinh.
+
 ## Bài tập
 
 **Bài tập 1**: Generate binary data. Fit logistic regression. Interpret odds ratio.

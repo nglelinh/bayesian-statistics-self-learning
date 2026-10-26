@@ -225,6 +225,12 @@ Kết quả trên cho thấy thông điệp cốt lõi của step 7: mỗi can t
 
 Case `diamonds` cho thấy một sự thật xuyên suốt của Bayesian modeling: chỉ số đẹp ở cấp tổng thể có thể cùng tồn tại với sai lệch nghiêm trọng ở cấp điều kiện, và nếu thiếu model checking có cấu trúc, ta sẽ dễ nhầm lẫn giữa "mô hình có tín hiệu" và "mô hình đáng tin cho quyết định". Bởi vậy, chu trình đúng không bao giờ là fit rồi kết luận, mà luôn phải là fit, kiểm tra theo nhiều tầng, diễn giải sai lệch bằng ngôn ngữ cơ chế, rồi mới sửa mô hình và đánh giá lại.
 
+## Video tham khảo
+
+- [Multiple Regression, Clearly Explained!!!](https://www.youtube.com/watch?v=EkAQAi3a4js) — StatQuest with Josh Starmer, English. **xem trước**. Xem hệ số trong hồi quy nhiều biến chỉ có nghĩa khi các biến còn lại được giữ trong mô hình, đúng kiểu dữ liệu nhiều mô tả của case study.
+- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. Xem kiểm tra hậu nghiệm dự báo, hỗ trợ luận điểm bài rằng fit được mô hình chưa phải điều kiện đủ.
+- [Oriol Abril-Pla - Model criticism with ArviZ | Pydata London 26](https://www.youtube.com/watch?v=HHPAzNan7Uw) — PyData, English. Xem model criticism bằng ArviZ, dùng cho đoạn bài biến chẩn đoán sampling và PPC thành một workflow.
+
 ## Câu hỏi tự luyện
 
 1. Nếu mô hình tái tạo tốt $$\bar y$$ nhưng trượt mạnh ở $$Q_{0.95}(y)$$, bạn sẽ kết luận thế nào về khả năng dùng mô hình cho phân khúc cao cấp?

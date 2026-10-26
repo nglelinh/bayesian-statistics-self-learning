@@ -252,6 +252,12 @@ Nếu không có bước checking và prediction, Bayesian regression mới ch�
 
 > **3 ý cần nhớ.** Posterior predictive check là cách hỏi xem model có sinh ra dữ liệu giống dữ liệu thật không; residual analysis (phân tích phần dư) và prediction là hai phần quan trọng để đánh giá model có thực sự hữu ích hay không; và fit model chỉ là bước đầu vì Bayesian workflow hoàn chỉnh luôn bao gồm checking, prediction, và revision (sửa đổi) nếu cần.
 
+## Video tham khảo
+
+- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Xem posterior predictive check hỏi mô hình có tái tạo được đặc điểm của dữ liệu hay không, đúng nửa sau của hồi quy mà bài nhấn mạnh.
+- [Quantile-Quantile Plots (QQ plots), Clearly Explained!!!](https://www.youtube.com/watch?v=okjYjClSjOg) — StatQuest with Josh Starmer, English. Xem biểu đồ Q–Q, hỗ trợ phần đối chiếu phân phối phần dư với giả định Normal.
+- [Residual plots | Exploring bivariate numerical data | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=VamMrPZ-8fc) — Khan Academy, English. Xem residual plot phát hiện cấu trúc còn sót, dùng cho đoạn bài không dừng ở việc sampler đã hội tụ.
+
 ## Câu hỏi tự luyện
 
 1. Vì sao một model fit xong nhưng chưa qua PPC thì chưa nên tin hoàn toàn?

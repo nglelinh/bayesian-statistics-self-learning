@@ -232,6 +232,12 @@ No. It is one of the best tools for building Bayesian intuition.
 
 **Grid approximation computes a posterior by discretizing the parameter space into a finite grid.** It is intuitive, flexible, and excellent for learning or for very small models, especially when conjugacy is unavailable but the parameter space is still simple enough to explore directly. Its main weakness is dimensionality, which is why more advanced methods such as MCMC are needed later. The main lesson to keep is that grid approximation turns a continuous posterior problem into a discrete weighted comparison over candidate values, works especially well for small models and non-conjugate examples, and fails to scale once the number of parameters becomes even moderately large.
 
+## Video tham khảo
+
+- [Introduction to the elements of Bayesian statistics. Week 3. Video 2. Grid approx. & probability.](https://www.youtube.com/watch?v=w4fKaBCX02Q) — Peter Blenis, English. **xem trước**. Watch a posterior computed on a grid and normalized by a sum, the algorithm this lesson wants you to implement.
+- [Bayes Week 2, Lecture 1: Grid Approximation](https://www.youtube.com/watch?v=2BhfFLATx8c) — Kevin James, English. Watch a second pass over building the grid, multiplying prior by likelihood, and reading the discrete posterior.
+- [Statistical Rethinking 2023 - 02 - The Garden of Forking Data](https://www.youtube.com/watch?v=R1vcdhPBlXA) — Richard McElreath, English. Watch Bayesian updating as counting, the idea a grid only discretizes.
+
 ## Practice questions
 
 1. Why does a 5-point grid only give a rough approximation?
