@@ -2,7 +2,7 @@
 layout: post
 title: "Bài 4.7: MCMC hiện đại — NUTS, HMC và hồi quy Bayes trong thực hành"
 chapter: '04'
-order: 7
+order: 8
 owner: Nguyen Le Linh
 lang: vi
 categories:

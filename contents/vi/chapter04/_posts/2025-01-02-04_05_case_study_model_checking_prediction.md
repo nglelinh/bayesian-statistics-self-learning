@@ -2,7 +2,7 @@
 layout: post
 title: "Bài 4.5: Case Study Model Checking & Prediction - Đi Trọn Workflow Trên Một Dataset"
 chapter: '04'
-order: 5
+order: 6
 owner: Nguyen Le Linh
 lang: vi
 categories:

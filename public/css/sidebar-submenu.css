@@ -1,4 +1,4 @@
-/* 
+/*
  * Submenu styles for chapter lessons
  * Author: Nguyen Le Linh
  * Date: 2026-01-24
@@ -15,67 +15,97 @@
   --sidebar-border-soft: rgba(255, 255, 255, 0.14);
 }
 
-/* Chapter group container */
 .sidebar-chapter-group {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.15rem;
 }
 
-/* Chapter header with dropdown arrow */
-.sidebar-chapter-header {
-  display: flex !important;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
+.sidebar-chapter-row {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-chapter-row.current-chapter {
+  background-color: var(--sidebar-surface-soft);
+}
+
+.sidebar-chapter-link {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-top: 0 !important;
   font-weight: 600;
-  position: relative;
   color: var(--sidebar-text-strong) !important;
-  border-radius: 8px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
 }
 
-.sidebar-chapter-header .dropdown-arrow {
-  font-size: 0.7rem;
-  transition: transform 0.3s ease;
-  margin-left: 0.5rem;
+.sidebar-chapter-toggle {
+  flex: 0 0 2.75rem;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--sidebar-accent);
+  cursor: pointer;
 }
 
-.sidebar-chapter-header.expanded .dropdown-arrow {
+.sidebar-chapter-toggle:hover,
+.sidebar-chapter-toggle:focus-visible {
+  background-color: var(--sidebar-surface-hover);
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: -2px;
+}
+
+.sidebar-chapter-toggle .dropdown-arrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-chapter-toggle.expanded .dropdown-arrow {
   transform: rotate(180deg);
 }
 
-/* Lessons submenu */
 .sidebar-lessons-submenu {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
-  padding-left: 1rem;
-  border-left: 2px solid var(--sidebar-border-soft);
-  margin-left: 0.5rem;
+  margin-left: 0.65rem;
+  border-left: 2px solid transparent;
+  transition: grid-template-rows 0.35s ease, opacity 0.25s ease, margin 0.25s ease, border-color 0.25s ease;
+}
+
+.sidebar-lessons-submenu > .sidebar-lessons-inner {
+  overflow: hidden;
+  min-height: 0;
 }
 
 .sidebar-lessons-submenu.open {
-  max-height: 2000px; /* Large enough for all lessons */
+  grid-template-rows: 1fr;
   opacity: 1;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.35rem;
+  border-left-color: var(--sidebar-border-soft);
 }
 
-/* Lesson items in submenu */
 .sidebar-lesson-item {
   font-size: 0.9rem !important;
-  padding: 0.4rem 0.5rem !important;
-  display: flex !important;
-  justify-content: space-between;
-  align-items: center;
+  padding: 0.45rem 0.55rem !important;
+  min-width: 0;
   color: var(--sidebar-text-muted) !important;
-  transition: all 0.2s ease;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
   border-radius: 6px;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.sidebar-lesson-item:hover {
+.sidebar-lesson-item:hover,
+.sidebar-lesson-item:focus {
   background-color: var(--sidebar-surface-hover);
-  padding-left: 0.8rem !important;
   color: var(--sidebar-text-strong) !important;
 }
 
@@ -86,74 +116,20 @@
   border-left: 3px solid var(--sidebar-accent-strong);
 }
 
-/* Lesson badges */
-.lesson-badge {
-  font-size: 0.65rem;
-  padding: 0.15rem 0.4rem;
-  border-radius: 3px;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-left: 0.5rem;
-  white-space: nowrap;
-}
-
-.lesson-badge.required {
-  background-color: #d73027;
-  color: white;
-}
-
-.lesson-badge.optional {
-  background-color: #4575b4;
-  color: white;
-}
-
-/* Auto-expand current chapter */
-.sidebar-chapter-header.current-chapter {
-  background-color: var(--sidebar-surface-soft);
-  color: var(--sidebar-text-strong) !important;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .sidebar-lessons-submenu {
-    padding-left: 0.5rem;
+    margin-left: 0.4rem;
   }
-  
+
   .sidebar-lesson-item {
     font-size: 0.85rem !important;
   }
-  
-  .lesson-badge {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.3rem;
-  }
 }
 
-/* Animation for smooth expand/collapse */
-@keyframes slideDown {
-  from {
-    max-height: 0;
-    opacity: 0;
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-lessons-submenu,
+  .sidebar-chapter-toggle .dropdown-arrow,
+  .sidebar-lesson-item {
+    transition: none;
   }
-  to {
-    max-height: 2000px;
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    max-height: 2000px;
-    opacity: 1;
-  }
-  to {
-    max-height: 0;
-    opacity: 0;
-  }
-}
-
-/* Hover effect for chapter header */
-.sidebar-chapter-header:hover {
-  background-color: var(--sidebar-surface-hover);
-  transition: background-color 0.2s ease;
 }
