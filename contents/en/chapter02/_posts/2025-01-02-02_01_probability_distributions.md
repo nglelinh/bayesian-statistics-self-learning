@@ -196,7 +196,7 @@ No. Even with lots of data, distributions still matter for risk communication an
 
 > **3 key takeaways.** A distribution always carries more information than a point estimate because it keeps uncertainty visible; two distributions can share the same center and still imply very different levels of certainty; and in Bayesian inference, prior, likelihood, and posterior are all distributions playing different roles.
 
-## Video tham khảo
+## Reference videos
 
 - [The Main Ideas behind Probability Distributions](https://www.youtube.com/watch?v=oI3hZJqXJuc) — StatQuest with Josh Starmer, English. **xem trước**. Watch the main ideas of a probability distribution so a distribution reads as a story about uncertainty, as this lesson asks.
 - [Random variables and probability distributions.](https://www.youtube.com/watch?v=pvkhK03aFDM) — Ben Lambert, English. Watch discrete and continuous random variables separated cleanly, supporting the lesson's choice of distribution family.
@@ -217,4 +217,4 @@ No. Even with lots of data, distributions still matter for risk communication an
 
 ---
 
-*Next lesson: [2.2 Likelihood - The Data's Story Under a Model](/en/chapter02/likelihood/)*
+*Next lesson: [2.2 Likelihood - The Data's Story Under a Model]({{ site.baseurl }}/contents/en/chapter02/02_02_likelihood/)*

@@ -47,6 +47,15 @@ Với $$L_{FP}=5$$ và $$L_{FN}=40$$, ngưỡng quyết định chỉ là $$q^*=
 
 Nếu bỏ sót sự cố gây tổn thất lớn hơn nhiều lần so với cảnh báo nhầm, tổ chức hợp lý sẽ cảnh báo sớm hơn, tức dùng ngưỡng posterior thấp hơn. Ngược lại, nếu cảnh báo nhầm rất đắt đỏ, ngưỡng posterior cần cao hơn để tránh hành động quá mức. Quy tắc tối ưu vì vậy không bao giờ là một con số "phổ quát"; nó là hàm của cấu trúc mất mát trong bối cảnh cụ thể.
 
+### Thử nghiệm: ngưỡng quyết định trong A/B test
+
+Thêm từng lô 150 người dùng, theo dõi π = P(p > p₀) và so với ngưỡng c_fp/(c_fp + c_fn).
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="decision-explainer" data-lang="vi" data-tab="threshold"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3. Loss function và điểm tóm tắt posterior
 
 Trong bài toán ước lượng điểm, lựa chọn mean, median hay mode không phải sở thích trình bày, mà được quyết định bởi loss:
@@ -56,6 +65,14 @@ Trong bài toán ước lượng điểm, lựa chọn mean, median hay mode kh�
 - 0-1 loss (rời rạc) -> tối ưu là posterior mode.
 
 Kết luận phương pháp ở đây là: bất kỳ báo cáo "điểm ước lượng đại diện" nào cũng ngầm chứa một quan điểm về chi phí sai số, dù ta có ý thức điều đó hay không.
+
+### Thử nghiệm: mỗi hàm mất mát cho một điểm tóm tắt tối ưu khác nhau
+
+Bình phương → trung bình, trị tuyệt đối → trung vị, 0–1 → mode, bất đối xứng → phân vị.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="decision-explainer" data-lang="vi" data-tab="loss"></div>
+</div>
 
 ## 4. Từ bằng chứng đến hành động: vai trò của Bayes factor
 
@@ -90,6 +107,14 @@ $$
 Ví dụ, nếu expected loss hiện tại là 12 và sau khi bổ sung thông tin có thể giảm xuống 5, ta có VOI = 7. Nếu chi phí lấy thêm thông tin là 4, lợi ích ròng dương và nên thu thập; nếu chi phí là 10, lợi ích ròng âm và nên quyết định ngay với thông tin hiện có.
 
 ![Value of information decision curve]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_voi_decision_curve.png)
+
+### Thử nghiệm: EVSI và cỡ mẫu tối ưu
+
+So sánh giá trị kỳ vọng của mẫu thêm với chi phí thu thập để chọn cỡ mẫu.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="decision-explainer" data-lang="vi" data-tab="voi"></div>
+</div>
 
 ## 6. Ví dụ tổng hợp: quyết định A/B testing
 
@@ -128,4 +153,4 @@ Bayesian decision analysis hoàn tất chu trình của chapter 08: PPC giúp ph
 
 ---
 
-*Chương tiếp theo: [Chapter 12: Labs Thực Hành Bayesian](/vi/chapter12/)*
+*Chương tiếp theo: [Chapter 12: Labs Thực Hành Bayesian]({{ site.baseurl }}/vi/chapter12/)*

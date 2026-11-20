@@ -164,7 +164,7 @@ $$
 
 vì vậy báo cáo dự báo cần nhất quán với phép biến đổi để tránh underestimation có hệ thống ở thang nguyên thủy.
 
-![Minh hoa can thiep 1: log-transform giam heteroskedasticity va cai thien coverage vung carat cao]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_log_transform.png)
+![Minh họa can thiệp 1: log-transform giảm heteroskedasticity và cải thiện coverage ở vùng carat cao]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_log_transform.png)
 
 ### 7.2. Can thiệp 2: thay tuyến tính cứng bằng cấu trúc phi tuyến có kiểm soát
 
@@ -184,7 +184,7 @@ trong đó $$B_k$$ là các basis functions (spline/piecewise basis) và prior t
 
 Kết quả mong đợi sau can thiệp là đường trung bình posterior bám sát hơn ở cả đầu thấp và đầu cao của `carat`, đồng thời PPC có điều kiện theo từng bin của predictor cải thiện đồng bộ thay vì chỉ cải thiện ở trung tâm.
 
-![Minh hoa can thiep 2: mo hinh phi tuyen bat duoc do cong cua quan he carat-price tot hon tuyen tinh]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_nonlinear.png)
+![Minh họa can thiệp 2: mô hình phi tuyến bắt được độ cong của quan hệ carat-price tốt hơn mô hình tuyến tính]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_nonlinear.png)
 
 ### 7.3. Can thiệp 3: đưa cấu trúc nhóm vào generative story bằng partial pooling
 
@@ -198,7 +198,16 @@ Partial pooling giúp dung hòa hai cực đoan: không ép mọi nhóm giống 
 
 Nếu sau khi đưa hiệu ứng nhóm mà PPC theo nhóm vẫn chưa đạt, đó là tín hiệu rằng cấu trúc nhóm hiện tại chưa đủ: có thể cần slope theo nhóm, tương tác giữa `carat` và chất lượng, hoặc mô hình hóa sai số khác nhau theo phân khúc.
 
-![Minh hoa can thiep 3: them cau truc nhom giup calibration theo cut gan du lieu quan sat hon]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_group_effects.png)
+![Minh họa can thiệp 3: thêm cấu trúc nhóm giúp calibration theo cut gần dữ liệu quan sát hơn]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_46_intervention_group_effects.png)
+
+### Thử nghiệm: partial pooling co các nhóm về trung bình chung
+
+Tăng τ từ gộp hoàn toàn đến không gộp; so sánh với phân phối posterior của τ.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="pooling-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
 ### 7.4. Giao thức đánh giá sau mỗi can thiệp: khi nào được phép nói "đã tốt hơn"
 
@@ -246,4 +255,4 @@ Case `diamonds` cho thấy một sự thật xuyên suốt của Bayesian modeli
 
 ---
 
-*Kết thúc Chapter 4. Bài học tiếp theo: [Chapter 5 - Multiple Predictors và Causal Thinking](/vi/chapter05/)*
+*Kết thúc Chapter 4. Bài học tiếp theo: [Chapter 5 - Multiple Predictors và Causal Thinking]({{ site.baseurl }}/contents/vi/chapter05/)*

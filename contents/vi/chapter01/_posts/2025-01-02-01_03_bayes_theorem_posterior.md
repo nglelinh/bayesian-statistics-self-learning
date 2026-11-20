@@ -126,6 +126,15 @@ Posterior là niềm tin sau khi cập nhật. Nó là đối tượng trung tâ
 
 ![So sánh prior và posterior để thấy dữ liệu đã kéo niềm tin đi đâu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_prior_vs_posterior.png)
 
+### Thử nghiệm: đếm người thay vì nhân xác suất
+
+Kéo tỉ lệ nền, độ nhạy và độ đặc hiệu; bấm Bước tiếp để xem 1000 người tách thành bệnh/khỏe, dương/âm tính và vì sao kết quả dương tính chưa chắc là bệnh.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="bayesrule-explainer" data-lang="vi" data-tab="tree"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 7. Một ví dụ rất nổi tiếng: xét nghiệm y khoa
 
 Đây là ví dụ giúp người học thấy Bayes mạnh ở đâu.
@@ -263,6 +272,14 @@ $$
 
 Tức là posterior thay đổi mạnh theo bằng chứng mới: từ $$0.7 \to 0.847 \to 0.052$$.
 
+### Thử nghiệm: cập nhật tuần tự qua từng lần tung
+
+Ba loại đồng xu, mỗi lần tung nhân prior với likelihood rồi chuẩn hóa; đổi prior để thấy dữ liệu dần áp đảo.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="bayesrule-explainer" data-lang="vi" data-tab="sequential"></div>
+</div>
+
 ## 10. Prior mạnh hay yếu thì sao?
 
 Nếu prior rất mạnh, dữ liệu ít có thể chưa làm posterior thay đổi quá nhiều. Nếu prior yếu, dữ liệu sẽ có ảnh hưởng lớn hơn. Đây không phải lỗi của Bayes mà chính là điều ta mong muốn: khi kiến thức trước đó rất chắc, ta không nên vứt nó đi quá dễ dàng; còn khi prior mơ hồ, dữ liệu nên được nói mạnh hơn.
@@ -313,4 +330,4 @@ Một khi chấp nhận điều này, bạn sẽ thấy prior và posterior khô
 
 ---
 
-*Bài học tiếp theo: [1.4 Bayesian vs Frequentist - So Sánh và Lựa Chọn](/vi/chapter01/bayesian-vs-frequentist/)*
+*Bài học tiếp theo: [1.4 Bayesian vs Frequentist - So Sánh và Lựa Chọn]({{ site.baseurl }}/contents/vi/chapter01/01_04_bayesian_vs_frequentist/)*

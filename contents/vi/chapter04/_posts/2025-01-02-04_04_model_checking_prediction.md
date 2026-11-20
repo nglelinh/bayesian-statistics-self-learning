@@ -273,4 +273,4 @@ Nếu không có bước checking và prediction, Bayesian regression mới ch�
 
 ---
 
-*Bài học tiếp theo: [Bài 4.5 - Case Study Model Checking & Prediction](/vi/chapter04/2025/01/02/04_05_case_study_model_checking_prediction.html)*
+*Bài học tiếp theo: [Bài 4.5 - Case Study Model Checking & Prediction]({{ site.baseurl }}/contents/vi/chapter04/04_05_case_study_model_checking_prediction/)*

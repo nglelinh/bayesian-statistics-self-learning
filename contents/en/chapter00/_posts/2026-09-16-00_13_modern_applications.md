@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Lesson 0.13: Modern Applications of Foundational Probability in Data Science"
+title: "Lesson 0.20: Modern Applications of Foundational Probability in Data Science"
 chapter: '00'
-order: 13
+order: 22
 owner: Nguyen Le Linh
 lang: en
 categories:
@@ -62,9 +62,9 @@ These four settings already cover ranking, language, tabular modeling, and softw
 
 This lesson does not replace a course on deep learning or probabilistic programming. Calibration can fail after a distribution shift; log-space arithmetic does not fix a misspecified likelihood; and simulation-based checks only test the computation you actually ran. The next chapters begin the Bayesian update itself.
 
-## Video tham khảo
+## Reference videos
 
-- [Naive Bayes, Clearly Explained!!!](https://www.youtube.com/watch?v=O2L2Uv9pdDA) — StatQuest with Josh Starmer, English. **xem trước**. Watch Naive Bayes as a classifier written with conditional probability, matching the lesson's move from classroom probability into classifiers.
+- [Naive Bayes, Clearly Explained!!!](https://www.youtube.com/watch?v=O2L2Uv9pdDA) — StatQuest with Josh Starmer, English. **watch first**. Watch Naive Bayes as a classifier written with conditional probability, matching the lesson's move from classroom probability into classifiers.
 - [Why Log Probabilities Are Everywhere in AI - Underflow Error in HMMs and Viterbi Algorithm](https://www.youtube.com/watch?v=HghZrdnrNQY) — Algorithms and AI, English. Watch why language models stay on the log-probability scale, supporting the lesson's section on log-probability outside the classroom.
 - [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Watch uncertainty in deep learning as one place where expectation and full distributions leave the probability warmup and enter modern models.
 

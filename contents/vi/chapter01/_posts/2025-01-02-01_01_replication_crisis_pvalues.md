@@ -194,4 +194,4 @@ Chapter 1 sẽ dần đưa bạn đến đúng điểm đó. Bài này chỉ có
 
 ---
 
-*Bài học tiếp theo: [1.2 Xác suất như Độ tin cậy - Quan điểm Bayes](/vi/chapter01/probability-as-plausibility/)*
+*Bài học tiếp theo: [1.2 Xác suất như Độ tin cậy - Quan điểm Bayes]({{ site.baseurl }}/contents/vi/chapter01/01_02_probability_as_plausibility/)*

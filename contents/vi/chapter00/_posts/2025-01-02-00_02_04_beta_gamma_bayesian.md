@@ -285,4 +285,4 @@ Beta và Gamma là hai họ phân phối nền tảng trong thống kê: Beta ch
 
 ---
 
-*Bài học tiếp theo: [0.6 Thống kê Mô tả](/vi/chapter00/descriptive-statistics/)*
+*Bài học tiếp theo: [0.6 Thống kê Mô tả]({{ site.baseurl }}/contents/vi/chapter00/00_03_descriptive_statistics/)*

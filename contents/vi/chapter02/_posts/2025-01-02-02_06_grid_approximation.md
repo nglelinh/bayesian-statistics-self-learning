@@ -132,6 +132,15 @@ $$
 
 Chia cho tổng toàn bộ trọng số để thu được posterior rời rạc hợp lệ.
 
+### Thử nghiệm: từng bước của xấp xỉ lưới
+
+Chia lưới, tính prior, likelihood, nhân rồi chuẩn hóa; tăng số điểm lưới để thấy sai số giảm.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="grid-explainer" data-lang="vi" data-prior="flat" data-k="6" data-n="9" data-points="10"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Grid mịn hơn thì tốt hơn, nhưng cũng tốn hơn
 
 Một lưới 5 điểm giúp ta nắm ý tưởng, nhưng để xấp xỉ tốt hơn, ta thường phải dùng lưới mịn hơn, chẳng hạn 20 điểm, 100 điểm, hay 1000 điểm, tùy độ chính xác mà ta mong muốn.
@@ -163,6 +172,14 @@ Ta có thể biểu diễn prior này như một mixture hai đỉnh. Khi đó p
 ![Ví dụ grid với prior mixture]({{ site.baseurl }}/img/chapter_img/chapter02/grid_mixture_prior_example.png)
 
 Đây là lý do grid approximation rất mạnh về mặt trực giác: nó không đòi hỏi prior phải liên hợp, mà chỉ yêu cầu rằng ta có thể tính được prior và likelihood trên lưới các giá trị ứng viên.
+
+### Thử nghiệm: prior không liên hợp (tam giác lệch)
+
+Với prior không có công thức đóng, lưới vẫn cho posterior chính xác khi đủ mịn.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="grid-explainer" data-lang="vi" data-prior="tri" data-k="8" data-n="12" data-points="100"></div>
+</div>
 
 ## 6. Từ posterior trên grid, ta làm được gì?
 
@@ -297,4 +314,4 @@ Ngược lại. Grid là cách rất tốt để xây trực giác Bayes, hiểu
 
 ---
 
-*Kết thúc Chapter 02. Bài học tiếp theo: [Chapter 04 - Bayesian Linear Regression](/vi/chapter04/)*
+*Kết thúc Chapter 02. Bài học tiếp theo: [Chapter 04 - Bayesian Linear Regression]({{ site.baseurl }}/contents/vi/chapter04/)*

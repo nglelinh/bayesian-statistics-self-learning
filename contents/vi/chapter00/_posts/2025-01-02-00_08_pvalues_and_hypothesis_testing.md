@@ -143,6 +143,15 @@ Con số $$0.054$$ thường gây khó chịu vì nó nằm rất sát ngưỡng
 
 Đây là lý do nhiều nhà thống kê khuyên không nên biến p-value thành công tắc nhị phân kiểu bật/tắt. Điều quan trọng hơn là nhìn thêm effect size, confidence interval, chất lượng thiết kế nghiên cứu, và bối cảnh khoa học của câu hỏi đang xét.
 
+### Thử nghiệm: p-value dưới H₀ phân phối đều
+
+Lặp thí nghiệm nhiều lần: khi không có hiệu ứng vẫn có ~5% thí nghiệm cho p < 0.05.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="pvalue-explainer" data-lang="vi" data-tab="pnull"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## Ngưỡng Ý nghĩa và Quyết định: Quy ước $$\alpha = 0.05$$
 
 Trong thực hành, p-values thường được so sánh với một **mức ý nghĩa** (significance level) được định trước, thường ký hiệu là $$\alpha$$. Quy ước phổ biến nhất là $$\alpha = 0.05$$, mặc dù các giá trị khác như 0.01 hoặc 0.10 cũng đôi khi được sử dụng.
@@ -162,6 +171,14 @@ Nhưng hãy dừng lại và suy nghĩ về điều này. Sự khác biệt gi�
 Hơn nữa, ngưỡng $$\alpha = 0.05$$ là hoàn toàn tùy ý. Ronald Fisher, người đề xuất nó, đã nói rõ ràng rằng đây chỉ là một hướng dẫn thô, không phải là một quy tắc cứng nhắc. Tuy nhiên, trong thực hành, nó đã trở thành một ngưỡng ma thuật mà các nhà nghiên cứu cảm thấy phải vượt qua để công bố kết quả của họ.
 
 Việc dựa vào ngưỡng cứng nhắc này có nhiều hậu quả tiêu cực: nó khuyến khích "p-hacking", đẩy người nghiên cứu vào tư duy nhị phân kiểu "có hay không có hiệu ứng", và làm lu mờ những thông tin quan trọng hơn như kích thước hiệu ứng hay độ không chắc chắn của ước lượng.
+
+### Thử nghiệm: công suất của t-test
+
+Công suất tăng theo cỡ mẫu và độ lớn hiệu ứng; tại d = 0 nó bằng α.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="pvalue-explainer" data-lang="vi" data-tab="power"></div>
+</div>
 
 ## Những Hiểu lầm Phổ biến về P-values
 
@@ -273,6 +290,14 @@ Với tất cả những vấn đề này, tại sao p-values và kiểm định
 
 Tuy nhiên, có những dấu hiệu cho thấy điều này đang thay đổi. Nhiều tổ chức thống kê và tạp chí khoa học đã đưa ra các tuyên bố cảnh báo về việc lạm dụng p-values và khuyến khích các phương pháp thay thế.
 
+### Thử nghiệm: khoảng tin cậy và khoảng đáng tin
+
+Lặp thí nghiệm nhiều lần để thấy ý nghĩa tần suất của “95%”.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="interval-explainer" data-lang="vi"></div>
+</div>
+
 ## Phương pháp Bayesian: Một Cách Tiếp cận Tự nhiên hơn
 
 Phương pháp Bayesian cung cấp một cách tiếp cận tự nhiên và trực tiếp hơn cho các câu hỏi mà kiểm định giả thuyết cố gắng trả lời. Thay vì hỏi "Dữ liệu này sẽ bất thường như thế nào nếu giả thuyết không đúng?", phương pháp Bayesian hỏi "Cho dữ liệu này, niềm tin của chúng ta về tham số nên là gì?"
@@ -361,4 +386,4 @@ Hình trên cho thấy mối quan hệ giữa kích thước hiệu ứng và k�
 
 ---
 
-*Bài học tiếp theo: [0.12 T-test và Phân phối T](/vi/chapter00/t-test-and-t-distribution/)*
+*Bài học tiếp theo: [0.12 T-test và Phân phối T]({{ site.baseurl }}/contents/vi/chapter00/00_09_t_test_and_t_distribution/)*

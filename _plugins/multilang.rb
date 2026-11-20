@@ -87,6 +87,12 @@ module Jekyll
             other_url = fallback_page ? "/contents/#{other_lang}/chapter00/" : "/"
           end
         end
+      elsif current_url.start_with?("/#{current_lang}/")
+        # Pages with a top-level /<lang>/ permalink (e.g. chapter 12): swap the language prefix
+        potential_url = current_url.sub("/#{current_lang}/", "/#{other_lang}/")
+        found = site.pages.any? { |p| p.url == potential_url && p.data['lang'] == other_lang } ||
+                site.posts.docs.any? { |p| p.url == potential_url && p.data['lang'] == other_lang }
+        other_url = found ? potential_url : "/contents/#{other_lang}/chapter00/"
       elsif current_url.start_with?("/contents/")
         # Nếu URL hiện tại không có ngôn ngữ, thêm ngôn ngữ khác
         other_url = current_url.gsub("/contents/", "/contents/#{other_lang}/")

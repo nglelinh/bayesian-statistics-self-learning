@@ -156,4 +156,4 @@ Giả sử dữ liệu không phải là chiều cao mà là số cuộc gọi �
 
 ---
 
-*Bài học tiếp theo: [0.15 Kỳ vọng, Phương sai, và Hiệp phương sai](/vi/chapter00/expectation-variance-covariance/)*
+*Bài học tiếp theo: [0.15 Kỳ vọng, Phương sai, và Hiệp phương sai]({{ site.baseurl }}/contents/vi/chapter00/00_13_expectation_variance_covariance/)*

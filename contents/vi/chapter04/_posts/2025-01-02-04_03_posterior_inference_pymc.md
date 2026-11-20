@@ -254,7 +254,7 @@ Posterior của slope cho biết mối quan hệ đang dương hay âm, mạnh h
 
 Posterior của $$\sigma$$ cho biết mức độ dữ liệu phân tán quanh đường hồi quy, tức là model còn bỏ lại bao nhiêu biến thiên chưa giải thích.
 
-### 6.4. Ví dụ Session 7: cập nhật từ prior sang posterior cho tham số hồi quy
+### 6.4. Ví dụ: cập nhật từ prior sang posterior cho tham số hồi quy
 
 Giả sử sau khi fit mô hình tuyến tính một biến với PyMC, ta thu được tóm tắt sau:
 
@@ -264,7 +264,7 @@ Giả sử sau khi fit mô hình tuyến tính một biến với PyMC, ta thu �
   - $$\beta\mid D\approx \mathcal N(0.78,\,0.09^2)$$
   - $$\sigma\mid D$$ có trung bình hậu nghiệm khoảng $$2.4$$.
 
-Diễn giải nhanh theo tinh thần Buổi 7:
+Diễn giải nhanh:
 
 - dữ liệu đã kéo intercept từ vùng prior quanh 60 lên khoảng 63.2,
 - slope dương rõ rệt với bất định nhỏ (SD 0.09),
@@ -384,4 +384,4 @@ Mục tiêu không phải là nhớ từng dòng API PyMC. Mục tiêu là nhìn
 
 ---
 
-*Bài học tiếp theo: [4.4 Model Checking và Prediction - Đảm bảo Model Tốt](/vi/chapter04/model-checking-prediction/)*
+*Bài học tiếp theo: [4.4 Model Checking và Prediction - Đảm bảo Model Tốt]({{ site.baseurl }}/contents/vi/chapter04/04_04_model_checking_prediction/)*

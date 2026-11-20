@@ -122,6 +122,15 @@ Bayes không "xóa" các giả định này; Bayes chỉ thêm một lớp bất
 
 ![Residual distribution quanh đường hồi quy]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_regression_residual_distribution.png)
 
+### Thử nghiệm: posterior của hồi quy là cả bó đường thẳng
+
+Thêm từng điểm dữ liệu và xem bó đường thẳng khả dĩ thu hẹp; so với OLS và đường thật.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="regression-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 5. Vì sao “generative” (sinh dữ liệu) là một từ rất quan trọng?
 
 Nếu bạn xem regression như generative model (mô hình sinh dữ liệu), bạn sẽ tự hỏi đúng những câu hỏi hơn: dữ liệu được sinh ra từ quá trình nào, giả định Normal cho residual (phần dư) có hợp lý không, noise có đồng nhất theo mọi giá trị của $$x$$ không, và mô hình này có thực sự tạo ra dữ liệu giống dữ liệu thật hay không.
@@ -177,7 +186,7 @@ p(\alpha,\beta,\sigma\mid X,y)
 \propto p(y\mid X,\alpha,\beta,\sigma)\,p(\alpha,\beta,\sigma).
 $$
 
-Đây là cách nhìn thống nhất của Buổi 7: mọi suy luận tham số hồi quy đều xuất phát từ một joint model rõ ràng.
+Đây là cách nhìn thống nhất của chương này: mọi suy luận tham số hồi quy đều xuất phát từ một joint model rõ ràng.
 
 ### 6.2. Khoảng cho slope: biết phương sai và không biết phương sai
 
@@ -333,4 +342,4 @@ Mỗi khi thấy một bài toán regression, hãy tự ép mình đi qua một 
 
 ---
 
-*Bài học tiếp theo: [4.2 Priors for Regression - Chọn Prior có Nguyên tắc](/vi/chapter04/priors-for-regression/)*
+*Bài học tiếp theo: [4.2 Priors for Regression - Chọn Prior có Nguyên tắc]({{ site.baseurl }}/contents/vi/chapter04/04_02_priors_for_regression/)*

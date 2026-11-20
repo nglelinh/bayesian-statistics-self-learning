@@ -46,6 +46,15 @@ Một cách đọc ngắn gọn nhưng đúng bản chất là: WAIC thường n
 
 ![WAIC and LOO comparison with uncertainty]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_waic_loo_comparison.png)
 
+### Thử nghiệm: WAIC và LOO ước lượng chất lượng dự đoán ngoài mẫu
+
+Tăng bậc đa thức từng bước: lppd trong mẫu luôn tăng, còn elpd theo WAIC và LOO (bám sát elpd trên dữ liệu mới) đạt đỉnh rồi giảm. Bảng cho p_waic, Δelpd và sai số chuẩn.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="ic-explainer" data-lang="vi" data-tab="waic"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Đọc bảng so sánh mô hình: chênh lệch và độ bất định
 
 Giả sử ba mô hình cho kết quả theo thang elpd như sau (giá trị càng cao càng tốt):
@@ -103,4 +112,4 @@ Bài tiếp theo: **Model Comparison Strategies**, nơi ta đi sâu vào lựa c
 
 ---
 
-*Bài học tiếp theo: [8.3 Model Comparison Strategies](/vi/chapter08/model-comparison/)*
+*Bài học tiếp theo: [8.3 Model Comparison Strategies]({{ site.baseurl }}/contents/vi/chapter08/08_03_model_comparison/)*

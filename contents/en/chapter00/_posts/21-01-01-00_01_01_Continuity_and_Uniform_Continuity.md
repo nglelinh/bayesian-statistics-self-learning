@@ -2,7 +2,7 @@
 layout: post
 title: 00-01-01 Continuity and Uniform Continuity
 chapter: '00'
-order: 3
+order: 24
 owner: GitHub Copilot
 lang: en
 categories:
@@ -110,7 +110,7 @@ The three types of continuity form a hierarchy of increasingly strong conditions
 - **On $$[0,1]$$**: Continuous and uniformly continuous, but not Lipschitz (derivative unbounded near $$x = 0$$)
 - **On $$[a,1]$$ for $$a > 0$$**: Lipschitz with $$L = 1/(2\sqrt{a})$$
 
-## Video tham khảo
+## Reference videos
 
-- [Continuity at a point | Limits and continuity | AP Calculus AB | Khan Academy](https://www.youtube.com/watch?v=3KMqU5j7irw) — Khan Academy, English. **xem trước**. Watch continuity at a point through nearby inputs giving nearby outputs, the local idea this lesson starts from.
+- [Continuity at a point | Limits and continuity | AP Calculus AB | Khan Academy](https://www.youtube.com/watch?v=3KMqU5j7irw) — Khan Academy, English. **watch first**. Watch continuity at a point through nearby inputs giving nearby outputs, the local idea this lesson starts from.
 - [Uniform Continuity Explained | Real Analysis](https://www.youtube.com/watch?v=MmxtJwr3Kws) — Wrath of Math, English. Watch uniform continuity as a single modulus of continuity for the whole domain, the distinction the lesson exists to draw.

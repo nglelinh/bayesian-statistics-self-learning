@@ -102,7 +102,7 @@ Bạn chỉ cần đủ kiên nhẫn để chấp nhận rằng bất định l�
 
 ## Đi tiếp từ đây
 
-Bài tiếp theo là [1.1 Replication Crisis & P-values](/vi/chapter01/replication-crisis-pvalues/). Đây là nơi Chapter 1 bắt đầu đặt câu hỏi: nếu cách suy luận thống kê truyền thống có quá nhiều giới hạn, ta có lựa chọn nào tốt hơn không?
+Bài tiếp theo là [1.1 Replication Crisis & P-values]({{ site.baseurl }}/contents/vi/chapter01/01_01_replication_crisis_pvalues/). Đây là nơi Chapter 1 bắt đầu đặt câu hỏi: nếu cách suy luận thống kê truyền thống có quá nhiều giới hạn, ta có lựa chọn nào tốt hơn không?
 
 Nếu cần ôn lại nền tảng trước khi vào chương, bạn có thể xem [Chapter 00: Prerequisites](/vi/chapter00/).
 

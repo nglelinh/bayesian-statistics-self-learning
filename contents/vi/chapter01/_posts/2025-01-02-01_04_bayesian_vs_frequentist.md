@@ -80,6 +80,15 @@ Diễn giải Bayesian lại nói trực tiếp hơn: với dữ liệu hiện t
 
 Điều này gần đúng với kiểu câu hỏi mà người dùng thật sự muốn hỏi.
 
+### Thử nghiệm: khoảng tin cậy và khoảng đáng tin khi lặp thí nghiệm
+
+Mỗi hàng là một thí nghiệm; xem khoảng tin cậy 95% phủ μ cố định đúng 95% số lần, còn khoảng đáng tin phụ thuộc prior.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="interval-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 5. P-value và posterior probability khác nhau thế nào?
 
 ### Frequentist
@@ -192,4 +201,4 @@ Nếu phải nhớ thật ngắn, thì frequentist thường đánh giá dữ li
 
 ---
 
-*Kết thúc Chapter 1. Bài học tiếp theo: [Chapter 2 - Cơ bản về Phân tích Dữ liệu Bayesian](/vi/chapter02/)*
+*Kết thúc Chapter 1. Bài học tiếp theo: [Chapter 2 - Cơ bản về Phân tích Dữ liệu Bayesian]({{ site.baseurl }}/contents/vi/chapter02/)*

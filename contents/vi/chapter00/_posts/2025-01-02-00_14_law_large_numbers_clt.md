@@ -34,6 +34,15 @@ Trực giác: nhiễu ngẫu nhiên "triệt tiêu dần" khi lấy trung bình 
 
 *Hình 1a: Luật số lớn cho thấy trung bình chạy dần ổn định và hội tụ về giá trị kỳ vọng khi số quan sát tăng lên.*
 
+### Thử nghiệm: luật số lớn
+
+Trung bình chạy của năm chuỗi mô phỏng hội tụ về μ.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="clt-explainer" data-lang="vi" data-tab="lln"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 2) CLT: phân phối của trung bình mẫu gần chuẩn
 
 Với điều kiện đủ nhẹ, ta có:
@@ -53,6 +62,14 @@ ngay cả khi phân phối gốc không chuẩn (n đủ lớn).
 ![Phân phối của trung bình mẫu gần chuẩn]({{ site.baseurl }}/img/chapter_img/chapter00/clt_sample_means_histogram.png)
 
 *Hình 1b: Định lý giới hạn trung tâm cho thấy phân phối của trung bình mẫu tiến gần dạng chuẩn dù dữ liệu gốc không nhất thiết chuẩn.*
+
+### Thử nghiệm: định lý giới hạn trung tâm
+
+Histogram của trung bình mẫu tiến tới phân phối chuẩn khi n tăng, dù phân phối gốc lệch.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="clt-explainer" data-lang="vi" data-tab="clt"></div>
+</div>
 
 ## 3) LLN và CLT khác nhau thế nào?
 
@@ -110,4 +127,4 @@ Trong Bayes, Monte Carlo estimate cũng dựa vào ý tưởng trung bình mẫu
 
 ---
 
-*Bài học tiếp theo: [0.17 Sampling Distribution và Standard Error](/vi/chapter00/sampling-distribution-standard-error/)*
+*Bài học tiếp theo: [0.17 Sampling Distribution và Standard Error]({{ site.baseurl }}/contents/vi/chapter00/00_15_sampling_distribution_standard_error/)*

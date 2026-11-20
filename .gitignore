@@ -60,3 +60,6 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Explainers (Svelte + D3 + Vite)
+explainers/node_modules/
+explainers/.vite/

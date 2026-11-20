@@ -30,7 +30,7 @@ But exact computation is often hard because the posterior must be normalized. So
 
 ![An introduction to conjugate pairs]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_intro.png)
 
-## 0. A 30-second map before the formulas
+## A 30-second map before the formulas
 
 If conjugacy feels abstract at first reading, the most useful move is not to memorize formulas immediately, but to keep a compact chain of questions in mind: what the unknown parameter actually is, what form the data take, which likelihood matches that data story, and whether there is a prior with a matching structure such that the posterior remains in the same family after updating.
 
@@ -135,6 +135,15 @@ This is exactly the same result we would get by updating once with the full data
 ### 3.3. Typical applications
 
 Beta-Binomial is natural for settings such as conversion rates, pass rates, treatment success rates, email open rates, and defect proportions, because all of these contexts reduce to the same underlying data story: a count of successes out of a known number of trials, with an unknown success probability.
+
+### Try it: Beta–Binomial flip by flip
+
+Flip one at a time, watch Beta(a + k, b + n − k) change, with the 95% interval and a grid check.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="en" data-tab="betabinom"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
 ## 4. Beta-Geometric
 
@@ -297,6 +306,14 @@ Typical applications include calls per hour, failures per day, hospital arrivals
 
 Read the update as bookkeeping: the posterior shape equals the prior shape plus the total number of observed events, while the posterior rate equals the prior rate plus the number of observed time periods.
 
+### Try it: Gamma–Poisson observation by observation
+
+A Gamma prior on the rate λ, updated after each interval.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="en" data-tab="gammapoisson"></div>
+</div>
+
 ## 6. Normal-Normal
 
 ### 6.1. Real-world story
@@ -377,6 +394,14 @@ The posterior mean becomes a weighted compromise between the prior mean and the 
 
 Even if you forget the exact formula, the right intuition is that the more precise source of information receives more weight, while the posterior variance shrinks as the data become more informative.
 
+### Try it: Normal–Normal and precision weighting
+
+Drag μ₀, τ₀, σ to see the posterior as a weighted average of prior and data.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="en" data-tab="normalnormal"></div>
+</div>
+
 ## 7. Sequential updating
 
 One of the nicest features of conjugate models is how naturally they support sequential learning. You can update with today's data, use the resulting posterior as tomorrow's prior, and continue the process without having to restart the derivation from scratch each time new data arrive.
@@ -385,13 +410,13 @@ One of the nicest features of conjugate models is how naturally they support seq
 
 This is useful for dashboards, quality monitoring, and streaming observations.
 
-## 8. Why learn conjugacy if we later use MCMC?
+## Why learn conjugacy if we later use MCMC?
 
 Conjugacy remains worth learning even if we later rely on MCMC, and the reasons go beyond mere computational convenience. First, it builds strong intuition for how Bayesian updating works, because the effect of prior information and observed data can usually be read directly from the updated parameters. Second, it gives exact answers that are extremely useful when we want to check whether numerical methods such as grid approximation or MCMC are behaving sensibly. Third, it remains genuinely practical for many simple one-parameter models, where an exact and interpretable solution is often more valuable than a more elaborate computational approach.
 
 ![Conjugacy versus broader computational methods]({{ site.baseurl }}/img/chapter_img/chapter02/conjugacy_vs_mcmc.png)
 
-## 9. Limits of conjugacy
+## 8. Limits of conjugacy
 
 Conjugacy is about convenience, not truth. We should not force a conjugate prior if it is a poor description of prior knowledge, and this becomes especially important when the realistic prior is multimodal, when the model is hierarchical, when the parameter space has complex constraints, or when the dependence structure is richer than a simple one-parameter setup can express.
 
@@ -407,13 +432,13 @@ Support matters too. Sometimes the algebra looks familiar, but the posterior no 
 
 In such cases, we turn to grid approximation or MCMC.
 
-## 10. Quick guide to common conjugate pairs
+## 9. Quick guide to common conjugate pairs
 
 ![Table of common conjugate pairs]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_table.png)
 
 Think in terms of data stories rather than isolated formulas. If the parameter is a probability of success, Beta with Binomial is the natural pair; if the problem is about waiting until the first success, Beta with Geometric is the right mental model; if the target is an event rate, Gamma with Poisson is the standard pair; and if the unknown quantity is the mean of continuous data, Normal with Normal is the natural starting point.
 
-## 11. Common misunderstandings
+## 10. Common misunderstandings
 
 ### 11.1. “A conjugate prior is always the best prior”
 
@@ -431,7 +456,7 @@ No. It is still foundational for intuition and for simple exact solutions.
 
 **Conjugate priors are priors that keep the posterior in the same family after updating.** That property makes Bayesian inference easier to compute, easier to explain, and easier to update sequentially, which is why the four basic pairs in this lesson, namely Beta-Binomial, Beta-Geometric, Gamma-Poisson, and Normal-Normal, are worth remembering. Even so, the more important principle is that computational convenience should never replace good modeling judgment. In condensed form, the lesson is this: conjugacy happens when the algebra of the prior and likelihood matches so that the posterior stays in the same family, conjugate pairs are exceptionally useful for building intuition and checking simple exact updates, and a conjugate prior remains only a convenient choice rather than an automatically superior one.
 
-## Video tham khảo
+## Reference videos
 
 - [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Watch conjugacy defined as a prior-likelihood pair that keeps the posterior in the same family.
 - [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Watch several conjugate updates side by side, supporting the lesson's catalogue of practical pairs.
@@ -453,4 +478,4 @@ No. It is still foundational for intuition and for simple exact solutions.
 
 ---
 
-*Next lesson: [2.6 Grid Approximation - Discrete Approximation to the Posterior](/en/chapter02/grid-approximation/)*
+*Next lesson: [2.6 Grid Approximation - Discrete Approximation to the Posterior]({{ site.baseurl }}/contents/en/chapter02/02_06_grid_approximation/)*

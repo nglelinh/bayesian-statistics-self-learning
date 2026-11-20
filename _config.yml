@@ -69,6 +69,7 @@ markdown: kramdown
 
 # Exclude from processing
 exclude:
+  - explainers
   - Gemfile
   - Gemfile.lock
   - node_modules

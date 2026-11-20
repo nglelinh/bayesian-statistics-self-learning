@@ -196,4 +196,4 @@ $$p(x,y)=p(x\mid y)p(y)=p(y\mid x)p(x)$$
 
 ---
 
-*Bài học tiếp theo: [0.14 Mô hình Thống kê là gì?](/vi/chapter00/statistical-model-definition/)*
+*Bài học tiếp theo: [0.14 Mô hình Thống kê là gì?]({{ site.baseurl }}/contents/vi/chapter00/00_12_statistical_model_definition/)*

@@ -65,7 +65,7 @@ Laplace là địa phương. VBLL giả định lớp cuối tuyến tính trên
 ## Video tham khảo
 
 - [The Bayesian interpretation of weight decay 43 Machine Learning](https://www.youtube.com/watch?v=RckG_kNv1Kc) — Professor tutorials, English. **xem trước**. Xem weight decay được đọc như một prior trên trọng số, đúng cầu nối bài vẽ từ regularization sang mạng nơ-ron.
-- [Uncertainty estimation and Bayesian Neural Networks - Marcin Możejko](https://www.youtube.com/watch?v=dj-FKXxy7HQ) — PyData, Tiếng Việt. Xem ước lượng bất định bằng Bayesian neural network, hỗ trợ phần mô hình quá linh hoạt cần một prior.
+- [Uncertainty estimation and Bayesian Neural Networks - Marcin Możejko](https://www.youtube.com/watch?v=dj-FKXxy7HQ) — PyData, English. Xem ước lượng bất định bằng Bayesian neural network, hỗ trợ phần mô hình quá linh hoạt cần một prior.
 - [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem các cách học sâu báo bất định, trong đó có họ ensemble, dùng cho đoạn bài về deep ensemble.
 
 ## Bài tập

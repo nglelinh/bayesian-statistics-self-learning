@@ -1,0 +1,204 @@
+---
+layout: post
+title: "Lesson 1.4: Bayesian vs Frequentist - Comparison and Choice"
+chapter: '01'
+order: 4
+owner: Nguyen Le Linh
+lang: en
+categories:
+- chapter01
+lesson_type: required
+---
+
+## Learning objectives
+
+After this lesson, you need to understand that the difference between the two schools lies not only in computational tools, but in the very question each side chooses to answer. You also need to know why the Bayesian approach often gives a more direct interpretation, yet the frequentist approach still has a role in many practical contexts.
+
+> **Mini example.** With the same data of 7 heads in 10 tosses, a frequentist asks "if the coin is fair, how unusual is this data?", while a Bayesian asks "after seeing this data, where does the true probability likely lie?".
+>
+> **Quick check.** Do these two schools differ mainly in computational formulas, or in the very question they choose to answer?
+
+## 1. Why compare these two schools?
+
+Many people learning statistics feel confused because frequentists and Bayesians sometimes use the same data, the same model, even some of the same mathematical tools, but interpret the results very differently. The difference lies deeper than the technical level. It lies in how probability is understood, in what the parameter is taken to be, and in the kind of final answer each side aims for.
+
+## 2. The same problem, two different ways of asking
+
+Consider the coin example again: we toss 10 times, see 7 heads, and want to know whether the coin is biased.
+
+### A Frequentist usually asks:
+
+If the coin is truly balanced, is data like this unusual?
+
+### A Bayesian usually asks:
+
+After seeing this data, what is the plausible range of values for the probability of heads?
+
+The difference in the question alone already leads to a big difference in interpretation.
+
+![The Frequentist view in a general comparison]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_frequentist_vs_bayesian_frequentist.png)
+
+![The Bayesian view in a general comparison]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_frequentist_vs_bayesian_bayesian.png)
+
+## 3. Differing in the definition of probability
+
+### Frequentist
+
+For a frequentist, probability is the long-run frequency of an outcome over many repetitions.
+
+### Bayesian
+
+For a Bayesian, probability is the degree of reasonable belief in a proposition, based on the available information.
+
+This leads to a very important difference.
+
+### For the Frequentist
+
+The parameter is fixed but unknown, while the data is random.
+
+### For the Bayesian
+
+The observed data is already fixed, while the unknown parameter is described by a probability distribution.
+
+![Frequentist: fixed parameter, random data]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_frequentist.png)
+
+![Bayesian: data already seen, parameter still uncertain]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_bayesian.png)
+
+## 4. How do the confidence interval and the credible interval differ?
+
+This is the point that confuses learners the most.
+
+Suppose you have an interval $$[0.46, 0.86]$$.
+
+### Frequentist confidence interval
+
+The correct interpretation is that if we repeat this procedure very many times, 95% of the intervals produced will contain the true value. This does **not** mean "there is a 95% probability that the parameter lies in that interval".
+
+### Bayesian credible interval
+
+The Bayesian interpretation speaks more directly: given the current data and the current prior, there is a 95% probability that the parameter lies in that interval.
+
+This is close to the kind of question that users really want to ask.
+
+### Experiment: confidence intervals and credible intervals over repeated experiments
+
+Each row is one experiment; see the 95% confidence interval cover the fixed μ exactly 95% of the time, while the credible interval depends on the prior.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="interval-explainer" data-lang="en"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
+## 5. How do the p-value and the posterior probability differ?
+
+### Frequentist
+
+The p-value asks, if the null hypothesis is true, how unusual is this data.
+
+### Bayesian
+
+The posterior probability speaks about where the hypothesis or parameter is likely to be after seeing the data.
+
+This is the difference between talking about the **unusualness of the data** and talking about the **credibility of the hypothesis**.
+
+![The p-value from the Frequentist view]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_pvalue_vs_posterior_frequentist.png)
+
+![The posterior probability from the Bayesian view]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_pvalue_vs_posterior_bayesian.png)
+
+## 6. A medical example to see the difference more clearly
+
+Suppose a test returns a positive result.
+
+### Frequentist style
+
+One might say: if the patient does not have the disease, what is the probability of a positive result?
+
+### Bayesian style
+
+One asks more directly: after a positive result, what is the probability that the patient really has the disease?
+
+In medicine, clearly the second question is closer to what doctors and patients need.
+
+### A numerical example
+
+Suppose the disease rate in the population is only $$1\%$$, the test has sensitivity $$99\%$$, and the false positive rate is $$5\%$$. When a patient gets a positive result, a Bayesian will compute:
+
+$$
+P(\text{disease}\mid +)
+=\frac{0.99\times 0.01}{0.99\times 0.01 + 0.05\times 0.99}
+\approx 0.167.
+$$
+
+That is, after a positive result, the probability of really having the disease is only about $$16.7\%$$, not close to $$99\%$$. This example shows the difference very clearly: a frequentist usually reports the properties of the test under a hypothesis, while a Bayesian answers directly the question that doctors and patients really care about.
+
+![Clinical trial analysis, Frequentist style]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_frequentist.png)
+
+![Clinical trial analysis, Bayesian style]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_bayesian.png)
+
+## 7. Where is the Frequentist strong?
+
+It would not be fair to view the frequentist approach as "completely wrong".
+
+The frequentist approach is strong in contexts such as standardized trial design with fixed decision rules, problems with very large sample sizes, fields or regulatory agencies familiar with the language of traditional testing, and procedures that need to guarantee the long-run properties of the procedure. Typical examples are many late-phase clinical trials, manufacturing quality control, or situations where the decision process must be standardized very tightly.
+
+## 8. Where is the Bayesian strong?
+
+The Bayesian approach is especially strong when we need direct interpretation about a parameter or hypothesis, when there is trustworthy prior knowledge, when data is scarce, when sequential updating is needed, when the model has hierarchical or complex structure, or when forecasts with uncertainty are needed. Very typical examples are startups running A/B tests with modest traffic, doctors making decisions based on multiple sources of information, recommendation systems, time series forecasting, or scientific analyses with priors from earlier research.
+
+## 9. Typical weaknesses of each side
+
+### Frequentists usually struggle with:
+
+Frequentists usually struggle with interpreting p-values and confidence intervals, with incorporating prior knowledge, with speaking directly about the probability of a parameter, and with updating naturally when data arrives in batches.
+
+### Bayesians usually struggle with:
+
+Bayesians usually struggle with having to choose a prior, computation that is sometimes heavier, and needing the reader to accept the interpretation of probability as a degree of belief.
+
+But with modern tools such as PyMC and Stan, the computational barrier has dropped considerably.
+
+## 10. It is not always a "war"
+
+In modern practice, many analysts use frequentist thinking for some checks or baselines, but use Bayesian methods for the main model and interpretation of results. What matters is not choosing a side dogmatically, but whether you are using a tool suited to the question, and whether the interpretation of the results is honest with respect to the method actually chosen.
+
+![Decision tree: when to think Frequentist, when to think Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/decision_tree_freq_vs_bayes.png)
+
+## 11. Why does this course focus on Bayes?
+
+Because in most of the modern problems that learners of this course care about, Bayes answers more directly questions such as where the parameter is likely to lie, how much uncertainty remains, what the probability is that this hypothesis is greater than that one, and how the future forecast should be understood.
+
+In short, Bayes usually says exactly what end users, researchers, doctors, engineers or product analysts want to hear.
+
+## 12. An easy-to-remember conclusion
+
+If you had to remember it in the shortest way, the frequentist usually evaluates data under a hypothesis, while the Bayesian usually evaluates the hypothesis after seeing data.
+
+That is why the Bayesian approach often feels "more natural" for practical questions.
+
+> **3 key ideas.**
+> 1. Frequentist and Bayesian differ at the philosophical foundation: who is random, who is fixed, and what probability is talking about.
+> 2. The frequentist usually answers questions about hypothetical data under a hypothesis, while the Bayesian answers directly about the parameter or hypothesis after seeing the data.
+> 3. In many practical problems, the Bayesian answer is often closer to the question the user really wants to ask.
+
+## Reference videos
+
+- [Bayesian vs. Frequentist Statistics ... MADE EASY!!!](https://www.youtube.com/watch?v=qJcv7VHwqcA) — Stats with Brian, English. **watch first**. Watch the two schools pose two different questions on the same data, exactly the distinction the lesson pursues.
+- [Are you Bayesian or Frequentist?](https://www.youtube.com/watch?v=GEFxFVESQXc) — Cassie Kozyrkov, English. Watch one way of choosing the language of probability according to the decision to be made, supporting the part of the lesson that does not turn the difference into factions.
+- [Bayesian Statistics: Credible vs Confidence Intervals](https://www.youtube.com/watch?v=YPceDssQFWo) — Academia Elevated, English. Watch that a confidence interval and a Bayesian credible interval do not read as the same sentence, used for the part comparing how results are interpreted.
+
+## Practice questions
+
+1. Explain in words the difference between a confidence interval and a credible interval.
+2. In the 7/10 coin example, how are the frequentist and the Bayesian asking two different questions?
+3. For a medical diagnosis problem, why is the Bayesian interpretation usually more natural?
+4. Give a situation where the frequentist approach is still a reasonable choice.
+
+## References
+
+- Gelman, A. et al. *Bayesian Data Analysis* (3rd ed.), Chapter 1-4.
+- Dienes, Z. (2011). Bayesian versus orthodox statistics.
+- Wasserstein, R. L., & Lazar, N. A. (2016). ASA Statement on p-values.
+
+---
+
+*End of Chapter 1. Next lesson: [Chapter 2 - Fundamentals of Bayesian Data Analysis]({{ site.baseurl }}/contents/en/chapter02/)*

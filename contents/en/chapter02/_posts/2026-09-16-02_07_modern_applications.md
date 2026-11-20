@@ -68,7 +68,7 @@ Ads, ranking, site reliability, and sequential experiments are four places where
 
 Empirical Bayes point-estimates the hyperparameters and therefore understates uncertainty about the prior itself. Fully hierarchical Bayes, which Chapter 5’s multilevel thinking begins to motivate, puts a posterior on $$(\alpha,\beta)$$. Grid approximation dies in more than a few dimensions. The honest next tool is not a fancier conjugate table but a sampler, which Chapter 4 develops.
 
-## Video tham khảo
+## Reference videos
 
 - [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Watch when conjugacy is still a computational design choice, the reading this lesson gives conjugate priors.
 - [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Watch a Gamma–Poisson model estimate an event rate, the rate-monitoring pattern in the lesson.

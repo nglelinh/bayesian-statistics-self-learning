@@ -90,6 +90,15 @@ Hình trên so sánh phân phối t với nhiều giá trị df khác nhau. Vớ
 
 Lưu ý cách các critical values thay đổi: với df = 2 và $$\alpha = 0.05$$ (two-tailed), critical value là ±4.303, trong khi với phân phối chuẩn chỉ là ±1.96. Điều này làm cho việc bác bỏ $$H_0$$ khó hơn nhiều khi mẫu nhỏ - một đặc tính thận trọng và hợp lý.
 
+### Thử nghiệm: phân phối t với mẫu nhỏ
+
+Mô phỏng thống kê t và so với mật độ t và chuẩn khi n tăng.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="pvalue-explainer" data-lang="vi" data-tab="tdist"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## Các Loại T-test
 
 Có ba loại t-test phổ biến, tùy thuộc vào thiết kế nghiên cứu:
@@ -307,4 +316,4 @@ Trong các chương sau, bạn sẽ thấy cách phương pháp Bayesian giải 
 
 ---
 
-*Bài học tiếp theo: [0.13 Phân phối đồng thời (Joint Distribution)](/vi/chapter00/joint-distribution/)*
+*Bài học tiếp theo: [0.13 Phân phối đồng thời (Joint Distribution)]({{ site.baseurl }}/contents/vi/chapter00/00_11_joint_distribution/)*

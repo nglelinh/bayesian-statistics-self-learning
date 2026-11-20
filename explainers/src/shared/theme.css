@@ -1,0 +1,8 @@
+/* Shared typography / tokens used inside explainer wrappers. */
+:root {
+  --ex-blue: #004586;
+  --ex-accent: #007bff;
+  --ex-ink: #0f172a;
+  --ex-muted: #64748b;
+  --ex-line: #e2e8f0;
+}

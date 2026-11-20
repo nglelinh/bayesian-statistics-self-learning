@@ -345,4 +345,4 @@ Nếu phải nhớ đúng một câu sau bài này, hãy nhớ câu sau:
 
 ---
 
-*Bài học tiếp theo: [0.20 Kiểm tra giả định mô hình cơ bản](/vi/chapter00/basic-model-assumption-checks/)*
+*Bài học tiếp theo: [0.20 Kiểm tra giả định mô hình cơ bản]({{ site.baseurl }}/contents/vi/chapter00/00_18_basic_model_assumption_checks/)*

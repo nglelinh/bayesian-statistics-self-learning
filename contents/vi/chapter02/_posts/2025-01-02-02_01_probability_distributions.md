@@ -342,4 +342,4 @@ Nếu nắm chắc vai trò của phân phối, các bài sau về likelihood, p
 
 ---
 
-*Bài học tiếp theo: [2.2 Likelihood - Câu chuyện về Dữ liệu và Mô hình](/vi/chapter02/likelihood/)*
+*Bài học tiếp theo: [2.2 Likelihood - Câu chuyện về Dữ liệu và Mô hình]({{ site.baseurl }}/contents/vi/chapter02/02_02_likelihood/)*

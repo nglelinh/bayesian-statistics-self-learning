@@ -272,4 +272,4 @@ Một prior có vẻ hợp lý nhưng vẫn nên được thử thách bằng v�
 
 ---
 
-*Bài học tiếp theo: [4.3 Posterior Inference với PyMC - Từ Theory đến Practice](/vi/chapter04/posterior-inference-pymc/)*
+*Bài học tiếp theo: [4.3 Posterior Inference với PyMC - Từ Theory đến Practice]({{ site.baseurl }}/contents/vi/chapter04/04_03_posterior_inference_pymc/)*

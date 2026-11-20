@@ -148,6 +148,15 @@ Kết quả cuối cùng đúng bằng việc cập nhật một lần với to�
 
 Beta-Binomial đặc biệt tự nhiên trong các bài toán như tỷ lệ khách mua hàng sau khi nhìn quảng cáo, tỷ lệ học viên hoàn thành khóa học, tỷ lệ bệnh nhân đáp ứng điều trị, tỷ lệ email được mở, hay tỷ lệ sản phẩm lỗi trong kiểm định chất lượng. Điểm chung của các bối cảnh này là dữ liệu luôn có dạng “đếm số thành công trong một tổng số lần thử đã biết”, nên Binomial là likelihood hợp lý, và khi tham số cần suy luận là một xác suất thì prior Beta trở thành lựa chọn rất thuận tự nhiên.
 
+### Thử nghiệm: Beta–Binomial qua từng lần tung
+
+Tung từng lần, xem Beta(a + k, b + n − k) thay đổi, khoảng 95% và đối chiếu bằng lưới.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="vi" data-tab="betabinom"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Beta-Geometric: khi dữ liệu là số lần chờ đến thành công đầu tiên
 
 ### 4.1. Câu chuyện thực tế
@@ -370,6 +379,14 @@ $$
 
 Diễn giải: sau dữ liệu mới, mức sự cố trung bình ước lượng tăng từ 2 lên 2.75 sự cố/tuần.
 
+### Thử nghiệm: Gamma–Poisson qua từng quan sát
+
+Prior Gamma trên tốc độ λ, cập nhật sau mỗi khoảng quan sát.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="vi" data-tab="gammapoisson"></div>
+</div>
+
 ## 6. Normal-Normal: khi dữ liệu liên tục dao động quanh một trung bình
 
 ### 6.1. Câu chuyện thực tế
@@ -502,6 +519,14 @@ $$
 
 Diễn giải: so với prior ban đầu, dữ liệu đã kéo ước lượng trung tâm về gần 55 và giảm mạnh bất định hậu nghiệm.
 
+### Thử nghiệm: Normal–Normal và trọng số theo độ chính xác
+
+Kéo μ₀, τ₀, σ để thấy posterior là trung bình có trọng số giữa prior và dữ liệu.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="conjugate-explainer" data-lang="vi" data-tab="normalnormal"></div>
+</div>
+
 ## 7. Cập nhật tuần tự cực kỳ đẹp trong mô hình liên hợp
 
 Đây là một lợi ích rất lớn của conjugacy. Giả sử bạn theo dõi tỷ lệ khách nhấp quảng cáo theo từng ngày và mỗi ngày lại có thêm một ít dữ liệu mới; với Beta-Binomial, bạn không cần giải lại toàn bộ bài toán từ đầu, mà chỉ cần lấy posterior của ngày hôm qua làm prior cho ngày hôm nay rồi cập nhật thêm số lượt thành công và thất bại mới. Điều tương tự cũng đúng với Gamma-Poisson, nơi thông tin mới có thể được hấp thụ vào posterior bằng một phép cập nhật tham số rất gọn.
@@ -510,7 +535,7 @@ Diễn giải: so với prior ban đầu, dữ liệu đã kéo ước lượng 
 
 Trong các hệ thống giám sát vận hành hoặc dashboard theo thời gian thực, đây là ưu điểm rất trực quan.
 
-## 9. Nhưng conjugacy không phải lúc nào cũng là lựa chọn tốt nhất
+## 8. Nhưng conjugacy không phải lúc nào cũng là lựa chọn tốt nhất
 
 Đây là điểm rất quan trọng. Ta không nên chọn prior chỉ vì nó liên hợp nếu lựa chọn ấy mô tả kiến thức thực tế quá kém, khiến ta bỏ qua cấu trúc quan trọng của bài toán, hoặc đơn giản là bài toán đã đủ phức tạp để đòi hỏi một mô hình linh hoạt hơn. Chẳng hạn, prior thực tế có thể có dạng mixture hai đỉnh, tham số có thể chịu những ràng buộc phức tạp, hoặc mô hình có thể bao gồm nhiều tầng và nhiều tham số phụ thuộc lẫn nhau; trong các trường hợp như vậy, sự tiện lợi đại số không còn là tiêu chí quyết định nữa.
 
@@ -534,13 +559,13 @@ Biểu thức này vẫn hoàn toàn hợp lệ để suy luận Bayes, nhưng n
 
 Khi điều kiện ấy không còn thỏa, ta thường chuyển sang grid approximation cho những bài cực nhỏ hoặc sang MCMC cho các mô hình tổng quát và linh hoạt hơn.
 
-## 10. Khi nào nên nghĩ tới cặp liên hợp nào?
+## 9. Khi nào nên nghĩ tới cặp liên hợp nào?
 
 ![Bảng các cặp liên hợp phổ biến]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_table.png)
 
 Bạn có thể nhớ các cặp này theo câu chuyện dữ liệu thay vì học thuộc bảng công thức. Nếu tham số là xác suất thành công trong một số lần thử xác định, hãy nghĩ tới Beta prior đi với Binomial likelihood; nếu bài toán hỏi phải chờ bao lâu hay phải thử đến lần thứ mấy mới có thành công đầu tiên, hãy nghĩ tới Beta prior đi với Geometric likelihood; nếu mục tiêu là suy luận cường độ của số đếm theo thời gian, cặp Gamma-Poisson thường là lựa chọn tự nhiên; còn nếu tham số cần suy luận là trung bình của dữ liệu liên tục, cặp Normal-Normal là điểm khởi đầu hợp lý. Cách nhớ theo bối cảnh dữ liệu như vậy thường bền hơn nhiều so với việc cố học thuộc các biểu thức một cách rời rạc.
 
-## 11. Những nhầm lẫn phổ biến
+## 10. Những nhầm lẫn phổ biến
 
 ### 11.1. “Conjugate prior là prior tốt nhất”
 
@@ -580,4 +605,4 @@ Không. Nó vẫn là nền tảng trực giác và là bộ ví dụ chuẩn đ
 
 ---
 
-*Bài học tiếp theo: [2.6 Grid Approximation - Xấp xỉ Lưới](/vi/chapter02/grid-approximation/)*
+*Bài học tiếp theo: [2.6 Grid Approximation - Xấp xỉ Lưới]({{ site.baseurl }}/contents/vi/chapter02/02_06_grid_approximation/)*

@@ -594,4 +594,4 @@ print(f"\nR² = {r_squared:.4f}")
 
 ---
 
-*Bài học tiếp theo: [0.9 Giải tích Cơ bản](/vi/chapter00/calculus-basics/)*
+*Bài học tiếp theo: [0.9 Giải tích Cơ bản]({{ site.baseurl }}/contents/vi/chapter00/00_06_calculus_basics/)*

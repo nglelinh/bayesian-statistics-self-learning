@@ -446,6 +446,15 @@ plt.tight_layout()
 plt.show()
 ```
 
+### Thử nghiệm: posterior predictive check cho GLM
+
+Hiệu chuẩn theo nhóm cho logistic và thống kê số 0 cho Poisson; so sánh mô hình đúng với mô hình bị sai.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="glmppc-explainer" data-lang="vi" data-tab="logistic"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## Tóm tắt
 
 Đánh giá GLM không thể chỉ bê nguyên bộ công cụ của linear regression sang dùng. Với logistic regression, ta cần nghĩ đồng thời về confusion matrix, các thước đo phân lớp như sensitivity hay specificity, năng lực phân biệt tổng quát qua ROC/AUC, và chất lượng của các xác suất dự báo qua calibration plot. Với Poisson regression, trọng tâm lại chuyển sang deviance, dấu hiệu overdispersion, và các residual plot để xem mô hình có đang bỏ sót cấu trúc nào trong dữ liệu hay không. Còn với mọi GLM, **posterior predictive checks** vẫn là lớp kiểm tra cuối cùng và quan trọng nhất, vì chúng cho phép ta hỏi trực tiếp rằng dữ liệu mô hình sinh ra có giống dữ liệu thật ở những đặc điểm quan trọng hay không.
@@ -482,4 +491,4 @@ plt.show()
 
 ---
 
-*Chương tiếp theo: [Chapter 07: Regularization](/vi/chapter07/)*
+*Chương tiếp theo: [Chapter 07: Regularization]({{ site.baseurl }}/contents/vi/chapter07/)*
