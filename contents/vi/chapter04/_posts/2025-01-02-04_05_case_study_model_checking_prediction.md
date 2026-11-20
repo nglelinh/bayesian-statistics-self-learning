@@ -337,4 +337,4 @@ Case `tips` cho thấy ngay cả bài toán nhỏ cũng cần đầy đủ vòng
 
 ---
 
-*Bài học tiếp theo: [Bài 4.6 - Case Study Nâng Cao trên Dataset Phức Tạp](/vi/chapter04/2025/01/02/04_06_case_study_complex_dataset.html)*
+*Bài học tiếp theo: [Bài 4.6 - Case Study Nâng Cao trên Dataset Phức Tạp]({{ site.baseurl }}/contents/vi/chapter04/04_06_case_study_complex_dataset/)*

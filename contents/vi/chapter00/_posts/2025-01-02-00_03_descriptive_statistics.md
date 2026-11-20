@@ -209,4 +209,4 @@ Trong phân tích Bayesian, chúng ta thường mô hình hóa tương quan mộ
 
 ---
 
-*Bài học tiếp theo: [0.7 Python Cơ bản cho Data Science](/vi/chapter00/python-basics/)*
+*Bài học tiếp theo: [0.7 Python Cơ bản cho Data Science]({{ site.baseurl }}/contents/vi/chapter00/00_04_python_basics/)*

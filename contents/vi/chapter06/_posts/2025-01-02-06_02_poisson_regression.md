@@ -114,6 +114,15 @@ plt.tight_layout()
 plt.show()
 ```
 
+### Thử nghiệm: posterior của hồi quy Poisson và rate ratio
+
+Thêm từng điểm dữ liệu đếm; bó đường λ(x) và rate ratio exp(b) thu hẹp dần.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="glm-explainer" data-lang="vi" data-tab="poisson"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Interpretation: Rate Ratios
 
 ### 4.1. Rate Ratio
@@ -294,6 +303,14 @@ else:
 print("=" * 70)
 ```
 
+### Thử nghiệm: Poisson hay Negative Binomial?
+
+Từ var/mean đến posterior predictive check: Poisson bị bác bỏ, Negative Binomial mô tả được độ phân tán.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="overdisp-explainer" data-lang="vi" data-data="nb"></div>
+</div>
+
 ## Tóm tắt
 
 Poisson regression là mô hình tự nhiên cho dữ liệu đếm vì nó giải quyết đúng điểm yếu của linear regression: dự đoán của mô hình tuyến tính có thể âm, còn dữ liệu đếm thì không. Bằng cách dùng **log link**, mô hình hóa $$\log(\lambda)=\alpha+\beta x$$ rồi suy ra $$\lambda$$ trên thang gốc, Poisson regression bảo đảm rằng tốc độ kỳ vọng luôn dương. Hệ số của mô hình được hiểu tốt nhất thông qua **rate ratio** $$e^\beta$$, còn giả định quan trọng nhất luôn cần kiểm tra là phương sai có xấp xỉ trung bình hay không. Nếu dữ liệu quá phân tán, ta phải nghĩ đến những mô hình linh hoạt hơn.
@@ -330,4 +347,4 @@ Bài tiếp theo: **Model Evaluation for GLMs**.
 
 ---
 
-*Bài học tiếp theo: [6.3 Model Evaluation for GLMs](/vi/chapter06/model-evaluation-glm/)*
+*Bài học tiếp theo: [6.3 Model Evaluation for GLMs]({{ site.baseurl }}/contents/vi/chapter06/06_03_model_evaluation_glm/)*

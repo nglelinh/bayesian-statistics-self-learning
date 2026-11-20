@@ -137,6 +137,15 @@ Ta có thể hình dung model đang nói:
 
 Đây là lý do ta hay thấy posterior của các hệ số kéo dài theo một hướng chéo thay vì tròn gọn.
 
+### Thử nghiệm: tăng tương quan, posterior thành dải chéo
+
+Tăng ρ giữa hai predictor: sd(b₁) tăng theo √VIF, b₁ và b₂ tương quan âm nhưng tổng b₁ + b₂ vẫn ổn định.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="collinear-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 7. Nên xử lý multicollinearity như thế nào?
 
 Không có một đáp án duy nhất cho mọi trường hợp. Ta chọn cách xử lý theo mục tiêu phân tích.
@@ -220,4 +229,4 @@ Một bên là vấn đề **trùng lặp thông tin**, một bên là vấn đ�
 
 ---
 
-*Bài học tiếp theo: [5.4 Interaction Effects](/vi/chapter05/interaction-effects/)*
+*Bài học tiếp theo: [5.4 Interaction Effects]({{ site.baseurl }}/contents/vi/chapter05/05_04_interaction_effects/)*

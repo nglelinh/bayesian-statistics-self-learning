@@ -95,4 +95,4 @@ Nói cách khác, mô phỏng giúp ta học tư duy "model implies data".
 
 ---
 
-*Bài học tiếp theo: [Chương 1: Cơ bản về Suy diễn Bayes](/vi/chapter01/)*
+*Bài học tiếp theo: [Chương 1: Cơ bản về Suy diễn Bayes]({{ site.baseurl }}/contents/vi/chapter01/)*

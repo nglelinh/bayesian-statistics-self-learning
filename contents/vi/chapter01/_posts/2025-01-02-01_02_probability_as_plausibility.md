@@ -181,4 +181,4 @@ Không phải một bên hoàn toàn sai và bên kia hoàn toàn đúng trong m
 
 ---
 
-*Bài học tiếp theo: [1.3 Định lý Bayes - Công cụ Cập nhật Niềm tin](/vi/chapter01/bayes-theorem-posterior/)*
+*Bài học tiếp theo: [1.3 Định lý Bayes - Công cụ Cập nhật Niềm tin]({{ site.baseurl }}/contents/vi/chapter01/01_03_bayes_theorem_posterior/)*

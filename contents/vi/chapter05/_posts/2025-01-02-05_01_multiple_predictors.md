@@ -249,4 +249,4 @@ Multiple regression là cánh cửa mở sang ba câu hỏi rất thực tế, �
 
 ---
 
-*Bài học tiếp theo: [5.2 Confounding và DAGs](/vi/chapter05/confounding-dags/)*
+*Bài học tiếp theo: [5.2 Confounding và DAGs]({{ site.baseurl }}/contents/vi/chapter05/05_02_confounding_dags/)*

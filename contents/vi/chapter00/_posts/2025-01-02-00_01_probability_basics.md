@@ -201,4 +201,4 @@ Khi bạn tiến xa hơn trong khóa học này, bạn sẽ thấy rằng mọi 
 
 ---
 
-*Bài học tiếp theo: [0.2 Bernoulli và Binomial](/vi/chapter00/00_02_01_bernoulli_binomial/)*
+*Bài học tiếp theo: [0.2 Bernoulli và Binomial]({{ site.baseurl }}/contents/vi/chapter00/00_02_01_bernoulli_binomial/)*

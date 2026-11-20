@@ -122,4 +122,4 @@ Prior mạnh thường làm variance giảm nhưng có thể làm bias tăng, c�
 
 ---
 
-*Bài học tiếp theo: [0.19 Log-probability và Ổn định số](/vi/chapter00/log-probability-numerical-stability/)*
+*Bài học tiếp theo: [0.19 Log-probability và Ổn định số]({{ site.baseurl }}/contents/vi/chapter00/00_17_log_probability_numerical_stability/)*

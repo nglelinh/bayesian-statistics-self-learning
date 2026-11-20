@@ -51,6 +51,15 @@ Hình minh họa cho trực giác này rất rõ. Với mô hình bậc 1, các 
 
 Khi nhìn vào decomposition của MSE, ta thấy ngay vì sao việc chọn mô hình không thể dựa trên một tiêu chí đơn lẻ. Ở vùng độ phức tạp thấp, chẳng hạn bậc 1 hoặc 2, thành phần $$\text{Bias}^2$$ còn lớn vì mô hình quá đơn giản để mô tả dữ liệu, dù variance khi đó khá thấp. Khi độ phức tạp tăng lên vùng trung gian, hai thành phần này bắt đầu cân bằng hơn và tổng MSE đạt mức nhỏ nhất; đó là “sweet spot” thực sự của mô hình. Nhưng khi tiếp tục tăng độ phức tạp, bias có thể giảm thêm một chút trong khi variance tăng rất mạnh, làm MSE tăng trở lại. Biểu đồ stacked ở bên phải đặc biệt hữu ích vì nó cho thấy trực quan rằng mục tiêu không phải là tối thiểu hóa riêng bias hay riêng variance, mà là tối thiểu hóa tổng sai số dự báo.
 
+### Thử nghiệm: bias, variance và tổng sai số theo độ phức tạp
+
+Lặp 100 tập dữ liệu mỗi bậc đa thức; bias² giảm, variance tăng, tổng sai số hình chữ U; prior chặt (ridge) nén variance.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="biasvar-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3. Regularization và Bias-Variance
 
 Regularization chính là chiếc núm điều khiển trade-off này. Khi regularization yếu, tức $$\lambda$$ nhỏ, mô hình được phép linh hoạt hơn nên bias có xu hướng thấp nhưng variance lại cao. Khi regularization mạnh, tức $$\lambda$$ lớn, mô hình bị ép đơn giản hơn nên variance giảm, nhưng bias lại tăng.
@@ -182,7 +191,7 @@ print(f"Validation RMSE (z-scale): {val_scores[best_idx]:.3f}")
 print(f"Test RMSE (z-scale): {test_rmse:.3f}")
 ```
 
-![Applied ML Workflow Tradeoffs](../../../img/chapter_img/chapter07/applied_ml_workflow_tradeoffs.png)
+![Applied ML Workflow Tradeoffs]({{ site.baseurl }}/img/chapter_img/chapter07/applied_ml_workflow_tradeoffs.png)
 
 Hinh tren tom tat ba quyet dinh chinh trong workflow ap dung: (1) chon regularization bang validation RMSE, (2) kiem tra do lon he so sau shrinkage, va (3) danh gia do on dinh chon bien qua bootstrap frequencies.
 
@@ -236,4 +245,4 @@ Bai tiep theo: **Feature Selection** (hoan tat case study bang stability selecti
 
 ---
 
-*Bài học tiếp theo: [7.3 Feature Selection](/vi/chapter07/feature-selection/)*
+*Bài học tiếp theo: [7.3 Feature Selection]({{ site.baseurl }}/contents/vi/chapter07/07_03_feature_selection/)*

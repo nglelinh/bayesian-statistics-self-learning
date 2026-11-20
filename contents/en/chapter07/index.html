@@ -1,0 +1,14 @@
+---
+layout: page
+lang: en
+title: "Chapter 7: Priors, Regularization, and Overfitting"
+chapter: "07"
+owner: "Nguyen Le Linh"
+---
+
+<div class="chapter-intro">
+  <p>Chapter 7 focuses on a core problem of statistical inference and machine learning: how to build a model that can explain the structure of the data without sacrificing generalization to new observations. In practice, an overly flexible model tends to fit the training data well but fails when predicting out of sample; conversely, a model that is constrained too strongly may miss important signals. Priors, regularization, and feature selection should therefore not be seen as separate auxiliary techniques, but as tools for controlling model complexity across the whole analysis workflow.</p>
+  <p>In this chapter, you will go through three closely related topics. Lesson 7.1 presents regularization from the viewpoint of priors and clarifies the role of prior assumptions in narrowing the parameter space. Lesson 7.2 analyzes the bias-variance tradeoff as the foundation for understanding why a model can fall into overfitting or underfitting. Next, Lesson 7.3 discusses feature selection as a modeling decision that must be evaluated by out-of-sample predictive ability, the stability of the selected variables, and the risk of misinterpretation when the variable selection procedure is not carefully controlled.</p>
+  <p>The goal of the chapter is not only to introduce concepts, but also to form a principled working procedure for real-world modeling: define the problem and evaluation criteria correctly, split the data into train/validation/test to limit data leakage, choose the regularization level based on out-of-sample evidence, and interpret the model only after fully checking the stability of the variable selection decisions. In this approach, regularization and feature selection become natural components of a serious modeling workflow, rather than tricks applied piecemeal after the model has been built.</p>
+  <p>After the required lessons, the optional lesson <em>Lesson 7.4: Modern Applications of Priors, Regularization, and Bayesian Deep Learning</em> reads weight decay, Laplace, last-layer variational Bayes, and deep ensembles as ways of placing a prior on an overly flexible model. This lesson does not rewrite the bias–variance theory.</p>
+</div>

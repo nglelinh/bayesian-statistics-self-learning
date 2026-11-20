@@ -108,6 +108,15 @@ $$
 
 Divide by the total weight.
 
+### Try it: grid approximation step by step
+
+Lay a grid, compute prior and likelihood, multiply and normalise; add points to watch the error shrink.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="grid-explainer" data-lang="en" data-prior="flat" data-k="6" data-n="9" data-points="10"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Finer grids improve the approximation
 
 Using 5 points gives a rough picture. Using 20, 100, or 1000 points gives a smoother and more accurate approximation.
@@ -135,6 +144,14 @@ Suppose analysts have two competing prior beliefs about a return rate, with one 
 That gives a mixture prior with two peaks. Closed-form algebra may no longer be convenient, but grid approximation still works naturally, because we only need to evaluate the mixture prior on the grid, evaluate the likelihood at the same points, and then normalize the resulting weights.
 
 ![Grid approximation with a mixture prior]({{ site.baseurl }}/img/chapter_img/chapter02/grid_mixture_prior_example.png)
+
+### Try it: a non-conjugate prior (skewed triangle)
+
+With no closed form the grid still gives an accurate posterior when fine enough.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="grid-explainer" data-lang="en" data-prior="tri" data-k="8" data-n="12" data-points="100"></div>
+</div>
 
 ## 6. What can we do with a grid posterior?
 
@@ -232,7 +249,7 @@ No. It is one of the best tools for building Bayesian intuition.
 
 **Grid approximation computes a posterior by discretizing the parameter space into a finite grid.** It is intuitive, flexible, and excellent for learning or for very small models, especially when conjugacy is unavailable but the parameter space is still simple enough to explore directly. Its main weakness is dimensionality, which is why more advanced methods such as MCMC are needed later. The main lesson to keep is that grid approximation turns a continuous posterior problem into a discrete weighted comparison over candidate values, works especially well for small models and non-conjugate examples, and fails to scale once the number of parameters becomes even moderately large.
 
-## Video tham khảo
+## Reference videos
 
 - [Introduction to the elements of Bayesian statistics. Week 3. Video 2. Grid approx. & probability.](https://www.youtube.com/watch?v=w4fKaBCX02Q) — Peter Blenis, English. **xem trước**. Watch a posterior computed on a grid and normalized by a sum, the algorithm this lesson wants you to implement.
 - [Bayes Week 2, Lecture 1: Grid Approximation](https://www.youtube.com/watch?v=2BhfFLATx8c) — Kevin James, English. Watch a second pass over building the grid, multiplying prior by likelihood, and reading the discrete posterior.
@@ -253,4 +270,4 @@ No. It is one of the best tools for building Bayesian intuition.
 
 ---
 
-*End of Chapter 02. Next chapter: [Chapter 04 - Bayesian Linear Regression](/en/chapter04/)*
+*End of Chapter 02. Next chapter: [Chapter 04 - Bayesian Linear Regression]({{ site.baseurl }}/contents/en/chapter04/)*

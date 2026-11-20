@@ -1,0 +1,113 @@
+---
+layout: post
+title: "Course Introduction: Bayesian Data Analysis"
+chapter: '01'
+order: 0
+owner: Nguyen Le Linh
+lang: en
+categories:
+- chapter01
+lesson_type: required
+---
+
+## Welcome to Bayesian Statistics
+
+This course is built for one very clear goal: to help you learn to **think in probabilities**, instead of just memorizing statistical formulas as disconnected pieces. In practice, we constantly face questions such as whether a hypothesis is credible, whether new data changes an old belief, and, if we must decide today, how large the risk of being wrong is. Bayesian statistics is especially strong at exactly these questions, because it does not just give a "test result", but provides a unified way of thinking about **belief, data, uncertainty and decisions**.
+
+> **Mini example.** When you hear a forecast of "70% chance of rain", you do not need to repeat tomorrow infinitely many times to understand what it means. You only need to know the current level of confidence to decide whether to bring an umbrella.
+>
+> **Quick check.** In your opinion, why is the way of thinking "update beliefs when more information arrives" closer to real life than many disconnected statistical formulas?
+
+![Bayesian reasoning in everyday life]({{ site.baseurl }}/img/chapter_img/chapter01/bayesian_daily_life_small.png)
+
+## What will this course help you learn?
+
+If you study this course well, you will not only know "what Bayes' theorem is", but also how to use Bayesian thinking on real problems.
+
+### 1. Understand probability as a language of degrees of belief
+
+You will see why in Bayes, probability is understood not only as long-run frequency but also as a language describing the plausibility of a hypothesis, especially in situations where uncertainty is unavoidable.
+
+### 2. Understand how to build a data-generating model
+
+A good Bayesian model does not start from code. It starts from the question of how the data was generated, which parameters are still unknown, and which prior reasonably reflects what we already know.
+
+### 3. Understand how to update beliefs with data
+
+This is the heart of the whole course: the **prior** is what we initially believe, the **likelihood** is how the data speaks under each hypothesis or parameter value, and the **posterior** is the belief updated after those two parts meet.
+
+![The Bayes machine: from prior to posterior]({{ site.baseurl }}/img/chapter_img/chapter01/bayes_machine_small.png)
+
+### 4. Know how to use modern tools for Bayesian inference
+
+After the foundations, the course moves into tools such as **grid approximation**, Monte Carlo and MCMC, then PyMC to implement real models, as well as model diagnostic techniques and predictive checks.
+
+### 5. Know how to interpret results honestly
+
+You will learn how to answer the questions that researchers, business people and engineers really care about, such as what the probability is that a parameter is greater than 0, which range of values is still plausible, how uncertain the future forecast is, and whether the model is missing an important structure.
+
+## Why learn Bayes from the very beginning?
+
+Many people come to Bayes after learning frequentist statistics and feeling that something is "hard to swallow" about p-values, confidence intervals or hypothesis testing. That is perfectly normal.
+
+Bayes is attractive for three big reasons.
+
+### 1. It is close to the intuition of learning from new information
+
+In life, we already think in a very Bayesian way: hearing a weather forecast and then updating plans, seeing a medical test and then updating a diagnosis, or watching the first few purchases and then adjusting beliefs about market demand. We hardly ever think in the style of "I reject the hypothesis at the 5% significance level", because everyday language is closer to updating beliefs than to formal testing rituals.
+
+### 2. It is more honest about uncertainty
+
+Bayes does not only answer "what is the estimate", but also tells us how sure we are, which values remain possible, and, if we must forecast the future, how the risk region should be understood.
+
+### 3. It fits modern data science very well
+
+Bayes is especially strong in contexts such as little data but a need for quick decisions, hierarchical models, forecasting and recommendation, medical analysis, A/B testing, or machine learning with **quantification of uncertainty**.
+
+## Resources to consult throughout the course
+
+### Main resource
+
+**Richard McElreath (2020)** - *Statistical Rethinking* (2nd Edition)
+
+The strength of this resource is its very good modeling intuition, an explanation style close to beginners, and a tight connection between theory and practical models.
+
+### Supplementary resources
+
+**Andrew Gelman et al. (2013)** - *Bayesian Data Analysis* (3rd Edition)
+
+The strength of this resource is its very solid foundation, broad coverage, and high suitability when you want to go deeper after having built initial intuition.
+
+**John K. Kruschke (2014)** - *Doing Bayesian Data Analysis*
+
+The strength of this resource is its very high pedagogy, many illustrative examples, and a very good connection between concepts and interpretation.
+
+## Course information and assessment
+
+### Core reference materials
+
+1. Gelman, A. et al. *Bayesian Data Analysis*.
+2. Congdon, P. *Bayesian Statistical Modelling*.
+3. Lee, P. M. *Bayesian Statistics: An Introduction*.
+
+### Assessment components
+
+The current assessment consists of 20% regular work, 30% mid-term in a practical format, and 50% final in a practical format as well.
+
+## You do not need to be good at math to learn Bayes
+
+You only need enough patience to accept that uncertainty is something that must be modeled, that data does not speak for itself without a model, and that updating beliefs consistently is the core of inference. If you keep that spirit, Bayes will no longer be a hard chapter of statistics, but a very natural way of thinking.
+
+> **3 key ideas.** This course does not only teach the Bayes formula but also a whole way of thinking about learning from data; Bayesian statistics is strong in connecting models, uncertainty and decision-making in the same workflow; and to study this course well, you should always prioritize modeling intuition first and only then computational technique.
+
+## Moving on from here
+
+The next lesson is [1.1 Replication Crisis & P-values](/en/chapter01/replication-crisis-pvalues/). This is where Chapter 1 begins to ask: if traditional statistical inference has too many limitations, do we have a better option?
+
+If you need to review the foundations before entering the chapter, you can see [Chapter 00: Prerequisites](/en/chapter00/).
+
+## Reference videos
+
+- [The Bayesian Trap](https://www.youtube.com/watch?v=R13BD8qKeTg) — Veritasium, English. **watch first**. Watch the base-rate trap when updating beliefs, exactly the lesson's invitation to think in probabilities instead of memorizing formulas.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Watch the geometry of Bayes' theorem, supporting the roadmap the lesson promises from prior and likelihood to posterior.
+- [Statistical Rethinking 2023 - 01 - The Golem of Prague](https://www.youtube.com/watch?v=FdnMWdICdRs) — Richard McElreath, English. Watch the opening lecture of Statistical Rethinking on models as tools that need to be supervised, in the same spirit as this course.

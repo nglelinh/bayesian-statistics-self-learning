@@ -113,4 +113,4 @@ Trong Bayesian modeling, phân phối Normal xuất hiện ở nhiều tầng kh
 
 ---
 
-*Bài học tiếp theo: [0.5 Beta và Gamma](/vi/chapter00/00_02_04_beta_gamma_bayesian/)*
+*Bài học tiếp theo: [0.5 Beta và Gamma]({{ site.baseurl }}/contents/vi/chapter00/00_02_04_beta_gamma_bayesian/)*

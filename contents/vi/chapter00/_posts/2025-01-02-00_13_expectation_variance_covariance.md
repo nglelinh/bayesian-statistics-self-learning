@@ -132,4 +132,4 @@ Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp 
 
 ---
 
-*Bài học tiếp theo: [0.16 Luật số lớn và Định lý giới hạn trung tâm](/vi/chapter00/law-large-numbers-clt/)*
+*Bài học tiếp theo: [0.16 Luật số lớn và Định lý giới hạn trung tâm]({{ site.baseurl }}/contents/vi/chapter00/00_14_law_large_numbers_clt/)*

@@ -1,0 +1,45 @@
+/* Kiểu dùng chung cho các explainer (tiền tố dx- để không đụng CSS của site). */
+.dx { border:1px solid #e2e8f0; border-radius:12px; padding:16px 18px 18px; background:#fff; margin:14px 0; font-family:system-ui,-apple-system,sans-serif; color:#0f172a; line-height:1.4; }
+.dx *, .dx *::before, .dx *::after { box-sizing: border-box; }
+.dx h4 { margin:0 0 6px; font-size:1.08rem; color:#004586; }
+.dx h5 { margin:0; color:#004586; font-size:.95rem; }
+.dx .dx-help { margin:0 0 10px; color:#64748b; font-size:.92rem; line-height:1.45; }
+.dx .dx-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 10px; }
+.dx label { font-size:.9rem; display:flex; gap:6px; align-items:center; }
+.dx input[type=text], .dx input[type=number], .dx select, .dx textarea { padding:6px 8px; border:1px solid #cbd5e1; border-radius:8px; background:#fff; font-size:.92rem; font-family:inherit; }
+.dx button { padding:7px 12px; border:1px solid #007bff; background:#007bff; color:#fff; border-radius:8px; cursor:pointer; font-size:.9rem; font-family:inherit; }
+.dx button.sec { background:#fff; color:#0f437a; border-color:#94a3b8; }
+.dx button.on { background:#0f766e; border-color:#0f766e; color:#fff; }
+.dx button:disabled { opacity:.5; cursor:not-allowed; }
+.dx .dx-k { color:#64748b; font-size:.88rem; }
+.dx .dx-card { border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px 12px; background:#f8fafc; min-width:0; }
+.dx .dx-card > header { display:flex; justify-content:space-between; gap:8px; align-items:baseline; margin-bottom:8px; }
+.dx .dx-card > header span { color:#64748b; font-size:.78rem; }
+.dx .dx-grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+.dx .dx-msg { margin:10px 0 8px; padding:8px 10px; background:#f0f9ff; border:1px solid #bae6fd; border-radius:8px; color:#0c4a6e; font-size:.92rem; min-height:2.6em; }
+.dx .dx-err { margin:0 0 8px; padding:8px 10px; background:#fef2f2; border:1px solid #fecaca; color:#991b1b; border-radius:8px; font-size:.9rem; }
+.dx .dx-ok { color:#0f766e; font-weight:650; } .dx .dx-bad { color:#b91c1c; font-weight:650; }
+.dx table.dx-t { border-collapse:collapse; background:#fff; font-size:.85rem; }
+.dx table.dx-t th, .dx table.dx-t td { border:1px solid #e2e8f0; padding:3px 7px; text-align:center; }
+.dx table.dx-t th { background:#f1f5f9; color:#334155; }
+.dx .dx-chips { display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:2rem; }
+.dx .dx-chip { display:inline-flex; flex-direction:column; align-items:center; min-width:2rem; padding:4px 8px; border-radius:8px; background:#fff; border:1px solid #cbd5e1; font-weight:650; font-size:.92rem; }
+.dx .dx-chip small { font-weight:500; font-size:.68rem; color:#64748b; }
+.dx .dx-tabs { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 10px; }
+.dx .dx-mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+.dx .dx-svg { width:100%; height:auto; display:block; background:linear-gradient(180deg,#f8fafc,#fff); border:1px solid #e2e8f0; border-radius:10px; }
+.dx .dx-pseudo { border-radius:10px; background:#0b1220; color:#e2e8f0; padding:10px 12px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:.82rem; }
+.dx .dx-pseudo div { padding:2px 8px; border-radius:6px; color:#cbd5e1; white-space:pre-wrap; }
+.dx .dx-pseudo div.on { background:#1e3a5f; color:#fff; box-shadow:inset 3px 0 0 #38bdf8; }
+.dx .dx-stepper { margin-top:6px; }
+.dx .dx-stepper input[type=range] { width:90px; }
+.dx .dx-trail { display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:2.1rem; }
+.dx .dx-pill { padding:3px 9px; border-radius:999px; border:1px solid #cbd5e1; background:#fff; font-size:.85rem; font-weight:600; }
+.dx .dx-pill.hot { background:#fef3c7; border-color:#f59e0b; }
+.dx .dx-pill.good { background:#dcfce7; border-color:#16a34a; color:#14532d; }
+.dx .dx-pill.bad { background:#fee2e2; border-color:#dc2626; color:#7f1d1d; }
+.dx .dx-pill.dim { opacity:.45; }
+.dx .dx-row2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-top:8px; }
+@media (max-width:520px) { .dx { padding:12px 10px 14px; } .dx .dx-stepper input[type=range] { width:70px; } }
+.dx select { max-width:100%; }
+.dx .dx-bar label { flex-wrap:wrap; max-width:100%; }

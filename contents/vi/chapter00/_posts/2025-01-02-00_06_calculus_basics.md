@@ -623,4 +623,4 @@ print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2
 
 ---
 
-*Bài học tiếp theo: [0.10 Hàm Mật độ Xác suất (PDF)](/vi/chapter00/probability-density-functions/)*
+*Bài học tiếp theo: [0.10 Hàm Mật độ Xác suất (PDF)]({{ site.baseurl }}/contents/vi/chapter00/00_07_probability_density_functions/)*

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Lesson 0.12: What is a Statistical Model?"
+title: "Lesson 0.14: What is a Statistical Model?"
 chapter: '00'
-order: 12
+order: 14
 owner: Nguyen Le Linh
 lang: en
 categories:
@@ -128,9 +128,9 @@ The key point is that choosing a model is not just choosing a convenient formula
 3. Every model carries assumptions; understanding assumptions is central.
 4. In Bayes, the model provides the likelihood that updates prior to posterior.
 
-## Video tham khảo
+## Reference videos
 
-- [What is a statistical model?](https://www.youtube.com/watch?v=3d5ivs_8amQ) — Very Normal, English. **xem trước**. Watch a statistical model defined as a probability story for how data are generated, the practical definition in this lesson.
+- [What is a statistical model?](https://www.youtube.com/watch?v=3d5ivs_8amQ) — Very Normal, English. **watch first**. Watch a statistical model defined as a probability story for how data are generated, the practical definition in this lesson.
 - [Statistical Rethinking 2023 - 01 - The Golem of Prague](https://www.youtube.com/watch?v=FdnMWdICdRs) — Richard McElreath, English. Watch the argument that a model is a tool that must be supervised, supporting the lesson's focus on assumptions.
 - [Regression and Other Stories: Generative models and statistical inference (ros02 4)](https://www.youtube.com/watch?v=kn8fyNzvcPo) — Data Science Learning Community Videos, English. Watch generative models set next to statistical inference, useful for separating observed data from unknown parameters.
 

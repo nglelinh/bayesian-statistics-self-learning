@@ -98,6 +98,15 @@ Ví dụ, năng lực và may mắn đều ảnh hưởng đến việc được
 
 ![Tổng quan collider bias trong sơ đồ nhân quả]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_collider_bias_overview.png)
 
+### Thử nghiệm: confounder làm lệch hệ số và hiệu chỉnh Z sửa nó
+
+Mô phỏng fork Z → X, Z → Y: ước lượng ngây thơ, phân tầng (nghịch lý Simpson), rồi hồi quy có Z.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="confound-explainer" data-lang="vi" data-tab="fork"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 5. Quy tắc thực hành: nên control hay không?
 
 Một bản nhớ ngắn gọn là: **nên control cho confounders**, **không nên control cho mediators nếu mục tiêu là total effect (tổng hiệu ứng)**, và **không nên control cho colliders**. Quy tắc này nghe đơn giản, nhưng muốn áp dụng đúng thì phải có sơ đồ nhân quả đủ rõ.
@@ -198,6 +207,14 @@ Bài học rất quan trọng:
 
 > Không phải thêm biến nào vào mô hình cũng làm phân tích tốt hơn.
 
+### Thử nghiệm: điều kiện theo collider tạo tương quan giả
+
+X và Y độc lập nhưng cùng chỉ vào C; chỉ cần lọc theo C là chúng tương quan âm.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="confound-explainer" data-lang="vi" data-tab="collider"></div>
+</div>
+
 ## 10. Một quy trình DAG rất thực tế
 
 Khi gặp một câu hỏi nhân quả, bạn có thể đi theo bốn bước tương đối thực dụng sau.
@@ -258,4 +275,4 @@ Nếu không suy nghĩ nhân quả trước, hồi quy có thể chạy rất đ
 
 ---
 
-*Bài học tiếp theo: [5.3 Multicollinearity](/vi/chapter05/multicollinearity/)*
+*Bài học tiếp theo: [5.3 Multicollinearity]({{ site.baseurl }}/contents/vi/chapter05/05_03_multicollinearity/)*

@@ -86,6 +86,15 @@ Nói cách khác, effect (hiệu ứng) của ngân sách quảng cáo phụ thu
 
 Một phác đồ có thể rất hiệu quả với ca nhẹ nhưng ít hiệu quả hơn với ca rất nặng, hoặc ngược lại. Khi đó effect của treatment thay đổi theo severity (mức độ nặng của bệnh).
 
+### Thử nghiệm: từ mô hình cộng đến mô hình có tương tác
+
+Một đường chung → hai đường song song → hai đường khác dốc; xem RSS giảm ra sao.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="confound-explainer" data-lang="vi" data-tab="interaction"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 5. Cách đọc interaction cho đúng
 
 Sai lầm phổ biến nhất là cố đọc $$\beta_1$$ như một hiệu ứng chung cố định, dù mô hình đã có interaction.
@@ -247,4 +256,4 @@ Kiểu diễn giải này giúp người đọc hiểu bản chất hiện tư�
 
 ---
 
-*Chương tiếp theo: [Chapter 06: Model Comparison](/vi/chapter06/)*
+*Chương tiếp theo: [Chương 6: Mô hình Tuyến tính Tổng quát Bayes (GLM)]({{ site.baseurl }}/contents/vi/chapter06/)*

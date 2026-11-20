@@ -24,6 +24,15 @@ Model selection phù hợp khi khoảng cách dự báo ngoài mẫu giữa mô 
 
 Tuy nhiên, điều kiện ngầm của selection là sự tách biệt đủ mạnh. Nếu chênh lệch chỉ số dự báo nhỏ và không ổn định, selection có thể khiến toàn bộ pipeline phụ thuộc vào dao động mẫu ngẫu nhiên thay vì tín hiệu cấu trúc thật.
 
+### Thử nghiệm: Bayes factor là tỉ số marginal likelihood
+
+Tung từng lần và xem BF₁₀ = m₁(k)/m₀(k) tích lũy; marginal likelihood phạt mô hình dàn trải xác suất (hiệu ứng Occam).
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="bf-explainer" data-lang="vi" data-tab="seq"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3. Strategy B - Model averaging
 
 Model averaging đi theo nguyên tắc "bảo toàn bất định mô hình" bằng cách kết hợp predictive distributions:
@@ -33,6 +42,14 @@ p(\tilde y\mid y)=\sum_{k=1}^{K} w_k\,p_k(\tilde y\mid y),\qquad \sum_k w_k=1,\;
 $$
 
 Trong thực hành hiện đại, trọng số stacking thường được ưu tiên vì chúng tối ưu trực tiếp năng lực dự báo của phân phối kết hợp, thay vì cố gán một xác suất "đúng/sai" tuyệt đối cho từng mô hình.
+
+### Thử nghiệm: trung bình mô hình theo trọng số pseudo-BMA
+
+Thêm từng mô hình vào nhóm và xem trọng số w ∝ exp(elpd_loo) cùng dự đoán trung bình thay đổi.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="ic-explainer" data-lang="vi" data-tab="avg"></div>
+</div>
 
 ### 3.1. Ví dụ định lượng ngắn
 
@@ -45,6 +62,14 @@ $$
 Giá trị này phản ánh cả tín hiệu của hai mô hình lẫn bất định cấu trúc đang tồn tại giữa chúng, thay vì cưỡng bức chọn 52 hoặc 56 như hai kịch bản loại trừ nhau.
 
 ![Selection vs Stacking predictive distributions]({{ site.baseurl }}/img/chapter_img/chapter08/chapter08_selection_vs_stacking.png)
+
+### Thử nghiệm: BF phụ thuộc độ rộng prior
+
+Đổi prior Beta(c, c) của M₁ và xem BF₁₀ thay đổi — lý do phải phân tích độ nhạy.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="bf-explainer" data-lang="vi" data-tab="prior"></div>
+</div>
 
 ## 4. Strategy C - Model expansion
 
@@ -89,4 +114,4 @@ Bài tiếp theo: **Bayesian Decision Analysis**, nơi kết quả mô hình đ�
 
 ---
 
-*Bài học tiếp theo: [8.4 Bayesian Decision Analysis](/vi/chapter08/decision-analysis/)*
+*Bài học tiếp theo: [8.4 Bayesian Decision Analysis]({{ site.baseurl }}/contents/vi/chapter08/08_04_decision_analysis/)*

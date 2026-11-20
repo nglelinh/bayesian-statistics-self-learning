@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Lesson 0.10: Introduction to the Gamma Function"
+title: "Lesson 0.10b: Introduction to the Gamma Function"
 chapter: '00'
-order: 10
+order: 23
 owner: Nguyen Le Linh
 lang: en
 categories:
@@ -116,9 +116,9 @@ print(gammaln(100))  # log(Gamma(100))
 4. Famous value: $$\Gamma\!\left(\tfrac{1}{2}\right)=\sqrt{\pi}$$.
 5. In Bayesian statistics, Gamma frequently appears as a normalization constant.
 
-## Video tham khảo
+## Reference videos
 
-- [Gamma Function - Explained](https://www.youtube.com/watch?v=UZuszwqW_Qo) — DataMListic, English. **xem trước**. Watch for the gamma function as the extension of factorial beyond the positive integers, which is the definition this lesson starts from.
+- [Gamma Function - Explained](https://www.youtube.com/watch?v=UZuszwqW_Qo) — DataMListic, English. **watch first**. Watch for the gamma function as the extension of factorial beyond the positive integers, which is the definition this lesson starts from.
 - [Introduction to the Gamma function & the Pi function (extending the factorial!)](https://www.youtube.com/watch?v=L4Trz6pFut4) — blackpenredpen, English. Watch the explicit link between factorial and the gamma integral, supporting the lesson's passage from n! to Γ(z).
 - [What is the factorial of -½?](https://www.youtube.com/watch?v=dGnIJFzkLI4) — Stand-up Maths, English. Watch a concrete non-integer factorial, useful when the lesson explains why Beta, Gamma, and t densities need this function.
 

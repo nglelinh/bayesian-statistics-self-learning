@@ -46,6 +46,15 @@ Vậy:
 
 SD của dữ liệu đo mức phân tán giữa các cá thể, còn SE đo mức không chắc chắn của chính ước lượng.
 
+### Thử nghiệm: sampling distribution và sai số chuẩn
+
+Tăng cỡ mẫu n và xem độ lệch chuẩn của trung bình mẫu giảm theo σ/√n.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="clt-explainer" data-lang="vi" data-tab="clt"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3) Nhầm lẫn phổ biến: SD vs SE
 
 Hai dataset có SD giống nhau nhưng cỡ mẫu khác nhau sẽ có SE khác nhau.
@@ -107,4 +116,4 @@ Nếu bạn quen tư duy sampling distribution + SE, việc đọc posterior int
 
 ---
 
-*Bài học tiếp theo: [0.18 Ước lượng điểm, Bias-Variance, Consistency](/vi/chapter00/point-estimation-bias-variance-consistency/)*
+*Bài học tiếp theo: [0.18 Ước lượng điểm, Bias-Variance, Consistency]({{ site.baseurl }}/contents/vi/chapter00/00_16_point_estimation_bias_variance_consistency/)*

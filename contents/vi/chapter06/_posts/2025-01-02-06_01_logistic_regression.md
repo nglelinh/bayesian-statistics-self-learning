@@ -206,6 +206,15 @@ plt.tight_layout()
 plt.show()
 ```
 
+### Thử nghiệm: posterior của hồi quy logistic là cả họ đường cong
+
+Thêm từng điểm dữ liệu; posterior tính chính xác trên lưới (a, b), từ đó đọc odds ratio exp(b) cùng khoảng 95%.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="glm-explainer" data-lang="vi" data-tab="logistic"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 4. Interpretation: Odds Ratios
 
 ### 4.1. Odds vs Probability
@@ -384,4 +393,4 @@ Bài tiếp theo: **Poisson Regression** cho count data.
 
 ---
 
-*Bài học tiếp theo: [6.2 Poisson Regression](/vi/chapter06/poisson-regression/)*
+*Bài học tiếp theo: [6.2 Poisson Regression]({{ site.baseurl }}/contents/vi/chapter06/06_02_poisson_regression/)*

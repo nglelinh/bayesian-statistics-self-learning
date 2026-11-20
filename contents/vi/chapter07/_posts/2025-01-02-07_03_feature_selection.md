@@ -155,6 +155,15 @@ print(f"Horseshoe: {np.sum(np.abs(beta_horseshoe) > 0.1)} selected")
 print("=" * 70)
 ```
 
+### Thử nghiệm: Gaussian, Laplace và Horseshoe co rút khác nhau thế nào
+
+50 hệ số, chỉ 5 cái lớn: so sánh posterior mean của từng prior và đường cong co rút.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="horseshoe-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3. Posterior Inclusion Probabilities
 
 Ưu điểm quan trọng của cách tiếp cận Bayesian là nó không chỉ đưa ra một danh sách biến được chọn, mà còn định lượng được độ bất định của chính quá trình lựa chọn đó. **Posterior Inclusion Probability (PIP)** được hiểu như xác suất hậu nghiệm để một hệ số đủ khác 0 theo một tiêu chuẩn thực dụng, và nhờ vậy nó cho phép ta nói về mức độ chắc chắn của tầm quan trọng biến, thay vì chỉ nói “được chọn” hay “không được chọn”.
@@ -314,4 +323,4 @@ Feature selection là bài toán chọn ra những predictor thật sự liên q
 
 ---
 
-*Chương tiếp theo: [Chapter 08: Model Comparison](/vi/chapter08/)*
+*Chương tiếp theo: [Chapter 08: Model Comparison]({{ site.baseurl }}/contents/vi/chapter08/)*

@@ -145,7 +145,7 @@ Trong Bayes, prior Gamma cho $$\lambda$$ kết hợp với likelihood Poisson t�
 
 ---
 
-*Bài học tiếp theo: [0.4 Normal và trực giác CLT](/vi/chapter00/00_02_03_normal_clt_intuition/)*
+*Bài học tiếp theo: [0.4 Normal và trực giác CLT]({{ site.baseurl }}/contents/vi/chapter00/00_02_03_normal_clt_intuition/)*
 
 ## Video tham khảo
 

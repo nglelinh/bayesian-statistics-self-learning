@@ -143,7 +143,7 @@ Trong Bayes, ta thường đặt prior cho $$p$$ rồi cập nhật bằng dữ 
 
 ---
 
-*Bài học tiếp theo: [0.3 Poisson và Exponential](/vi/chapter00/00_02_02_poisson_exponential/)*
+*Bài học tiếp theo: [0.3 Poisson và Exponential]({{ site.baseurl }}/contents/vi/chapter00/00_02_02_poisson_exponential/)*
 
 ## Video tham khảo
 

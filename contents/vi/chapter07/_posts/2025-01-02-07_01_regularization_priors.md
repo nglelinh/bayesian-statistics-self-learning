@@ -60,6 +60,15 @@ $$
 
 Hình so sánh các priors cho thấy regularization trong Bayes thực chất là một lựa chọn mô hình hóa rất cụ thể chứ không phải một thủ thuật thêm vào sau. **Normal prior** ở panel bên trái có tâm tại 0 và phần đuôi trơn, nên nó có xu hướng kéo các hệ số về gần 0 nhưng hiếm khi ép chúng bằng đúng 0; kiểu prior này phù hợp khi ta tin rằng nhiều predictor đều có ảnh hưởng nhỏ. **Laplace prior** ở panel giữa nhọn hơn tại 0 và có đuôi dày hơn, nên nó khuyến khích **sparsity** (tính thưa), tức nhiều hệ số sẽ bị đẩy mạnh về 0 hơn; vì vậy nó đặc biệt hữu ích cho **feature selection** (chọn biến). Panel so sánh ở bên phải nhấn mạnh rằng lựa chọn prior thực chất là lựa chọn một “triết lý điều chuẩn”: prior phẳng gần như không regularize, trong khi Normal và Laplace mã hóa những mức độ và kiểu co rút khác nhau.
 
+### Thử nghiệm: prior chuẩn co hệ số (ridge)
+
+Giảm τ từng bước: đường cong mượt dần, sai số kiểm tra giảm rồi tăng.
+
+<div class="interactive-demo" markdown="1">
+<div data-demo="shrink-explainer" data-lang="vi"></div>
+</div>
+<script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
 ## 3. Bayesian Regularization trong PyMC
 
 ```python
@@ -322,4 +331,4 @@ Bai tiep theo: **Bias-Variance Tradeoff** (di sau vao validation strategy va mod
 
 ---
 
-*Bài học tiếp theo: [7.2 Bias-Variance Tradeoff](/vi/chapter07/bias-variance-tradeoff/)*
+*Bài học tiếp theo: [7.2 Bias-Variance Tradeoff]({{ site.baseurl }}/contents/vi/chapter07/07_02_bias_variance_tradeoff/)*

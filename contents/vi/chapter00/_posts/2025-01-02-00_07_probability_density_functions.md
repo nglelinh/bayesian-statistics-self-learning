@@ -309,4 +309,4 @@ $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqr
 
 ---
 
-*Bài học tiếp theo: [0.11 P-values và Kiểm định Giả thuyết](/vi/chapter00/pvalues-and-hypothesis-testing/)*
+*Bài học tiếp theo: [0.11 P-values và Kiểm định Giả thuyết]({{ site.baseurl }}/contents/vi/chapter00/00_08_pvalues_and_hypothesis_testing/)*

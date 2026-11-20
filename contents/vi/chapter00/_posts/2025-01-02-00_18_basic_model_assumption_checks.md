@@ -339,4 +339,4 @@ Mục tiêu không phải "chứng minh mô hình đúng", mà là làm mô hìn
 
 ---
 
-*Bài học tiếp theo: [0.21 Mô phỏng để kiểm tra trực giác thống kê](/vi/chapter00/simulation-for-statistical-intuition/)*
+*Bài học tiếp theo: [0.21 Mô phỏng để kiểm tra trực giác thống kê]({{ site.baseurl }}/contents/vi/chapter00/00_19_simulation_for_statistical_intuition/)*
