@@ -12,73 +12,59 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu sự khác nhau giữa hai trường phái không chỉ ở công cụ tính toán, mà ở chính câu hỏi mà mỗi bên chọn để trả lời. Bạn cũng cần biết vì sao Bayesian thường cho diễn giải trực tiếp hơn, nhưng frequentist vẫn có vai trò trong nhiều bối cảnh thực tế.
+Sau bài này, bạn cần hiểu rằng sự khác nhau giữa hai trường phái không chỉ nằm ở kỹ thuật tính toán mà nằm ở chính câu hỏi mỗi bên lựa chọn để trả lời. Bạn cũng cần nhận ra vì sao cách tiếp cận Bayes thường cho diễn giải trực tiếp hơn, đồng thời hiểu rõ những bối cảnh mà phương pháp tần suất vẫn giữ vai trò quan trọng.
 
-> **Ví dụ mini.** Cùng dữ liệu 7 ngửa trong 10 lần tung, một frequentist hỏi “nếu đồng xu công bằng thì dữ liệu này lạ đến mức nào?”, còn một Bayesian hỏi “sau khi thấy dữ liệu này, xác suất thật sự có khả năng nằm ở đâu?”.
+> **Ví dụ mini.** Với cùng dữ liệu 7 mặt ngửa trong 10 lần tung, nhà thống kê tần suất hỏi: “Nếu đồng xu cân bằng thì dữ liệu này bất thường đến mức nào?”, còn nhà thống kê Bayes hỏi: “Sau khi quan sát dữ liệu này, xác suất ra ngửa thực sự có khả năng nằm ở đâu?”.
 >
-> **Câu hỏi tự kiểm tra.** Hai trường phái này khác nhau chủ yếu ở công thức tính toán, hay ở chính câu hỏi mà họ chọn để trả lời?
+> **Câu hỏi tự kiểm tra.** Hai trường phái này khác nhau chủ yếu ở công thức tính toán, hay ở chính câu hỏi mà họ đặt ra?
 
 ## 1. Vì sao cần so sánh hai trường phái này?
 
-Rất nhiều người học thống kê cảm thấy bối rối vì frequentist và Bayesian đôi khi dùng cùng dữ liệu, cùng mô hình, thậm chí cùng một số công cụ toán, nhưng lại diễn giải kết quả rất khác. Sự khác biệt nằm sâu hơn mức kỹ thuật. Nó nằm ở cách hiểu xác suất, ở việc tham số được xem là gì, và ở loại câu trả lời cuối cùng mà mỗi bên muốn nhắm tới.
+Nhiều người học thống kê cảm thấy lúng túng vì trường phái tần suất (frequentist) và trường phái Bayes (Bayesian) đôi khi sử dụng cùng dữ liệu, cùng mô hình, thậm chí cùng một số công cụ toán học, nhưng lại diễn giải kết quả rất khác nhau. Sự khác biệt này nằm sâu hơn mức kỹ thuật: nó xuất phát từ cách định nghĩa xác suất, cách nhìn nhận tham số và loại câu trả lời cuối cùng mà mỗi bên hướng tới.
 
-## 2. Cùng một bài toán, hai cách hỏi khác nhau
+## 2. Cùng một bài toán, hai cách đặt câu hỏi
 
-Xét lại ví dụ đồng xu: ta tung 10 lần, thấy 7 mặt ngửa, và muốn biết đồng xu có thiên lệch hay không.
+Xét lại ví dụ tung đồng xu 10 lần thu được 7 mặt ngửa để kiểm tra xem đồng xu có thiên lệch hay không.
 
-### Frequentist thường hỏi:
+### Câu hỏi theo hướng Frequentist
 
-Nếu đồng xu thật sự cân bằng, dữ liệu như thế này có lạ không?
+Nếu đồng xu thực sự cân bằng, dữ liệu như thế này có bất thường không?
 
-### Bayesian thường hỏi:
+### Câu hỏi theo hướng Bayesian
 
 Sau khi thấy dữ liệu này, vùng giá trị hợp lý của xác suất ra ngửa là gì?
 
-Chỉ riêng khác biệt trong câu hỏi đã dẫn tới khác biệt lớn trong diễn giải.
+Chỉ riêng sự khác biệt trong cách đặt câu hỏi đã dẫn đến cách diễn giải hoàn toàn khác nhau.
 
 ![Góc nhìn Frequentist trong so sánh tổng quát]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_frequentist_vs_bayesian_frequentist.png)
 
 ![Góc nhìn Bayesian trong so sánh tổng quát]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_frequentist_vs_bayesian_bayesian.png)
 
-## 3. Khác nhau ở định nghĩa xác suất
+## 3. Khác biệt ở định nghĩa xác suất và vai trò của tham số
 
-### Frequentist
+### Trường phái Frequentist
 
-Với frequentist, xác suất là tần suất dài hạn của một kết quả trong nhiều lần lặp lại.
+Xác suất được hiểu là tần suất dài hạn của một kết quả qua nhiều lần lặp lại. Do đó, tham số được xem là cố định nhưng chưa biết, còn dữ liệu là đại lượng ngẫu nhiên.
 
-### Bayesian
+### Trường phái Bayesian
 
-Với Bayesian, xác suất là mức độ tin tưởng hợp lý vào một mệnh đề, dựa trên thông tin hiện có.
-
-Điều này kéo theo một khác biệt rất quan trọng.
-
-### Với Frequentist
-
-Tham số là cố định nhưng chưa biết, còn dữ liệu là ngẫu nhiên.
-
-### Với Bayesian
-
-Dữ liệu quan sát đã cố định, còn tham số chưa biết được mô tả bằng phân phối xác suất.
+Xác suất được hiểu là mức độ tin cậy hợp lý đối với một mệnh đề dựa trên thông tin hiện có. Do đó, dữ liệu đã quan sát được xem là cố định, còn tham số chưa biết được mô tả bằng phân phối xác suất.
 
 ![Frequentist: tham số cố định, dữ liệu ngẫu nhiên]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_frequentist.png)
 
 ![Bayesian: dữ liệu đã thấy, tham số còn bất định]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_bayesian.png)
 
-## 4. Confidence interval và credible interval khác nhau thế nào?
+## 4. Khoảng tin cậy (Confidence interval) và khoảng tin cậy Bayes (Credible interval)
 
-Đây là điểm gây nhầm nhất cho người học.
-
-Giả sử bạn có một khoảng $$[0.46, 0.86]$$.
+Đây là điểm dễ gây nhầm lẫn nhất với người học. Giả sử ta thu được một khoảng $$[0.46, 0.86]$$.
 
 ### Frequentist confidence interval
 
-Diễn giải đúng là nếu ta lặp lại quy trình này rất nhiều lần thì 95% các khoảng được tạo ra sẽ chứa giá trị thật. Điều này **không** có nghĩa là “có 95% xác suất tham số nằm trong khoảng đó”.
+Diễn giải đúng là nếu lặp lại quy trình lấy mẫu và dựng khoảng rất nhiều lần, thì 95% các khoảng được tạo ra sẽ chứa giá trị tham số thực. Điều này **không** có nghĩa là “có 95% xác suất tham số nằm trong khoảng cụ thể đang có”.
 
 ### Bayesian credible interval
 
-Diễn giải Bayesian lại nói trực tiếp hơn: với dữ liệu hiện tại và prior hiện tại, có 95% xác suất tham số nằm trong khoảng đó.
-
-Điều này gần đúng với kiểu câu hỏi mà người dùng thật sự muốn hỏi.
+Diễn giải Bayes trực tiếp hơn: với dữ liệu hiện tại và prior đã chọn, xác suất để tham số nằm trong khoảng đó là 95%. Cách phát biểu này sát với câu hỏi mà người dùng thực sự muốn đặt ra.
 
 ### Thử nghiệm: khoảng tin cậy và khoảng đáng tin khi lặp thí nghiệm
 
@@ -89,39 +75,39 @@ Mỗi hàng là một thí nghiệm; xem khoảng tin cậy 95% phủ μ cố đ
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 5. P-value và posterior probability khác nhau thế nào?
+## 5. P-value và xác suất hậu nghiệm (Posterior probability)
 
-### Frequentist
+### Theo góc nhìn Frequentist
 
-P-value hỏi nếu giả thuyết không đúng, thì dữ liệu này lạ đến mức nào.
+P-value đánh giá rằng nếu giả thuyết không là đúng thì dữ liệu quan sát được bất thường đến mức nào.
 
-### Bayesian
+### Theo góc nhìn Bayesian
 
-Posterior probability lại nói về việc sau khi thấy dữ liệu, giả thuyết hoặc tham số có khả năng ở đâu.
+Xác suất hậu nghiệm cho biết sau khi thấy dữ liệu, giả thuyết hoặc tham số có khả năng nằm ở đâu.
 
-Đây là khác biệt giữa việc nói về **độ lạ của dữ liệu** và việc nói về **độ tin cậy của giả thuyết**.
+Đây là khác biệt giữa việc đánh giá **độ bất thường của dữ liệu** và việc đánh giá **độ tin cậy của giả thuyết**.
 
 ![P-value ở góc nhìn Frequentist]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_pvalue_vs_posterior_frequentist.png)
 
 ![Posterior probability ở góc nhìn Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_pvalue_vs_posterior_bayesian.png)
 
-## 6. Một ví dụ y khoa để thấy khác biệt rõ hơn
+## 6. Ví dụ y khoa minh họa sự khác biệt
 
-Giả sử một xét nghiệm cho kết quả dương tính.
+Giả sử một xét nghiệm trả về kết quả dương tính.
 
-### Frequentist style
+### Theo góc nhìn Frequentist
 
-Người ta có thể nói: nếu bệnh nhân không mắc bệnh, xác suất có kết quả dương tính là bao nhiêu?
+Câu hỏi thường đặt ra là: nếu bệnh nhân không mắc bệnh, xác suất xét nghiệm vẫn cho kết quả dương tính là bao nhiêu?
 
-### Bayesian style
+### Theo góc nhìn Bayesian
 
-Người ta hỏi trực tiếp hơn: sau khi có kết quả dương tính, xác suất bệnh nhân thực sự mắc bệnh là bao nhiêu?
+Câu hỏi trực tiếp hơn: sau khi nhận kết quả dương tính, xác suất bệnh nhân thực sự mắc bệnh là bao nhiêu?
 
-Trong y khoa, rõ ràng câu hỏi thứ hai gần với nhu cầu của bác sĩ và bệnh nhân hơn.
+Trong thực hành y khoa, câu hỏi thứ hai sát với nhu cầu của cả bác sĩ lẫn bệnh nhân hơn.
 
 ### Một ví dụ bằng con số
 
-Giả sử tỷ lệ mắc bệnh trong dân số chỉ là $$1\%$$, xét nghiệm có độ nhạy $$99\%$$, và tỷ lệ dương tính giả là $$5\%$$. Khi một bệnh nhân có kết quả dương tính, Bayesian sẽ tính:
+Giả sử tỷ lệ mắc bệnh trong dân số là $$1\%$$, xét nghiệm có độ nhạy $$99\%$$ và tỷ lệ dương tính giả là $$5\%$$. Khi một người có kết quả dương tính, theo định lý Bayes:
 
 $$
 P(\text{bệnh}\mid +)
@@ -129,69 +115,61 @@ P(\text{bệnh}\mid +)
 \approx 0.167.
 $$
 
-Nghĩa là sau kết quả dương tính, xác suất thật sự mắc bệnh mới chỉ khoảng $$16.7\%$$, chứ không phải gần $$99\%$$. Ví dụ này cho thấy rất rõ sự khác biệt: frequentist thường báo đặc tính của xét nghiệm dưới giả thuyết, còn Bayesian trả lời thẳng câu hỏi mà bác sĩ và bệnh nhân thật sự quan tâm.
+Nghĩa là sau khi có kết quả dương tính, xác suất thực sự mắc bệnh mới chỉ vào khoảng $$16.7\%$$ chứ không phải gần $$99\%$$. Ví dụ này cho thấy rõ: phương pháp tần suất thường báo cáo đặc tính của xét nghiệm dưới một giả thuyết cho trước, còn phương pháp Bayes trả lời trực tiếp xác suất mắc bệnh mà bác sĩ và bệnh nhân cần biết.
 
 ![Phân tích thử nghiệm lâm sàng theo Frequentist]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_frequentist.png)
 
 ![Phân tích thử nghiệm lâm sàng theo Bayesian]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_clinical_trial_bayesian.png)
 
-## 7. Frequentist mạnh ở đâu?
+## 7. Thế mạnh của trường phái Frequentist
 
-Sẽ không công bằng nếu xem frequentist như “sai hoàn toàn”.
+Sẽ không công bằng nếu coi thống kê tần suất là “sai hoàn toàn”. Trường phái này có ưu thế rõ rệt trong các thiết kế thử nghiệm chuẩn hóa với quy tắc quyết định cố định, các bài toán có cỡ mẫu rất lớn, những lĩnh vực hay cơ quan quản lý đã quen với khung kiểm định truyền thống, và các quy trình đòi hỏi bảo đảm tính chất thống kê dài hạn. Các ví dụ tiêu biểu gồm thử nghiệm lâm sàng giai đoạn cuối, kiểm soát chất lượng sản xuất hay những quy trình ra quyết định cần chuẩn hóa nghiêm ngặt.
 
-Frequentist mạnh trong các bối cảnh như thiết kế thử nghiệm chuẩn hóa với quy tắc quyết định cố định, các bài toán có cỡ mẫu rất lớn, những ngành hoặc cơ quan quản lý quen với ngôn ngữ kiểm định truyền thống, và các thủ tục cần bảo đảm tính chất dài hạn của quy trình. Những ví dụ điển hình là nhiều clinical trial giai đoạn cuối, kiểm soát chất lượng sản xuất, hay những tình huống mà quy trình ra quyết định phải được chuẩn hóa rất chặt.
+## 8. Thế mạnh của trường phái Bayesian
 
-## 8. Bayesian mạnh ở đâu?
+Thống kê Bayes đặc biệt phù hợp khi cần diễn giải trực tiếp về tham số hoặc giả thuyết, khi có kiến thức ban đầu (prior) đáng tin cậy, khi cỡ mẫu còn nhỏ, khi cần cập nhật tuần tự theo từng đợt dữ liệu, khi mô hình có cấu trúc phân cấp hoặc phức tạp, hay khi cần dự báo đi kèm định lượng bất định. Những ứng dụng tiêu biểu gồm thử nghiệm A/B ở các doanh nghiệp mới có lưu lượng chưa lớn, hỗ trợ quyết định y khoa từ nhiều nguồn thông tin, hệ gợi ý, dự báo chuỗi thời gian và các phân tích khoa học có prior từ nghiên cứu trước.
 
-Bayesian đặc biệt mạnh khi cần diễn giải trực tiếp về tham số hoặc giả thuyết, khi có kiến thức prior đáng tin, khi dữ liệu còn ít, khi cần cập nhật tuần tự, khi mô hình có cấu trúc phân cấp hoặc phức tạp, hay khi cần dự báo đi kèm bất định. Những ví dụ rất tiêu biểu là startup làm A/B test với traffic chưa lớn, bác sĩ ra quyết định dựa trên nhiều nguồn thông tin, các hệ recommendation, dự báo time series, hay những phân tích khoa học có prior từ nghiên cứu trước.
+## 9. Hạn chế thường gặp của mỗi bên
 
-## 9. Điểm yếu điển hình của mỗi bên
+### Hạn chế của Frequentist
 
-### Frequentist thường gặp khó ở:
+Thống kê tần suất thường gặp khó khăn trong việc diễn giải đúng p-value và khoảng tin cậy, khó tích hợp kiến thức ban đầu, không cho phép phát biểu trực tiếp về xác suất của tham số, và không thuận tiện khi cập nhật liên tục theo từng đợt dữ liệu.
 
-Frequentist thường gặp khó ở việc diễn giải p-value và confidence interval, trong việc kết hợp kiến thức prior, trong việc nói trực tiếp về xác suất của tham số, và trong việc cập nhật tự nhiên khi dữ liệu tới theo từng đợt.
+### Hạn chế của Bayesian
 
-### Bayesian thường gặp khó ở:
+Thống kê Bayes đòi hỏi phải lựa chọn prior, chi phí tính toán đôi khi cao hơn và cần người đọc chấp nhận cách hiểu xác suất như mức độ tin cậy. Tuy vậy, với các công cụ hiện đại như PyMC và Stan, rào cản tính toán đã giảm đi đáng kể.
 
-Bayesian thường gặp khó ở chỗ phải chọn prior, tính toán đôi khi nặng hơn, và cần người đọc chấp nhận cách diễn giải xác suất như degree of belief.
+## 10. Lựa chọn theo bài toán thay vì theo phe phái
 
-Nhưng với công cụ hiện đại như PyMC và Stan, rào cản tính toán đã giảm đi rất nhiều.
-
-## 10. Không phải lúc nào cũng là “chiến tranh”
-
-Trong thực hành hiện đại, nhiều nhà phân tích dùng tư duy frequentist cho một số kiểm tra hay baseline, nhưng dùng Bayesian cho mô hình chính và diễn giải kết quả. Điều quan trọng không phải là chọn phe một cách giáo điều, mà là xem bạn có đang dùng công cụ phù hợp với câu hỏi hay không, và việc diễn giải kết quả có trung thực với chính phương pháp đã chọn hay không.
+Trong thực hành hiện đại, nhiều nhà phân tích kết hợp cả hai cách tiếp cận: dùng tư duy tần suất cho một số kiểm tra nhanh hoặc mốc so sánh cơ sở, và dùng Bayes cho mô hình chính cũng như phần diễn giải kết quả. Điều quan trọng không phải là chọn phe một cách cứng nhắc, mà là dùng đúng công cụ cho câu hỏi đặt ra và diễn giải kết quả trung thực với phương pháp đã chọn.
 
 ![Cây quyết định: khi nào nghĩ theo Frequentist, khi nào theo Bayes]({{ site.baseurl }}/img/chapter_img/chapter01/decision_tree_freq_vs_bayes.png)
 
-## 11. Vì sao khóa học này chọn trọng tâm là Bayes?
+## 11. Vì sao khóa học này tập trung vào Bayes?
 
-Vì trong phần lớn các bài toán hiện đại mà người học khóa này quan tâm, Bayes trả lời trực tiếp hơn các câu hỏi như tham số có khả năng nằm ở đâu, bất định còn lại là bao nhiêu, xác suất giả thuyết này lớn hơn giả thuyết kia là bao nhiêu, và dự báo tương lai nên được hiểu thế nào.
+Trong phần lớn các bài toán hiện đại mà người học quan tâm, thống kê Bayes trả lời trực tiếp hơn những câu hỏi cốt lõi: tham số có khả năng nằm ở đâu, độ bất định còn lại lớn đến mức nào, xác suất giả thuyết này vượt trội hơn giả thuyết kia là bao nhiêu, và dự báo tương lai nên được hiểu ra sao. Nói gọn lại, kết quả Bayes thường sát với thông tin mà nhà nghiên cứu, bác sĩ, kỹ sư hay chuyên viên phân tích sản phẩm thực sự cần.
 
-Nói ngắn gọn, Bayes thường nói đúng thứ mà người dùng cuối, nhà nghiên cứu, bác sĩ, kỹ sư hay product analyst muốn nghe.
+## 12. Tóm lược dễ nhớ
 
-## 12. Một cách kết luận dễ nhớ
-
-Nếu phải nhớ thật ngắn, thì frequentist thường đánh giá dữ liệu dưới một giả thuyết, còn Bayesian thường đánh giá giả thuyết sau khi thấy dữ liệu.
-
-Đó là lý do vì sao Bayesian thường có cảm giác “tự nhiên hơn” đối với câu hỏi thực tế.
+Nếu cần một cách phân biệt ngắn gọn: trường phái tần suất đánh giá dữ liệu dưới một giả thuyết cho trước, còn trường phái Bayes đánh giá giả thuyết sau khi đã quan sát dữ liệu. Chính điểm này khiến cách diễn giải Bayes thường tự nhiên hơn trong các bài toán thực tế.
 
 > **3 ý cần nhớ.**
-> 1. Frequentist và Bayesian khác nhau từ nền tảng triết học: ai là ngẫu nhiên, ai là cố định, và xác suất đang nói về điều gì.
+> 1. Frequentist và Bayesian khác nhau từ nền tảng triết học: đại lượng nào ngẫu nhiên, đại lượng nào cố định và xác suất biểu thị điều gì.
 > 2. Frequentist thường trả lời câu hỏi về dữ liệu giả định dưới một giả thuyết, còn Bayesian trả lời trực tiếp về tham số hoặc giả thuyết sau khi thấy dữ liệu.
-> 3. Trong nhiều bài toán thực tế, câu trả lời Bayesian thường gần hơn với câu hỏi mà người dùng thật sự muốn hỏi.
+> 3. Trong nhiều bài toán thực tế, câu trả lời theo hướng Bayes gần hơn với câu hỏi mà người dùng thực sự muốn đặt ra.
 
 ## Video tham khảo
 
-- [Bayesian vs. Frequentist Statistics ... MADE EASY!!!](https://www.youtube.com/watch?v=qJcv7VHwqcA) — Stats with Brian, English. **xem trước**. Xem hai trường phái đặt hai câu hỏi khác nhau trên cùng một dữ liệu, đúng phân biệt mà bài theo đuổi.
-- [Are you Bayesian or Frequentist?](https://www.youtube.com/watch?v=GEFxFVESQXc) — Cassie Kozyrkov, English. Xem một cách chọn ngôn ngữ xác suất theo quyết định cần ra, hỗ trợ phần bài không biến khác biệt thành phe phái.
-- [Bayesian Statistics: Credible vs Confidence Intervals](https://www.youtube.com/watch?v=YPceDssQFWo) — Academia Elevated, English. Xem khoảng tin cậy và khoảng tin cậy Bayes không đọc cùng một câu, dùng cho đoạn so sánh diễn giải kết quả.
+- [Bayesian vs. Frequentist Statistics ... MADE EASY!!!](https://www.youtube.com/watch?v=qJcv7VHwqcA) — Stats with Brian, English. **xem trước**. Minh họa cách hai trường phái đặt hai câu hỏi khác nhau trên cùng một tập dữ liệu, đúng trọng tâm so sánh của bài.
+- [Are you Bayesian or Frequentist?](https://www.youtube.com/watch?v=GEFxFVESQXc) — Cassie Kozyrkov, English. Trình bày cách chọn ngôn ngữ xác suất dựa trên quyết định cần đưa ra, củng cố quan điểm không biến khác biệt phương pháp thành phe phái.
+- [Bayesian Statistics: Credible vs Confidence Intervals](https://www.youtube.com/watch?v=YPceDssQFWo) — Academia Elevated, English. Phân biệt rõ cách đọc khoảng tin cậy (confidence interval) và khoảng tin cậy Bayes (credible interval), bổ trợ cho phần diễn giải kết quả.
 
 ## Câu hỏi tự luyện
 
 1. Hãy giải thích bằng lời sự khác nhau giữa confidence interval và credible interval.
-2. Trong ví dụ đồng xu 7/10, frequentist và Bayesian đang hỏi hai câu khác nhau như thế nào?
-3. Với một bài toán chẩn đoán y khoa, vì sao cách diễn giải Bayesian thường tự nhiên hơn?
-4. Hãy nêu một tình huống mà frequentist vẫn là lựa chọn hợp lý.
+2. Trong ví dụ đồng xu 7/10, trường phái Frequentist và Bayesian đang đặt hai câu hỏi khác nhau như thế nào?
+3. Với một bài toán chẩn đoán y khoa, vì sao cách diễn giải theo hướng Bayes thường tự nhiên hơn?
+4. Hãy nêu một tình huống mà cách tiếp cận Frequentist vẫn là lựa chọn hợp lý.
 
 ## Tài liệu tham khảo
 

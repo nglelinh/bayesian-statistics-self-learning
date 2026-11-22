@@ -12,68 +12,68 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn hiểu Hamiltonian Monte Carlo và NUTS không phải thuật toán trang trí sau hồi quy tuyến tính Bayes, mà là hệ quả tất yếu khi posterior không còn dạng đóng. Bạn sẽ đọc được một chuỗi Stan, PyMC hoặc NumPyro như một xấp xỉ có kiểm soát của cùng mô hình sinh mà Chương 4 đã viết bằng lời.
+Sau bài tùy chọn này, bạn sẽ hiểu Hamiltonian Monte Carlo (HMC) và NUTS không phải phần phụ kỹ thuật đứng sau hồi quy tuyến tính Bayes, mà là giải pháp tất yếu khi phân phối hậu nghiệm không còn công thức dạng đóng. Bạn cũng sẽ biết cách đọc kết quả lấy mẫu từ Stan, PyMC hay NumPyro như một xấp xỉ số có kiểm soát cho đúng mô hình sinh dữ liệu đã thiết lập ở Chương 4.
 
 ## Kiến thức cần có
 
-Các bài 4.1–4.6 đã dựng hồi quy tuyến tính như câu chuyện sinh, chọn prior, và lấy posterior bằng PyMC. Bài 4.2b đã nói về MCMC ở mức lý thuyết lớp học. Bài này không viết lại Metropolis. Nó hỏi sampler hiện đại đang làm gì trong các hệ thống 2022–2026, và vì sao hồi quy tuyến tính vẫn là mô hình được lấy mẫu nhiều nhất.
+Các bài 4.1–4.6 đã xây dựng hồi quy tuyến tính như một mô hình sinh dữ liệu, trình bày cách chọn phân phối tiên nghiệm và suy luận hậu nghiệm với PyMC, còn Bài 4.2b đã giới thiệu nền tảng toán học của MCMC. Bài này không lặp lại thuật toán Metropolis mà tập trung vào cách các bộ lấy mẫu hiện đại vận hành trong giai đoạn 2022–2026 và lý do hồi quy tuyến tính vẫn là lớp mô hình được lấy mẫu phổ biến nhất.
 
 ## Mở đầu
 
-Một khi mô hình có intercept, slope, phương sai, và vài biến dự báo, tích prior–likelihood không còn tích phân bằng tay. Lưới của Chương 2 nổ số ô. Chính xác lý thuyết vì thế trở nên không đủ, không vì ý tưởng Bayes yếu đi, mà vì hình học của posterior đã vượt khỏi giấy. Căng thẳng của bài này là: nếu ta không thể vẽ posterior, ta còn tin được chuỗi số mà máy trả về hay không?
+Ngay khi mô hình có hệ số chặn, hệ số dốc, độ nhiễu và vài biến dự báo, tích giữa phân phối tiên nghiệm và hàm hợp lý không còn tính tích phân được bằng tay, trong khi phương pháp lưới ở Chương 2 bùng nổ về số ô tính toán. Rào cản không nằm ở tư duy Bayes, mà ở hình học nhiều chiều của phân phối hậu nghiệm. Câu hỏi trung tâm của bài là: khi không thể vẽ trực tiếp phân phối hậu nghiệm, ta dựa vào đâu để tin tưởng chuỗi số mà máy tính trả về?
 
 ## Phát triển khái niệm
 
-Hamiltonian Monte Carlo dùng gradient của log-posterior để đề xuất bước đi xa mà vẫn chấp nhận được. NUTS (No-U-Turn Sampler) dừng quỹ đạo khi nó bắt đầu quay lại, để người dùng không phải chọn độ dài quỹ đạo bằng tay. Điều sampler đang xấp xỉ là kỳ vọng dưới posterior,
+Hamiltonian Monte Carlo sử dụng đạo hàm (gradient) của hàm mật độ log hậu nghiệm để đề xuất những bước di chuyển xa mà vẫn duy trì tỷ lệ chấp nhận cao. Biến thể NUTS (No-U-Turn Sampler) tự động dừng quỹ đạo khi nó bắt đầu quay ngược lại, giúp người dùng không phải tự chỉnh độ dài quỹ đạo bằng tay. Về bản chất, đại lượng mà bộ lấy mẫu đang xấp xỉ là kỳ vọng theo phân phối hậu nghiệm:
 
 $$
 \mathbb E[g(\theta)\mid y]\approx\frac{1}{S}\sum_{s=1}^{S}g(\theta^{(s)}),\qquad \theta^{(s)}\sim p(\theta\mid y),
 $$
 
-cùng một đối tượng mà hồi quy Bayes dùng cho hệ số, cho dự báo, và cho khoảng hậu nghiệm. Phần mềm không thay mô hình; nó thay giấy nháp.
+chính là công cụ mà hồi quy Bayes dùng để tính ước lượng hệ số, khoảng tin cậy hậu nghiệm và dự báo. Phần mềm lấy mẫu không thay thế mô hình thống kê, mà thay thế phần tính tích phân thủ công.
 
-## Mô hình như câu chuyện sinh dữ liệu
+## Mô hình trong thực hành hiện đại
 
 ### 1. NUTS trong Stan, PyMC và NumPyro cho hồi quy phân cấp
 
-Câu chuyện sinh vẫn là: tham số ~ prior, dữ liệu ~ chuẩn quanh một mặt phẳng. Sự khác biệt công nghiệp là mặt phẳng ấy có intercept theo quốc gia, theo chiến dịch, hoặc theo máy chủ. Stan User’s Guide và các notebook PyMC/NumPyro đều lấy NUTS làm mặc định vì gradient của log-density có thể lấy bằng vi phân tự động. Khi bạn đọc một khoảng tin cậy cho hệ số quảng cáo, bạn đang đọc một tóm tắt của chuỗi NUTS, không phải một công thức OLS.
+Cấu trúc sinh dữ liệu cốt lõi vẫn không đổi: tham số tuân theo phân phối tiên nghiệm, còn dữ liệu dao động theo phân phối Chuẩn quanh một siêu phẳng tuyến tính. Điểm khác biệt trong thực tế công nghiệp là siêu phẳng ấy thường có hệ số chặn thay đổi theo quốc gia, chiến dịch hoặc máy chủ. Tài liệu hướng dẫn của Stan cùng hệ sinh thái PyMC và NumPyro đều chọn NUTS làm mặc định vì đạo hàm của hàm mật độ log có thể tính chính xác bằng vi phân tự động (automatic differentiation). Khi đọc một khoảng tin cậy hậu nghiệm cho hệ số quảng cáo, thực chất bạn đang đọc bản tóm tắt của các mẫu NUTS chứ không phải công thức OLS.
 
-### 2. Pathfinder như khởi động ấm, không phải thay thế MCMC
+### 2. Pathfinder: bước khởi động ấm thay vì thay thế MCMC
 
-Zhang, Carpenter, Gelman và Vehtari (2022) đề xuất Pathfinder: đi theo một đường tối ưu quasi-Newton, đặt các xấp xỉ Gaussian dọc đường, rồi lấy mẫu từ xấp xỉ có KL nhỏ nhất. Trên nhiều posterior, các mẫu ấy tốt hơn ADVI và rẻ hơn một chuỗi HMC ngắn, nên Stan và các thư viện JAX dùng Pathfinder để khởi động NUTS. Ý nghĩa sư phạm rất đúng với Chương 4. Variational inference xuất hiện vì MCMC cần một chỗ đứng tốt, không vì posterior đã bị thay bằng một tối ưu hóa.
+Zhang, Carpenter, Gelman và Vehtari (2022) đề xuất thuật toán Pathfinder: bám theo quỹ đạo tối ưu quasi-Newton, dựng các xấp xỉ Gaussian dọc theo đường đi rồi lấy mẫu từ xấp xỉ có phân kỳ KL nhỏ nhất. Trên nhiều phân phối hậu nghiệm, các mẫu này có chất lượng cao hơn ADVI và tốn ít chi phí hơn một chuỗi HMC ngắn, nên Stan và các thư viện trên nền JAX dùng Pathfinder để khởi động ấm cho NUTS. Ý nghĩa thực hành ở đây rất rõ: suy luận biến phân (variational inference) đóng vai trò tìm điểm xuất phát tốt cho MCMC, chứ không thay thế hoàn toàn việc lấy mẫu hậu nghiệm.
 
-### 3. BlackJAX và MCMC có thể kết hợp trên gia tốc
+### 3. BlackJAX và MCMC dạng mô-đun trên phần cứng tăng tốc
 
-Cabezas et al. (2024) mô tả BlackJAX như một hộp nguyên tử thống kê—bước Metropolis, động lực Hamiltonian, cơ chế Langevin—viết bằng JAX để biên dịch lên GPU và TPU. Hồi quy Bayes khi ấy không còn là “một chuỗi trên laptop”, mà là cùng một log-density chạy song song hàng nghìn chuỗi. Câu chuyện sinh không đổi; ngân sách tính toán đổi.
+Cabezas et al. (2024) xây dựng BlackJAX như một tập hợp các khối thuật toán thống kê cơ sở — bước Metropolis, động lực học Hamilton, cơ chế Langevin — viết trên JAX để biên dịch trực tiếp lên GPU và TPU. Khi đó, hồi quy Bayes không còn giới hạn ở vài chuỗi chạy tuần tự trên máy tính cá nhân, mà cùng một hàm mật độ log có thể chạy song song hàng nghìn chuỗi. Mô hình sinh dữ liệu giữ nguyên; điều thay đổi là quy mô năng lực tính toán.
 
 ### 4. MCMC cho mạng nơ-ron Bayes
 
-Izmailov, Vikram, Hoffman và Wilson (2021) hỏi posterior của một Bayesian neural network trông thế nào nếu ta thật sự chạy HMC đắt, chứ không tin ngay vào dropout hay một Gaussian chéo. Họ thấy các xấp xỉ phổ biến thường không tái tạo được posterior đầy đủ, nhưng dự báo vẫn có thể hữu ích. Bài học cho sinh viên hồi quy tuyến tính là khiêm tốn và sắc: nếu HMC đã khó đọc trên vài chục hệ số có tương quan, thì “MCMC cho deep learning” là cùng một bài toán hình học, chỉ lớn hơn. Chương 7 sẽ gặp lại các xấp xỉ rẻ hơn.
+Izmailov, Vikram, Hoffman và Wilson (2021) khảo sát hình dạng thực sự của phân phối hậu nghiệm trong mạng nơ-ron Bayes khi chạy HMC quy mô lớn, thay vì mặc định tin vào dropout hay xấp xỉ Gaussian đường chéo. Kết quả cho thấy các phương pháp xấp xỉ phổ biến thường không tái tạo được đầy đủ phân phối hậu nghiệm thực, dù dự báo thu được vẫn có thể hữu ích. Bài học rút ra cho người học hồi quy tuyến tính rất rõ ràng: nếu HMC đã gặp thách thức hình học ngay trên vài chục hệ số có tương quan, thì MCMC cho học sâu chính là cùng một bài toán hình học đó ở quy mô lớn hơn. Chương 7 sẽ trình bày các phương pháp xấp xỉ nhẹ hơn cho bối cảnh này.
 
 ## Diễn giải và nhận định
 
-Một khoảng hậu nghiệm từ NUTS chỉ đáng tin nếu chuỗi đã trộn và mô hình không sai một cách thô. $$\hat R$$ gần 1 không chứng minh mặt phẳng là nhân quả. Pathfinder có thể ngồi ở một mode phụ và làm NUTS khởi động sai chỗ. BlackJAX nhanh không khiến prior trở nên vô hại. Hãy đọc sampler như một kính lúp: nó phóng to đúng mô hình bạn đã viết, kể cả các giả định Gaussian về phần dư.
+Một khoảng hậu nghiệm từ NUTS chỉ đáng tin khi các chuỗi đã trộn đều và bản thân mô hình không sai lệch thô bạo. Chỉ số $$\hat R$$ gần 1 không chứng minh được mối quan hệ là nhân quả. Pathfinder có thể dừng ở một cực đại cục bộ (mode phụ) khiến NUTS khởi động lệch vùng, còn tốc độ của BlackJAX không làm một phân phối tiên nghiệm bất hợp lý trở nên vô hại. Hãy xem bộ lấy mẫu như một kính lúp: nó phóng đại trung thực đúng mô hình bạn đã khai báo, bao gồm cả những giả định chưa chuẩn xác về phần dư.
 
 ## Ứng dụng
 
-Hồi quy tuyến tính Bayes là xương sống của media mix, định giá, và các mô hình phân cấp trong A/B. MCMC hiện đại là lý do những mô hình ấy có thể mang prior thật và vẫn ra posterior dùng được, thay vì dừng ở ước lượng điểm.
+Hồi quy tuyến tính Bayes là nền tảng của mô hình phân bổ ngân sách truyền thông (media mix modeling), định giá và các mô hình phân cấp trong thử nghiệm A/B. MCMC hiện đại giúp các mô hình này tích hợp được phân phối tiên nghiệm thực chất và trả về phân phối hậu nghiệm đầy đủ thay vì chỉ dừng ở ước lượng điểm.
 
 ## Giới hạn và hướng mở rộng
 
-HMC cần log-density khả vi; dữ liệu rời rạc với tham số rời rạc phải đi đường khác. Các mô hình lớn vẫn cần VI, Laplace, hoặc ensemble. Bài này cố ý không mở lại lý thuyết Markov chain. Chương 5 sẽ làm posterior khó hơn bằng cách thêm nhiều predictor và cấu trúc nhân quả.
+HMC đòi hỏi hàm mật độ log phải khả vi theo tham số; các bài toán có tham số rời rạc cần những phương pháp xử lý khác. Với các mô hình có kích thước rất lớn, thực hành vẫn cần đến suy luận biến phân (VI), xấp xỉ Laplace hoặc tổ hợp mô hình (ensemble). Bài này không đi sâu lại lý thuyết chuỗi Markov; Chương 5 sẽ tiếp tục mở rộng độ phức tạp của phân phối hậu nghiệm khi đưa thêm nhiều biến dự báo và tư duy nhân quả.
 
 ## Video tham khảo
 
-- [The intuition behind the Hamiltonian Monte Carlo algorithm](https://www.youtube.com/watch?v=a-wydhEuAm0) — Ben Lambert, English. **xem trước**. Xem trực giác HMC trước khi đọc NUTS như một cách chọn độ dài quỹ đạo, đúng bước bài đi từ Metropolis sang sampler hiện đại.
-- [Michael Betancourt: Scalable Bayesian Inference with Hamiltonian Monte Carlo](https://www.youtube.com/watch?v=jUSZboSq1zg) — London Machine Learning Meetup, English. Xem Michael Betancourt trình bày suy luận Bayes quy mô lớn bằng Hamiltonian Monte Carlo.
-- [#78 Exploring MCMC Sampler Algorithms, with Matt D. Hoffman](https://www.youtube.com/watch?v=KVpAziPblks) — Learning Bayesian Statistics, English. Xem Matt Hoffman, đồng tác giả NUTS, bàn về các sampler MCMC, hỗ trợ phần bài đọc chuỗi PyMC hoặc Stan như một xấp xỉ có kiểm soát.
+- [The intuition behind the Hamiltonian Monte Carlo algorithm](https://www.youtube.com/watch?v=a-wydhEuAm0) — Ben Lambert, English. **xem trước**. Giải thích trực giác HMC trước khi tiếp cận NUTS như cơ chế tự chọn độ dài quỹ đạo, nối tiếp bước chuyển từ Metropolis sang bộ lấy mẫu hiện đại.
+- [Michael Betancourt: Scalable Bayesian Inference with Hamiltonian Monte Carlo](https://www.youtube.com/watch?v=jUSZboSq1zg) — London Machine Learning Meetup, English. Michael Betancourt trình bày về suy luận Bayes quy mô lớn bằng Hamiltonian Monte Carlo.
+- [#78 Exploring MCMC Sampler Algorithms, with Matt D. Hoffman](https://www.youtube.com/watch?v=KVpAziPblks) — Learning Bayesian Statistics, English. Matt Hoffman, đồng tác giả của NUTS, trao đổi về các thuật toán lấy mẫu MCMC, bổ trợ cho phần diễn giải chuỗi mẫu từ PyMC và Stan.
 
 ## Bài tập
 
-1. Một đồng nghiệp bảo “PyMC đã hội tụ vì trace trông ổn”. Bạn sẽ xin thêm hai chẩn đoán nào, và mỗi cái đang kiểm tra giả định hình học nào?
-2. Giải thích, không dùng mã, vì sao Pathfinder có thể vừa là variational inference vừa là phần của workflow MCMC.
-3. Trong hồi quy giá nhà với sai số đuôi nặng, NUTS vẫn chạy. Posterior đang xấp xỉ mô hình nào, và PPC sẽ tố cáo điều gì?
-4. Đọc trang NUTS của Stan hoặc NumPyro. Chỉ ra một câu trong tài liệu nói về *target log density*. Câu ấy tương ứng đối tượng toán nào của bài 4.1?
+1. Một đồng nghiệp nhận xét "PyMC đã hội tụ vì trace plot trông ổn". Bạn sẽ yêu cầu thêm hai chỉ số chẩn đoán nào, và mỗi chỉ số kiểm tra khía cạnh hình học gì của chuỗi?
+2. Giải thích bằng lời (không dùng mã nguồn) vì sao Pathfinder vừa là một phương pháp suy luận biến phân, vừa có thể đóng vai trò một bước trong quy trình MCMC.
+3. Trong bài toán hồi quy giá nhà có sai số đuôi dày, NUTS vẫn chạy xong bình thường. Phân phối hậu nghiệm thu được đang xấp xỉ mô hình nào, và kiểm tra PPC sẽ chỉ ra dấu hiệu sai lệch gì?
+4. Đọc trang tài liệu về NUTS của Stan hoặc NumPyro và chỉ ra một câu đề cập đến *target log density*. Đối tượng đó tương ứng với thành phần toán học nào trong Bài 4.1?
 
 ## Tài liệu tham khảo
 

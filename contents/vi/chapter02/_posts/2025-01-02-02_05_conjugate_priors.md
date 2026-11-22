@@ -12,116 +12,112 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn nên hiểu prior liên hợp không phải là “mẹo học thuộc”, mà là những cặp prior-likelihood khiến việc cập nhật Bayes trở nên rất gọn. Bạn cũng nên nhìn được ý nghĩa thực tế của các cặp liên hợp phổ biến, biết khi nào chúng cực kỳ tiện, và khi nào ta nên bỏ chúng để dùng phương pháp tính toán tổng quát hơn.
+Sau bài này, bạn cần hiểu prior liên hợp (conjugate prior) không phải là “mẹo học thuộc”, mà là những cặp prior–likelihood giúp phép cập nhật Bayes có dạng giải tích rất gọn. Bạn cũng cần nắm được ý nghĩa thực tế của các cặp liên hợp phổ biến, biết khi nào chúng hữu ích và khi nào cần chuyển sang các phương pháp tính toán tổng quát hơn.
 
-> **Ví dụ mini.** Nếu prior cho tỷ lệ đậu là Beta$$(2,2)$$ và dữ liệu mới là 7 sinh viên đậu trên 10 em, posterior trở thành Beta$$(9,5)$$. Ta không phải tìm một họ phân phối mới, chỉ cần cập nhật tham số.
+> **Ví dụ mini.** Nếu prior cho tỷ lệ qua môn là Beta$$(2,2)$$ và dữ liệu mới là 7 sinh viên đậu trên 10 người, posterior trở thành Beta$$(9,5)$$. Ta không phải tìm một họ phân phối mới mà chỉ cần cập nhật hai tham số.
 >
-> **Câu hỏi tự kiểm tra.** Điều gì làm cho một prior được gọi là “liên hợp” với likelihood?
+> **Câu hỏi tự kiểm tra.** Điều gì làm cho một prior được gọi là “liên hợp” với một likelihood?
 
-## Mở đầu: vì sao có những bài Bayes giải tay rất đẹp?
+## Mở đầu: vì sao một số bài toán Bayes có thể giải tay gọn gàng?
 
-Trong các bài trước, ta đã học rằng:
+Trong các bài trước, ta đã biết:
 
 $$
 P(\theta \mid D) \propto P(D \mid \theta)P(\theta).
 $$
 
-Về mặt ý tưởng, công thức này rất đơn giản. Nhưng khi bắt tay vào tính thật, ta thường gặp một vấn đề: posterior phải được chuẩn hóa, và bước chuẩn hóa đó có thể rất khó.
+Về mặt nguyên lý, biểu thức này rất rõ ràng. Tuy nhiên, khi tính toán thực tế, ta phải chuẩn hóa posterior — và tích phân chuẩn hóa thường rất khó giải bằng tay.
 
-Thế nhưng có một số bài toán rất “đẹp”. Khi ta nhân prior với likelihood, posterior vẫn rơi vào **cùng một họ phân phối** như prior. Những trường hợp đẹp này được gọi là **prior liên hợp**.
+Dù vậy, có một số trường hợp đặc biệt mà khi nhân prior với likelihood, posterior vẫn rơi vào **cùng một họ phân phối** với prior. Những trường hợp đó gọi là **prior liên hợp (conjugate prior)**.
 
 ![Giới thiệu về các cặp liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_intro.png)
 
-Nếu bạn thấy phần prior liên hợp dễ gây cảm giác “ngợp công thức”, cách tốt nhất không phải là cố nhớ thật nhiều biểu thức ngay từ đầu, mà là giữ trong đầu một chuỗi câu hỏi rất cơ bản nhưng đủ mạnh: 
-- tham số chưa biết thực sự là gì, 
-- dữ liệu đến dưới dạng nào, 
-- likelihood nào mô tả đúng kiểu dữ liệu ấy, 
-- và cuối cùng có prior nào có cùng cấu trúc với likelihood đến mức sau khi cập nhật thì posterior vẫn nằm trong đúng họ phân phối ban đầu hay không.
+Nếu cảm thấy phần này có nhiều công thức, thay vì cố ghi nhớ máy móc, bạn nên đi theo bốn câu hỏi cơ bản:
 
-Chỉ cần đi theo bốn câu hỏi đó, bạn sẽ thấy các cặp liên hợp quen thuộc xuất hiện khá tự nhiên. 
-- Khi dữ liệu kể câu chuyện “đếm số thành công trong $$n$$ lần thử”, likelihood phù hợp thường là Binomial và prior tự nhiên cho xác suất thành công là Beta; 
-- khi dữ liệu là “phải chờ đến lần thử thứ mấy mới có thành công đầu tiên”, ta chuyển sang Geometric nhưng vẫn giữ được prior Beta; 
-- khi quan sát là số sự kiện xảy ra theo thời gian, Poisson thường là lựa chọn hợp lý và Gamma trở thành prior liên hợp tự nhiên cho cường độ đếm; 
-- còn khi mục tiêu là suy luận trung bình của dữ liệu liên tục dao động quanh một giá trị trung tâm, ta gặp cặp Normal-Normal. 
- 
-Bạn không cần học thuộc toàn bộ các cặp này ngay ở lần đọc đầu tiên; chỉ cần nhận ra mình đang đứng trước một bài toán về tỷ lệ, thời gian chờ, tốc độ đếm hay trung bình liên tục, phần còn lại sẽ trở nên dễ theo dõi hơn rất nhiều.
+- Tham số chưa biết thực chất là đại lượng gì?
+- Dữ liệu quan sát có dạng như thế nào?
+- Likelihood nào mô tả đúng cơ chế sinh dữ liệu đó?
+- Có họ prior nào đồng dạng về mặt đại số với likelihood để sau khi nhân lại, posterior vẫn thuộc cùng họ phân phối ban đầu không?
+
+Đi theo đúng trình tự này, các cặp liên hợp quen thuộc sẽ xuất hiện rất tự nhiên:
+
+- Khi dữ liệu đếm số thành công trong $$n$$ phép thử cố định, likelihood là Binomial và prior liên hợp cho xác suất thành công là Beta.
+- Khi dữ liệu đếm số lần thử cho đến khi có thành công đầu tiên, likelihood là Geometric và prior liên hợp vẫn là Beta.
+- Khi dữ liệu là số sự kiện xảy ra theo thời gian hoặc đơn vị phơi nhiễm, likelihood là Poisson và prior liên hợp cho cường độ là Gamma.
+- Khi dữ liệu liên tục dao động quanh một trung bình chưa biết (với phương sai đã biết), ta có cặp Normal–Normal.
+
+Bạn chỉ cần nhận diện mình đang đứng trước bài toán về tỷ lệ, thời gian chờ rời rạc, tốc độ đếm hay trung bình liên tục; phần cập nhật tham số sẽ trở nên dễ theo dõi hơn nhiều.
 
 ## 1. Prior liên hợp là gì?
 
-**Ta nói prior $$p(\theta)$$ là liên hợp với likelihood $$p(y \mid \theta)$$ nếu posterior $$p(\theta \mid y)$$ thuộc cùng họ với prior.**
+**Ta nói prior $$p(\theta)$$ là liên hợp với likelihood $$p(y \mid \theta)$$ nếu posterior $$p(\theta \mid y)$$ thuộc cùng một họ phân phối với prior.**
 
-Ví dụ:
+Ví dụ: prior Beta $$\rightarrow$$ posterior vẫn là Beta; prior Gamma $$\rightarrow$$ posterior vẫn là Gamma; prior Normal $$\rightarrow$$ posterior vẫn là Normal.
 
-prior Beta  $$\rightarrow$$ posterior vẫn là Beta, prior Gamma  $$\rightarrow$$ posterior vẫn là Gamma, và prior Normal  $$\rightarrow$$ posterior vẫn là Normal.
+Nhờ tính chất này, ta không cần tìm một họ phân phối mới sau mỗi lần cập nhật mà chỉ cần cập nhật các tham số của họ phân phối ban đầu. Biểu thức posterior vì thế ngắn gọn, dễ diễn giải và rất hữu ích để xây dựng trực giác về sự tương tác giữa prior và dữ liệu.
 
-Ý nghĩa thực tế của hiện tượng này nằm ở chỗ ta không phải phát minh ra một họ phân phối mới sau mỗi lần cập nhật Bayes, mà chỉ cần điều chỉnh một số tham số của họ phân phối vốn đã quen thuộc; vì vậy, biểu thức posterior thường gọn, trong sáng, và đặc biệt hữu ích cho việc xây trực giác về cách prior và dữ liệu tương tác với nhau.
+Trước khi đi sâu, nếu muốn ôn lại vai trò của hàm Gamma, miền tham số của Beta/Gamma/Normal và lưu ý về xấp xỉ Normal, bạn có thể xem lại [Bài 2.1: Phân phối Xác suất](/vi/chapter02/probability-distributions/).
 
-Trước khi đi sâu, nếu bạn muốn ôn nhanh vai trò hàm Gamma, miền tham số của Beta/Gamma/Normal, và lưu ý xấp xỉ Normal, xem lại phần bổ sung ở [Bài 2.1: Phân phối Xác suất](/vi/chapter02/probability-distributions/).
+## 2. Trực giác: vì sao tính liên hợp xuất hiện?
 
-## 2. Trực giác: vì sao liên hợp xuất hiện?
+Tính liên hợp xuất hiện khi prior và likelihood có “cùng cấu trúc đại số” theo tham số. Chẳng hạn, likelihood Binomial chứa các lũy thừa của $$\theta$$ và $$1-\theta$$, trong khi prior Beta cũng được cấu tạo từ đúng hai thừa số đó. Khi nhân prior với likelihood, ta không làm đổi dạng hàm mà chỉ cộng các số mũ tương ứng, nên posterior vẫn thuộc họ Beta.
 
-Liên hợp xuất hiện khi prior và likelihood có “cùng chất liệu đại số”, nghĩa là khi viết chúng ra dưới dạng hàm của tham số, ta thấy chúng được tạo nên từ cùng những khối biểu thức cơ bản. Chẳng hạn, likelihood Binomial tạo ra các lũy thừa của $$\theta$$ và $$1-\theta$$, trong khi prior Beta cũng được xây đúng từ hai thành phần đó; vì vậy, khi nhân prior với likelihood, ta không làm thay đổi họ hàm mà chỉ cộng các số mũ lại với nhau, và chính điều này giải thích tại sao posterior vẫn tiếp tục là một phân phối Beta.
+Nói ngắn gọn: **tính liên hợp (conjugacy) là sự tương thích về cấu trúc đại số giữa prior và likelihood.**
 
-Nói ngắn gọn:
+## 3. Beta–Binomial: cặp liên hợp nền tảng
 
-**Conjugacy là sự ăn khớp giữa hình dạng của prior và hình dạng của likelihood.**
+### 3.1. Mô hình và phép cập nhật
 
-## 3. Beta-Binomial: ví dụ quan trọng nhất để bắt đầu
-
-### 3.1. Câu chuyện thực tế
-
-Một giáo viên muốn suy luận tỷ lệ sinh viên qua môn $$\theta$$. Có 40 sinh viên và 31 em qua môn.
-
-Nếu mỗi sinh viên được xem như một phép thử thành công-thất bại độc lập, ta dùng:
+Một giảng viên muốn suy luận tỷ lệ sinh viên qua môn $$\theta$$ dựa trên lớp 40 sinh viên có 31 em qua môn. Nếu xem mỗi sinh viên là một phép thử Bernoulli độc lập, ta có:
 
 $$
 Y \mid \theta \sim \text{Binomial}(n,\theta).
 $$
 
-Giả sử prior là:
+Với prior:
 
 $$
-\theta \sim \text{Beta}(\alpha,\beta).
+\theta \sim \text{Beta}(\alpha,\beta),
 $$
 
-Khi đó posterior là:
+posterior tương ứng là:
 
 $$
 \theta \mid y \sim \text{Beta}(\alpha + y,\beta + n - y).
 $$
 
-Nếu muốn thấy rõ phép biến đổi đại số, ta chỉ cần nhìn phần phụ thuộc vào $$\theta$$:
+Kiểm tra nhanh phần phụ thuộc vào $$\theta$$:
 
 $$
 p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}
 $$
 
-và:
+và
 
 $$
 p(y\mid \theta)\propto \theta^y(1-\theta)^{n-y}.
 $$
 
-Do đó:
+Nhân hai biểu thức lại:
 
 $$
 p(\theta\mid y)\propto p(y\mid \theta)p(\theta)
 \propto \theta^{\alpha+y-1}(1-\theta)^{\beta+n-y-1},
 $$
 
-nên:
+suy ra:
 
 $$
 \theta\mid y\sim \text{Beta}(\alpha+y,\beta+n-y).
 $$
 
-Nếu dữ liệu được viết dưới dạng $$y_1,\dots,y_n$$ với mỗi quan sát là Bernoulli, đặt $$s=\sum_{i=1}^n y_i$$ thì ta cũng có:
+Nếu dữ liệu được viết ở dạng từng quan sát Bernoulli $$y_1,\dots,y_n$$ và đặt $$s=\sum_{i=1}^n y_i$$ thì:
 
 $$
 \theta\mid y_{1:n}\sim \text{Beta}(\alpha+s,\beta+n-s).
 $$
 
-Từ đó, posterior mean là:
+Trung bình hậu nghiệm là:
 
 $$
 E[\theta\mid y]=\frac{\alpha+y}{\alpha+\beta+n}.
@@ -129,24 +125,22 @@ $$
 
 ### 3.2. Ý nghĩa trực giác
 
-Nếu prior là Beta$$(2,2)$$ và dữ liệu là 31/40, posterior thành Beta$$(33,11)$$.
+Với prior Beta$$(2,2)$$ và dữ liệu 31/40, posterior trở thành Beta$$(33,11)$$. Có thể hiểu prior như đang mang sẵn một số “lần thành công giả định” ($$\alpha$$) và “lần thất bại giả định” ($$\beta$$); khi dữ liệu thực xuất hiện, ta chỉ cần cộng số thành công và thất bại quan sát được vào hai tham số này.
 
-Đọc bằng lời, prior giống như đang mang sẵn một lượng thông tin ban đầu có thể được hiểu như vài “lần thành công giả tưởng” và vài “lần thất bại giả tưởng”; khi dữ liệu thật xuất hiện, ta chỉ việc cộng thông tin mới đó vào, và posterior là kết quả tổng hợp giữa niềm tin ban đầu với bằng chứng quan sát được.
+### 3.2.1. Ví dụ cập nhật tuần tự
 
-### 3.2.1. Một ví dụ cập nhật tuần tự rất trực tiếp
+Tính liên hợp cũng cho thấy sự nhất quán của cập nhật từng đợt. Bắt đầu từ prior Beta$$(2,2)$$:
 
-Ta cũng có thể thấy vẻ đẹp của conjugacy qua cập nhật từng đợt. Bắt đầu với prior Beta$$(2,2)$$:
+- Sau đợt 1 (3 sinh viên qua môn trên 4 em), posterior là Beta$$(5,3)$$.
+- Sau đợt 2 (thêm 28 sinh viên qua môn trên 36 em), posterior mới là Beta$$(33,11)$$.
 
-- Sau đợt 1, nếu thấy 3 sinh viên qua môn trên 4 em, posterior là Beta$$(5,3)$$.
-- Sau đợt 2, nếu quan sát thêm 28 sinh viên qua môn trên 36 em, posterior mới là Beta$$(33,11)$$.
-
-Kết quả cuối cùng đúng bằng việc cập nhật một lần với toàn bộ dữ liệu 31/40. Đây là lý do prior liên hợp rất thuận tiện: ta không cần giải lại bài toán từ đầu, mà chỉ việc cộng thêm thông tin mới vào các tham số của phân phối.
+Kết quả cuối cùng trùng khớp hoàn toàn với việc cập nhật một lần bằng toàn bộ dữ liệu 31/40.
 
 ![Minh họa Beta-Binomial conjugacy]({{ site.baseurl }}/img/chapter_img/chapter02/beta_binomial_conjugacy_visual.png)
 
-### 3.3. Ví dụ đời thường khác
+### 3.3. Các bối cảnh ứng dụng phổ biến
 
-Beta-Binomial đặc biệt tự nhiên trong các bài toán như tỷ lệ khách mua hàng sau khi nhìn quảng cáo, tỷ lệ học viên hoàn thành khóa học, tỷ lệ bệnh nhân đáp ứng điều trị, tỷ lệ email được mở, hay tỷ lệ sản phẩm lỗi trong kiểm định chất lượng. Điểm chung của các bối cảnh này là dữ liệu luôn có dạng “đếm số thành công trong một tổng số lần thử đã biết”, nên Binomial là likelihood hợp lý, và khi tham số cần suy luận là một xác suất thì prior Beta trở thành lựa chọn rất thuận tự nhiên.
+Cặp Beta–Binomial phù hợp với nhiều bài toán thực tế như tỷ lệ mua hàng sau khi xem quảng cáo, tỷ lệ hoàn thành khóa học, tỷ lệ đáp ứng điều trị, tỷ lệ mở email hay tỷ lệ sản phẩm lỗi trong kiểm định chất lượng — nơi dữ liệu là số thành công trong một số lần thử xác định trước.
 
 ### Thử nghiệm: Beta–Binomial qua từng lần tung
 
@@ -157,13 +151,13 @@ Tung từng lần, xem Beta(a + k, b + n − k) thay đổi, khoảng 95% và đ
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 4. Beta-Geometric: khi dữ liệu là số lần chờ đến thành công đầu tiên
+## 4. Beta–Geometric: khi dữ liệu là số lần thử đến thành công đầu tiên
 
-### 4.1. Câu chuyện thực tế
+### 4.1. Mô hình và phép cập nhật
 
-Giả sử Nam đi thi chứng chỉ tiếng Anh cho tới khi đậu. Ta muốn suy luận xác suất đậu ở mỗi lần thi là $$\theta$$. Nếu Nam đậu đúng ở lần thứ ba, dữ liệu không nên được đọc như “3 lần thi có 1 lần đậu” theo tinh thần Binomial, mà phải được hiểu như một chuỗi có thứ tự thời gian rất rõ gồm hai lần trượt liên tiếp rồi mới đến một lần đậu ở lần thứ ba.
+Giả sử Nam thi chứng chỉ tiếng Anh cho tới khi đậu và ta muốn suy luận xác suất đậu mỗi lần thi $$\theta$$. Nếu Nam đậu đúng ở lần thứ ba, dữ liệu không phải “3 lần thi có 1 lần đậu” theo kiểu Binomial, mà là chuỗi có thứ tự gồm 2 lần trượt liên tiếp rồi đến 1 lần đậu ở lần thứ ba.
 
-Nếu mô hình là Geometric theo quy ước “đếm số lần thử cho đến thành công đầu tiên”, ta có:
+Theo quy ước phân phối Geometric đếm tổng số lần thử cho đến thành công đầu tiên:
 
 $$
 Y \mid \theta \sim \text{Geometric}(\theta),
@@ -175,31 +169,31 @@ $$
 P(Y=y \mid \theta) = \theta(1-\theta)^{y-1}.
 $$
 
-Nếu prior vẫn là:
+Với prior:
 
 $$
 \theta \sim \text{Beta}(\alpha,\beta),
 $$
 
-thì posterior trở thành:
+posterior là:
 
 $$
 \theta \mid y \sim \text{Beta}(\alpha + 1,\beta + y - 1).
 $$
 
-Với một quan sát thời gian chờ $$y$$, likelihood có thể viết lại dưới dạng:
+Thật vậy, kết hợp:
 
 $$
-p(y\mid \theta)=\theta(1-\theta)^{y-1}\propto \theta^1(1-\theta)^{y-1}.
+p(y\mid \theta)=\theta(1-\theta)^{y-1}\propto \theta^1(1-\theta)^{y-1}
 $$
 
-Trong khi đó, prior Beta cho ta:
+và
 
 $$
-p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1}.
+p(\theta)\propto \theta^{\alpha-1}(1-\theta)^{\beta-1},
 $$
 
-Nhân hai phần này lại:
+ta thu được:
 
 $$
 p(\theta\mid y)\propto \theta^{\alpha}(1-\theta)^{\beta+y-2},
@@ -218,59 +212,59 @@ p(y_{1:m}\mid \theta)=\prod_{i=1}^m \theta(1-\theta)^{y_i-1}
 =\theta^m(1-\theta)^{\sum_{i=1}^m y_i-m},
 $$
 
-và posterior trở thành:
+suy ra posterior là:
 
 $$
-\theta\mid y_{1:m}\sim \text{Beta}\left(\alpha+m,\beta+\sum_{i=1}^m y_i-m\right).
+\theta\mid y_{1:m}\sim \text{Beta}\left(\alpha+m,\beta+\sum_{i=1}^m y_i-m\right),
 $$
 
-Posterior mean tương ứng là:
+với trung bình hậu nghiệm:
 
 $$
 E[\theta\mid y_{1:m}]=\frac{\alpha+m}{\alpha+\beta+\sum_{i=1}^m y_i}.
 $$
 
-### 4.2. Vì sao vẫn liên hợp?
+### 4.2. Vì sao vẫn giữ được tính liên hợp?
 
-Điểm mấu chốt là likelihood Geometric vẫn tạo ra đúng hai “chất liệu đại số” quen thuộc:
+Likelihood Geometric vẫn gồm hai thừa số quen thuộc:
 
 $$
 \theta^1(1-\theta)^{y-1}.
 $$
 
-Khi nhân với prior Beta:
+Khi nhân với hạt nhân của prior Beta:
 
 $$
 \theta^{\alpha-1}(1-\theta)^{\beta-1},
 $$
 
-ta chỉ cộng số mũ của $$\theta$$ và $$1-\theta$$. Vì thế, posterior vẫn ở trong họ Beta.
+ta chỉ cộng số mũ của $$\theta$$ và $$1-\theta$$, nên posterior vẫn thuộc họ Beta.
 
 ### 4.3. Cách đọc trực giác
 
-Nếu dữ liệu là “đậu ở lần thứ ba”, cách đọc trực giác của posterior là ta vừa ghi nhận một lần thành công thực sự, đồng thời cũng ghi nhận hai lần thất bại thực sự xuất hiện trước đó. Chính vì vậy, Beta-Geometric đặc biệt phù hợp với những tình huống như thi cho tới khi đậu, chờ đến khi có khách mua đầu tiên, hay đếm xem cần bao nhiêu lần thử trước khi một hệ thống vận hành thành công lần đầu tiên.
+Với quan sát “đậu ở lần thứ ba”, dữ liệu cung cấp đúng 1 lần thành công và 2 lần thất bại xảy ra trước đó. Vì vậy, Beta–Geometric rất phù hợp cho các tình huống như thi cho đến khi đậu, chờ đến khách hàng mua đầu tiên, hay đếm số lần thử trước khi hệ thống vận hành thành công lần đầu.
 
-### 4.4. Đừng nhầm Beta-Geometric với Beta-Binomial
+### 4.4. Phân biệt Beta–Geometric và Beta–Binomial
 
-Đây là chỗ người mới học rất hay lẫn. Binomial trả lời câu hỏi “trong số $$n$$ lần thử cố định, có bao nhiêu lần thành công?”, còn Geometric trả lời câu hỏi “phải đợi tới lần thử thứ mấy mới có thành công đầu tiên?”. Hai mô hình này khác nhau ở chính cách dữ liệu được tổ chức và diễn giải, mặc dù cả hai vẫn có thể dùng prior Beta vì likelihood của chúng đều được xây từ cùng hai thành phần cơ bản là “thành công” và “thất bại”.
+Binomial trả lời câu hỏi “trong $$n$$ lần thử cố định, có bao nhiêu lần thành công?”, còn Geometric trả lời câu hỏi “cần đến lần thử thứ mấy mới xuất hiện thành công đầu tiên?”. Hai mô hình khác nhau về thiết kế thí nghiệm và cơ chế sinh dữ liệu, dù cùng dùng prior Beta vì đều xây dựng trên xác suất thành công và thất bại.
 
-## 5. Gamma-Poisson: khi dữ liệu là số đếm theo thời gian
+## 5. Gamma–Poisson: khi dữ liệu là số đếm theo thời gian
 
-### 5.1. Câu chuyện thực tế
+### 5.1. Mô hình và phép cập nhật
 
-Một tổng đài muốn suy luận số cuộc gọi trung bình mỗi giờ $$\lambda$$. Trong 8 giờ gần nhất, số cuộc gọi lần lượt là:
+Một tổng đài muốn suy luận số cuộc gọi trung bình mỗi giờ $$\lambda$$. Trong 8 giờ gần nhất, số cuộc gọi quan sát được lần lượt là:
 
 $$
 7, 9, 8, 6, 10, 8, 11, 7.
 $$
 
-Nếu số cuộc gọi theo giờ được mô hình bằng Poisson:
+Nếu mô hình hóa số cuộc gọi mỗi giờ bằng Poisson:
 
 $$
 Y_i \mid \lambda \sim \text{Poisson}(\lambda),
 $$
 
-và prior là:
+và đặt prior Gamma theo tham số hóa shape–rate:
 
 $$
 \lambda \sim \text{Gamma}(\alpha,\beta),
@@ -279,25 +273,23 @@ $$
 thì posterior là:
 
 $$
-\lambda \mid y_{1:n} \sim \text{Gamma}\left(\alpha + \sum_i y_i,\beta + n\right)
+\lambda \mid y_{1:n} \sim \text{Gamma}\left(\alpha + \sum_i y_i,\beta + n\right).
 $$
 
-theo tham số hóa shape-rate.
-
-Nếu viết rõ phần phụ thuộc vào $$\lambda$$, prior Gamma có dạng:
+Thật vậy, prior Gamma có hạt nhân:
 
 $$
-p(\lambda)\propto \lambda^{\alpha-1}e^{-\beta\lambda}.
+p(\lambda)\propto \lambda^{\alpha-1}e^{-\beta\lambda},
 $$
 
-Còn likelihood Poisson cho $$n$$ quan sát là:
+còn likelihood Poisson cho $$n$$ quan sát là:
 
 $$
 p(y_{1:n}\mid \lambda)=\prod_{i=1}^n \frac{e^{-\lambda}\lambda^{y_i}}{y_i!}
 \propto \lambda^{\sum_{i=1}^n y_i}e^{-n\lambda}.
 $$
 
-Vì vậy:
+Nhân lại ta được:
 
 $$
 p(\lambda\mid y_{1:n})\propto p(y_{1:n}\mid \lambda)p(\lambda)
@@ -307,24 +299,24 @@ $$
 nên:
 
 $$
-\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+n\right).
+\lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+n\right),
 $$
 
-Posterior mean là:
+với trung bình hậu nghiệm:
 
 $$
 E[\lambda\mid y]=\frac{\alpha+\sum_i y_i}{\beta+n}.
 $$
 
-Nếu mỗi quan sát gắn với mức phơi nhiễm $$t_i$$ và mô hình là $$Y_i\mid \lambda \sim \text{Poisson}(t_i\lambda)$$, công thức cập nhật chỉ thay $$n$$ bằng tổng mức phơi nhiễm:
+Trường hợp tổng quát khi mỗi quan sát có mức phơi nhiễm $$t_i$$ và $$Y_i\mid \lambda \sim \text{Poisson}(t_i\lambda)$$, ta thay $$n$$ bằng tổng mức phơi nhiễm:
 
 $$
 \lambda\mid y_{1:n}\sim \text{Gamma}\left(\alpha+\sum_i y_i,\beta+\sum_i t_i\right).
 $$
 
-### 5.2. Cách đọc
+### 5.2. Ý nghĩa trực giác
 
-Gamma-Poisson tiện ở chỗ số đếm quan sát được sẽ cộng vào tham số shape, còn số khoảng thời gian hoặc số đơn vị phơi nhiễm được quan sát sẽ cộng vào rate. Cách cập nhật này rất hợp với trực giác, bởi vì càng quan sát lâu thì ta càng có nhiều thông tin về cường độ xảy ra sự kiện, và càng nhìn thấy nhiều sự kiện thì niềm tin của ta về cường độ trung bình cũng càng được kéo lên.
+Trong cặp Gamma–Poisson, tổng số sự kiện quan sát được cộng vào tham số hình dạng (shape), còn số khoảng thời gian hoặc tổng mức phơi nhiễm cộng vào tham số tốc độ (rate). Cách cập nhật này phản ánh trực tiếp cả cường độ sự kiện lẫn thời lượng theo dõi.
 
 ![Prior Gamma và posterior sau khi thấy dữ liệu đếm]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_prior_posterior.png)
 
@@ -334,50 +326,48 @@ Gamma-Poisson tiện ở chỗ số đếm quan sát được sẽ cộng vào t
 
 ![Cập nhật tuần tự trong Gamma-Poisson]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_gamma_poisson_sequential_updates.png)
 
-### 5.3. Các bối cảnh rất hợp
+### 5.3. Các bối cảnh ứng dụng
 
-Các bối cảnh điển hình cho cặp Gamma-Poisson bao gồm số lỗi hệ thống mỗi ngày, số bệnh nhân nhập viện trong mỗi ca trực, số đơn hàng theo giờ, số sinh viên nghỉ học theo tuần, hoặc số sự cố an ninh mạng theo tháng; nói ngắn gọn, hễ dữ liệu là số đếm gắn với một khoảng thời gian hay một đơn vị phơi nhiễm, cặp này thường rất đáng nghĩ tới.
+Gamma–Poisson thường dùng cho số lỗi hệ thống mỗi ngày, số bệnh nhân nhập viện mỗi ca trực, số đơn hàng mỗi giờ, số sinh viên nghỉ học mỗi tuần hoặc số sự cố an ninh mạng mỗi tháng — nói chung là các bài toán đếm sự kiện trên một đơn vị thời gian hoặc phơi nhiễm.
 
-### 5.4. Công thức nhớ nhanh
+### 5.4. Quy tắc nhớ nhanh
 
-Với Gamma-Poisson, bạn có thể đọc công thức như một quy tắc ghi sổ rất cơ học nhưng rất hữu ích: posterior shape bằng prior shape cộng với tổng số sự kiện đã quan sát, còn posterior rate bằng prior rate cộng với số khoảng thời gian hay số đơn vị phơi nhiễm đã được theo dõi. Nói cách khác, ta đồng thời cập nhật cả mức độ hoạt động lẫn độ dài của quá trình quan sát.
+Tham số shape hậu nghiệm bằng shape tiền nghiệm cộng tổng số sự kiện quan sát được; tham số rate hậu nghiệm bằng rate tiền nghiệm cộng tổng số khoảng thời gian (hoặc đơn vị phơi nhiễm) đã theo dõi.
 
-### 5.5. Ví dụ cập nhật sự cố mất điện (Gamma-Poisson)
+### 5.5. Ví dụ: cập nhật số sự cố mất điện
 
-Giả sử một trạm điện theo dõi số sự cố mất điện theo tuần. Đặt:
+Một trạm điện theo dõi số sự cố mất điện hằng tuần với mô hình:
 
 $$
 Y_i\mid\lambda \sim \text{Poisson}(\lambda),\quad i=1,\dots,6.
 $$
 
-Prior kỹ thuật ban đầu:
+Prior kỹ thuật ban đầu (shape–rate) là:
 
 $$
-\lambda \sim \text{Gamma}(\alpha_0=4,\beta_0=2)
+\lambda \sim \text{Gamma}(\alpha_0=4,\beta_0=2),
 $$
 
-(shape-rate), nên prior mean là $$E[\lambda]=2$$ sự cố/tuần.
-
-Quan sát 6 tuần có tổng số sự cố:
+ứng với trung bình tiền nghiệm $$E[\lambda]=2$$ sự cố/tuần. Sau 6 tuần, tổng số sự cố ghi nhận là:
 
 $$
 \sum_{i=1}^6 y_i = 18.
 $$
 
-Posterior:
+Posterior là:
 
 $$
 \lambda\mid y_{1:6}\sim \text{Gamma}(\alpha_0+\sum y_i,\beta_0+n)
-=\text{Gamma}(22,8).
+=\text{Gamma}(22,8),
 $$
 
-Suy ra posterior mean:
+với trung bình hậu nghiệm:
 
 $$
 E[\lambda\mid y]=\frac{22}{8}=2.75.
 $$
 
-Diễn giải: sau dữ liệu mới, mức sự cố trung bình ước lượng tăng từ 2 lên 2.75 sự cố/tuần.
+Như vậy, dữ liệu mới kéo ước lượng cường độ sự cố trung bình từ 2 lên 2.75 sự cố/tuần.
 
 ### Thử nghiệm: Gamma–Poisson qua từng quan sát
 
@@ -387,25 +377,23 @@ Prior Gamma trên tốc độ λ, cập nhật sau mỗi khoảng quan sát.
 <div data-demo="conjugate-explainer" data-lang="vi" data-tab="gammapoisson"></div>
 </div>
 
-## 6. Normal-Normal: khi dữ liệu liên tục dao động quanh một trung bình
+## 6. Normal–Normal: khi dữ liệu liên tục dao động quanh một trung bình
 
-### 6.1. Câu chuyện thực tế
+### 6.1. Mô hình và phép cập nhật
 
-Bạn muốn suy luận chiều cao trung bình $$\mu$$ của một nhóm sinh viên. Giả sử độ lệch chuẩn quan sát $$\sigma$$ đã biết, và dữ liệu được mô hình:
+Giả sử bạn muốn suy luận chiều cao trung bình $$\mu$$ của một nhóm sinh viên, với độ lệch chuẩn quan sát $$\sigma$$ đã biết:
 
 $$
 Y_i \mid \mu \sim \mathcal{N}(\mu,\sigma^2).
 $$
 
-Nếu prior cho $$\mu$$ cũng là Normal:
+Nếu prior cho $$\mu$$ cũng là phân phối Normal:
 
 $$
 \mu \sim \mathcal{N}(\mu_0,\tau_0^2),
 $$
 
-thì posterior cho $$\mu$$ vẫn là Normal.
-
-Nếu viết mọi thứ như một hàm theo $$\mu$$, likelihood của $$n$$ quan sát có phần hạt nhân:
+thì posterior cho $$\mu$$ vẫn là phân phối Normal. Cụ thể, phần hạt nhân của likelihood theo $$\mu$$ là:
 
 $$
 p(y_{1:n}\mid \mu)\propto \exp\left(-\frac{1}{2\sigma^2}\sum_{i=1}^n (y_i-\mu)^2\right)
@@ -418,13 +406,13 @@ $$
 \bar y=\frac{1}{n}\sum_{i=1}^n y_i.
 $$
 
-Còn prior Normal có dạng:
+Prior Normal có hạt nhân:
 
 $$
 p(\mu)\propto \exp\left(-\frac{(\mu-\mu_0)^2}{2\tau_0^2}\right).
 $$
 
-Khi nhân prior với likelihood và hoàn thành bình phương, ta thu được:
+Nhân prior với likelihood và nhóm bình phương hoàn chỉnh theo $$\mu$$, ta thu được:
 
 $$
 \mu\mid y_{1:n}\sim \mathcal{N}(\mu_n,\tau_n^2),
@@ -436,7 +424,7 @@ $$
 \tau_n^2=\left(\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}\right)^{-1}
 $$
 
-và:
+và
 
 $$
 \mu_n=\tau_n^2\left(\frac{\mu_0}{\tau_0^2}+\frac{n\bar y}{\sigma^2}\right)
@@ -451,7 +439,7 @@ $$
 
 ### 6.2. Ý nghĩa trực giác
 
-Posterior mean trong mô hình này là một dạng **trung bình có trọng số** giữa prior mean và trung bình mẫu, trong đó nguồn thông tin nào đáng tin hơn sẽ được trao trọng số lớn hơn. Trọng số cụ thể phụ thuộc vào prior có tập trung mạnh hay không, dữ liệu có nhiều hay ít, và độ nhiễu quan sát lớn đến mức nào.
+Trung bình hậu nghiệm trong mô hình Normal–Normal là **trung bình có trọng số** giữa trung bình tiền nghiệm $$\mu_0$$ và trung bình mẫu $$\bar y$$, với trọng số tỉ lệ thuận với độ chính xác (nghịch đảo phương sai) của từng nguồn thông tin. Nguồn nào chính xác hơn (prior hẹp hơn, cỡ mẫu lớn hơn, hoặc nhiễu quan sát nhỏ hơn) sẽ chi phối mạnh hơn.
 
 ![Prior Normal và posterior sau khi kết hợp với dữ liệu]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_posterior.png)
 
@@ -461,38 +449,38 @@ Posterior mean trong mô hình này là một dạng **trung bình có trọng s
 
 ![Trọng số tương đối của prior và dữ liệu trong Normal-Normal]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_normal_normal_prior_data_weights.png)
 
-### 6.3. Những bối cảnh gần gũi
+### 6.3. Các bối cảnh ứng dụng
 
-Normal-Normal gần gũi với nhiều bài toán quen thuộc như suy luận chiều cao trung bình của một nhóm người, điểm trung bình của một lớp học, thời gian xử lý trung bình của một quy trình, hoặc sai số của cảm biến dao động quanh một giá trị thật chưa biết.
+Normal–Normal thường gặp khi suy luận chiều cao trung bình, điểm trung bình của lớp học, thời gian xử lý trung bình của một quy trình, hoặc sai số đo đạc của cảm biến quanh một giá trị thực chưa biết.
 
-### 6.4. Công thức nhớ nhanh
+### 6.4. Cách nhớ ngắn gọn
 
-Nếu bạn quên công thức chi tiết, vẫn có thể nhớ đúng tinh thần của Normal-Normal bằng hai ý sau được gộp lại trong một câu duy nhất: posterior mean luôn bị kéo về phía nguồn thông tin chính xác hơn, còn posterior variance sẽ co lại khi dữ liệu trở nên nhiều hơn hoặc nhiễu quan sát nhỏ đi. Nói ngắn gọn nhưng vẫn chặt chẽ, trong mô hình Normal-Normal, Bayes đang lấy một trung bình có trọng số theo độ tin cậy của từng nguồn thông tin.
+Trong mô hình Normal–Normal, trung bình hậu nghiệm luôn dịch về phía nguồn thông tin có độ chính xác cao hơn, còn phương sai hậu nghiệm co nhỏ lại khi cỡ mẫu tăng hoặc nhiễu quan sát giảm.
 
-### 6.5. Ví dụ Bayes estimate và posterior risk (Normal-Normal)
+### 6.5. Ví dụ: ước lượng Bayes và rủi ro hậu nghiệm trong Normal–Normal
 
-Giả sử cần suy luận trung bình thời gian xử lý hồ sơ $$\mu$$ (phút), với phương sai quan sát đã biết:
+Giả sử cần suy luận thời gian xử lý hồ sơ trung bình $$\mu$$ (tính bằng phút), với phương sai quan sát đã biết:
 
 $$
 Y_i\mid\mu \sim \mathcal{N}(\mu,\sigma^2),\quad \sigma^2=25.
 $$
 
-Prior chuyên gia:
+Prior từ chuyên gia:
 
 $$
 \mu\sim \mathcal{N}(\mu_0=50,\tau_0^2=100).
 $$
 
-Quan sát $$n=16$$ hồ sơ, trung bình mẫu $$\bar y=55$$.
+Quan sát $$n=16$$ hồ sơ cho trung bình mẫu $$\bar y=55$$. Khi đó:
 
-Posterior variance:
+- Phương sai hậu nghiệm:
 
 $$
 \tau_n^2=\left(\frac{1}{\tau_0^2}+\frac{n}{\sigma^2}\right)^{-1}
 =\left(\frac{1}{100}+\frac{16}{25}\right)^{-1}\approx 1.538.
 $$
 
-Posterior mean:
+- Trung bình hậu nghiệm:
 
 $$
 \mu_n=\tau_n^2\left(\frac{\mu_0}{\tau_0^2}+\frac{n\bar y}{\sigma^2}\right)
@@ -505,19 +493,19 @@ $$
 \mu\mid y \sim \mathcal{N}(54.92,1.538).
 $$
 
-Với hàm mất mát bình phương, Bayes estimate là posterior mean:
+Dưới hàm tổn thất bình phương, ước lượng Bayes tối ưu là trung bình hậu nghiệm:
 
 $$
-\hat\mu_{Bayes}=E[\mu\mid y]=54.92.
+\hat\mu_{Bayes}=E[\mu\mid y]=54.92,
 $$
 
-Posterior risk tại Bayes estimate bằng chính posterior variance:
+và rủi ro hậu nghiệm (posterior risk) tại ước lượng này bằng chính phương sai hậu nghiệm:
 
 $$
 R(\hat\mu_{Bayes})=E\left[(\mu-\hat\mu_{Bayes})^2\mid y\right]=\mathrm{Var}(\mu\mid y)=1.538.
 $$
 
-Diễn giải: so với prior ban đầu, dữ liệu đã kéo ước lượng trung tâm về gần 55 và giảm mạnh bất định hậu nghiệm.
+So với prior ban đầu, dữ liệu đã kéo ước lượng trung tâm về sát 55 và thu hẹp mạnh độ bất định hậu nghiệm.
 
 ### Thử nghiệm: Normal–Normal và trọng số theo độ chính xác
 
@@ -527,27 +515,23 @@ Kéo μ₀, τ₀, σ để thấy posterior là trung bình có trọng số gi
 <div data-demo="conjugate-explainer" data-lang="vi" data-tab="normalnormal"></div>
 </div>
 
-## 7. Cập nhật tuần tự cực kỳ đẹp trong mô hình liên hợp
+## 7. Cập nhật tuần tự trong mô hình liên hợp
 
-Đây là một lợi ích rất lớn của conjugacy. Giả sử bạn theo dõi tỷ lệ khách nhấp quảng cáo theo từng ngày và mỗi ngày lại có thêm một ít dữ liệu mới; với Beta-Binomial, bạn không cần giải lại toàn bộ bài toán từ đầu, mà chỉ cần lấy posterior của ngày hôm qua làm prior cho ngày hôm nay rồi cập nhật thêm số lượt thành công và thất bại mới. Điều tương tự cũng đúng với Gamma-Poisson, nơi thông tin mới có thể được hấp thụ vào posterior bằng một phép cập nhật tham số rất gọn.
+Một lợi ích thiết thực của tính liên hợp là khả năng cập nhật tuần tự rất gọn. Chẳng hạn, khi theo dõi tỷ lệ nhấp quảng cáo hằng ngày bằng Beta–Binomial, bạn chỉ cần lấy posterior ngày hôm qua làm prior cho hôm nay rồi cộng thêm số lượt thành công và thất bại mới. Tương tự với Gamma–Poisson, thông tin mới được hấp thụ ngay qua phép cộng tham số — rất phù hợp với các hệ thống giám sát vận hành và bảng điều khiển thời gian thực.
 
 ![Cập nhật tuần tự với prior liên hợp]({{ site.baseurl }}/img/chapter_img/chapter02/sequential_updating_story.png)
 
-Trong các hệ thống giám sát vận hành hoặc dashboard theo thời gian thực, đây là ưu điểm rất trực quan.
+## 8. Giới hạn của prior liên hợp
 
-## 8. Nhưng conjugacy không phải lúc nào cũng là lựa chọn tốt nhất
+Ta không nên chọn prior chỉ vì tính liên hợp nếu lựa chọn đó phản ánh kém kiến thức thực tế, làm mất cấu trúc quan trọng của bài toán, hoặc khi mô hình có nhiều tầng và nhiều tham số phụ thuộc lẫn nhau (chẳng hạn prior hỗn hợp hai đỉnh hoặc tham số bị ràng buộc miền phức tạp).
 
-Đây là điểm rất quan trọng. Ta không nên chọn prior chỉ vì nó liên hợp nếu lựa chọn ấy mô tả kiến thức thực tế quá kém, khiến ta bỏ qua cấu trúc quan trọng của bài toán, hoặc đơn giản là bài toán đã đủ phức tạp để đòi hỏi một mô hình linh hoạt hơn. Chẳng hạn, prior thực tế có thể có dạng mixture hai đỉnh, tham số có thể chịu những ràng buộc phức tạp, hoặc mô hình có thể bao gồm nhiều tầng và nhiều tham số phụ thuộc lẫn nhau; trong các trường hợp như vậy, sự tiện lợi đại số không còn là tiêu chí quyết định nữa.
-
-Một điểm dễ bị bỏ qua là **support của tham số cũng quan trọng**. Có những trường hợp phần đại số trông có vẻ quen, nhưng posterior lại không còn rơi gọn vào một họ chuẩn quen thuộc trên đúng miền giá trị đang xét.
-
-Ví dụ, nếu tham số $$\theta$$ bị ràng buộc trong đoạn $$[0,1]$$ nhưng likelihood lại đến từ mô hình Poisson, ta có thể thu được một mật độ không chuẩn hóa kiểu:
+Một điểm thường bị bỏ qua là **miền xác định (support) của tham số**. Ngay cả khi phần biểu thức đại số trông quen thuộc, posterior vẫn có thể không rơi vào một họ phân phối chuẩn nếu miền giá trị bị chặn. Ví dụ, nếu tham số $$\theta$$ bị giới hạn trong $$[0,1]$$ nhưng likelihood có dạng Poisson, mật độ chưa chuẩn hóa sẽ có dạng:
 
 $$
 \theta^{y+1}e^{-\theta}, \qquad 0 \le \theta \le 1.
 $$
 
-Biểu thức này vẫn hoàn toàn hợp lệ để suy luận Bayes, nhưng nó không còn là một ví dụ liên hợp “đẹp” như Beta-Binomial hay Gamma-Poisson nữa. Bài học quan trọng ở đây là conjugacy không chỉ phụ thuộc vào hình dạng đại số của mật độ, mà còn phụ thuộc vào việc posterior có còn nằm gọn trong một họ phân phối quen thuộc trên đúng support của tham số hay không.
+Biểu thức này vẫn hoàn toàn hợp lệ cho suy luận Bayes, nhưng không còn thuộc một họ liên hợp dạng đóng quen thuộc như Beta–Binomial hay Gamma–Poisson. Do đó, tính liên hợp đòi hỏi cả sự tương thích đại số lẫn sự khớp nhau về miền giá trị của tham số.
 
 ![Prior liên hợp có thể biểu diễn kém khi prior lý tưởng bị chặn miền]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_truncated_prior.png)
 
@@ -557,45 +541,45 @@ Biểu thức này vẫn hoàn toàn hợp lệ để suy luận Bayes, nhưng n
 
 ![Cây quyết định nhanh để chọn ở lại với conjugacy hay chuyển sang MCMC]({{ site.baseurl }}/img/chapter_img/chapter02/chapter02_conjugate_limit_decision_tree.png)
 
-Khi điều kiện ấy không còn thỏa, ta thường chuyển sang grid approximation cho những bài cực nhỏ hoặc sang MCMC cho các mô hình tổng quát và linh hoạt hơn.
+Khi bài toán không còn liên hợp, ta chuyển sang xấp xỉ lưới (grid approximation) cho mô hình rất nhỏ hoặc MCMC cho các mô hình tổng quát hơn.
 
-## 9. Khi nào nên nghĩ tới cặp liên hợp nào?
+## 9. Chọn cặp liên hợp theo bối cảnh dữ liệu
 
 ![Bảng các cặp liên hợp phổ biến]({{ site.baseurl }}/img/chapter_img/chapter02/conjugate_pairs_table.png)
 
-Bạn có thể nhớ các cặp này theo câu chuyện dữ liệu thay vì học thuộc bảng công thức. Nếu tham số là xác suất thành công trong một số lần thử xác định, hãy nghĩ tới Beta prior đi với Binomial likelihood; nếu bài toán hỏi phải chờ bao lâu hay phải thử đến lần thứ mấy mới có thành công đầu tiên, hãy nghĩ tới Beta prior đi với Geometric likelihood; nếu mục tiêu là suy luận cường độ của số đếm theo thời gian, cặp Gamma-Poisson thường là lựa chọn tự nhiên; còn nếu tham số cần suy luận là trung bình của dữ liệu liên tục, cặp Normal-Normal là điểm khởi đầu hợp lý. Cách nhớ theo bối cảnh dữ liệu như vậy thường bền hơn nhiều so với việc cố học thuộc các biểu thức một cách rời rạc.
+Thay vì học thuộc bảng công thức, bạn nên gắn mỗi cặp với câu chuyện dữ liệu tương ứng: xác suất thành công trong $$n$$ phép thử cố định dẫn tới Beta–Binomial; số lần thử cho đến thành công đầu tiên dẫn tới Beta–Geometric; cường độ sự kiện đếm theo thời gian dẫn tới Gamma–Poisson; và trung bình của dữ liệu liên tục dẫn tới Normal–Normal.
 
 ## 10. Những nhầm lẫn phổ biến
 
-### 10.1. “Conjugate prior là prior tốt nhất”
+### 10.1. “Prior liên hợp luôn là prior tốt nhất”
 
-Không. Nó chỉ là prior thuận tiện về mặt tính toán.
+Không đúng. Nó chỉ là lựa chọn thuận tiện về mặt tính toán.
 
-### 10.2. “Học thuộc công thức là đủ”
+### 10.2. “Chỉ cần học thuộc công thức là đủ”
 
-Không. Nếu không hiểu câu chuyện sinh dữ liệu và ý nghĩa tham số, bạn sẽ rất dễ lắp sai mô hình.
+Không đúng. Nếu không hiểu cơ chế sinh dữ liệu và ý nghĩa của tham số, ta rất dễ áp dụng sai mô hình.
 
-### 10.3. “Thời đại MCMC rồi thì conjugacy vô dụng”
+### 10.3. “Đã có MCMC thì không cần học prior liên hợp”
 
-Không. Nó vẫn là nền tảng trực giác và là bộ ví dụ chuẩn để học Bayesian updating.
+Không đúng. Prior liên hợp vẫn là nền tảng xây dựng trực giác về cập nhật Bayes và vẫn được dùng rộng rãi trong nhiều hệ thống cần độ trễ thấp.
 
 ## Tóm tắt
 
-**Prior liên hợp là những prior khiến posterior vẫn nằm trong cùng họ phân phối sau khi cập nhật.** Chính đặc điểm này làm cho suy luận Bayes trong các ví dụ đơn giản trở nên dễ tính tay hơn, dễ diễn giải hơn, dễ cập nhật tuần tự hơn, và đặc biệt hữu ích cho việc xây trực giác trước khi chuyển sang những phương pháp tính toán tổng quát hơn. Bốn cặp cơ bản mà bạn nên nhớ đầu tiên trong bài này là Beta-Binomial, Beta-Geometric, Gamma-Poisson, và Normal-Normal; tuy nhiên, điều cần giữ lại lâu dài hơn chính là nguyên tắc rằng sự thuận tiện về mặt tính toán không tự động đồng nghĩa với một lựa chọn mô hình hóa tốt nhất. Nói gọn lại trong ba ý, conjugacy xuất hiện khi prior và likelihood ăn khớp với nhau về đại số nên posterior vẫn ở trong cùng một họ phân phối, các cặp liên hợp giúp cho việc cập nhật Bayes vừa nhanh vừa sáng sủa về mặt trực giác, nhưng prior liên hợp vẫn chỉ là một lựa chọn thuận tiện chứ không nên bị ép dùng nếu nó mô tả kiến thức thực tế quá kém.
+**Prior liên hợp là prior đảm bảo posterior thuộc cùng một họ phân phối sau khi cập nhật.** Nhờ tính chất này, các bài toán cơ bản có thể giải tay gọn gàng, dễ diễn giải và cập nhật tuần tự nhanh chóng. Bốn cặp nền tảng cần nắm gồm Beta–Binomial, Beta–Geometric, Gamma–Poisson và Normal–Normal. Tuy nhiên, cần luôn ghi nhớ rằng sự tiện lợi về đại số không đồng nghĩa với mô hình tốt nhất: khi prior liên hợp không còn phản ánh đúng thực tế, ta nên chuyển sang các phương pháp tính toán linh hoạt hơn.
 
 ## Video tham khảo
 
-- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Xem định nghĩa prior liên hợp là cặp khiến posterior còn trong cùng họ, đúng ý bài không coi liên hợp là mẹo thuộc lòng.
-- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Xem cập nhật Bayes trên vài cặp liên hợp quen, hỗ trợ phần ý nghĩa thực tế của các cặp đó.
-- [20 - Beta conjugate prior to Binomial and Bernoulli likelihoods](https://www.youtube.com/watch?v=hKYvZF9wXkk) — Ox educ, English. Xem Beta cập nhật bằng số thành công và thất bại của Binomial, dùng cho cặp liên hợp trung tâm của bài.
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Giải thích định nghĩa prior liên hợp và lý do posterior giữ nguyên họ phân phối, giúp hiểu bản chất thay vì học thuộc.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Minh họa quá trình cập nhật Bayes trên các cặp liên hợp quen thuộc cùng ý nghĩa thực tế của chúng.
+- [20 - Beta conjugate prior to Binomial and Bernoulli likelihoods](https://www.youtube.com/watch?v=hKYvZF9wXkk) — Ox educ, English. Trình bày chi tiết phép cập nhật Beta–Binomial dựa trên số lần thành công và thất bại.
 
 ## Câu hỏi tự luyện
 
-1. Hãy nêu một ví dụ thực tế phù hợp với Beta-Binomial.
-2. Beta-Geometric khác Beta-Binomial ở kiểu dữ liệu nào, dù cả hai cùng dùng prior Beta?
-3. Vì sao Gamma-Poisson hợp tự nhiên với dữ liệu đếm theo thời gian?
-4. Trong Normal-Normal, điều gì quyết định posterior mean gần prior mean hay gần trung bình mẫu hơn?
-5. Khi nào bạn sẽ không muốn chọn prior liên hợp dù biết nó rất tiện?
+1. Hãy nêu một ví dụ thực tế phù hợp với cặp Beta–Binomial.
+2. Beta–Geometric khác Beta–Binomial ở kiểu dữ liệu nào, dù cả hai cùng sử dụng prior Beta?
+3. Vì sao Gamma–Poisson phù hợp với dữ liệu đếm theo thời gian?
+4. Trong mô hình Normal–Normal, yếu tố nào quyết định trung bình hậu nghiệm nằm gần trung bình tiền nghiệm hay gần trung bình mẫu hơn?
+5. Khi nào bạn không nên dùng prior liên hợp dù biết nó thuận tiện về mặt tính toán?
 
 ## Tài liệu tham khảo
 

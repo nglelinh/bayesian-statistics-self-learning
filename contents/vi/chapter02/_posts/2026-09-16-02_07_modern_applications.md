@@ -12,74 +12,74 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn nhìn prior liên hợp (conjugate prior) và xấp xỉ lưới (grid approximation) như những lựa chọn thiết kế công nghiệp, không còn như mẹo làm bài. Bạn có thể chỉ vào một sản phẩm đang chạy—quảng cáo, xếp hạng, hoặc giám sát tần suất sự kiện—và nói likelihood đang giả định gì, họ prior nào giữ cho phép cập nhật đủ rẻ, và khi nào đại số phải nhường chỗ cho mô phỏng.
+Sau bài học tùy chọn này, bạn sẽ nhìn nhận prior liên hợp (conjugate prior) và xấp xỉ lưới (grid approximation) như những lựa chọn thiết kế hệ thống thực tế chứ không chỉ là kỹ thuật làm bài tập. Bạn có thể quan sát một hệ thống đang vận hành — như quảng cáo, xếp hạng hay giám sát sự cố — và chỉ ra likelihood đang giả định điều gì, họ prior nào giữ chi phí cập nhật ở mức thấp, và khi nào phép tính giải tích phải nhường chỗ cho mô phỏng.
 
 ## Kiến thức cần có
 
-Các bài 2.1–2.6 đã dựng bộ khung bốn phần: phân phối, likelihood, prior, posterior. Bài này không chứng minh lại liên hợp Beta–Binomial hay Gamma–Poisson. Nó hỏi vì sao các cặp ấy vẫn xuất hiện trong hệ thống khoa học máy tính lớn, và vì sao empirical Bayes thường là cách prior nhận được một con số.
+Các bài 2.1–2.6 đã xây dựng bộ khung gồm bốn thành phần: phân phối, likelihood, prior và posterior. Bài viết này không chứng minh lại tính liên hợp của Beta–Binomial hay Gamma–Poisson, mà tập trung trả lời vì sao các cặp này vẫn xuất hiện trong các hệ thống khoa học máy tính quy mô lớn và vì sao empirical Bayes thường được dùng để chọn tham số cho prior.
 
 ## Mở đầu
 
-Khi bạn đã cập nhật được một Beta bằng cách đếm số thành công, một nghi ngờ tự nhiên xuất hiện. Vì sao một công ty với hàng triệu người dùng vẫn cần posterior dạng đóng? Câu trả lời là độ trễ và tính nhiều nhiệm vụ. Một hệ quảng cáo hay xếp hạng có thể cần xác suất chuyển đổi cho mọi mục, mỗi phút. Một chuỗi MCMC cho từng mục thường quá chậm; một phép cập nhật liên hợp cộng số đếm vào $$(\alpha,\beta)$$ thì không. Căng thẳng trí tuệ vì thế vừa kinh tế vừa thống kê. Đại số chính xác sống sót ở những nơi nó *đủ nhanh để còn trung thực ở quy mô lớn*.
+Khi đã quen với việc cập nhật phân phối Beta bằng cách đếm số lần thành công, một câu hỏi tự nhiên nảy ra: vì sao một nền tảng có hàng triệu người dùng vẫn cần đến posterior dạng đóng? Câu trả lời nằm ở yêu cầu độ trễ thấp và số lượng thực thể rất lớn. Một hệ thống quảng cáo hay xếp hạng có thể phải cập nhật xác suất chuyển đổi cho hàng triệu mục sau mỗi phút. Chạy chuỗi MCMC cho từng mục là quá chậm, trong khi phép cập nhật liên hợp chỉ cần cộng số đếm vào $$(\alpha,\beta)$$ nên chạy gần như tức thời. Bài toán đặt ra vì thế vừa mang tính hiệu năng vừa mang tính thống kê: các công thức giải tích vẫn giữ vị trí quan trọng ở những nơi chúng đủ nhanh để duy trì suy luận trung thực ở quy mô lớn.
 
 ## Phát triển khái niệm
 
-Prior liên hợp là một họ phân phối đứng yên trong chính nó sau khi nhân với likelihood. Với xác suất chuyển đổi $$\theta$$ và dữ liệu nhị thức, prior Beta cho
+Prior liên hợp là họ phân phối đóng dưới phép nhân với likelihood: posterior thu được vẫn thuộc cùng họ đó. Với xác suất chuyển đổi $$\theta$$ và dữ liệu nhị thức, prior Beta cho:
 
 $$
 \theta\mid y \sim \mathrm{Beta}(\alpha+y,\ \beta+n-y).
 $$
 
-Cùng phép cộng số đếm ấy, một bảng điều khiển gọi là “làm mượt”. Empirical Bayes chọn $$\alpha$$ và $$\beta$$ từ cả tập hợp các mục thay vì từ một chuyên gia đơn lẻ, nên một mục hiếm được vay sức từ toàn chợ. Khi likelihood rời họ mũ, hoặc prior phải phân cấp theo cách phá vỡ liên hợp, lưới bạn gặp ở bài 2.6 trở thành bức tranh đúng cuối cùng trước Hamiltonian Monte Carlo.
+Trên các bảng điều khiển phân tích, chính phép cộng số đếm này thường được gọi là “làm mượt” (smoothing). Phương pháp **empirical Bayes** ước lượng $$\alpha$$ và $$\beta$$ từ toàn bộ tập hợp các mục thay vì chỉ hỏi một chuyên gia đơn lẻ, nhờ đó một mục mới hoặc hiếm dữ liệu có thể mượn thông tin từ toàn hệ thống. Khi likelihood không còn thuộc họ mũ hoặc khi cấu trúc prior phân cấp phá vỡ tính liên hợp, xấp xỉ lưới ở Bài 2.6 là trực giác hình học cuối cùng trước khi chuyển sang Hamiltonian Monte Carlo.
 
 ## Mô hình như câu chuyện sinh dữ liệu
 
-### 1. Tỷ lệ Beta–Binomial trong quảng cáo và xếp hạng
+### 1. Ước lượng tỷ lệ Beta–Binomial trong quảng cáo và xếp hạng
 
-Hãy tưởng tượng mỗi mẫu quảng cáo, mỗi cặp truy vấn–mục, hay mỗi ghim gợi ý có một xác suất nhấp hoặc chuyển đổi chưa biết $$\theta_i$$. Câu chuyện dữ liệu rất trần: $$n_i$$ cơ hội, $$y_i$$ thành công. Một prior Beta chung, với siêu tham số khớp bằng empirical Bayes, kéo các mục ồn về phía trung bình của chợ. Đó là lý do một mục mới với một nhấp trên hai lần hiển thị không bị coi là chuyển đổi 50%. Trung bình hậu nghiệm
+Xét mỗi mẫu quảng cáo, mỗi cặp truy vấn–mục, hoặc mỗi nội dung gợi ý có một xác suất nhấp hay chuyển đổi chưa biết $$\theta_i$$. Cấu trúc dữ liệu rất gọn: $$n_i$$ lượt hiển thị và $$y_i$$ lượt thành công. Một prior Beta dùng chung — với siêu tham số được ước lượng bằng empirical Bayes — sẽ kéo ước lượng của các mục ít dữ liệu, nhiều nhiễu về gần mức trung bình chung của hệ thống. Nhờ vậy, một mục mới chỉ có 1 lượt nhấp trên 2 lượt hiển thị sẽ không bị đánh giá là có tỷ lệ chuyển đổi 50%. Trung bình hậu nghiệm:
 
 $$
 \hat\theta_i=\frac{\alpha+y_i}{\alpha+\beta+n_i}
 $$
 
-là điểm xếp hạng có thể làm mới bằng phép cộng số nguyên. PinnerFormer của Pinterest (Pancha et al., 2022) là mô hình chuỗi cho biểu diễn người dùng, nhưng tầng phục vụ vẫn cần các tỷ lệ mục đứng vững; làm mượt liên hợp vẫn là bước Bayes rẻ đầu tiên dưới các ranker phức tạp hơn.
+đóng vai trò điểm xếp hạng có thể cập nhật liên tục chỉ bằng phép cộng số nguyên. Chẳng hạn, PinnerFormer của Pinterest (Pancha et al., 2022) là mô hình tuần tự biểu diễn hành vi người dùng, nhưng tầng phục vụ (serving layer) vẫn cần các ước lượng tỷ lệ ổn định cho từng mục; làm mượt liên hợp vì thế vẫn là lớp suy luận Bayes chi phí thấp đứng nền cho các bộ xếp hạng phức tạp hơn.
 
-### 2. Thompson sampling như lấy mẫu posterior để quyết định
+### 2. Thompson sampling: lấy mẫu từ posterior để ra quyết định
 
-Russo et al. (2018) sắp xếp một sự thật mà các nền tảng vẫn cài mỗi ngày: nếu bạn lấy được mẫu từ $$p(\theta\mid y)$$, bạn có thể chọn hành động bằng cách giả bộ mẫu ấy là đúng. Với bandit Beta–Binomial, mẫu đó là một dòng mã. Câu chuyện sinh là tuần tự. Posterior hôm nay trở thành prior ngày mai; khám phá không phải heuristic mà là hệ quả của bề rộng posterior còn lại. Các contextual bandit hiện đại thay Beta bằng posterior hồi quy, nhưng quy tắc quyết định—lấy mẫu rồi hành động—vẫn là phép cập nhật bạn đã làm trên lưới.
+Russo et al. (2018) hệ thống hóa một nguyên lý đang được triển khai hằng ngày trên nhiều nền tảng: nếu có thể lấy mẫu từ $$p(\theta\mid y)$$, bạn có thể chọn hành động tối ưu bằng cách hành động như thể giá trị vừa lấy mẫu là tham số thực. Với bài toán bandit Beta–Binomial, thao tác lấy mẫu này chỉ tốn một dòng mã. Cơ chế sinh dữ liệu diễn ra tuần tự: posterior hôm nay trở thành prior ngày mai, còn hoạt động thăm dò (exploration) không phải quy tắc cảm tính mà là hệ quả tự nhiên của độ rộng posterior còn lại. Các hệ thống contextual bandit hiện đại thay phân phối Beta bằng posterior của mô hình hồi quy, nhưng nguyên tắc quyết định — lấy mẫu rồi hành động — vẫn xuất phát từ chính cơ chế cập nhật ở Chương 2.
 
 ### 3. Giám sát số đếm bằng Gamma–Poisson
 
-Sự kiện hạ tầng, sụt chất lượng luồng, và số sự cố thường được mô hình hóa Poisson với prior Gamma trên cường độ. Posterior vẫn là Gamma sau một đêm đếm, nên hệ thống trực canh có thể báo một khoảng dự báo hậu nghiệm mà không cần bộ lấy mẫu. Khi phương sai vượt quá trung bình, câu chuyện phải đổi sang Negative Binomial và liên hợp không còn là bữa trưa miễn phí. Đó là lúc bài 2.6 đã chuẩn bị: vẽ lưới, thấy posterior méo đi, và thừa nhận dạng đóng đã hết.
+Các sự kiện hạ tầng, suy giảm chất lượng luồng dữ liệu và số lượng sự cố thường được mô hình hóa bằng Poisson với prior Gamma trên cường độ. Sau mỗi chu kỳ đếm, posterior vẫn là phân phối Gamma, giúp hệ thống trực canh tính ngay khoảng dự báo hậu nghiệm mà không cần bộ lấy mẫu. Tuy nhiên, khi phương sai vượt quá trung bình (overdispersion), mô hình cần chuyển sang Negative Binomial và không còn giữ được dạng đóng liên hợp thuận tiện nữa. Khi đó, tư duy của Bài 2.6 phát huy tác dụng: quan sát posterior trên lưới, nhận ra phân phối bị lệch và chấp nhận rằng lời giải giải tích đã đạt giới hạn.
 
-### 4. Khi liên hợp thất bại: từ lưới đến lập trình xác suất
+### 4. Khi tính liên hợp không còn đáp ứng: từ lưới đến lập trình xác suất
 
-Stan, PyMC và NumPyro đều viết các mô hình liên hợp như những trường hợp bạn *không* nên phí một sampler, và các mô hình không liên hợp như lý do NUTS tồn tại. Lưới vẫn là hình dung đúng. Nó cho thấy tích chưa chuẩn hóa $$p(y\mid\theta)p(\theta)$$ như một phong cảnh. Hamiltonian Monte Carlo, sẽ vào Chương 4, là việc bạn làm khi phong cảnh ấy có quá nhiều tọa độ cho một lưới. Pathfinder (Zhang, Carpenter, Gelman và Vehtari, 2022) sau đó dùng một đường quasi-Newton để đặt một Gaussian rẻ gần cùng phong cảnh, thường để khởi động ấm. Các đối tượng Chương 2 không bị thay; chúng được cấp trình biên dịch.
+Các thư viện lập trình xác suất như Stan, PyMC và NumPyro đều coi mô hình liên hợp là trường hợp không cần tiêu tốn tài nguyên cho bộ lấy mẫu, còn các mô hình không liên hợp chính là lý do thuật toán NUTS ra đời. Xấp xỉ lưới vẫn giữ vai trò hình dung cốt lõi: nó cho thấy tích chưa chuẩn hóa $$p(y\mid\theta)p(\theta)$$ như một bề mặt mật độ trên không gian tham số. Hamiltonian Monte Carlo (trình bày ở Chương 4) là công cụ dùng khi bề mặt đó có quá nhiều chiều để dựng lưới. Sau đó, Pathfinder (Zhang, Carpenter, Gelman và Vehtari, 2022) sử dụng quỹ đạo tối ưu quasi-Newton để dựng nhanh một xấp xỉ Gaussian quanh vùng mật độ cao đó, thường dùng làm bước khởi tạo (warm start). Các khái niệm của Chương 2 không bị thay thế, mà được tự động hóa bằng các công cụ tính toán hiện đại.
 
 ## Diễn giải và nhận định
 
-Một tỷ lệ bị co (shrinkage) không phải “CTR thật”. Nó là trung bình hậu nghiệm dưới một câu chuyện phân cấp, và câu chuyện ấy sai nếu các mục không trao đổi được với nhau—mẫu quảng cáo khác nước, hay truy vấn khác ý định. Thompson sampling không xóa regret; nó tiêu bất định posterior. Một khoảng Gamma bỏ qua điểm gãy sẽ trông sắc và đến muộn. Hãy đọc mọi dạng đóng như một giả định rằng quan sát kế tiếp vẫn cùng một loại.
+Một tỷ lệ đã qua phép co về trung bình (shrinkage) không phải là “CTR thực”, mà là trung bình hậu nghiệm dưới một giả định phân cấp; giả định này sẽ sai lệch nếu các mục không tương đương để chia sẻ thông tin (chẳng hạn mẫu quảng cáo thuộc các thị trường khác nhau hoặc truy vấn có mục đích khác nhau). Thompson sampling không triệt tiêu hoàn toàn độ hối tiếc (regret), mà giảm dần nó khi độ bất định của posterior thu hẹp. Tương tự, một khoảng dự báo Gamma bỏ qua điểm chuyển chế độ (changepoint) sẽ trông rất hẹp nhưng phản ứng chậm khi hệ thống thay đổi đột ngột. Mọi công thức dạng đóng đều ngầm giả định rằng quan sát kế tiếp vẫn tuân theo cùng một quy luật sinh dữ liệu.
 
 ## Ứng dụng
 
-Quảng cáo, xếp hạng, độ tin cậy hệ thống, và thí nghiệm tuần tự là bốn nơi Chương 2 đã vào sản xuất. Chúng cũng chỉ ra ranh giới: liên hợp cho vòng trong, mô phỏng cho mô hình không còn viết vừa một bảng.
+Quảng cáo, hệ xếp hạng, giám sát độ tin cậy hệ thống và thử nghiệm tuần tự là bốn lĩnh vực đưa kiến thức Chương 2 trực tiếp vào vận hành thực tế. Chúng cũng vạch rõ ranh giới thiết kế: dùng prior liên hợp cho vòng tính toán lõi đòi hỏi tốc độ cao, và dùng mô phỏng cho những mô hình không còn biểu diễn gọn bằng công thức đóng.
 
 ## Giới hạn và hướng mở rộng
 
-Empirical Bayes ước lượng điểm các siêu tham số nên thường đánh giá thấp bất định về chính prior. Bayes phân cấp đầy đủ, vốn được tư duy đa mức ở Chương 5 bắt đầu thúc đẩy, đặt posterior lên $$(\alpha,\beta)$$. Xấp xỉ lưới chết khi số chiều lớn hơn vài đơn vị. Công cụ trung thực tiếp theo không phải bảng liên hợp dày hơn mà là một sampler, điều Chương 4 xây dựng.
+Empirical Bayes chỉ ước lượng điểm các siêu tham số nên thường đánh giá thấp độ bất định của chính prior. Cách tiếp cận Bayes phân cấp đầy đủ — được mở ra qua tư duy đa mức ở Chương 5 — đặt phân phối hậu nghiệm lên chính $$(\alpha,\beta)$$. Trong khi đó, xấp xỉ lưới nhanh chóng mất khả thi khi số chiều vượt quá vài tham số. Bước tiến trung thực tiếp theo không phải là mở rộng bảng công thức liên hợp mà là sử dụng bộ lấy mẫu — trọng tâm của Chương 4.
 
 ## Video tham khảo
 
-- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Xem lại khi nào liên hợp còn là một lựa chọn tính toán gọn, đúng cách bài đọc prior liên hợp như quyết định thiết kế.
-- [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Xem Gamma–Poisson ước lượng một tỷ lệ sự kiện, hỗ trợ ví dụ giám sát tần suất trong bài.
-- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Xem cập nhật liên hợp được lặp lại khi dữ liệu tới dần, dùng cho phần bài về hệ thống phải cập nhật liên tục.
+- [What is a conjugate prior?](https://www.youtube.com/watch?v=aPNrhR0dFi8) — Ben Lambert, English. **xem trước**. Ôn lại điều kiện để prior liên hợp mang lại phép cập nhật gọn, phù hợp với góc nhìn thiết kế hệ thống trong bài.
+- [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Minh họa cách mô hình Gamma–Poisson ước lượng tốc độ sự kiện, hỗ trợ ví dụ giám sát tần suất.
+- [Bayesian Updates and Conjugate Priors](https://www.youtube.com/watch?v=GqSX-8AQL90) — Steve Brunton, English. Trình bày quá trình cập nhật liên hợp lặp lại khi dữ liệu đến liên tục, gắn với các hệ thống vận hành thời gian thực.
 
 ## Bài tập
 
-1. Hai mục có dữ liệu nhấp $$(y,n)=(1,2)$$ và $$(40,100)$$. Với prior $$\mathrm{Beta}(2,98)$$, trung bình hậu nghiệm nào dịch nhiều hơn, và quyết định sản phẩm nào được biện minh?
-2. Viết câu chuyện sinh của Thompson sampling trên ba tiêu đề email. Cái gì quan sát được, cái gì ẩn, và khi nào nên dừng khám phá?
-3. Một monitor Poisson–Gamma báo cường độ rất hẹp sau cuối tuần yên. Lưu lượng thứ Hai cao gấp mười. Giả định nào vừa vỡ?
-4. Mở trang bắt đầu của PyMC hoặc Stan, tìm một ví dụ liên hợp và một ví dụ không liên hợp. Với ví dụ thứ hai, nói vì sao lưới sẽ thất bại.
+1. Hai mục có dữ liệu lượt nhấp $$(y,n)=(1,2)$$ và $$(40,100)$$. Với prior $$\mathrm{Beta}(2,98)$$, trung bình hậu nghiệm của mục nào dịch chuyển mạnh hơn so với tỷ lệ thô, và quyết định sản phẩm nào được rút ra từ đó?
+2. Viết câu chuyện sinh dữ liệu cho Thompson sampling với ba tiêu đề email: đại lượng nào quan sát được, đại lượng nào ẩn, và khi nào nên dừng giai đoạn thăm dò?
+3. Một bộ giám sát Poisson–Gamma cho ước lượng cường độ rất hẹp sau một cuối tuần yên ắng, nhưng sang thứ Hai lưu lượng tăng gấp mười lần. Giả định nào của mô hình vừa bị phá vỡ?
+4. Mở trang tài liệu khởi đầu của PyMC hoặc Stan, tìm một ví dụ liên hợp và một ví dụ không liên hợp; với ví dụ thứ hai, giải thích vì sao xấp xỉ lưới sẽ không khả thi.
 
 ## Tài liệu tham khảo
 

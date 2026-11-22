@@ -12,120 +12,106 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu rằng fit model mới chỉ là nửa đầu của regression Bayes. Nửa còn lại là kiểm tra model có đang mô tả dữ liệu hợp lý hay không, và dùng posterior để dự đoán dữ liệu mới một cách trung thực. Bạn cũng cần nắm posterior predictive checks (kiểm tra dự báo hậu nghiệm) như công cụ trung tâm của bước này.
+Sau bài này, bạn sẽ hiểu rằng việc khớp mô hình (fitting) mới chỉ là nửa đầu của quy trình hồi quy Bayes. Nửa còn lại là kiểm tra xem mô hình có mô tả dữ liệu một cách hợp lý hay không, đồng thời sử dụng phân phối hậu nghiệm để dự đoán dữ liệu mới kèm đầy đủ mức độ bất định. Trọng tâm của bài là kỹ thuật **kiểm tra dự báo hậu nghiệm** (posterior predictive check — PPC) và phân tích phần dư.
 
-> **Ví dụ mini.** Một đường hồi quy có thể nhìn rất đẹp trên scatter plot, nhưng nếu nó không sinh ra dữ liệu giống dữ liệu thật thì model vẫn có vấn đề. Model checking là cách chất vấn mô hình thay vì chỉ tin vì nó đã chạy xong.
+> **Ví dụ ngắn.** Một đường hồi quy có thể trông khớp mắt trên biểu đồ phân tán, nhưng nếu dữ liệu giả lập từ mô hình không giống dữ liệu thực tế thì mô hình vẫn đang có vấn đề. Kiểm tra mô hình là cách chủ động chất vấn giả định của chính mình thay vì mặc nhiên tin vào kết quả sau khi chạy xong thuật toán.
 >
-> **Câu hỏi tự kiểm tra.** Vì sao một posterior “trông ổn” chưa đủ để kết luận mô hình là tốt?
+> **Câu hỏi tự kiểm tra.** Vì sao một phân phối hậu nghiệm "trông gọn đẹp" vẫn chưa đủ cơ sở để kết luận mô hình là tốt?
 
-## 1. Fit tốt chưa chắc model tốt
+## 1. Khớp dữ liệu tốt chưa đồng nghĩa với mô hình tốt
 
-Đây là một chuyển biến quan trọng trong tư duy.
+Nhiều người học hồi quy thường dừng lại ngay sau khi ước lượng hệ số dốc và đọc khoảng tin cậy. Tuy nhiên, một quy trình Bayes đầy đủ đòi hỏi ta phải đặt thêm ba câu hỏi quan trọng: mô hình có tái tạo được đặc trưng của dữ liệu quan sát không, phần dư (residual) có còn chứa quy luật có hệ thống nào không, và dự đoán cho dữ liệu mới có hợp lý trong thực tế hay không.
 
-Nhiều người học regression dừng lại ở chỗ ước lượng slope, xem interval, rồi kết luận như thể công việc đã hoàn tất.
-
-Nhưng một Bayesian workflow (quy trình Bayes) trưởng thành sẽ hỏi thêm những câu khó hơn: model này có tái tạo được dữ liệu quan sát không, residual (phần dư) có còn pattern (mẫu hình) đáng ngờ không, và dự đoán cho dữ liệu mới có thực sự hợp lý hay không.
-
-George Box có câu rất nổi tiếng:
+Nhà thống kê George Box có câu nói nổi tiếng:
 
 > “All models are wrong, but some are useful.”
 
-Mục tiêu không phải tìm ra một model “đúng tuyệt đối”, mà là một model đủ hữu ích, đủ trung thực, và không bỏ sót những cấu trúc quan trọng của dữ liệu.
+Mục tiêu của việc kiểm tra không phải là tìm ra một mô hình "hoàn hảo tuyệt đối", mà là xác nhận mô hình đủ hữu ích, phản ánh trung thực mức độ bất định và không bỏ sót những cấu trúc quan trọng của dữ liệu.
 
-## 2. Posterior predictive distribution (phân phối dự báo hậu nghiệm) là gì?
+## 2. Phân phối dự báo hậu nghiệm (Posterior Predictive Distribution) là gì?
 
-Giả sử bạn đã có posterior của các tham số. Khi đó bạn có thể sinh dữ liệu mới $$\tilde y$$ từ model:
+Khi đã có phân phối hậu nghiệm $$p(\theta \mid y)$$ của các tham số, ta có thể mô phỏng dữ liệu mới $$\tilde y$$ từ mô hình thông qua phân phối dự báo hậu nghiệm:
 
 $$
 p(\tilde y \mid y) = \int p(\tilde y \mid \theta)\,p(\theta \mid y)\,d\theta.
 $$
 
-Ý nghĩa của posterior predictive distribution là ta không chỉ suy luận về tham số, mà còn suy luận về dữ liệu tương lai hoặc dữ liệu tái tạo từ chính model.
+Công thức này là cầu nối trực tiếp giữa suy luận tham số và dự đoán dữ liệu tương lai (hoặc dữ liệu tái tạo từ chính mô hình):
 
-Đây chính là cầu nối giữa estimation và prediction.
+- $$\tilde y$$ là dữ liệu mới hoặc dữ liệu mô phỏng cần dự đoán.
+- $$\theta$$ là vector tham số của mô hình.
+- $$p(\theta \mid y)$$ thể hiện mức độ hợp lý của từng giá trị tham số sau khi đã quan sát dữ liệu $$y$$.
+- $$p(\tilde y \mid \theta)$$ là cơ chế sinh dữ liệu mới khi cố định tham số ở $$\theta$$.
 
-*Đọc công thức trên*:
+Nói cách khác, tích phân trên là một phép trung bình có trọng số trên mọi khả năng của tham số, trong đó trọng số chính là phân phối hậu nghiệm $$p(\theta \mid y)$$: **những bộ tham số phù hợp với dữ liệu hơn sẽ đóng góp trọng số lớn hơn vào dự đoán cuối cùng**.
 
-- $$\tilde y$$ là dữ liệu mới (hoặc dữ liệu giả lập) mà ta muốn dự đoán,
-- $$\theta$$ là tham số mô hình,
-- $$p(\theta \mid y)$$ là mức độ ta tin vào từng giá trị tham số sau khi thấy dữ liệu,
-- $$p(\tilde y \mid \theta)$$ là cách mô hình sinh ra dữ liệu mới nếu tham số được cố định ở $$\theta$$.
-
-Vậy tích phân chính là một phép "trung bình có trọng số" trên mọi khả năng của tham số. Trọng số ở đây là posterior $$p(\theta \mid y)$$: **tham số nào posterior cho là hợp lý hơn thì đóng góp nhiều hơn vào dự báo cuối cùng**.
-
-Nói ngắn gọn, posterior predictive không dùng một bộ tham số duy nhất, mà gộp dự báo từ nhiều bộ tham số theo mức độ tin cậy của chúng.
-
-Trong thực hành MCMC, ta thường xấp xỉ tích phân bằng tổng:
+Trong thực hành MCMC, tích phân này được xấp xỉ trực tiếp bằng trung bình trên các mẫu hậu nghiệm:
 
 $$
 p(\tilde y \mid y) \approx \frac{1}{S}\sum_{s=1}^{S} p(\tilde y \mid \theta^{(s)}), \quad \theta^{(s)} \sim p(\theta \mid y).
 $$
 
-Quy trình tính rất trực quan: lấy nhiều mẫu $$\theta^{(s)}$$ từ posterior, từ mỗi mẫu sinh $$\tilde y^{(s)}$$, rồi ghép tất cả lại thành phân phối dự báo hậu nghiệm.
+Ta chỉ cần rút nhiều mẫu $$\theta^{(s)}$$ từ phân phối hậu nghiệm, ứng với mỗi mẫu sinh ra một tập dữ liệu mới $$\tilde y^{(s)}$$, rồi tổng hợp lại để thu được phân phối dự báo hậu nghiệm.
 
-## 3. Posterior predictive check (PPC, kiểm tra dự báo hậu nghiệm) là gì?
+## 3. Kiểm tra dự báo hậu nghiệm (Posterior Predictive Check — PPC)
 
-PPC hỏi một câu rất thực tế:
+PPC đặt ra một câu hỏi thực tế:
 
-> Nếu model của tôi đúng, dữ liệu giả lập sinh từ model có giống dữ liệu thật không?
+> Nếu mô hình của ta mô tả đúng quá trình sinh dữ liệu, liệu dữ liệu giả lập từ mô hình có mang những đặc trưng giống dữ liệu quan sát hay không?
 
-Quy trình cơ bản của PPC là lấy nhiều mẫu tham số từ posterior, từ mỗi mẫu đó sinh dữ liệu giả, rồi so sánh dữ liệu giả với dữ liệu quan sát.
-
-Nếu dữ liệu giả có hình dạng, độ phân tán, và các pattern tương tự dữ liệu thật, thì model có nhiều cơ sở hơn để được xem là đang ổn.
+Quy trình gồm ba bước: rút nhiều bộ tham số từ phân phối hậu nghiệm, sinh dữ liệu giả lập từ từng bộ tham số đó và đối chiếu dữ liệu giả lập với dữ liệu thực tế. Nếu dữ liệu giả lập tái hiện được hình dạng phân phối, độ phân tán và các quy luật chính của dữ liệu quan sát, ta có cơ sở vững chắc hơn để tin tưởng mô hình.
 
 ![Tóm tắt workflow của posterior predictive check]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_summary.png)
 
-### 3.1. Một ví dụ cụ thể: slope trông đẹp nhưng model vẫn sai
+### 3.1. Ví dụ minh họa: hệ số dốc rõ rệt nhưng mô hình vẫn sai cấu trúc
 
-Giả sử bạn mô hình hóa mối quan hệ giữa số giờ học và điểm thi bằng một đường thẳng. Posterior của slope ra rất đẹp: dương rõ rệt, interval hẹp, và xác suất $$\beta > 0$$ gần như bằng 1.
+Giả sử ta mô hình hóa mối quan hệ giữa số giờ học và điểm thi bằng một đường thẳng. Phân phối hậu nghiệm của hệ số dốc có thể rất rõ ràng: dương, khoảng tin cậy hẹp và xác suất $$\beta > 0$$ gần bằng 1.
 
-Nếu dừng ở đây, nhiều người sẽ kết luận model tốt. Nhưng hãy tưởng tượng quan hệ thật của dữ liệu là: tăng giờ học giúp điểm tăng nhanh ở giai đoạn đầu, sau đó hiệu ứng dần bão hòa khi học quá nhiều. Khi đó một đường thẳng sẽ thường tạo ra ba dấu hiệu cảnh báo:
+Tuy nhiên, giả sử trên thực tế mối quan hệ đó có tính bão hòa: học thêm giúp điểm tăng nhanh ở giai đoạn đầu nhưng tăng chậm dần khi số giờ học đã cao (đường cong lõm xuống). Khi đó, mô hình đường thẳng sẽ bộc lộ ba dấu hiệu sai lệch:
 
-- PPC sinh ra quá nhiều điểm dự đoán cao một cách phi thực tế ở vùng học rất nhiều giờ,
-- residual ở vùng giữa có xu hướng âm còn residual ở hai đầu có xu hướng dương, tạo pattern cong,
-- mean prediction nhìn có vẻ ổn tổng thể nhưng sai có hệ thống ở những vùng $$x$$ quan trọng.
+- PPC sinh ra nhiều điểm dự đoán cao bất hợp lý ở vùng số giờ học lớn.
+- Phần dư ở vùng giữa có xu hướng dương, còn phần dư ở hai đầu (học rất ít hoặc rất nhiều) có xu hướng âm, tạo thành mẫu hình cong rõ rệt.
+- Đường dự đoán trung bình có vẻ khớp tổng thể nhưng sai lệch có hệ thống tại những vùng giá trị $$x$$ quan trọng.
 
-Ý nghĩa của ví dụ này là: posterior của tham số có thể "đẹp" vì model đã fit rất chắc vào một cấu trúc sai. PPC và residual analysis tồn tại chính để lật mặt kiểu sai lệch đó.
+Ví dụ này cho thấy phân phối hậu nghiệm của tham số có thể rất "chắc chắn" chỉ vì mô hình đang khớp chặt vào một giả định cấu trúc sai. PPC và phân tích phần dư giúp phát hiện chính những sai lệch dạng này.
 
-## 4. PPC nên nhìn những gì?
+## 4. Cần kiểm tra những khía cạnh nào trong PPC?
 
-Không có một kiểm tra duy nhất phù hợp cho mọi bài toán. Bạn nên nhìn nhiều góc:
+Không có một phép kiểm tra đơn lẻ nào đủ cho mọi bài toán; ta nên đánh giá mô hình từ nhiều góc độ:
 
 ### 4.1. Phân phối tổng thể
 
-Histogram hoặc density của dữ liệu giả có giống dữ liệu thật không?
+So sánh biểu đồ tần suất hoặc đường mật độ của dữ liệu giả lập với dữ liệu thực tế để xem hình dạng tổng thể có tương đồng không.
 
 ![So sánh phân phối posterior predictive tại một giá trị x đại diện]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_distribution_at_x5.png)
 
-### 4.2. Trung bình và độ phân tán
+### 4.2. Trung bình, độ phân tán và vùng đuôi
 
-Model có tái hiện được mean (trung bình), variance (phương sai), min/max hợp lý, hay tail behavior (hành vi phần đuôi) của dữ liệu thật hay không?
+Kiểm tra xem mô hình có tái hiện được giá trị trung bình, phương sai, giá trị cực tiểu/cực đại và hành vi vùng đuôi (tail behavior) của dữ liệu quan sát hay không.
 
 ![Kiểm tra mean của dữ liệu quan sát trong posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_test_stat_mean.png)
 
 ![Kiểm tra variance của dữ liệu quan sát trong posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_variance_check.png)
 
-### 4.3. Quan hệ giữa predictor và response
+### 4.3. Mối quan hệ giữa biến dự báo và biến phản hồi
 
-Với regression, điều rất quan trọng là mô hình có tái hiện đúng pattern giữa predictor (biến dự báo) $$x$$ và response (biến phản hồi) $$y$$ hay không.
+Trong hồi quy, điều cốt yếu là kiểm tra xem mô hình có tái hiện đúng xu hướng và độ rộng phân tán giữa biến dự báo $$x$$ và biến phản hồi $$y$$ trên toàn miền dữ liệu hay không.
 
 ![So sánh dữ liệu quan sát với các mẫu posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_observed_vs_predicted.png)
 
-### 4.4. Statistic chuyên biệt theo bài toán
+### 4.4. Thống kê đặc thù theo bài toán
 
-Ví dụ, số outlier (điểm ngoại lai), độ lệch, độ bất đối xứng, hay tỷ lệ vượt ngưỡng.
+Tùy lĩnh vực, bạn nên bổ sung các đại lượng kiểm tra riêng như tỷ lệ điểm ngoại lai (outlier), độ lệch, độ bất đối xứng hoặc tỷ lệ quan sát vượt một ngưỡng quan trọng.
 
-## 5. Residual analysis (phân tích phần dư) vẫn rất quan trọng
+## 5. Phân tích phần dư (Residual Analysis)
 
-Ngay cả trong Bayesian regression, residual vẫn là một gương soi tốt cho mô hình.
+Ngay cả trong hồi quy Bayes, phần dư vẫn là công cụ chẩn đoán sắc bén. Ta thường kiểm tra biểu đồ phần dư theo giá trị ước lượng (residual vs. fitted), phần dư theo biến dự báo, phân phối phần dư và biểu đồ Q–Q để phát hiện phương sai thay đổi (heteroskedasticity), quan hệ phi tuyến (nonlinearity) hoặc sai số có đuôi dày.
 
-Ta thường nhìn residual vs fitted (phần dư theo giá trị ước lượng), residual vs predictor (phần dư theo biến dự báo), phân phối residual, dấu hiệu heteroskedasticity (phương sai thay đổi), và dấu hiệu nonlinearity (phi tuyến).
-
-Residual analysis thường được hiểu dễ nhất khi đặt cạnh các tình huống điển hình: một mô hình tốt, một mô hình bỏ sót phi tuyến, một mô hình có heteroskedasticity, và một mô hình có residual nặng đuôi.
+Bốn tình huống điển hình dưới đây giúp bạn nhận diện nhanh các dạng sai lệch: mô hình phù hợp, mô hình bỏ sót quan hệ phi tuyến, mô hình có phương sai tăng theo $$x$$ và mô hình có phần dư đuôi dày.
 
 ![Residual distribution: quan sát vs posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_residual_distribution.png)
 
-Ở mức scatter plot gốc, bốn hình sau cho thấy dữ liệu có thể trông như thế nào trong từng tình huống.
+Ở biểu đồ phân tán dữ liệu gốc, bốn kịch bản này có dạng như sau:
 
 ![Scatter plot của mô hình tốt]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_good_model_scatter.png)
 
@@ -135,7 +121,7 @@ Residual analysis thường được hiểu dễ nhất khi đặt cạnh các t
 
 ![Scatter plot khi residual có đuôi dày]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_bad_nonnormal_scatter.png)
 
-Khi chuyển sang residual vs fitted, ta muốn thấy phần dư rải ngẫu nhiên quanh 0 thay vì tạo thành pattern có hệ thống.
+Trên biểu đồ phần dư theo giá trị ước lượng, mô hình phù hợp sẽ cho phần dư phân bố ngẫu nhiên quanh mức 0, không tạo thành hình cong hay hình quạt:
 
 ![Residuals vs fitted của mô hình tốt]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_good_model_residuals.png)
 
@@ -145,7 +131,7 @@ Khi chuyển sang residual vs fitted, ta muốn thấy phần dư rải ngẫu n
 
 ![Residuals vs fitted với residual nặng đuôi]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_bad_nonnormal_residuals.png)
 
-Q-Q plot giúp kiểm tra xem residual có còn gần Normal hay đang lệch khỏi giả định này.
+Biểu đồ Q–Q cho phép đối chiếu phân phối phần dư với giả định phân phối Chuẩn:
 
 ![Q-Q plot của residual trong mô hình tốt]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_good_model_qq.png)
 
@@ -155,115 +141,72 @@ Q-Q plot giúp kiểm tra xem residual có còn gần Normal hay đang lệch kh
 
 ![Q-Q plot khi residual có đuôi dày]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_bad_nonnormal_qq.png)
 
-Nếu residual cho thấy pattern có hệ thống, model có thể đang bỏ sót phi tuyến, interaction (tương tác), heteroskedasticity, hoặc một biến quan trọng nào đó chưa được đưa vào.
+Khi phần dư xuất hiện mẫu hình có hệ thống, mô hình nhiều khả năng đang bỏ sót yếu tố phi tuyến, hiệu ứng tương tác (interaction), phương sai thay đổi hoặc một biến giải thích quan trọng.
 
-## 6. Prediction trong Bayes khác gì prediction điểm?
+## 6. Dự đoán Bayes khác gì dự đoán điểm?
 
-Trong regression cổ điển, nhiều người chỉ quen với một giá trị dự đoán trung bình duy nhất.
+Thay vì chỉ trả về một giá trị trung bình duy nhất như hồi quy cổ điển, dự đoán Bayes giữ lại đầy đủ cả bất định của tham số lẫn độ nhiễu của quan sát mới. Nhờ đó, ta không chỉ nêu con số dự đoán (chẳng hạn 72) mà còn chỉ rõ khoảng giá trị hợp lý và mức độ tin cậy đi kèm — thông tin thiết thực hơn nhiều cho việc ra quyết định.
 
-Bayesian prediction đi xa hơn ở chỗ nó giữ lại bất định của tham số, và cả bất định do noise (độ nhiễu) của quan sát mới.
+## 7. Khoảng dự đoán và hai nguồn bất định
 
-Điều này cho phép bạn nói không chỉ “dự đoán là 72”, mà còn “vùng giá trị hợp lý của dự đoán nằm ở đâu, và ta chắc đến mức nào”.
+Một dự đoán Bayes luôn bao gồm hai tầng bất định:
 
-Đó là kiểu dự báo hữu ích hơn nhiều cho ra quyết định.
+1. **Bất định tham số:** ta chưa biết giá trị chính xác của $$\alpha, \beta, \sigma$$.
+2. **Bất định của quan sát mới:** ngay cả khi biết chính xác tham số, từng quan sát thực tế vẫn dao động quanh đường trung bình với độ lệch chuẩn $$\sigma$$.
 
-## 7. Prediction interval (khoảng dự đoán) và uncertainty (bất định)
+Vì vậy, **khoảng dự đoán** (prediction interval) cho một quan sát mới luôn rộng hơn khoảng hậu nghiệm của giá trị trung bình (mean response).
 
-Có hai nguồn bất định chính:
+### 7.1. Ví dụ ngắn tránh nhầm lẫn hai loại khoảng
 
-### 7.1. Bất định tham số
+Giả sử với nhóm học sinh học 6 giờ, mô hình cho:
 
-Ta chưa biết chính xác $$\alpha,\beta,\sigma$$.
+- Khoảng hậu nghiệm cho điểm trung bình (mean score): từ 7.4 đến 8.2.
+- Khoảng dự đoán cho một học sinh cụ thể mới: từ 6.0 đến 9.3.
 
-### 7.2. Bất định của quan sát mới
+Khoảng thứ nhất trả lời câu hỏi về điểm trung bình của cả nhóm học sinh cùng học 6 giờ; khoảng thứ hai trả lời câu hỏi về khoảng điểm khả dĩ của một cá nhân cụ thể. Dùng nhầm khoảng thứ nhất để dự báo cho một cá nhân sẽ tạo ra cảm giác chắc chắn quá mức so với thực tế.
 
-Ngay cả nếu biết tham số hoàn hảo, quan sát mới vẫn dao động quanh đường trung bình.
+## 8. Kiểm tra mô hình không phải phép thử nhị phân
 
-Prediction interval vì vậy luôn rộng hơn uncertainty chỉ của mean response (giá trị trung bình phản hồi).
+Đừng nhìn việc kiểm tra mô hình theo lối trắng–đen "hoàn hảo hoặc loại bỏ". Mục đích thực sự là xác định mô hình đang lệch ở đâu, mức độ lệch ra sao và sai lệch đó có ảnh hưởng đến câu hỏi thực tế mà ta cần giải quyết hay không. Một mô hình hơi lệch ở vùng đuôi vẫn có thể dùng tốt nếu mục tiêu chỉ là ước lượng xu hướng trung bình; nhưng nếu bài toán liên quan đến quản trị rủi ro cực trị, chính sai lệch ở đuôi lại là vấn đề nghiêm trọng cần khắc phục.
 
-Đây là điều rất quan trọng khi báo cáo dự báo cho người dùng cuối.
+## 9. Cần làm gì khi mô hình không vượt qua kiểm tra?
 
-### 7.3. Một ví dụ ngắn để tránh nhầm hai loại khoảng
+Thay vì phản ứng máy móc bằng cách tăng số mẫu MCMC, hãy rà soát mô hình theo ba hướng chính:
 
-Giả sử với học sinh học 6 giờ, mô hình cho:
+- **Cấu trúc mô hình sinh dữ liệu:** có quan hệ phi tuyến, hiệu ứng tương tác hay cấu trúc phân nhóm/phân cấp (hierarchical structure) nào bị bỏ sót không?
+- **Phân phối tiên nghiệm:** tiên nghiệm có quá rộng, quá hẹp hoặc tạo ra dự báo tiên nghiệm thiếu hợp lý không?
+- **Đặc điểm dữ liệu:** dữ liệu có điểm ngoại lai, sai số đo lường, biến giải thích bị thiếu hoặc phương sai thay đổi đáng kể không?
 
-- khoảng hậu nghiệm cho mean score là từ 7.4 đến 8.2,
-- khoảng dự đoán cho một học sinh mới là từ 6.0 đến 9.3.
+Chẩn đoán tốt chính là cơ sở trực tiếp cho bước sửa đổi mô hình (model revision) đúng hướng.
 
-Khoảng thứ nhất trả lời câu hỏi: "nếu lấy rất nhiều học sinh đều học 6 giờ, điểm trung bình của họ nằm ở đâu?"
+## 10. Quy trình khép kín của hồi quy Bayes
 
-Khoảng thứ hai trả lời câu hỏi: "một học sinh cụ thể học 6 giờ có thể đạt điểm trong vùng nào?"
-
-Nếu bạn vô tình dùng khoảng thứ nhất để giao tiếp về một cá nhân cụ thể, bạn sẽ tạo cảm giác chắc chắn quá mức. Đây là lỗi diễn giải rất phổ biến trong prediction.
-
-## 8. Model checking không phải để “bắt model hoàn hảo”
-
-Đừng hiểu model checking như một trò chơi nhị phân kiểu hoặc model hoàn hảo hoặc phải vứt đi.
-
-Nó là quá trình để hỏi model đang sai ở đâu, sai ở mức nào, và sai lệch đó có ảnh hưởng đến câu hỏi thực tế mà ta quan tâm hay không.
-
-Ví dụ, nếu model hơi lệch ở tail nhưng vẫn dự đoán trung bình rất tốt thì có thể nó vẫn chấp nhận được; nhưng nếu bạn đang quan tâm đến rủi ro cực đoan thì chính lỗi ở tail lại trở thành vấn đề rất nghiêm trọng.
-
-## 9. Khi model kiểm tra không ổn, ta nên làm gì?
-
-Không nên phản ứng máy móc kiểu “chạy sampler thêm”.
-
-Thay vào đó, hãy nghĩ theo ba hướng lớn sau:
-
-### 9.1. Generative story (câu chuyện sinh dữ liệu) có thiếu không?
-
-Hãy hỏi có phi tuyến không, có interaction (tương tác) không, hay có nhóm/hierarchical structure (cấu trúc phân cấp) nào đang bị bỏ quên không.
-
-### 9.2. Prior có vấn đề không?
-
-Hãy xem prior có quá rộng, quá hẹp, hay prior predictive (dự báo từ prior) của nó đã thực sự hợp lý chưa.
-
-### 9.3. Dữ liệu có gì đặc biệt không?
-
-Hãy kiểm tra xem dữ liệu có outlier, measurement error (sai số đo lường), biến bị thiếu, hay heteroskedasticity nào đáng chú ý không.
-
-Model checking tốt là thứ mở đường cho model revision (sửa đổi mô hình) tốt.
-
-## 10. Một workflow (quy trình) khép kín của regression Bayes
-
-Chapter 4 thực ra đang dạy một workflow đầy đủ: kể generative story (câu chuyện sinh dữ liệu), chọn prior có nguyên tắc, fit posterior, kiểm tra diagnostics (chẩn đoán) của sampler, kiểm tra model bằng PPC và residual, dùng posterior để dự đoán, rồi quay lại sửa mô hình nếu cần.
-
-Nếu bạn làm đủ bảy bước này, regression không còn là “chạy một hàm”, mà là một quy trình mô hình hóa thật sự.
+Chương 4 xây dựng một quy trình làm việc hoàn chỉnh gồm bảy bước liên kết chặt chẽ: xác định quá trình sinh dữ liệu, chọn phân phối tiên nghiệm có nguyên tắc, suy luận phân phối hậu nghiệm, kiểm tra chẩn đoán hội tụ của bộ lấy mẫu, kiểm tra mô hình bằng PPC và phân tích phần dư, tạo dự đoán kèm bất định, rồi điều chỉnh mô hình khi cần thiết. Khi thực hiện đầy đủ bảy bước này, hồi quy trở thành một quy trình mô hình hóa khoa học thay vì chỉ là thao tác gọi hàm.
 
 ## 11. Những sai lầm phổ biến
 
-### 11.1. Tin posterior mà không kiểm tra model
+- **Tin vào phân phối hậu nghiệm mà không kiểm tra mô hình:** hậu nghiệm chỉ có giá trị khi mô hình tạo ra nó mô tả dữ liệu một cách hợp lý.
+- **Chỉ đánh giá độ khớp trên dữ liệu huấn luyện:** chất lượng thực sự của mô hình thể hiện rõ nhất ở khả năng dự đoán dữ liệu mới.
+- **Chỉ kiểm tra một tiêu chí PPC duy nhất:** một mô hình có thể khớp tốt giá trị trung bình nhưng sai lệch nghiêm trọng về phương sai hoặc vùng đuôi; cần kiểm tra trên nhiều thống kê khác nhau.
 
-Posterior chỉ đáng tin nếu mô hình sinh ra posterior ấy còn hợp lý.
+## 12. Tổng kết bài học
 
-### 11.2. Chỉ nhìn fit trên dữ liệu cũ
+Hồi quy Bayes không dừng lại ở việc lấy được phân phối hậu nghiệm của tham số. Giá trị thực tiễn của mô hình nằm ở khả năng tái tạo đặc trưng dữ liệu và đưa ra dự đoán trung thực về bất định. Thiếu bước kiểm tra và dự đoán, quy trình hồi quy Bayes mới chỉ hoàn thành một nửa.
 
-Dự đoán cho dữ liệu mới mới là nơi model bộc lộ giá trị thực.
-
-### 11.3. Chỉ làm một PPC duy nhất
-
-Một model có thể qua một tiêu chí nhưng trượt ở tiêu chí khác. Hãy kiểm tra nhiều góc nhìn.
-
-## 12. Điều nên giữ lại sau bài này
-
-Regression Bayes không kết thúc ở posterior. Nó thực sự sống ở chỗ mô hình có giải thích dữ liệu hợp lý hay không, và dự đoán mà nó tạo ra có thực sự hữu ích hay không.
-
-Nếu không có bước checking và prediction, Bayesian regression mới chỉ đi được nửa chặng đường.
-
-> **3 ý cần nhớ.** Posterior predictive check là cách hỏi xem model có sinh ra dữ liệu giống dữ liệu thật không; residual analysis (phân tích phần dư) và prediction là hai phần quan trọng để đánh giá model có thực sự hữu ích hay không; và fit model chỉ là bước đầu vì Bayesian workflow hoàn chỉnh luôn bao gồm checking, prediction, và revision (sửa đổi) nếu cần.
+> **3 ý cần nhớ.** Kiểm tra dự báo hậu nghiệm (PPC) đánh giá xem mô hình có sinh ra dữ liệu giống dữ liệu thực tế hay không; phân tích phần dư và khoảng dự đoán giúp thẩm định tính hữu ích thực sự của mô hình; và một quy trình Bayes hoàn chỉnh luôn bao gồm kiểm tra, dự đoán và điều chỉnh mô hình khi phát hiện sai lệch.
 
 ## Video tham khảo
 
-- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Xem posterior predictive check hỏi mô hình có tái tạo được đặc điểm của dữ liệu hay không, đúng nửa sau của hồi quy mà bài nhấn mạnh.
-- [Quantile-Quantile Plots (QQ plots), Clearly Explained!!!](https://www.youtube.com/watch?v=okjYjClSjOg) — StatQuest with Josh Starmer, English. Xem biểu đồ Q–Q, hỗ trợ phần đối chiếu phân phối phần dư với giả định Normal.
-- [Residual plots | Exploring bivariate numerical data | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=VamMrPZ-8fc) — Khan Academy, English. Xem residual plot phát hiện cấu trúc còn sót, dùng cho đoạn bài không dừng ở việc sampler đã hội tụ.
+- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Giải thích bản chất của kiểm tra dự báo hậu nghiệm và lý do cần kiểm tra khả năng tái tạo dữ liệu, khớp với trọng tâm của bài.
+- [Quantile-Quantile Plots (QQ plots), Clearly Explained!!!](https://www.youtube.com/watch?v=okjYjClSjOg) — StatQuest with Josh Starmer, English. Hướng dẫn đọc biểu đồ Q–Q, hỗ trợ phần đối chiếu phân phối phần dư với giả định Chuẩn.
+- [Residual plots | Exploring bivariate numerical data | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=VamMrPZ-8fc) — Khan Academy, English. Minh họa cách dùng biểu đồ phần dư phát hiện cấu trúc còn sót, bổ trợ cho mục phân tích phần dư.
 
 ## Câu hỏi tự luyện
 
-1. Vì sao một model fit xong nhưng chưa qua PPC thì chưa nên tin hoàn toàn?
-2. Sự khác nhau giữa uncertainty của mean prediction và uncertainty của một quan sát mới là gì?
-3. Hãy nêu ba thứ bạn có thể so sánh giữa dữ liệu thật và dữ liệu posterior predictive.
-4. Nếu residual cho thấy pattern cong rõ rệt, bạn sẽ nghi ngờ điều gì ở mô hình?
+1. Vì sao một mô hình đã chạy hội tụ nhưng chưa qua kiểm tra PPC thì chưa nên tin dùng hoàn toàn?
+2. Sự khác nhau giữa bất định của giá trị trung bình dự đoán và bất định của một quan sát mới là gì?
+3. Hãy nêu ba đặc trưng bạn có thể so sánh giữa dữ liệu thực tế và dữ liệu mô phỏng từ phân phối dự báo hậu nghiệm.
+4. Nếu biểu đồ phần dư xuất hiện dạng cong rõ rệt, bạn sẽ nghi ngờ giả định nào của mô hình đang bị vi phạm?
 
 ## Tài liệu tham khảo
 

@@ -12,61 +12,63 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ hiểu kỳ vọng như "mức trung bình dài hạn", phương sai như "độ phân tán quanh trung bình", hiệp phương sai như "mức thay đổi cùng chiều hay ngược chiều" giữa hai biến, và biết vì sao ba khái niệm này xuất hiện liên tục trong mọi mô hình Bayesian.
+Sau bài này, bạn sẽ hiểu kỳ vọng như "giá trị trung bình dài hạn", phương sai như "độ phân tán quanh trung bình", hiệp phương sai như "mức độ biến thiên cùng chiều hay ngược chiều" giữa hai biến, và nắm rõ vì sao ba đại lượng này xuất hiện xuyên suốt trong các mô hình Bayesian.
 
-## Giới thiệu: ba đại lượng mô tả trung tâm và bất định
+## Giới thiệu: Ba đại lượng mô tả trung tâm và độ bất định
 
-Trong suy luận xác suất, không phải lúc nào ta cũng cần biết toàn bộ phân phối chi tiết. Nhiều quyết định thực hành bắt đầu từ ba câu hỏi cơ bản: giá trị điển hình nằm ở đâu, mức dao động lớn đến mức nào, và các biến có cùng biến thiên hay không. Kỳ vọng, phương sai, và hiệp phương sai là ba đại lượng trả lời trực tiếp ba câu hỏi đó.
+Trong suy luận xác suất, không phải lúc nào ta cũng cần đọc toàn bộ dạng chi tiết của phân phối. Nhiều câu hỏi thực hành bắt đầu từ ba đặc trưng cơ bản: giá trị điển hình nằm ở đâu, mức dao động lớn đến mức nào, và các biến có biến thiên cùng nhau hay không. Kỳ vọng, phương sai và hiệp phương sai trả lời trực tiếp ba câu hỏi đó.
 
-## 1) Kỳ vọng: giá trị trung bình theo phân phối
+## 1) Kỳ vọng: Giá trị trung bình theo phân phối
 
-Với biến rời rạc:
+Với biến ngẫu nhiên rời rạc:
 
 $$
 \mathbb{E}[X] = \sum_x x\,p(x)
 $$
 
-Với biến liên tục:
+Với biến ngẫu nhiên liên tục:
 
 $$
 \mathbb{E}[X] = \int x f(x)\,dx
 $$
 
-Kỳ vọng không nhất thiết là giá trị ta quan sát trực tiếp nhiều nhất. Nó là "trọng tâm xác suất" của phân phối.
+Kỳ vọng không nhất thiết là giá trị xuất hiện nhiều nhất; nó đóng vai trò như "trọng tâm xác suất" của phân phối.
 
 ![Kỳ vọng như trọng tâm của phân phối]({{ site.baseurl }}/img/chapter_img/chapter00/expectation_center_histogram.png)
 
-*Hình 1a: Kỳ vọng có thể được nhìn như trọng tâm của phân phối, chứ không nhất thiết là đỉnh cao nhất của histogram.*
+*Hình 1a: Kỳ vọng có thể được nhìn như trọng tâm của phân phối, không nhất thiết trùng với đỉnh cao nhất của histogram.*
 
-## 2) Phương sai: độ bất định quanh trung bình
+## 2) Phương sai: Độ bất định quanh trung bình
+
+Phương sai được định nghĩa là kỳ vọng của bình phương độ lệch so với trung bình:
 
 $$
 \mathrm{Var}(X)=\mathbb{E}\big[(X-\mathbb{E}[X])^2\big]
 $$
 
-Viết lại dạng tính nhanh:
+Dạng khai triển thuận tiện khi tính toán:
 
 $$
 \mathrm{Var}(X)=\mathbb{E}[X^2]-\mathbb{E}[X]^2
 $$
 
-Độ lệch chuẩn là:
+Độ lệch chuẩn là căn bậc hai của phương sai:
 
 $$
 \mathrm{SD}(X)=\sqrt{\mathrm{Var}(X)}
 $$
 
-Về trực giác, phương sai lớn cho thấy dữ liệu phân tán mạnh, còn phương sai nhỏ cho thấy dữ liệu tập trung hơn quanh trung bình.
+Về trực giác, phương sai lớn cho thấy các giá trị phân tán rộng, còn phương sai nhỏ cho thấy phân phối tập trung chặt quanh kỳ vọng.
 
-## 3) Hiệp phương sai: quan hệ cùng biến thiên
+## 3) Hiệp phương sai: Mức độ cùng biến thiên
 
-Với hai biến $$X, Y$$:
+Với hai biến ngẫu nhiên $$X$$ và $$Y$$, hiệp phương sai được định nghĩa là:
 
 $$
 \mathrm{Cov}(X,Y)=\mathbb{E}\big[(X-\mathbb{E}[X])(Y-\mathbb{E}[Y])\big]
 $$
 
-Khi $$\mathrm{Cov}>0$$, hai biến có xu hướng tăng cùng nhau; khi $$\mathrm{Cov}<0$$, một biến tăng thì biến kia thường giảm; còn khi hiệp phương sai gần 0, quan hệ tuyến tính giữa chúng yếu hoặc gần như không đáng kể.
+Khi $$\mathrm{Cov}(X,Y) > 0$$, hai biến có xu hướng cùng tăng hoặc cùng giảm; khi $$\mathrm{Cov}(X,Y) < 0$$, biến này tăng thì biến kia có xu hướng giảm; còn khi hiệp phương sai gần 0, mối liên hệ tuyến tính giữa chúng yếu hoặc không đáng kể.
 
 ![Hiệp phương sai dương giữa hai biến]({{ site.baseurl }}/img/chapter_img/chapter00/covariance_positive_scatter.png)
 
@@ -76,20 +78,20 @@ Khi $$\mathrm{Cov}>0$$, hai biến có xu hướng tăng cùng nhau; khi $$\math
 
 *Hình 1c: Hiệp phương sai âm xuất hiện khi một biến tăng thì biến kia có xu hướng giảm.*
 
-Lưu ý: hiệp phương sai phụ thuộc đơn vị đo. Vì vậy thực hành thường dùng tương quan:
+Lưu ý rằng hiệp phương sai phụ thuộc vào đơn vị đo của các biến. Để so sánh không phụ thuộc thang đo, thực hành thường chuẩn hóa thành hệ số tương quan:
 
 $$
 \rho_{XY}=\frac{\mathrm{Cov}(X,Y)}{\mathrm{SD}(X)\mathrm{SD}(Y)}
 $$
 
-### 3.1) Một ví dụ quyết định rất ngắn
+### 3.1) Một ví dụ ngắn trong quyết định hằng ngày
 
-Giả sử có hai tuyến xe buýt đều có thời gian đi làm kỳ vọng là 30 phút.
+Giả sử hai tuyến xe buýt đều có thời gian di chuyển kỳ vọng là 30 phút:
 
-- Tuyến A có các thời gian điển hình quanh $$28, 30, 32$$ phút.
-- Tuyến B có các thời gian điển hình quanh $$20, 30, 40$$ phút.
+- Tuyến A thường mất quanh mức $$28, 30, 32$$ phút.
+- Tuyến B thường dao động quanh mức $$20, 30, 40$$ phút.
 
-Hai tuyến có thể có cùng kỳ vọng, nhưng tuyến B có phương sai lớn hơn nhiều nên rủi ro đi trễ cũng cao hơn hẳn. Nếu thêm vào đó ta thấy hôm nào mưa lớn thì thời gian đi làm cũng tăng mạnh, ta đang mô tả một hiệp phương sai dương giữa lượng mưa và thời gian di chuyển. Ví dụ này nhắc rằng chỉ nhìn trung bình là chưa đủ; quyết định thực tế thường phụ thuộc cả vào độ phân tán và cách các biến cùng biến thiên.
+Dù cùng kỳ vọng, tuyến B có phương sai lớn hơn nhiều nên rủi ro đến trễ cao hơn hẳn. Nếu nhận thấy những ngày mưa lớn thời gian di chuyển cũng kéo dài hơn, đó chính là hiệp phương sai dương giữa lượng mưa và thời gian đi lại. Ví dụ này cho thấy chỉ xem trung bình là chưa đủ; quyết định thực tế phụ thuộc cả vào độ phân tán và mối liên hệ giữa các biến.
 
 ## 4) Các tính chất cần nhớ
 
@@ -98,32 +100,30 @@ Hai tuyến có thể có cùng kỳ vọng, nhưng tuyến B có phương sai l
 3. $$\mathrm{Var}(X+Y)=\mathrm{Var}(X)+\mathrm{Var}(Y)+2\mathrm{Cov}(X,Y)$$
 4. Nếu $$X,Y$$ độc lập thì $$\mathrm{Cov}(X,Y)=0$$
 
-Tính chất (4) chỉ đi một chiều: cov bằng 0 chưa chắc độc lập.
+Lưu ý tính chất (4) chỉ đúng theo một chiều: hiệp phương sai bằng 0 chưa đủ kết luận hai biến độc lập.
 
-## 5) Liên hệ với Bayes
+## 5) Liên hệ với thống kê Bayesian
 
-Trong Bayesian inference, posterior mean chính là kỳ vọng theo posterior, độ không chắc chắn thường được báo bằng posterior SD hoặc posterior variance, và khi có nhiều tham số thì covariance matrix cho biết mức phụ thuộc giữa các tham số đó.
-
-Nói cách khác, học Bayes mà không chắc kỳ vọng/phương sai/hiệp phương sai thì rất khó diễn giải kết quả.
+Trong suy diễn Bayesian, trung bình hậu nghiệm (posterior mean) chính là kỳ vọng theo phân phối hậu nghiệm; độ bất định thường được báo cáo qua độ lệch chuẩn hoặc phương sai hậu nghiệm; còn khi mô hình có nhiều tham số, ma trận hiệp phương sai hậu nghiệm cho biết mức độ phụ thuộc giữa các tham số đó. Vì vậy, nắm chắc kỳ vọng, phương sai và hiệp phương sai là điều kiện cần để diễn giải kết quả Bayesian.
 
 ## Tóm tắt nhanh
 
-1. Kỳ vọng là trung bình theo phân phối.
-2. Phương sai đo mức phân tán quanh trung bình.
-3. Hiệp phương sai đo mức thay đổi cùng chiều/ngược chiều của hai biến.
-4. Ba đại lượng này là ngôn ngữ cơ bản để diễn giải posterior.
+1. Kỳ vọng là trung bình có trọng số theo phân phối xác suất.
+2. Phương sai đo mức độ phân tán quanh kỳ vọng.
+3. Hiệp phương sai đo chiều hướng và mức độ cùng biến thiên tuyến tính của hai biến.
+4. Ba đại lượng này là ngôn ngữ cơ bản để tóm tắt và diễn giải phân phối hậu nghiệm.
 
 ## Video tham khảo
 
-- [Expected Values, Main Ideas!!!](https://www.youtube.com/watch?v=KLs_7b7SKi4) — StatQuest with Josh Starmer, English. **xem trước**. Xem kỳ vọng như trung bình dài hạn của một biến ngẫu nhiên, đúng định nghĩa mở đầu của bài.
-- [Covariance, Clearly Explained!!!](https://www.youtube.com/watch?v=qtaqvPAeEJY) — StatQuest with Josh Starmer, English. Xem hiệp phương sai dương, âm và bằng không nghĩa là gì, hỗ trợ phần hai biến cùng chiều hay ngược chiều.
-- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Xem sự khác giữa tham số quần thể và ước lượng từ mẫu, dùng khi bài nối kỳ vọng với phương sai mẫu.
+- [Expected Values, Main Ideas!!!](https://www.youtube.com/watch?v=KLs_7b7SKi4) — StatQuest with Josh Starmer, English. **Xem trước.** Giải thích kỳ vọng như giá trị trung bình dài hạn của một biến ngẫu nhiên.
+- [Covariance, Clearly Explained!!!](https://www.youtube.com/watch?v=qtaqvPAeEJY) — StatQuest with Josh Starmer, English. Minh họa trực quan hiệp phương sai dương, âm và bằng không.
+- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Phân biệt tham số quần thể với đại lượng ước lượng từ mẫu.
 
 ## Câu hỏi tự luyện
 
-1. Vì sao kỳ vọng không luôn nằm ở đỉnh của phân phối?
-2. Hãy nêu ví dụ hai biến có hiệp phương sai âm trong đời sống.
-3. Tại sao nói cov bằng 0 chưa đủ kết luận độc lập?
+1. Vì sao kỳ vọng không phải lúc nào cũng trùng với đỉnh cao nhất của phân phối?
+2. Nêu một ví dụ thực tế về hai biến có hiệp phương sai âm.
+3. Vì sao hiệp phương sai bằng 0 chưa đủ để kết luận hai biến độc lập?
 
 ## Tài liệu tham khảo
 

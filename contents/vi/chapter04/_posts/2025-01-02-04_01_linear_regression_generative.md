@@ -12,134 +12,116 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần nhìn hồi quy tuyến tính Bayes như một **câu chuyện sinh dữ liệu**, chứ không chỉ là bài toán “fit một đường thẳng”. Bạn cũng cần hiểu vai trò của intercept (hệ số chặn), slope (hệ số dốc) và noise (độ nhiễu) trong mô hình, và vì sao Bayesian regression luôn giữ lại bất định của tham số lẫn dự đoán.
+Sau bài này, bạn sẽ hiểu hồi quy tuyến tính Bayes như một **mô hình sinh dữ liệu** (generative model), thay vì chỉ là bài toán khớp một đường thẳng vào các điểm dữ liệu. Bạn cũng sẽ nắm rõ vai trò của hệ số chặn (intercept), hệ số dốc (slope) và độ nhiễu (noise) trong mô hình, cũng như lý do hồi quy Bayes luôn giữ lại bất định của cả tham số lẫn dự đoán.
 
-> **Ví dụ mini.** Bạn muốn mô tả mối liên hệ giữa chiều cao và cân nặng. Cách nhìn cũ là “tìm đường thẳng tốt nhất”. Cách nhìn Bayes là “mỗi người có cân nặng được sinh ra quanh một xu hướng trung bình, và ta chưa chắc chắn về xu hướng đó”.
+> **Ví dụ ngắn.** Khi mô tả mối liên hệ giữa chiều cao và cân nặng, cách tiếp cận truyền thống thường đặt câu hỏi: "Đường thẳng nào khớp dữ liệu tốt nhất?" Trong khi đó, cách tiếp cận Bayes đặt câu hỏi: "Cân nặng của mỗi người được sinh ra quanh một xu hướng trung bình như thế nào, và mức độ bất định của ta về xu hướng đó là bao nhiêu?"
 >
-> **Câu hỏi tự kiểm tra.** Vì sao regression theo tinh thần Bayes không nên được hiểu đơn giản là tìm một đường thẳng duy nhất?
+> **Câu hỏi tự kiểm tra.** Vì sao không nên hiểu hồi quy Bayes chỉ đơn thuần là việc tìm một đường thẳng duy nhất?
 
-## 1. Regression không chỉ là vẽ đường thẳng
+## 1. Hồi quy không chỉ là vẽ một đường thẳng
 
-Khi mới học hồi quy, nhiều người được dạy rằng chỉ cần chọn một đường thẳng $$y = \alpha + \beta x$$ rồi tìm đường làm sai số bình phương nhỏ nhất.
+Khi mới học hồi quy, nhiều người thường tiếp cận bài toán bằng cách chọn phương trình đường thẳng $$y = \alpha + \beta x$$ rồi tìm các hệ số sao cho tổng bình phương sai số đạt giá trị nhỏ nhất. Cách làm này hữu ích, nhưng dễ tạo ra cảm giác hồi quy chỉ là một kỹ thuật khớp đường mang tính hình học.
 
-Cách đó hữu ích, nhưng nó dễ khiến ta nghĩ regression chỉ là một kỹ thuật fitting hình học.
+Trong hồi quy Bayes, ta đi sâu hơn một bước: đặt câu hỏi dữ liệu được tạo ra từ quá trình nào, vì sao các điểm quan sát không nằm chính xác trên cùng một đường thẳng, và mức độ bất định của ta đối với chính các tham số của đường thẳng đó lớn đến đâu.
 
-Trong Bayesian regression, ta nhìn sâu hơn và buộc mình phải hỏi dữ liệu đến từ đâu, tại sao các điểm không nằm đúng trên một đường, và ta bất định đến mức nào về chính các tham số của đường đó.
+## 2. Quá trình sinh dữ liệu của hồi quy tuyến tính
 
-## 2. Câu chuyện sinh dữ liệu của hồi quy tuyến tính
+Giả sử ta muốn mô hình hóa mối quan hệ giữa chiều cao $$x$$ và cân nặng $$y$$. Quá trình sinh dữ liệu có thể được mô tả qua ba bước sau.
 
-Giả sử ta muốn mô hình hóa mối quan hệ giữa chiều cao $$x$$ và cân nặng $$y$$.
+### Bước 1. Giả định một xu hướng trung bình
 
-Câu chuyện sinh dữ liệu có thể kể như sau.
-
-### Bước 1. Có một xu hướng trung bình
-
-Người cao hơn thường nặng hơn. Ta mô tả xu hướng đó bằng:
+Người cao hơn thường có xu hướng nặng hơn. Ta biểu diễn xu hướng trung bình đó bằng:
 
 $$
 \mu_i = \alpha + \beta x_i.
 $$
 
-Ở đây $$\alpha$$ là intercept (hệ số chặn) còn $$\beta$$ là slope (hệ số dốc).
+Trong đó, $$\alpha$$ là hệ số chặn (intercept) và $$\beta$$ là hệ số dốc (slope).
 
-### Bước 2. Mỗi cá nhân dao động quanh xu hướng đó
+### Bước 2. Mỗi cá thể dao động quanh xu hướng trung bình
 
-Không ai nằm chính xác trên đường trung bình, vì còn nhiều yếu tố khác như khối cơ, chế độ ăn, giới tính, mức độ vận động, hay sai số đo lường.
-
-Vì vậy ta viết:
+Trên thực tế, không ai nằm chính xác trên đường trung bình vì cân nặng còn chịu ảnh hưởng của nhiều yếu tố khác như khối lượng cơ, chế độ ăn, giới tính, mức độ vận động hay sai số đo lường. Do đó, ta mô hình hóa giá trị quan sát quanh đường trung bình như sau:
 
 $$
 y_i \sim \mathcal{N}(\mu_i,\sigma).
 $$
 
-Ở đây $$\sigma$$ là độ nhiễu quanh đường hồi quy.
+Ở đây, $$\sigma$$ biểu thị độ nhiễu (noise) — tức mức độ phân tán của các quan sát quanh đường hồi quy.
 
 ![Quá trình sinh dữ liệu của regression]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_regression_data_generating_process.png)
 
 ![Phân phối cân nặng tại một chiều cao cố định]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_regression_distribution_fixed_height.png)
 
-### Bước 3. Ta chưa biết chính xác các tham số
+### Bước 3. Thừa nhận sự bất định về các tham số
 
-Ta không biết thật sự intercept là bao nhiêu, slope là bao nhiêu, và noise là bao nhiêu.
-
-Nên ta đặt prior cho chúng, rồi dùng dữ liệu để suy luận posterior.
+Ta không biết trước giá trị chính xác của hệ số chặn $$\alpha$$, hệ số dốc $$\beta$$ hay độ nhiễu $$\sigma$$. Vì vậy, ta gán phân phối tiên nghiệm (prior) cho các tham số này, sau đó kết hợp với dữ liệu quan sát để suy luận phân phối hậu nghiệm (posterior).
 
 ![Tóm tắt generative story của regression]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_regression_story_summary.png)
 
-## 3. Ba tham số cần hiểu thật chắc
+## 3. Ba tham số cốt lõi cần nắm vững
 
-### 3.1. Intercept $$\alpha$$
+### 3.1. Hệ số chặn $$\alpha$$
 
-Intercept là giá trị trung bình của $$y$$ khi $$x = 0$$.
-
-Về mặt toán học, nó rất tiện. Nhưng về mặt thực tế, nó không phải lúc nào cũng dễ diễn giải.
-
-Ví dụ, nếu $$x$$ là chiều cao tính bằng cm, thì $$x=0$$ hầu như không có ý nghĩa thực tế.
-
-Vì thế trong regression Bayes, ta thường center (đưa biến về quanh trung tâm) hoặc standardize (chuẩn hóa) biến đầu vào để intercept có ý nghĩa dễ đọc hơn.
+Hệ số chặn là giá trị kỳ vọng của $$y$$ khi $$x = 0$$. Dù thuận tiện về mặt toán học, tham số này không phải lúc nào cũng có ý nghĩa trực quan trong thực tế. Chẳng hạn, nếu $$x$$ là chiều cao tính bằng cm, mốc $$x = 0$$ không tồn tại ở người thật. Vì vậy, trong hồi quy Bayes, ta thường dịch tâm (centering) hoặc chuẩn hóa (standardization) biến đầu vào để hệ số chặn mang ý nghĩa dễ diễn giải hơn.
 
 ![Intercept sau khi center biến đầu vào]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_intercept_after_centering.png)
 
-### 3.2. Slope $$\beta$$
+### 3.2. Hệ số dốc $$\beta$$
 
-Slope cho biết trung bình $$y$$ thay đổi bao nhiêu khi $$x$$ tăng 1 đơn vị.
-
-Ví dụ, nếu $$\beta = 0.7$$ kg/cm, thì mỗi cm chiều cao tăng tương ứng với mức tăng trung bình 0.7 kg cân nặng.
+Hệ số dốc cho biết giá trị trung bình của $$y$$ thay đổi bao nhiêu khi $$x$$ tăng thêm 1 đơn vị. Ví dụ, nếu $$\beta = 0.7$$ kg/cm, mỗi 1 cm chiều cao tăng thêm tương ứng với mức tăng trung bình 0.7 kg cân nặng.
 
 ![Diễn giải slope trong hồi quy tuyến tính]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_slope_interpretation.png)
 
-### 3.3. Noise $$\sigma$$
+### 3.3. Độ nhiễu $$\sigma$$
 
-Noise cho biết mức độ các điểm dữ liệu phân tán quanh đường hồi quy. Nếu $$\sigma$$ nhỏ thì dữ liệu bám sát đường hơn, còn nếu $$\sigma$$ lớn thì dữ liệu phân tán mạnh hơn.
+Độ nhiễu đo mức độ phân tán của các điểm dữ liệu quanh đường hồi quy. Khi $$\sigma$$ nhỏ, các quan sát tập trung sát đường trung bình; khi $$\sigma$$ lớn, dữ liệu phân tán rộng hơn quanh đường đó.
 
 ![Diễn giải noise quanh đường hồi quy]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_noise_interpretation.png)
 
-## 4. Bayesian regression khác OLS ở đâu?
+## 4. Hồi quy Bayes khác phương pháp OLS ở đâu?
 
-### OLS thường trả lời
+### Phương pháp OLS trả lời câu hỏi gì?
 
-OLS (ordinary least squares, tức bình phương tối thiểu thông thường) thường trả lời câu hỏi về việc đường thẳng “tốt nhất” là gì theo một tiêu chí tối ưu hóa nhất định.
+Phương pháp bình phương tối thiểu thông thường (OLS — Ordinary Least Squares) tập trung tìm một đường thẳng "tốt nhất" duy nhất theo tiêu chí tối thiểu hóa tổng bình phương sai số.
 
 ![Góc nhìn point estimate của OLS]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_frequentist_point_estimate.png)
 
-### Bayesian regression trả lời
+### Hồi quy Bayes trả lời câu hỏi gì?
 
-Bayesian regression thì trả lời một câu hỏi rộng hơn nhiều: những đường thẳng nào còn hợp lý sau khi thấy dữ liệu, mức độ bất định của slope và intercept là bao nhiêu, và dự đoán cho một quan sát mới sẽ bất định đến mức nào. Nói cách khác, OLS cho bạn một đường trung tâm, còn Bayes cho bạn một **phân phối của các đường có thể**.
+Hồi quy Bayes đặt câu hỏi rộng hơn: những đường thẳng nào vẫn hợp lý sau khi quan sát dữ liệu, mức độ bất định của hệ số chặn và hệ số dốc là bao nhiêu, và dự đoán cho một quan sát mới có độ bất định lớn đến mức nào. Nói ngắn gọn, OLS cho một đường ước lượng điểm, còn hồi quy Bayes cho một **phân phối gồm nhiều đường thẳng khả dĩ**.
 
 ![Góc nhìn bất định của Bayesian regression]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_bayesian_uncertainty_quantification.png)
 
-### 4.1. Các giả định cổ điển cần nói rõ trước khi suy luận Bayes
+### 4.1. Các giả định nền cần nêu rõ trước khi suy luận Bayes
 
-Trước khi đi vào posterior, ta nên nhắc rõ các giả định nền của linear regression:
+Trước khi tính phân phối hậu nghiệm, cần nêu rõ các giả định cơ bản của mô hình hồi quy tuyến tính:
 
-- quan hệ trung bình có dạng tuyến tính theo tham số,
-- sai số có kỳ vọng bằng 0,
-- sai số độc lập có điều kiện theo biến đầu vào,
-- phương sai sai số ổn định (homoscedastic) trong mô hình cơ bản,
-- với bản đơn giản nhất, sai số thường được giả sử Normal.
+- Quan hệ trung bình có dạng tuyến tính theo các tham số.
+- Sai số có kỳ vọng bằng 0.
+- Các sai số độc lập có điều kiện với nhau khi biết biến đầu vào.
+- Phương sai của sai số không đổi theo biến đầu vào (tính đồng phương sai — homoscedasticity) trong mô hình cơ bản.
+- Ở dạng đơn giản nhất, sai số được giả định tuân theo phân phối Chuẩn (Normal).
 
-Bayes không "xóa" các giả định này; Bayes chỉ thêm một lớp bất định cho tham số và cho phép ta kiểm tra giả định minh bạch hơn ở bước model checking.
+Cách tiếp cận Bayes không loại bỏ các giả định này; thay vào đó, nó bổ sung tầng bất định cho tham số và giúp ta kiểm tra lại các giả định một cách minh bạch ở bước kiểm định mô hình (model checking).
 
 ![Residual distribution quanh đường hồi quy]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_regression_residual_distribution.png)
 
-### Thử nghiệm: posterior của hồi quy là cả bó đường thẳng
+### Thử nghiệm: phân phối hậu nghiệm của hồi quy là cả một bó đường thẳng
 
-Thêm từng điểm dữ liệu và xem bó đường thẳng khả dĩ thu hẹp; so với OLS và đường thật.
+Thêm từng điểm dữ liệu để quan sát bó đường thẳng khả dĩ thu hẹp dần, đồng thời so sánh với đường OLS và đường thực.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="regression-explainer" data-lang="vi"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 5. Vì sao “generative” (sinh dữ liệu) là một từ rất quan trọng?
+## 5. Vì sao góc nhìn sinh dữ liệu lại quan trọng?
 
-Nếu bạn xem regression như generative model (mô hình sinh dữ liệu), bạn sẽ tự hỏi đúng những câu hỏi hơn: dữ liệu được sinh ra từ quá trình nào, giả định Normal cho residual (phần dư) có hợp lý không, noise có đồng nhất theo mọi giá trị của $$x$$ không, và mô hình này có thực sự tạo ra dữ liệu giống dữ liệu thật hay không.
-
-Đây là khác biệt rất quan trọng giữa thái độ “fit xong là xong” và thái độ “mô hình hóa rồi kiểm tra”.
+Khi xem hồi quy là một mô hình sinh dữ liệu, ta sẽ chủ động đặt ra những câu hỏi sát thực tế hơn: dữ liệu được tạo ra theo cơ chế nào, giả định phân phối Chuẩn cho phần dư (residual) có phù hợp không, độ nhiễu có đồng nhất trên toàn miền giá trị của $$x$$ không, và dữ liệu mô phỏng từ mô hình có giống dữ liệu quan sát hay không. Đây chính là ranh giới giữa việc "chạy hồi quy xong là dừng" và việc "xây dựng mô hình rồi kiểm tra lại".
 
 ## 6. Viết mô hình Bayes đầy đủ
 
-Một Bayesian linear regression tối giản có dạng:
+Một mô hình hồi quy tuyến tính Bayes tối giản được viết như sau:
 
 $$
 \alpha \sim p(\alpha)
@@ -157,182 +139,162 @@ $$
 y_i \sim \mathcal{N}(\alpha + \beta x_i,\sigma)
 $$
 
-Từ đó ta suy ra posterior:
+Từ mô hình này, ta suy luận phân phối hậu nghiệm đồng thời:
 
 $$
 p(\alpha,\beta,\sigma \mid x,y).
 $$
 
-Điều quan trọng không phải là thuộc công thức này, mà là hiểu prior (phân phối tiên nghiệm) đang nói điều gì trước dữ liệu, likelihood (hàm hợp lý) đang kể dữ liệu đến từ đâu, và posterior (phân phối hậu nghiệm) là câu trả lời xuất hiện sau khi hai thứ ấy được ghép lại.
+Điều quan trọng không nằm ở việc học thuộc ký hiệu, mà ở việc hiểu rõ ba thành phần: phân phối tiên nghiệm (prior) biểu diễn niềm tin trước khi có dữ liệu, hàm hợp lý (likelihood) mô tả cơ chế sinh dữ liệu, và phân phối hậu nghiệm (posterior) là kết quả kết hợp hai thành phần đó sau khi quan sát dữ liệu.
 
-### 6.1. Khung joint likelihood - prior - posterior cho hồi quy
+### 6.1. Khung hàm hợp lý – tiên nghiệm – hậu nghiệm cho hồi quy
 
-Với dữ liệu $$\mathcal D=\{(x_i,y_i)\}_{i=1}^n$$, ta có:
+Với tập dữ liệu $$\mathcal D=\{(x_i,y_i)\}_{i=1}^n$$, hàm hợp lý có dạng:
 
 $$
 p(y\mid X,\alpha,\beta,\sigma)=\prod_{i=1}^n \mathcal N(y_i\mid \alpha+\beta x_i,\sigma).
 $$
 
-Joint prior (nếu giả sử độc lập tiên nghiệm):
+Nếu các tham số được giả định độc lập tiên nghiệm, phân phối tiên nghiệm đồng thời là:
 
 $$
 p(\alpha,\beta,\sigma)=p(\alpha)p(\beta)p(\sigma).
 $$
 
-Từ đó:
+Theo định lý Bayes, phân phối hậu nghiệm thỏa mãn:
 
 $$
 p(\alpha,\beta,\sigma\mid X,y)
 \propto p(y\mid X,\alpha,\beta,\sigma)\,p(\alpha,\beta,\sigma).
 $$
 
-Đây là cách nhìn thống nhất của chương này: mọi suy luận tham số hồi quy đều xuất phát từ một joint model rõ ràng.
+Đây là khung tư duy xuyên suốt chương này: mọi suy luận về tham số hồi quy đều bắt nguồn từ một mô hình phân phối đồng thời được xác định rõ ràng.
 
-### 6.2. Khoảng cho slope: biết phương sai và không biết phương sai
+### 6.2. Khoảng bất định cho hệ số dốc: biết trước và chưa biết phương sai nhiễu
 
-Khi phương sai nhiễu coi như đã biết, posterior của slope thường có dạng gần Normal và khoảng hậu nghiệm cho $$\beta$$ đọc theo kiểu:
+Khi phương sai nhiễu được xem là đã biết trước, phân phối hậu nghiệm của hệ số dốc thường có dạng gần phân phối Chuẩn, và khoảng hậu nghiệm 95% cho $$\beta$$ có dạng:
 
 $$
 \mu_{\beta\mid D}\pm z_{0.975}\,\sigma_{\beta\mid D}.
 $$
 
-Khi phương sai chưa biết và được suy luận cùng dữ liệu, hậu nghiệm của $$\beta$$ thường có đuôi dày hơn (thực hành gần Student-t), nên khoảng hậu nghiệm thường rộng hơn để phản ánh thêm bất định.
+Ngược lại, khi phương sai nhiễu chưa biết và phải được suy luận đồng thời từ dữ liệu, phân phối hậu nghiệm biên của $$\beta$$ thường có đuôi dày hơn (trong thiết lập liên hợp là phân phối Student-t), khiến khoảng hậu nghiệm rộng hơn để phản ánh thêm bất định về nhiễu. Vì vậy, khi báo cáo khoảng ước lượng cho hệ số dốc, cần nêu rõ phương sai nhiễu đang được cố định hay được ước lượng từ dữ liệu.
 
-Vì vậy, khi báo cáo "interval của slope", cần nói rõ bạn đang ở bối cảnh biết hay không biết phương sai nhiễu.
+## 7. Một số ví dụ thực tế khác
 
-## 7. Một ví dụ thực tế khác ngoài chiều cao - cân nặng
+Hồi quy Bayes được áp dụng rộng rãi trong nhiều lĩnh vực khác nhau:
 
-Regression Bayes xuất hiện ở rất nhiều nơi:
+- **Giá nhà và diện tích:** biến đầu vào $$x$$ là diện tích, biến đầu ra $$y$$ là giá nhà.
+- **Điểm thi và số giờ học:** $$x$$ là số giờ ôn tập, $$y$$ là điểm thi.
+- **Doanh thu và chi phí quảng cáo:** $$x$$ là ngân sách quảng cáo, $$y$$ là doanh thu.
 
-### Giá nhà và diện tích
+Trong mọi trường hợp, cấu trúc mô hình sinh dữ liệu đều giống nhau: tồn tại một xu hướng trung bình, các quan sát thực tế dao động quanh xu hướng đó, và ta luôn có mức độ bất định nhất định đối với các tham số điều khiển xu hướng.
 
-Ở đây $$x$$ có thể là diện tích còn $$y$$ là giá nhà.
+## 8. Hồi quy Bayes tạo dự đoán như thế nào?
 
-### Điểm thi và số giờ học
+Giả sử bạn cần dự đoán cân nặng của một người cao 175 cm. Hồi quy Bayes không chỉ trả về một con số duy nhất, mà cung cấp cả giá trị trung bình dự đoán, phần bất định do chưa biết chính xác $$\alpha$$ và $$\beta$$, cùng phần bất định do độ nhiễu cá thể $$\sigma$$. Nhờ đó, ta không chỉ có dự đoán mà còn biết mức độ tin cậy của dự đoán ấy.
 
-Ở đây $$x$$ có thể là số giờ ôn tập còn $$y$$ là điểm thi.
+### 8.1. Ví dụ minh họa: dự đoán cân nặng ở chiều cao 175 cm
 
-### Doanh thu và chi phí quảng cáo
-
-Ở đây $$x$$ có thể là ngân sách quảng cáo còn $$y$$ là doanh thu.
-
-Trong mọi ví dụ đó, tư duy generative (sinh dữ liệu) vẫn giống nhau: có một xu hướng trung bình, dữ liệu thật dao động quanh xu hướng đó, và ta vẫn bất định về chính các tham số điều khiển xu hướng ấy.
-
-## 8. Regression Bayes cho dự đoán như thế nào?
-
-Giả sử bạn muốn dự đoán cân nặng của một người cao 175 cm.
-
-Regression Bayes không chỉ cho một con số duy nhất. Nó cho một giá trị trung bình dự đoán, bất định do chưa chắc về $$\alpha$$ và $$\beta$$, và cả bất định do noise cá thể $$\sigma$$.
-
-Đây là một điểm rất mạnh: ta không chỉ dự đoán, mà còn biết nên tự tin đến đâu vào dự đoán đó.
-
-### 8.1. Một ví dụ cụ thể: dự đoán cân nặng ở 175 cm
-
-Giả sử sau khi fit mô hình trên dữ liệu chiều cao - cân nặng, posterior của ta cho thấy các giá trị điển hình như sau:
+Giả sử sau khi ước lượng mô hình trên dữ liệu chiều cao – cân nặng, phân phối hậu nghiệm tập trung quanh các giá trị điển hình:
 
 $$
 \alpha \approx -55,\qquad \beta \approx 0.75,\qquad \sigma \approx 6.
 $$
 
-Ta có thể hiểu ba con số này theo ngôn ngữ đời thường như sau:
+Ba con số này có thể được diễn giải như sau:
 
-- intercept khoảng $$-55$$ giúp xác định vị trí của đường trung bình,
-- slope khoảng $$0.75$$ nghĩa là cao thêm 1 cm thì cân nặng trung bình tăng khoảng 0.75 kg,
-- noise khoảng $$6$$ kg nghĩa là ngay cả ở cùng một chiều cao, cân nặng thực tế của từng người vẫn còn dao động khá đáng kể quanh mức trung bình.
+- Hệ số chặn $$\alpha \approx -55$$ xác định vị trí hình học của đường trung bình.
+- Hệ số dốc $$\beta \approx 0.75$$ cho biết khi chiều cao tăng thêm 1 cm, cân nặng trung bình tăng khoảng 0.75 kg.
+- Độ nhiễu $$\sigma \approx 6$$ kg cho thấy ngay cả giữa những người có cùng chiều cao, cân nặng thực tế vẫn dao động đáng kể quanh mức trung bình.
 
-Với một người mới có chiều cao $$x_{\text{new}}=175$$, trung bình dự đoán của mô hình là:
+Với một người mới có chiều cao $$x_{\text{new}}=175$$ cm, giá trị trung bình dự đoán theo bộ tham số đại diện là:
 
 $$
 \mu_{\text{new}} = \alpha + \beta x_{\text{new}}
 \approx -55 + 0.75 \times 175 = 76.25.
 $$
 
-Nếu chỉ nhìn vào một bộ tham số đại diện, ta có thể nói: "với người cao 175 cm, cân nặng trung bình hợp lý theo mô hình là khoảng 76.25 kg". Nhưng Bayesian regression không dừng ở đó, vì nó không giả vờ rằng $$\alpha$$ và $$\beta$$ đã được biết chính xác.
+Nếu chỉ dùng một bộ tham số duy nhất, ta sẽ kết luận mức cân nặng trung bình hợp lý là khoảng 76.25 kg. Tuy nhiên, hồi quy Bayes không giả định rằng $$\alpha$$ và $$\beta$$ đã được biết chắc chắn. Hãy xem xét vài mẫu tham số rút ra từ phân phối hậu nghiệm:
 
-Hãy tưởng tượng posterior cho ta một vài mẫu tham số như sau:
-
-| Mẫu posterior | $$\alpha$$ | $$\beta$$ | $$\sigma$$ | $$\mu_{\text{new}} = \alpha + \beta \cdot 175$$ |
+| Mẫu hậu nghiệm | $$\alpha$$ | $$\beta$$ | $$\sigma$$ | $$\mu_{\text{new}} = \alpha + \beta \cdot 175$$ |
 |---|---:|---:|---:|---:|
 | 1 | -52 | 0.73 | 5.8 | 75.75 |
 | 2 | -58 | 0.77 | 6.1 | 76.75 |
 | 3 | -50 | 0.72 | 5.5 | 76.00 |
 | 4 | -57 | 0.76 | 6.4 | 76.00 |
 
-Bảng này cho thấy một ý rất quan trọng: ngay cả trước khi tính đến noise cá thể, chỉ riêng việc chưa chắc về intercept và slope cũng đã tạo ra một **phân phối của giá trị trung bình dự đoán**. Nói cách khác, mô hình không nói "chắc chắn là 76.25 kg", mà nói "vùng hợp lý cho giá trị trung bình ở chiều cao 175 cm nằm quanh khoảng 75 đến 77 kg".
+Bảng trên cho thấy: ngay cả khi chưa tính đến nhiễu cá thể, bản thân sự bất định về $$\alpha$$ và $$\beta$$ đã tạo ra một **phân phối cho giá trị trung bình dự đoán**. Thay vì khẳng định mức trung bình đúng bằng 76.25 kg, mô hình cho biết vùng giá trị hợp lý của trung bình tại chiều cao 175 cm nằm khoảng từ 75 đến 77 kg.
 
-Đây là lúc cần tách rất rõ hai câu hỏi khác nhau:
+Từ đây, cần phân biệt rõ hai câu hỏi khác nhau:
 
-**Câu hỏi 1.** Trung bình cân nặng của những người cao 175 cm là bao nhiêu?
+**Câu hỏi 1. Cân nặng trung bình của nhóm người cao 175 cm là bao nhiêu?**
 
-Câu hỏi này nhắm vào $$\mu_{\text{new}}$$. Nếu lấy rất nhiều mẫu từ posterior rồi tính $$\mu_{\text{new}}$$ cho từng mẫu, ta sẽ có một posterior distribution cho giá trị trung bình. Giả sử sau bước này ta thu được khoảng hậu nghiệm 89% xấp xỉ:
+Câu hỏi này hướng tới đại lượng $$\mu_{\text{new}}$$. Khi rút nhiều mẫu từ phân phối hậu nghiệm và tính $$\mu_{\text{new}}$$ cho từng mẫu, ta thu được phân phối hậu nghiệm của giá trị trung bình. Giả sử khoảng hậu nghiệm 89% thu được là:
 
 $$
 \mu_{\text{new}} \in [74,\ 78.5]\ \text{kg}.
 $$
 
-Khoảng này phản ánh **bất định tham số**: ta chưa biết hoàn toàn chính xác đường hồi quy nằm ở đâu.
+Khoảng này phản ánh **bất định tham số** — tức sự chưa chắc chắn về vị trí chính xác của đường hồi quy.
 
-**Câu hỏi 2.** Một cá nhân cụ thể cao 175 cm sẽ nặng bao nhiêu?
+**Câu hỏi 2. Một cá nhân cụ thể cao 175 cm sẽ nặng bao nhiêu?**
 
-Câu hỏi này khó hơn, vì ngoài bất định tham số còn có thêm dao động cá thể quanh đường trung bình. Khi đó ta phải dùng posterior predictive distribution:
+Câu hỏi này khó hơn vì ngoài bất định tham số còn có biến thiên cá thể quanh đường trung bình. Ta cần dùng phân phối dự báo hậu nghiệm (posterior predictive distribution):
 
 $$
 y_{\text{new}} \sim \mathcal{N}(\mu_{\text{new}}, \sigma).
 $$
 
-Nếu tiếp tục lan truyền cả bất định của $$\alpha,\beta,\sigma$$ lẫn noise mới này, ta có thể nhận được một khoảng dự đoán 89% rộng hơn, chẳng hạn:
+Khi lan truyền đồng thời bất định của $$\alpha, \beta, \sigma$$ và nhiễu cá thể, khoảng dự đoán 89% sẽ rộng hơn đáng kể, chẳng hạn:
 
 $$
 y_{\text{new}} \in [66,\ 87]\ \text{kg}.
 $$
 
-Khoảng này rộng hơn nhiều so với khoảng cho $$\mu_{\text{new}}$$ vì nó trả lời cho **một người cụ thể**, không phải cho trung bình của cả nhóm người cùng chiều cao.
+Khoảng thứ hai rộng hơn nhiều vì nó dự đoán cho **một cá nhân cụ thể** thay vì giá trị trung bình của cả nhóm. Điểm khác biệt này thường dễ bị nhầm lẫn:
 
-Đó chính là điểm mà nhiều người mới học regression hay bỏ qua:
+- Khoảng của $$\mu_{\text{new}}$$ phản ánh bất định về xu hướng trung bình.
+- Khoảng của $$y_{\text{new}}$$ phản ánh bất định về một quan sát mới cụ thể.
+- Khoảng dự đoán cho $$y_{\text{new}}$$ luôn rộng hơn vì bao hàm cả biến thiên cá thể.
 
-- khoảng cho $$\mu_{\text{new}}$$ trả lời về xu hướng trung bình,
-- khoảng cho $$y_{\text{new}}$$ trả lời về một quan sát mới thực sự,
-- khoảng thứ hai luôn rộng hơn vì nó giữ lại cả biến thiên cá thể.
+Theo tinh thần mô hình sinh dữ liệu, quy trình dự đoán Bayes gồm bốn bước:
 
-Nhìn theo tinh thần generative, quy trình dự đoán Bayes thực chất là:
+1. Rút một bộ mẫu tham số $$(\alpha^{(s)}, \beta^{(s)}, \sigma^{(s)})$$ từ phân phối hậu nghiệm.
+2. Tính giá trị trung bình dự đoán $$\mu_{\text{new}}^{(s)} = \alpha^{(s)} + \beta^{(s)} x_{\text{new}}$$.
+3. Sinh một quan sát mới $$y_{\text{new}}^{(s)} \sim \mathcal{N}(\mu_{\text{new}}^{(s)}, \sigma^{(s)})$$.
+4. Lặp lại quá trình trên nhiều lần để thu được phân phối dự báo hậu nghiệm.
 
-1. Lấy một mẫu từ posterior của $$\alpha,\beta,\sigma$$.
-2. Tính $$\mu_{\text{new}}^{(s)} = \alpha^{(s)} + \beta^{(s)} x_{\text{new}}$$.
-3. Sinh một giá trị mới $$y_{\text{new}}^{(s)} \sim \mathcal{N}(\mu_{\text{new}}^{(s)}, \sigma^{(s)})$$.
-4. Lặp lại rất nhiều lần để tạo posterior predictive distribution.
+Như vậy, dự đoán trong hồi quy Bayes không phải là thay số vào một đường thẳng cố định, mà là tạo ra cả một phân phối các giá trị mới hợp lý sau khi đã cập nhật dữ liệu.
 
-Vì vậy, regression Bayes cho dự đoán không phải bằng cách "cắm số vào một đường thẳng duy nhất", mà bằng cách tạo ra cả một phân phối của những giá trị mới hợp lý sau khi đã nhìn dữ liệu.
+### 8.2. Mở rộng từ hồi quy một biến sang nhiều biến (dạng ma trận)
 
-### 8.2. Cầu nối từ hồi quy 1 biến sang nhiều biến (dạng ma trận)
-
-Với nhiều biến giải thích, ta viết:
+Khi có nhiều biến giải thích, mô hình được viết gọn dưới dạng ma trận:
 
 $$
 y=X\mathbf w+\varepsilon,
 $$
 
-trong đó $$\mathbf w=(\alpha,\beta_1,\dots,\beta_p)^\top$$ và $$X$$ là ma trận thiết kế.
+trong đó $$\mathbf w=(\alpha,\beta_1,\dots,\beta_p)^\top$$ là vector tham số và $$X$$ là ma trận thiết kế (design matrix). Suy luận Bayes khi đó chuyển từ một hệ số dốc sang một vector hệ số, nhưng cấu trúc tư duy không thay đổi: đặt phân phối tiên nghiệm trên $$\mathbf w$$, xác định hàm hợp lý từ cơ chế sinh dữ liệu và suy luận phân phối hậu nghiệm cho toàn bộ vector tham số.
 
-Khi đó, suy luận Bayes chuyển từ "một slope" sang "một vector hệ số", nhưng tư duy không đổi: prior trên $$\mathbf w$$, likelihood từ mô hình sinh dữ liệu, và posterior cho toàn bộ vector tham số.
+## 9. Thói quen tư duy cần hình thành
 
-## 9. Một thói quen quan trọng từ bài này
+Mỗi khi gặp một bài toán hồi quy, hãy lần lượt trả lời năm câu hỏi: dữ liệu được sinh ra từ quá trình nào, đâu là xu hướng trung bình, đâu là phần nhiễu, những tham số nào chưa biết, và khi dự đoán cho quan sát mới thì cần giữ lại những nguồn bất định nào. Thực hành đều đặn chuỗi câu hỏi này sẽ giúp bạn tiếp cận bài toán như một người làm mô hình hóa Bayes thay vì chỉ chạy thuật toán khớp đường.
 
-Mỗi khi thấy một bài toán regression, hãy tự ép mình đi qua một chuỗi câu hỏi rất cụ thể: dữ liệu đang được sinh ra như thế nào, đâu là xu hướng trung bình, đâu là phần noise, tham số nào còn chưa biết, và khi tạo dự đoán mới thì những bất định nào cần được giữ lại. Nếu làm được như vậy, bạn đã bắt đầu nghĩ như người làm Bayesian modeling (mô hình hóa Bayes) chứ không chỉ như người chạy hồi quy.
-
-> **3 ý cần nhớ.** Bayesian linear regression là một generative model trong đó dữ liệu được sinh quanh một xu hướng trung bình có nhiễu; intercept, slope và noise đều là các đại lượng chưa biết cần được suy luận chứ không chỉ ước lượng bằng một con số điểm; và điểm mạnh của regression Bayes nằm ở chỗ nó giữ lại bất định của cả tham số lẫn dự đoán thay vì chỉ đưa ra một đường thẳng duy nhất.
+> **3 ý cần nhớ.** Hồi quy tuyến tính Bayes là một mô hình sinh dữ liệu, trong đó các quan sát dao động quanh một xu hướng trung bình kèm nhiễu; hệ số chặn, hệ số dốc và độ nhiễu đều là các đại lượng chưa biết cần được suy luận bằng phân phối thay vì ước lượng điểm; và ưu điểm cốt lõi của hồi quy Bayes là giữ lại đầy đủ bất định của cả tham số lẫn dự đoán thay vì chỉ đưa ra một đường thẳng duy nhất.
 
 ## Video tham khảo
 
-- [The Essence of Linear Regression!!!](https://www.youtube.com/watch?v=aFDOzpTeg0s) — StatQuest with Josh Starmer, English. **xem trước**. Xem hồi quy như một câu chuyện về trung bình có điều kiện cộng nhiễu, đúng cách bài từ chối bắt đầu từ bình phương tối thiểu.
-- [Linear Regression, Clearly Explained!!!](https://www.youtube.com/watch?v=7ArmBVF2dCs) — StatQuest with Josh Starmer, English. Xem hệ số chặn, hệ số dốc và phần dư trên một đường thẳng, hỗ trợ phần gọi tên α, β và σ.
-- [Statistical Rethinking 2023 - 03 - Geocentric Models](https://www.youtube.com/watch?v=tNOu-SEacNU) — Richard McElreath, English. Xem mô hình hồi quy được viết như mô hình sinh rồi mới được ước lượng, cùng trình tự với bài.
+- [The Essence of Linear Regression!!!](https://www.youtube.com/watch?v=aFDOzpTeg0s) — StatQuest with Josh Starmer, English. **xem trước**. Trình bày hồi quy như mô hình trung bình có điều kiện cộng nhiễu, phù hợp với cách tiếp cận không bắt đầu từ bình phương tối thiểu trong bài.
+- [Linear Regression, Clearly Explained!!!](https://www.youtube.com/watch?v=7ArmBVF2dCs) — StatQuest with Josh Starmer, English. Minh họa trực quan hệ số chặn, hệ số dốc và phần dư trên đường hồi quy, bổ trợ cho phần diễn giải $$\alpha$$, $$\beta$$ và $$\sigma$$.
+- [Statistical Rethinking 2023 - 03 - Geocentric Models](https://www.youtube.com/watch?v=tNOu-SEacNU) — Richard McElreath, English. Trình bày cách viết mô hình hồi quy dưới dạng mô hình sinh trước khi ước lượng, tương ứng với trình tự của bài học.
 
 ## Câu hỏi tự luyện
 
-1. Hãy kể generative story cho mối quan hệ giữa số giờ học và điểm thi.
-2. Vì sao $$\sigma$$ là một tham số rất quan trọng chứ không chỉ là “phần dư” phụ thêm?
-3. Khác biệt lớn nhất giữa “fit a line” và “model a process” là gì?
-4. Trong công việc của bạn, bài toán regression nào nên được nhìn theo tinh thần generative?
+1. Hãy mô tả quá trình sinh dữ liệu cho mối quan hệ giữa số giờ học và điểm thi.
+2. Vì sao $$\sigma$$ là một tham số quan trọng của mô hình chứ không chỉ là phần dư phụ thêm?
+3. Sự khác biệt cốt lõi giữa "khớp một đường thẳng" (fit a line) và "mô hình hóa một quá trình" (model a process) là gì?
+4. Trong công việc hoặc lĩnh vực bạn quan tâm, bài toán hồi quy nào nên được tiếp cận theo hướng mô hình sinh dữ liệu?
 
 ## Tài liệu tham khảo
 

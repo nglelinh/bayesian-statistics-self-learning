@@ -10,19 +10,19 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu cách đánh giá các **GLM models** như logistic regression và Poisson regression trong bối cảnh thực tế. Trọng tâm của bài là học cách chọn đúng tiêu chí đánh giá cho đúng loại biến kết quả, từ các **classification metrics** (thước đo phân lớp) như accuracy, sensitivity, specificity, và ROC curves, đến **calibration plot** (đồ thị hiệu chỉnh xác suất), **deviance** (độ lệch mô hình), và **posterior predictive checks** (kiểm tra dự báo hậu nghiệm). Đây là bước rất quan trọng, vì một mô hình chỉ thật sự có giá trị khi ta hiểu rõ nó đang làm tốt điều gì, đang làm chưa tốt điều gì, và những sai lệch nào còn tồn tại.
+Sau khi hoàn thành bài học này, bạn sẽ nắm cách đánh giá các **mô hình GLM** như hồi quy logistic và hồi quy Poisson trong thực tế. Trọng tâm của bài là chọn đúng tiêu chí đánh giá theo bản chất của biến kết quả: từ các **thước đo phân lớp (classification metrics)** như accuracy, sensitivity, specificity và đường cong ROC, đến **đồ thị hiệu chỉnh xác suất (calibration plot)**, **độ lệch mô hình (deviance)** và **kiểm tra dự báo hậu nghiệm (posterior predictive checks)**. Một mô hình chỉ thực sự hữu ích khi ta biết rõ nó làm tốt ở điểm nào, hạn chế ở đâu và còn tồn tại những sai lệch nào.
 
-## Giới thiệu: Đánh giá GLMs khác gì so với Linear Regression
+## Giới thiệu: Đánh giá GLMs khác gì so với hồi quy tuyến tính
 
-Với linear regression, chúng ta thường quen dùng các chỉ số như $$R^2$$, RMSE, hay các biểu đồ residual để xem mô hình khớp dữ liệu đến đâu. Tuy nhiên, khi chuyển sang GLMs, tiêu chí đánh giá phải thay đổi theo bản chất của biến kết quả. Với **binary outcomes** (biến kết quả nhị phân), ta quan tâm đến năng lực phân biệt lớp và hiệu chỉnh xác suất nên thường dùng accuracy, ROC, hay calibration. Với **count outcomes** (biến kết quả đếm), ta phải kiểm tra mức độ khớp của phân phối, deviance, và dấu hiệu **overdispersion** (quá phân tán). Dù vậy, có một nguyên tắc chung cho mọi GLM: luôn cần dùng **posterior predictive checks** để so sánh dữ liệu mô hình sinh ra với dữ liệu thực tế.
+Với hồi quy tuyến tính, ta thường dùng các chỉ số như $$R^2$$, RMSE hay biểu đồ phần dư (residual) để kiểm tra mức độ khớp dữ liệu. Khi chuyển sang GLMs, tiêu chí đánh giá phải thay đổi theo loại biến kết quả. Với **biến kết quả nhị phân (binary outcomes)**, ta quan tâm đến khả năng phân biệt lớp và độ hiệu chỉnh xác suất nên thường dùng accuracy, đường cong ROC hay calibration. Với **biến kết quả đếm (count outcomes)**, ta cần kiểm tra mức độ khớp của phân phối, deviance và dấu hiệu **quá phân tán (overdispersion)**. Dù vậy, có một nguyên tắc chung cho mọi GLM: luôn thực hiện **kiểm tra dự báo hậu nghiệm (posterior predictive checks)** để so sánh dữ liệu mô hình sinh ra với dữ liệu thực tế.
 
-## 1. Evaluating Logistic Regression
+## 1. Đánh giá hồi quy logistic
 
 ![Model Evaluation for GLM]({{ site.baseurl }}/img/chapter_img/chapter06/model_evaluation_glm.png)
 
-### 1.1. Confusion Matrix
+### 1.1. Ma trận nhầm lẫn (Confusion Matrix)
 
 ```python
 import numpy as np
@@ -119,47 +119,41 @@ print("  Precision = TP / (TP + FP)")
 print("=" * 70)
 ```
 
-### 1.1.1. Đánh giá theo decision rule thay vì chỉ theo threshold 0.5
+### 1.1.1. Đánh giá theo quy tắc quyết định thay vì cố định ngưỡng 0.5
 
-Trong phân lớp Bayes, threshold 0.5 chỉ hợp lý khi chi phí hai loại lỗi gần như đối xứng. Nếu chi phí khác nhau, ta nên chọn ngưỡng theo expected risk.
+Trong phân lớp Bayes, ngưỡng 0.5 chỉ hợp lý khi chi phí của hai loại sai lầm gần như bằng nhau. Khi chi phí khác nhau, ta nên chọn ngưỡng dựa trên rủi ro kỳ vọng (expected risk).
 
-Ví dụ hai lớp (positive/negative):
-
-Ta ký hiệu chi phí của **false positive** là $$C_{FP}$$ và chi phí của **false negative** là $$C_{FN}$$.
-
-Quy tắc tối ưu (không có reject) là dự đoán positive khi:
+Xét bài toán hai lớp (dương tính/âm tính) với chi phí của **dương tính giả (false positive)** là $$C_{FP}$$ và chi phí của **âm tính giả (false negative)** là $$C_{FN}$$. Quy tắc tối ưu (khi không có tùy chọn từ chối) là dự đoán dương tính khi:
 
 $$
 P(y=1\mid x) > \frac{C_{FP}}{C_{FP}+C_{FN}}.
 $$
 
-Nếu thêm hành động reject với chi phí $$C_R$$, ta chỉ phân lớp khi rủi ro của quyết định nhỏ hơn $$C_R$$.
+Nếu bổ sung hành động từ chối (reject) với chi phí $$C_R$$, ta chỉ đưa ra quyết định phân lớp khi rủi ro của quyết định đó nhỏ hơn $$C_R$$. Về mặt thực hành, ma trận nhầm lẫn không phải là một bảng đếm tách rời ngữ cảnh: một ngưỡng chỉ có ý nghĩa khi gắn với chi phí thực tế của từng loại sai lầm, bởi trong nhiều ứng dụng, âm tính giả nghiêm trọng hơn nhiều so với dương tính giả hoặc ngược lại.
 
-Điểm thực hành quan trọng là confusion matrix không nên được trình bày như một bảng đếm trung tính về mặt ngữ cảnh. Một ngưỡng chỉ có ý nghĩa khi gắn với chi phí của từng loại sai lầm, bởi trong nhiều bài toán ứng dụng, false negative có thể nghiêm trọng hơn rất nhiều so với false positive, hoặc ngược lại.
+### 1.1.2. Ví dụ cụ thể: Ngưỡng 0.5 có thể làm bỏ sót ca quan trọng
 
-### 1.1.2. Một ví dụ cụ thể: threshold 0.5 có thể làm ta bỏ sót ca quan trọng
-
-Giả sử đây là bài toán sàng lọc bệnh hiếm, trong đó bỏ sót một ca bệnh nặng hơn báo động giả khoảng 9 lần. Khi đó:
+Giả sử trong bài toán sàng lọc bệnh hiếm, chi phí bỏ sót một ca bệnh cao gấp 9 lần chi phí báo động giả. Khi đó:
 
 $$
 \text{threshold tối ưu}=\frac{C_{FP}}{C_{FP}+C_{FN}}=\frac{1}{1+9}=0.1
 $$
 
-Nghĩa là chỉ cần $$P(y=1\mid x)>0.1$$ thì đã nên nghiêng về quyết định "gửi đi kiểm tra thêm". Nếu mô hình trả về ba xác suất $$0.18$$, $$0.32$$ và $$0.65$$ cho ba bệnh nhân, thì cả ba đều nên được xếp vào nhóm cần theo dõi tiếp. Nếu ta giữ threshold 0.5 một cách máy móc, hai người đầu sẽ bị xếp là âm tính dù rủi ro của việc bỏ sót là rất lớn. Ví dụ này cho thấy logistic regression không chỉ là chuyện dự đoán nhãn, mà còn là chuyện dùng posterior probability đúng với chi phí quyết định của bài toán.
+Nghĩa là chỉ cần $$P(y=1\mid x)>0.1$$, ta đã nên chọn phương án gửi đi kiểm tra bổ sung. Nếu mô hình trả về ba xác suất $$0.18$$, $$0.32$$ và $$0.65$$ cho ba bệnh nhân, cả ba đều cần được theo dõi tiếp. Nếu áp dụng ngưỡng 0.5 một cách máy móc, hai người đầu sẽ bị xếp là âm tính dù rủi ro bỏ sót rất lớn. Ví dụ này cho thấy hồi quy logistic không chỉ dừng ở việc gán nhãn, mà cần sử dụng xác suất hậu nghiệm gắn với chi phí quyết định của bài toán.
 
-### 1.1.3. Bayes factor như thước đo bằng chứng ở mức mô hình
+### 1.1.3. Hệ số Bayes (Bayes Factor) như thước đo bằng chứng ở mức mô hình
 
-Ngoài metric phân lớp theo nhãn, có thể so sánh bằng chứng giữa hai mô hình/giả thuyết bằng Bayes factor:
+Bên cạnh các thước đo phân lớp theo nhãn, ta có thể so sánh mức độ ủng hộ của dữ liệu giữa hai mô hình hoặc giả thuyết bằng **hệ số Bayes (Bayes factor)**:
 
 $$
 BF_{10}=\frac{p(D\mid M_1)}{p(D\mid M_0)}.
 $$
 
-Khi $$BF_{10}>1$$, dữ liệu ủng hộ $$M_1$$ nhiều hơn $$M_0$$; khi $$BF_{10}<1$$, bằng chứng lại nghiêng về $$M_0$$. Vì vậy, Bayes factor bổ sung cho ROC/AUC theo một cách rất khác: ROC nói về năng lực phân biệt nhãn, còn Bayes factor nói về mức bằng chứng tương đối cho mô hình hay giả thuyết.
+Khi $$BF_{10}>1$$, dữ liệu ủng hộ $$M_1$$ nhiều hơn $$M_0$$; khi $$BF_{10}<1$$, bằng chứng nghiêng về $$M_0$$. Như vậy, Bayes factor bổ sung cho ROC/AUC ở một góc nhìn khác: ROC đánh giá năng lực phân biệt nhãn, còn Bayes factor đo mức bằng chứng tương đối giữa các mô hình hoặc giả thuyết.
 
-### 1.2. ROC Curve
+### 1.2. Đường cong ROC (ROC Curve)
 
-**ROC curve** là đồ thị biểu diễn **Sensitivity** theo $$1-\text{Specificity}$$ khi ta quét qua mọi ngưỡng phân lớp có thể. Thay vì chốt sớm ở một ngưỡng cụ thể, ROC cho ta cái nhìn toàn cục về sự đánh đổi giữa việc bắt đúng ca dương tính và việc tránh báo động giả. **AUC** (Area Under the Curve) là bản tóm tắt của toàn bộ đường cong đó; giá trị gần 0.5 gợi ý mô hình gần như ngẫu nhiên, còn giá trị tiến gần 1 cho thấy năng lực phân biệt rất mạnh.
+**Đường cong ROC** biểu diễn **độ nhạy (Sensitivity)** theo $$1-\text{Specificity}$$ khi quét qua toàn bộ các ngưỡng phân lớp có thể. Thay vì cố định sớm ở một ngưỡng, ROC cung cấp cái nhìn tổng thể về sự đánh đổi giữa khả năng phát hiện đúng ca dương tính và tỷ lệ báo động giả. **AUC (Area Under the Curve)** tóm tắt toàn bộ đường cong đó bằng một con số: giá trị gần 0.5 tương ứng với phân lớp gần như ngẫu nhiên, còn giá trị tiến gần 1 cho thấy khả năng phân biệt tốt.
 
 ```python
 # Compute ROC curve
@@ -209,15 +203,15 @@ else:
 print("=" * 70)
 ```
 
-### 1.3. Calibration Plot
+### 1.3. Đồ thị hiệu chỉnh xác suất (Calibration Plot)
 
-**Calibration** (hiệu chỉnh xác suất) trả lời một câu hỏi khác với ROC: khi mô hình nói xác suất là 0.7, liệu trong thực tế khoảng 70% trường hợp như vậy có thật sự xảy ra hay không. Một mô hình có thể phân biệt lớp khá tốt nhưng vẫn hiệu chỉnh kém, nghĩa là các xác suất mà nó báo cáo quá lạc quan hoặc quá dè dặt. Vì vậy, calibration plot giúp ta đánh giá chất lượng của chính các xác suất dự báo, chứ không chỉ chất lượng của quyết định phân lớp cuối cùng.
+**Hiệu chỉnh xác suất (calibration)** trả lời một câu hỏi khác với ROC: khi mô hình dự đoán xác suất là 0.7, liệu trong thực tế có khoảng 70% trường hợp như vậy xảy ra hay không? Một mô hình có thể phân biệt lớp khá tốt nhưng vẫn hiệu chỉnh kém, tức các xác suất nó đưa ra bị đẩy quá cao hoặc quá thấp. Đồ thị hiệu chỉnh xác suất giúp đánh giá độ tin cậy của chính các xác suất dự báo, chứ không chỉ nhãn phân lớp cuối cùng.
 
-### 1.3.1. Một ví dụ cụ thể: AUC tốt nhưng xác suất vẫn lệch
+### 1.3.1. Ví dụ cụ thể: AUC tốt nhưng xác suất vẫn lệch
 
-Hãy tưởng tượng mô hình dự đoán cho 10 bệnh nhân với xác suất quanh mức $$0.8$$, nhưng cuối cùng chỉ có 5 người thật sự dương tính. Khi đó mô hình vẫn có thể có ROC/AUC khá ổn nếu 5 người mắc bệnh nhận xác suất cao hơn phần lớn người không mắc bệnh. Tuy nhiên, về calibration thì mô hình đang quá tự tin: nói "80%" nhưng thực tế chỉ xảy ra khoảng "50%".
+Giả sử mô hình dự đoán cho 10 bệnh nhân với xác suất quanh mức $$0.8$$, nhưng thực tế chỉ có 5 người dương tính. Mô hình vẫn có thể đạt ROC/AUC khá tốt nếu 5 người mắc bệnh nhận xác suất cao hơn phần lớn người không mắc bệnh. Tuy nhiên, xét về calibration, mô hình đang quá tự tin: dự báo "80%" nhưng tần suất thực tế chỉ khoảng "50%".
 
-Tương tự, nếu một nhóm khác được dự đoán quanh mức $$0.2$$ nhưng thực tế có đến $$0.35$$ số ca xảy ra, mô hình lại đang đánh giá thấp rủi ro. Điểm cốt lõi là ROC trả lời câu hỏi "mô hình có xếp hạng đúng người rủi ro cao hơn không?", còn calibration trả lời câu hỏi "con số xác suất mà mô hình đưa ra có đáng tin như một xác suất thật hay không?".
+Tương tự, nếu một nhóm khác được dự báo quanh mức $$0.2$$ nhưng thực tế có tới $$0.35$$ số ca xảy ra, mô hình lại đang đánh giá thấp rủi ro. Như vậy, ROC trả lời câu hỏi "mô hình có xếp hạng đúng người có rủi ro cao hơn không?", còn calibration trả lời câu hỏi "con số xác suất mô hình đưa ra có phản ánh đúng tần suất thực tế hay không?".
 
 ```python
 # Calibration plot
@@ -262,11 +256,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-## 2. Evaluating Poisson Regression
+## 2. Đánh giá hồi quy Poisson
 
-### 2.1. Deviance
+### 2.1. Độ lệch mô hình (Deviance)
 
-**Deviance** là một thước đo mức độ khớp của mô hình trong họ GLM, và theo trực giác có thể hiểu là khoảng cách giữa mô hình đang xét với một mô hình bão hòa có khả năng khớp hoàn hảo dữ liệu. Giá trị deviance càng nhỏ thì mô hình càng gần với mức khớp lý tưởng đó.
+**Deviance** là thước đo mức độ khớp của mô hình trong họ GLM. Theo trực giác, deviance đo khoảng cách giữa mô hình đang xét với một mô hình bão hòa (saturated model) khớp hoàn hảo dữ liệu. Giá trị deviance càng nhỏ thì mô hình càng gần mức khớp lý tưởng đó:
 
 $$
 D = -2 \log \frac{L(\text{model})}{L(\text{saturated})}
@@ -322,13 +316,13 @@ else:
 print("=" * 70)
 ```
 
-### 2.1.1. Một ví dụ cụ thể: mean khớp nhưng variance vẫn báo động
+### 2.1.1. Ví dụ cụ thể: Trung bình khớp nhưng phương sai báo động
 
-Giả sử số cuộc gọi hỗ trợ trong 7 ngày liên tiếp là: $$2, 3, 4, 2, 3, 4, 18$$. Trung bình của chuỗi này vào khoảng $$5.1$$, nên một mô hình Poisson với $$\lambda$$ quanh mức 5 có thể nhìn qua tưởng là "không tệ". Nhưng trực giác đã cho thấy có điều gì đó bất thường: sáu ngày đầu khá thấp, còn một ngày vọt lên 18.
+Giả sử số cuộc gọi hỗ trợ trong 7 ngày liên tiếp là: $$2, 3, 4, 2, 3, 4, 18$$. Trung bình của chuỗi này vào khoảng $$5.1$$, nên một mô hình Poisson với $$\lambda$$ quanh mức 5 có vẻ khớp với giá trị trung bình. Tuy nhiên, chuỗi số liệu cho thấy sự bất thường rõ rệt: sáu ngày đầu khá thấp, còn một ngày vọt lên 18.
 
-Trong tình huống như vậy, mean một mình không đủ để kết luận mô hình tốt. Nếu posterior predictive distribution tạo ra các bộ dữ liệu có mean gần 5 nhưng variance và giá trị cực đại nhỏ hơn dữ liệu thật rất nhiều, thì deviance, residual plots, và PPC đều sẽ cùng chỉ về một hướng: mô hình đang quá hẹp so với dữ liệu. Đây chính là dấu hiệu rất điển hình của overdispersion hoặc của một nguồn biến thiên chưa được mô hình hóa.
+Trong tình huống này, chỉ nhìn vào trung bình là không đủ để kết luận mô hình tốt. Nếu phân phối dự báo hậu nghiệm sinh ra các tập dữ liệu có trung bình gần 5 nhưng phương sai và giá trị cực đại nhỏ hơn dữ liệu thực rất nhiều, thì deviance, biểu đồ phần dư và PPC sẽ cùng chỉ ra rằng mô hình quá hẹp so với dữ liệu. Đây là dấu hiệu điển hình của hiện tượng quá phân tán (overdispersion) hoặc của một nguồn biến thiên chưa được đưa vào mô hình.
 
-### 2.2. Residual Plots
+### 2.2. Biểu đồ phần dư (Residual Plots)
 
 ```python
 # Residuals
@@ -381,7 +375,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-## 3. Posterior Predictive Checks for GLMs
+## 3. Kiểm tra dự báo hậu nghiệm cho GLMs
 
 ```python
 # PPC for Poisson
@@ -446,9 +440,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Thử nghiệm: posterior predictive check cho GLM
+### Thử nghiệm: Kiểm tra dự báo hậu nghiệm cho GLM
 
-Hiệu chuẩn theo nhóm cho logistic và thống kê số 0 cho Poisson; so sánh mô hình đúng với mô hình bị sai.
+Quan sát độ hiệu chuẩn theo nhóm cho hồi quy logistic và thống kê số giá trị 0 cho hồi quy Poisson để so sánh mô hình đặc tả đúng với mô hình đặc tả sai.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="glmppc-explainer" data-lang="vi" data-tab="logistic"></div>
@@ -457,31 +451,31 @@ Hiệu chuẩn theo nhóm cho logistic và thống kê số 0 cho Poisson; so s�
 
 ## Tóm tắt
 
-Đánh giá GLM không thể chỉ bê nguyên bộ công cụ của linear regression sang dùng. Với logistic regression, ta cần nghĩ đồng thời về confusion matrix, các thước đo phân lớp như sensitivity hay specificity, năng lực phân biệt tổng quát qua ROC/AUC, và chất lượng của các xác suất dự báo qua calibration plot. Với Poisson regression, trọng tâm lại chuyển sang deviance, dấu hiệu overdispersion, và các residual plot để xem mô hình có đang bỏ sót cấu trúc nào trong dữ liệu hay không. Còn với mọi GLM, **posterior predictive checks** vẫn là lớp kiểm tra cuối cùng và quan trọng nhất, vì chúng cho phép ta hỏi trực tiếp rằng dữ liệu mô hình sinh ra có giống dữ liệu thật ở những đặc điểm quan trọng hay không.
+Đánh giá GLM không thể chỉ sử dụng lại bộ công cụ của hồi quy tuyến tính. Với hồi quy logistic, cần xem xét đồng thời ma trận nhầm lẫn, các thước đo phân lớp như sensitivity và specificity, năng lực phân biệt tổng quát qua ROC/AUC, và độ tin cậy của xác suất dự báo qua đồ thị hiệu chỉnh xác suất. Với hồi quy Poisson, trọng tâm chuyển sang deviance, dấu hiệu quá phân tán và biểu đồ phần dư để phát hiện các cấu trúc còn bị bỏ sót. Với mọi GLM, **kiểm tra dự báo hậu nghiệm (posterior predictive checks)** vẫn là bước kiểm chứng quan trọng nhất để xem dữ liệu mô hình sinh ra có tái hiện được các đặc điểm chính của dữ liệu thực hay không.
 
-Điểm cần giữ lại là mỗi loại biến kết quả đòi hỏi một tiêu chuẩn đánh giá riêng, và không có một chỉ số đơn lẻ nào đủ để kết luận mô hình “tốt” hay “xấu”. Thói quen đúng là luôn kết hợp metric chuyên biệt với kiểm tra hậu nghiệm để nhìn mô hình từ nhiều góc độ.
+Mỗi loại biến kết quả đòi hỏi bộ tiêu chí đánh giá tương ứng, và không có một chỉ số đơn lẻ nào đủ để kết luận mô hình tốt hay xấu. Cách làm hợp lý là kết hợp các thước đo chuyên biệt với kiểm tra dự báo hậu nghiệm để đánh giá mô hình từ nhiều góc độ.
 
-**Chapter 06 Complete!** GLMs: Logistic, Poisson, Evaluation.
+Kết thúc Chương 06 về các mô hình tuyến tính tổng quát (GLMs): hồi quy logistic, hồi quy Poisson và đánh giá mô hình.
 
 ## Video tham khảo
 
-- [Machine Learning Fundamentals: The Confusion Matrix](https://www.youtube.com/watch?v=Kdsp6soqA7o) — StatQuest with Josh Starmer, English. **xem trước**. Xem ma trận nhầm lẫn trước khi tính accuracy, đúng phần bài đổi tiêu chí khi kết quả là nhị phân.
-- [Probability Calibration : Data Science Concepts](https://www.youtube.com/watch?v=AunotauS5yI) — ritvikmath, English. Xem hiệu chuẩn xác suất, hỗ trợ lập luận rằng một điểm phân loại đúng chưa cho biết xác suất có đáng tin.
-- [Deviance Residuals](https://www.youtube.com/watch?v=JC56jS2gVUE) — StatQuest with Josh Starmer, English. Xem deviance residual, dùng khi bài đánh giá GLM đếm hoặc logistic ngoài các chỉ số phân loại.
+- [Machine Learning Fundamentals: The Confusion Matrix](https://www.youtube.com/watch?v=Kdsp6soqA7o) — StatQuest with Josh Starmer, English. **Xem trước**. Giới thiệu ma trận nhầm lẫn trước khi tính accuracy, phù hợp với phần đánh giá biến kết quả nhị phân.
+- [Probability Calibration : Data Science Concepts](https://www.youtube.com/watch?v=AunotauS5yI) — ritvikmath, English. Giải thích hiệu chỉnh xác suất, minh họa rằng điểm phân lớp cao chưa bảo đảm xác suất dự báo đáng tin cậy.
+- [Deviance Residuals](https://www.youtube.com/watch?v=JC56jS2gVUE) — StatQuest with Josh Starmer, English. Trình bày phần dư deviance, hữu ích khi đánh giá mô hình GLM đếm hoặc logistic ngoài các chỉ số phân lớp.
 
 ## Bài tập
 
-**Bài tập 1**: Fit logistic regression. Compute ROC, AUC. Interpret.
+**Bài tập 1**: Khớp một mô hình hồi quy logistic, tính đường cong ROC và chỉ số AUC, sau đó diễn giải kết quả.
 
-**Bài tập 2**: Create calibration plot. Is model well-calibrated?
+**Bài tập 2**: Vẽ đồ thị hiệu chỉnh xác suất (calibration plot) và đánh giá xem mô hình đã được hiệu chỉnh tốt chưa.
 
-**Bài tập 3**: Fit Poisson regression. Check for overdispersion. If present, what to do?
+**Bài tập 3**: Khớp một mô hình hồi quy Poisson, kiểm tra hiện tượng quá phân tán (overdispersion) và nêu hướng xử lý nếu hiện tượng này xuất hiện.
 
-**Bài tập 4**: Perform comprehensive PPC for GLM. Check mean, variance, max, distribution.
+**Bài tập 4**: Thực hiện kiểm tra dự báo hậu nghiệm (PPC) đầy đủ cho mô hình GLM trên các thống kê: trung bình, phương sai, giá trị cực đại và phân phối tổng thể.
 
-**Bài tập 5**: Compare two logistic models using ROC curves. Which is better?
+**Bài tập 5**: So sánh hai mô hình hồi quy logistic bằng đường cong ROC và xác định mô hình nào tốt hơn.
 
-## Tài liệu Tham khảo
+## Tài liệu tham khảo
 
 **Gelman, A., et al. (2020).** *Regression and Other Stories*. Cambridge University Press.
 - Chapter 11: Assumptions, diagnostics, and model evaluation

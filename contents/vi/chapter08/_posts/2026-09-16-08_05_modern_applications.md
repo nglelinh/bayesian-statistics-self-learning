@@ -12,68 +12,68 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn nhìn PPC, LOO/WAIC và decision analysis như một workflow sản xuất, không như chương “phụ lục sau khi đã fit”. Bạn sẽ nối được kiểm tra hậu nghiệm với simulation-based calibration, so sánh mô hình với bất định của chính hiệu chênh LOO, và quy tắc Bayes action với Bayesian optimization cùng bandit.
+Sau bài học tùy chọn này, bạn sẽ nhìn nhận PPC, LOO/WAIC và phân tích quyết định như một quy trình vận hành thực tế, thay vì phần phụ lục sau khi khớp mô hình. Bạn sẽ kết nối được kiểm tra hậu nghiệm với hiệu chuẩn dựa trên mô phỏng (simulation-based calibration), so sánh mô hình với độ bất định của chính hiệu chênh LOO, và quy tắc hành động Bayes với tối ưu hóa Bayes (Bayesian optimization) cùng bài toán bandit.
 
 ## Kiến thức cần có
 
-Các bài 8.1–8.4 đã xây PPC, information criteria, so sánh mô hình, và quyết định dưới loss. Bài này không định nghĩa lại ELPD. Nó cho thấy các đối tượng ấy đang được siết chặt trong nghiên cứu 2022–2025 và trong các thư viện tối ưu hóa.
+Các bài 8.1–8.4 đã trình bày PPC, các tiêu chí thông tin, chiến lược so sánh mô hình và ra quyết định dưới hàm mất mát. Bài học này không định nghĩa lại ELPD, mà cho thấy các công cụ đó đang được hoàn thiện như thế nào trong nghiên cứu giai đoạn 2022–2025 và trong các thư viện tối ưu hóa hiện đại.
 
 ## Mở đầu
 
-Chương 8 được viết vì một thói quen xấu: xem chuỗi MCMC hội tụ rồi dừng. Trong khoa học máy tính, thói quen ấy biến thành dashboard xanh. Một sampler có thể lấy đúng mẫu từ sai mô hình, hoặc lấy sai mẫu từ đúng mô hình. Một hiệu $$\Delta\mathrm{ELPD}$$ có thể đổi dấu khi bạn tính lại sai số. Căng thẳng của bài này là phân biệt ba câu hỏi mà sản phẩm hay trộn: mô hình có sinh được dữ liệu kiểu này không, mô hình nào dự báo tốt hơn dưới bất định của chính sự so sánh, và ta nên *làm gì*?
+Chương 8 xuất phát từ một thói quen phổ biến nhưng dễ gây sai lầm: thấy chuỗi MCMC hội tụ là dừng lại. Trong môi trường kỹ thuật phần mềm và dữ liệu, thói quen đó thường biến thành tâm lý yên tâm chỉ vì các chỉ báo hội tụ đều hiển thị trạng thái đạt. Tuy nhiên, một thuật toán lấy mẫu có thể lấy mẫu chính xác từ một mô hình sai, hoặc lấy mẫu sai từ một mô hình đúng; và một hiệu chênh $$\Delta\mathrm{ELPD}$$ có thể đảo dấu khi tính lại sai số. Trọng tâm của bài học này là tách bạch ba câu hỏi mà các nhóm sản phẩm thường trộn lẫn: mô hình có sinh được dữ liệu giống thực tế không, mô hình nào dự báo tốt hơn khi tính cả độ bất định của phép so sánh, và cuối cùng ta nên *hành động* ra sao?
 
 ## Phát triển khái niệm
 
-PPC hỏi liệu $$y^{\mathrm{rep}}$$ sinh từ $$p(y\mid\theta)$$ với $$\theta\sim p(\theta\mid y)$$ có tái tạo được cấu trúc của $$y$$. LOO ước lượng kỳ vọng log predictive density trên một điểm mới. Decision theory chọn
+PPC đặt câu hỏi liệu dữ liệu mô phỏng $$y^{\mathrm{rep}}$$ sinh từ $$p(y\mid\theta)$$ với $$\theta\sim p(\theta\mid y)$$ có tái tạo được cấu trúc của dữ liệu quan sát $$y$$ hay không. LOO ước lượng kỳ vọng mật độ dự báo dạng log trên một điểm dữ liệu mới. Lý thuyết quyết định chọn hành động tối ưu:
 
 $$
 a^*(y)=\arg\min_a\int L(a,\theta)\,p(\theta\mid y)\,d\theta.
 $$
 
-Ba đối tượng ấy không thay thế nhau. Một mô hình thắng LOO vẫn có thể thất bại PPC ở đuôi. Một hành động tối ưu có thể chọn mô hình *xấu hơn về log score* nếu loss không đối xứng.
+Ba công cụ này không thay thế nhau. Một mô hình có điểm LOO tốt hơn vẫn có thể thất bại ở PPC phần đuôi; và một hành động tối ưu vẫn có thể dựa trên mô hình có điểm log score thấp hơn nếu hàm mất mát mang tính bất đối xứng.
 
 ## Mô hình như câu chuyện sinh dữ liệu
 
-### 1. Simulation-based calibration như kiểm tra phần mềm và suy luận
+### 1. Hiệu chuẩn dựa trên mô phỏng (SBC) như kiểm thử phần mềm và suy luận
 
-Modrák et al. (2025) siết lại simulation-based calibration: lấy $$\theta$$ từ prior, sinh $$y$$, khớp lại, rồi xét thứ hạng của đại lượng kiểm tra trong posterior. Họ chỉ ra rằng chỉ xếp hạng tham số sẽ bỏ sót cả một lớp lỗi—kể cả trường hợp posterior trùng prior—và rằng likelihood đồng thời là một test quantity nhạy. Trong công nghiệp, đây là unit test cho một mô hình PyMC/Stan trước khi nó vào A/B hoặc vào định giá. PPC của bài 8.1 kiểm tra mô hình trên dữ liệu thật; SBC kiểm tra *công cụ suy luận* trên dữ liệu sinh ra từ chính mô hình.
+Modrák et al. (2025) hoàn thiện khung hiệu chuẩn dựa trên mô phỏng (simulation-based calibration — SBC): rút $$\theta$$ từ tiên nghiệm, sinh dữ liệu $$y$$, khớp lại mô hình rồi kiểm tra phân bố thứ hạng của các đại lượng kiểm định trong hậu nghiệm. Nhóm tác giả chỉ ra rằng nếu chỉ kiểm tra thứ hạng của riêng tham số, ta có thể bỏ sót cả một lớp lỗi — kể cả trường hợp hậu nghiệm trùng với tiên nghiệm — trong khi hàm hợp lý đồng thời là một đại lượng kiểm định rất nhạy. Trong công nghiệp, SBC đóng vai trò như kiểm thử đơn vị (unit test) cho mô hình PyMC hoặc Stan trước khi đưa vào thử nghiệm A/B hay định giá. PPC của bài 8.1 kiểm tra mô hình trên dữ liệu thật, còn SBC kiểm tra *chính thuật toán suy luận* trên dữ liệu sinh từ mô hình đó.
 
-### 2. Bất định của chính cuộc so sánh LOO
+### 2. Độ bất định của bản thân phép so sánh LOO
 
-Sivula, Magnusson, Matamoros và Vehtari (2025) cho thấy xấp xỉ chuẩn của hiệu LOO thường lệch khi hai mô hình dự báo gần nhau, khi mô hình sai đặc tả, hoặc khi mẫu nhỏ. Skewness của sai số có thể không tắt khi $$n\to\infty$$ trong một số tình huống. Hệ quả sản phẩm rất cụ thể: một leaderboard mô hình không được công bố như một thứ hạng cứng nếu sai số của $$\Delta\mathrm{ELPD}$$ nuốt mất hiệu. Bài 8.3 đã nói so sánh là quyết định dưới bất định mô hình; giấy này đo chính bất định ấy.
+Sivula, Magnusson, Matamoros và Vehtari (2025) chỉ ra rằng xấp xỉ chuẩn cho hiệu chênh LOO thường bị lệch khi hai mô hình dự báo gần giống nhau, khi mô hình bị đặc tả sai hoặc khi cỡ mẫu nhỏ. Độ lệch (skewness) của sai số ước lượng thậm chí có thể không triệt tiêu khi $$n\to\infty$$ trong một số trường hợp. Hệ quả thực tế rất rõ: không nên công bố bảng xếp hạng mô hình như một thứ tự tuyệt đối nếu sai số chuẩn của $$\Delta\mathrm{ELPD}$$ lấn át bản thân độ chênh lệch. Bài 8.3 đã nhấn mạnh so sánh mô hình là ra quyết định dưới độ bất định; nghiên cứu này định lượng trực tiếp phần độ bất định đó.
 
-### 3. Bayesian optimization như decision theory trên hàm đắt
+### 3. Tối ưu hóa Bayes (Bayesian optimization) như lý thuyết quyết định trên hàm tốn kém
 
-Khi $$\theta$$ là một cấu hình siêu tham số hoặc một thí nghiệm phòng lab, mỗi đánh giá $$f(\theta)$$ rất đắt. Bayesian optimization đặt một posterior—thường là quá trình Gauss—lên $$f$$, rồi chọn điểm kế tiếp bằng cách tối thiểu hóa expected loss, ví dụ expected improvement. Đó là bài 8.4 viết cho không gian hành động liên tục. BoTorch (Balandat et al., 2020; hệ sinh thái 2022–2026) biến quy tắc ấy thành Monte Carlo trên posterior, đủ để tối ưu nhiều mục tiêu và ràng buộc. AutoML là ứng dụng, không phải lý thuyết mới: chọn mô hình và siêu tham số bằng Bayes action, không bằng một lưới mù.
+Khi $$\theta$$ là một cấu hình siêu tham số hoặc một thí nghiệm phòng lab, mỗi lần đánh giá hàm mục tiêu $$f(\theta)$$ đều rất tốn kém. Tối ưu hóa Bayes đặt một phân phối hậu nghiệm — thường là quá trình Gauss (Gaussian process) — lên hàm $$f$$, rồi chọn điểm đánh giá tiếp theo bằng cách tối thiểu hóa mất mát kỳ vọng (ví dụ qua tiêu chí expected improvement). Đây chính là nguyên lý của bài 8.4 áp dụng cho không gian hành động liên tục. Thư viện BoTorch (Balandat et al., 2020; hệ sinh thái 2022–2026) triển khai quy tắc này bằng mô phỏng Monte Carlo trên hậu nghiệm, hỗ trợ tối ưu đa mục tiêu và có ràng buộc. AutoML nhờ vậy là một ứng dụng trực tiếp của hành động Bayes để chọn mô hình và siêu tham số thay cho tìm kiếm lưới mù quáng.
 
-### 4. Bandit và thí nghiệm thích nghi
+### 4. Bài toán bandit và thí nghiệm thích nghi
 
-Thompson sampling, đã xuất hiện như ứng dụng conjugate ở Chương 2, nay được đọc đúng chỗ của nó: một xấp xỉ tuần tự của Bayes action khi loss là regret. Nền tảng nội dung, quảng cáo, và thử nghiệm lâm sàng thích nghi đều cập nhật $$p(\theta\mid y)$$ rồi chọn tay đòn. Quyết định không phải “bác bỏ $$H_0$$”; quyết định là tiếp tục, dừng, hay đổi tỷ lệ phân bổ. PPC vẫn cần: nếu mô hình chuyển đổi sai đuôi, bandit sẽ khai thác một ảo ảnh.
+Thompson sampling — từng xuất hiện như ứng dụng của tiên nghiệm liên hợp ở Chương 2 — được đặt đúng vào vị trí của nó: một cách xấp xỉ tuần tự cho hành động Bayes khi hàm mất mát là độ hối tiếc (regret). Các nền tảng nội dung, quảng cáo và thử nghiệm lâm sàng thích nghi liên tục cập nhật $$p(\theta\mid y)$$ rồi chọn phương án (arm) tiếp theo. Quyết định ở đây không phải "bác bỏ $$H_0$$", mà là tiếp tục thử nghiệm, dừng lại hay điều chỉnh tỷ lệ phân bổ lưu lượng. PPC vẫn giữ vai trò thiết yếu: nếu mô hình tỷ lệ chuyển đổi sai ở phần đuôi, thuật toán bandit có thể dồn lưu lượng vào một phương án kém hiệu quả.
 
 ## Diễn giải và nhận định
 
-Một PPC đẹp không cấp giấy phép nhân quả. Một hiệu LOO lớn hơn hai sai số chuẩn vẫn có thể là so sánh giữa hai mô hình cùng misspecify. Expected improvement cao không có nghĩa điểm kế tiếp sẽ tốt; nó có nghĩa *dưới posterior hiện tại* giá trị thông tin vượt chi phí. Hãy giữ ba lớp diễn giải tách bạch: phê bình sinh dữ liệu, so sánh dự báo, và hành động.
+Một kết quả PPC tốt không đồng nghĩa với bằng chứng nhân quả. Một hiệu chênh LOO lớn hơn hai lần sai số chuẩn vẫn có thể chỉ là so sánh giữa hai mô hình cùng bị đặc tả sai. Giá trị expected improvement cao không bảo đảm điểm đánh giá kế tiếp chắc chắn tốt hơn, mà chỉ có nghĩa rằng *dưới phân phối hậu nghiệm hiện tại*, giá trị thông tin dự kiến vượt chi phí đánh giá. Cần giữ tách bạch ba lớp diễn giải: phê bình cơ chế sinh dữ liệu, so sánh năng lực dự báo và lựa chọn hành động.
 
 ## Ứng dụng
 
-Kiểm thử mô hình trước khi lên production, chọn mô hình dự báo cho bảng và cho chuỗi thời gian, tinh chỉnh siêu tham số, và phân bổ thí nghiệm là bốn mặt của Chương 8 trong CS/DS hiện nay.
+Kiểm thử mô hình trước khi đưa vào vận hành, lựa chọn mô hình dự báo cho dữ liệu bảng và chuỗi thời gian, tinh chỉnh siêu tham số và phân bổ thí nghiệm là bốn mảng ứng dụng nổi bật của Chương 8 trong khoa học máy tính và khoa học dữ liệu hiện nay.
 
 ## Giới hạn và hướng mở rộng
 
-SBC tốn nhiều lần khớp mô hình. LOO giả định các quan sát đóng góp gần như nhân tử hóa được. Bayesian optimization phụ thuộc mạnh vào prior trên $$f$$ và sẽ nhẹ dạ nếu nhiễu bị hiểu sai. Khóa học không có chương Gaussian process riêng, nên bài này chỉ dùng GP như một posterior phục vụ quyết định. Nếu chương sau mở nonparametric, bạn sẽ thấy nhân của BO chính là mô hình ấy.
+SBC đòi hỏi khớp lại mô hình rất nhiều lần nên tốn chi phí tính toán. LOO giả định đóng góp của các quan sát có thể tách tích gần như độc lập. Tối ưu hóa Bayes phụ thuộc mạnh vào tiên nghiệm trên hàm $$f$$ và dễ đưa ra lựa chọn thiếu thận trọng nếu mô hình nhiễu bị đặc tả sai. Khóa học không có chương riêng về quá trình Gauss, nên bài này chỉ sử dụng GP như một phân phối hậu nghiệm phục vụ ra quyết định; khi mở rộng sang thống kê phi tham số, bạn sẽ thấy hạt nhân của tối ưu hóa Bayes chính là mô hình này.
 
 ## Video tham khảo
 
-- [#164 Bayesian Workflow, with Andrew Gelman, Aki Vehtari & Richard McElreath](https://www.youtube.com/watch?v=ysITaNRUQUU) — Learning Bayesian Statistics, English. **xem trước**. Xem Andrew Gelman, Aki Vehtari và Richard McElreath bàn Bayesian workflow, đúng cách bài ghép kiểm tra mô hình với so sánh và quyết định.
-- [BITESIZE | Understanding Simulation-Based Calibration, with Teemu Säilynoja](https://www.youtube.com/watch?v=EC1bvP65rjs) — Learning Bayesian Statistics, English. Xem simulation-based calibration, hỗ trợ đoạn bài nối posterior predictive với việc kiểm tra chính thuật toán suy luận.
-- [Uncertainty in Bayesian leave-one-out cross-validation based model comparison](https://www.youtube.com/watch?v=vLx6lUlZ0fc) — Aki Vehtari, English. Xem bất định của so sánh mô hình bằng LOO, dùng cho phần bài không đọc một hiệu chênh ELPD như một xếp hạng cứng.
+- [#164 Bayesian Workflow, with Andrew Gelman, Aki Vehtari & Richard McElreath](https://www.youtube.com/watch?v=ysITaNRUQUU) — Learning Bayesian Statistics, English. **Xem trước**. Cuộc thảo luận của Andrew Gelman, Aki Vehtari và Richard McElreath về quy trình Bayes, kết nối kiểm tra mô hình với so sánh và ra quyết định.
+- [BITESIZE | Understanding Simulation-Based Calibration, with Teemu Säilynoja](https://www.youtube.com/watch?v=EC1bvP65rjs) — Learning Bayesian Statistics, English. Giải thích hiệu chuẩn dựa trên mô phỏng (SBC), bổ trợ cho phần kiểm thử thuật toán suy luận.
+- [Uncertainty in Bayesian leave-one-out cross-validation based model comparison](https://www.youtube.com/watch?v=vLx6lUlZ0fc) — Aki Vehtari, English. Phân tích độ bất định khi so sánh mô hình bằng LOO, làm rõ vì sao không nên đọc hiệu chênh ELPD như một bảng xếp hạng cứng.
 
 ## Bài tập
 
-1. Phân biệt, trên một mô hình giá, một thất bại PPC ở đuôi phải với một thất bại SBC. Cái nào buộc bạn sửa *mã suy luận*, cái nào buộc bạn sửa *câu chuyện sinh*?
-2. Hai mô hình có $$\Delta\mathrm{ELPD}=1.2$$ và sai số 1.5. Dựa trên Sivula et al. (2025), bạn sẽ viết gì trên slide cho giám đốc sản phẩm?
-3. Viết loss của một vòng Bayesian optimization khi mỗi thí nghiệm tốn một ngân sách cố định và bạn còn năm lần đánh giá. Hành động là gì, trạng thái thế giới là gì?
-4. Một bandit nội dung khai thác sớm một tiêu đề clickbait. PPC nào sẽ tố cáo mô hình thưởng, và decision rule nào sẽ thận trọng hơn Thompson sampling thuần?
+1. Trên một mô hình định giá, hãy phân biệt trường hợp không đạt ở PPC phần đuôi phải với trường hợp không đạt ở SBC. Trường hợp nào buộc bạn sửa *mã suy luận*, trường hợp nào buộc bạn sửa *câu chuyện sinh dữ liệu*?
+2. Hai mô hình có $$\Delta\mathrm{ELPD}=1.2$$ với sai số chuẩn 1.5. Dựa trên Sivula et al. (2025), bạn sẽ trình bày kết luận như thế nào trên slide báo cáo cho giám đốc sản phẩm?
+3. Viết hàm mất mát cho một vòng tối ưu hóa Bayes khi mỗi thí nghiệm tiêu tốn một ngân sách cố định và bạn chỉ còn năm lần đánh giá. Tập hành động và trạng thái thế giới trong bài toán này là gì?
+4. Một thuật toán bandit nội dung khai thác quá sớm một tiêu đề giật gân (clickbait). Phép kiểm tra PPC nào sẽ phát hiện sai lệch của mô hình phần thưởng, và quy tắc quyết định nào sẽ thận trọng hơn Thompson sampling thuần túy?
 
 ## Tài liệu tham khảo
 

@@ -12,68 +12,68 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn đọc được một hệ số trong mô hình nhiều predictor như một tuyên bố nhân quả có điều kiện, không như một hệ số “quan trọng hơn” chỉ vì phần mềm in ra sao. Bạn sẽ thấy confounding, đa cộng tuyến và tương tác không phải lỗi hồi quy, mà là hình dạng của dữ liệu sản phẩm: thử nghiệm A/B trên chợ, hệ gợi ý, và hồ sơ y tế theo thời gian.
+Sau bài tùy chọn này, bạn sẽ biết cách đọc hệ số trong mô hình nhiều biến dự báo như một phát biểu nhân quả có điều kiện, thay vì đánh giá tầm quan trọng chỉ dựa vào dấu sao ý nghĩa thống kê trên bảng kết quả. Bạn cũng sẽ thấy hiện tượng gây nhiễu (confounding), đa cộng tuyến và hiệu ứng tương tác không phải là "lỗi" của hồi quy, mà là đặc trưng tự nhiên của dữ liệu ứng dụng hiện đại như thử nghiệm A/B trên nền tảng thị trường (marketplace), hệ gợi ý và hồ sơ y tế dọc theo thời gian.
 
 ## Kiến thức cần có
 
-Các bài 5.1–5.4 đã đặt multiple regression, DAG, đa cộng tuyến và tương tác. Bài này không vẽ lại định nghĩa back-door. Nó chỉ đưa cùng những sơ đồ ấy vào các bài báo và hệ thống 2022–2026.
+Các bài 5.1–5.4 đã trình bày hồi quy đa biến, DAG, đa cộng tuyến và hiệu ứng tương tác. Bài này không nhắc lại định nghĩa đường cửa sau (backdoor), mà đặt chính những khái niệm đó vào các nghiên cứu và hệ thống thực tế giai đoạn 2022–2026.
 
 ## Mở đầu
 
-Chương 5 bắt đầu từ một thất vọng quen thuộc: thêm biến thì $$R^2$$ tăng, nhưng câu chuyện về “tác động” lại vỡ. Trong khoa học máy tính ứng dụng, thất vọng ấy đắt hơn. Một nền tảng có thể thêm hàng trăm feature vào một mô hình nâng hạng, rồi tuyên bố đã “kiểm soát mọi thứ”. Nếu một trong những feature ấy là biến trung gian hoặc collider, hệ số của xử lý không còn là hiệu ứng ta muốn. Căng thẳng của bài này là: dữ liệu càng nhiều cột, DAG càng cần, không càng thừa.
+Chương 5 mở ra từ một tình huống quen thuộc: thêm biến mới có thể làm tăng $$R^2$$, nhưng lại làm sai lệch câu chuyện về tác động nhân quả. Trong khoa học máy tính và sản phẩm số, cái giá của sai lầm này còn lớn hơn. Một nền tảng có thể đưa hàng trăm đặc trưng (feature) vào mô hình xếp hạng rồi cho rằng mình đã "kiểm soát mọi thứ". Nếu trong số đó có biến trung gian hoặc collider, hệ số của biến can thiệp sẽ không còn phản ánh đúng hiệu ứng mục tiêu. Thông điệp xuyên suốt bài này là: tập dữ liệu càng nhiều cột thì đồ thị nhân quả DAG càng cần thiết, chứ không hề thừa.
 
 ## Phát triển khái niệm
 
-Một hệ số $$\beta_j$$ trong
+Trong phương trình hồi quy đa biến:
 
 $$
 y_i=\alpha+\sum_j\beta_j x_{ij}+\varepsilon_i
 $$
 
-chỉ mang nghĩa nhân quả sau khi tập điều khiển đã chặn các đường back-door và không mở ra đường mới. Cinelli, Forney và Pearl (2022) gọi đúng vấn đề này là good and bad controls: không phải mọi covariate “liên quan” đều nên vào phương trình. Tương tác nói một chuyện khác, rằng $$\beta_j$$ bản thân nó có thể là hàm của một biến khác. Đa cộng tuyến thì không phải thiên lệch nhân quả; nó là bất định hậu nghiệm phình ra khi các cột kể cùng một câu.
+hệ số $$\beta_j$$ chỉ mang ý nghĩa nhân quả khi tập biến kiểm soát đã chặn được toàn bộ các đường cửa sau mà không mở ra đường phi nhân quả mới. Cinelli, Forney và Pearl (2022) hệ thống hóa vấn đề này dưới khái niệm *good and bad controls*: không phải mọi hiệp biến có liên quan đều nên đưa vào phương trình. Trong khi đó, hiệu ứng tương tác cho thấy bản thân $$\beta_j$$ có thể là hàm theo một biến khác; còn đa cộng tuyến không gây thiên lệch nhân quả mà làm mở rộng bất định hậu nghiệm khi nhiều cột cùng phản ánh một nguồn thông tin.
 
-## Mô hình như câu chuyện sinh dữ liệu
+## Mô hình trong các hệ thống hiện đại
 
-### 1. Good and bad controls trong thử nghiệm sản phẩm
+### 1. Biến kiểm soát đúng và sai (Good and Bad Controls) trong thử nghiệm sản phẩm
 
-Câu chuyện sinh của một A/B trên marketplace thường có sẵn confounding: người dùng chủ động, cung cầu cùng lúc, và một can thiệp trên một phía thay đổi phía kia. Thêm biến “số lần nhấp sau khi thấy biến thể” có thể là bad control nếu nhấp nằm trên đường từ xử lý đến doanh thu. Cinelli et al. (2022) cho một catalog các DAG nhỏ nơi trực giác “càng kiểm soát càng sạch” thất bại. Một nhóm thực nghiệm trung thực vẽ DAG trước khi mở feature store, rồi mới hỏi hồi quy Bayes nên điều kiện hóa trên biến nào.
+Cơ chế sinh dữ liệu của một thử nghiệm A/B trên nền tảng thị trường (marketplace) thường chứa sẵn yếu tố gây nhiễu do hành vi chủ động của người dùng và tương tác cung – cầu hai phía. Đưa biến "số lượt nhấp sau khi thấy biến thể" vào mô hình phân tích doanh thu là một biến kiểm soát sai (bad control) nếu lượt nhấp nằm trên con đường nhân quả từ can thiệp tới doanh thu. Cinelli et al. (2022) cung cấp một hệ thống các DAG mẫu cho thấy trực giác "kiểm soát càng nhiều càng sạch" dễ thất bại ra sao. Thực hành đúng là vẽ DAG trước khi chọn đặc trưng từ kho dữ liệu, rồi mới xác định mô hình hồi quy Bayes cần điều kiện hóa trên tập biến nào.
 
-### 2. Học DAG và giới hạn của tối ưu hóa
+### 2. Học cấu trúc DAG từ dữ liệu và giới hạn của tối ưu hóa
 
-Bello, Aragam và Ravikumar (2022) đưa bài toán học DAG về một đặc trưng acyclicity log-det trên M-matrix, rồi tối ưu liên tục (DAGMA). Đây là một phát triển khoa học máy tính rõ ràng: thay vì giả sử đồ thị, ta cố học nó. Nhưng câu chuyện sinh vẫn cần giả định—thường là mô hình phương trình cấu trúc cộng tính, nhiễu độc lập. Một DAG học được từ log nhấp không tự động là DAG nghiệp vụ. Hồi quy đa biến của Chương 5 vẫn cần người phân tích chịu trách nhiệm về các mũi tên không quan sát được.
+Bello, Aragam và Ravikumar (2022) chuyển bài toán học DAG thành một bài toán tối ưu liên tục (DAGMA) bằng đặc trưng không chu trình dựa trên log-determinant của ma trận M. Đây là bước tiến đáng chú ý về mặt thuật toán: thay vì chỉ giả định đồ thị, ta tìm cách ước lượng nó từ dữ liệu. Tuy vậy, cách tiếp cận này vẫn phụ thuộc vào các giả định sinh dữ liệu cụ thể — thường là mô hình phương trình cấu trúc cộng tính với nhiễu độc lập. Một DAG học từ nhật ký nhấp chuột không tự động tương đương với cấu trúc nhân quả nghiệp vụ; người phân tích vẫn phải chịu trách nhiệm về các yếu tố gây nhiễu không quan sát được.
 
-### 3. Transformer nhân quả cho kết cục theo thời gian
+### 3. Causal Transformer cho dữ liệu kết cục theo thời gian
 
-Melnychuk, Frauen và Feuerriegel (2022) xây Causal Transformer để ước lượng kết cục phản thực trên dữ liệu dọc, ví dụ phác đồ điều trị trong MIMIC. Câu chuyện sinh là: đồng biến theo thời gian, điều trị, và kết cục phụ thuộc lẫn nhau trên một chân trời dài; confounding thay đổi theo thời gian. Kiến trúc transformer không xóa confounding. Nó cố học một biểu diễn vừa đoán được kết cục vừa *không* đoán được việc gán điều trị hiện tại, nhờ một loss đối kháng. Đó là phiên bản học sâu của cùng ý tưởng Chương 5: muốn $$\beta$$ của điều trị đọc được, phải chặn đường gây nhiễu, không phải thêm lớp mạng.
+Melnychuk, Frauen và Feuerriegel (2022) đề xuất kiến trúc *Causal Transformer* nhằm ước lượng kết cục phản thực trên dữ liệu dọc theo thời gian, chẳng hạn phác đồ điều trị trong cơ sở dữ liệu y tế MIMIC. Trong bối cảnh này, các hiệp biến thay đổi theo thời gian, quyết định điều trị và kết cục tác động qua lại liên tục qua nhiều mốc thời gian, tạo ra hiện tượng gây nhiễu biến thiên theo thời gian. Bản thân kiến trúc transformer không tự xóa bỏ confounding; mô hình phải dùng hàm mất mát đối kháng để học một biểu diễn vừa dự đoán tốt kết cục vừa không dự đoán được việc gán điều trị hiện tại. Đây chính là phiên bản học sâu của nguyên tắc Chương 5: muốn ước lượng đúng tác động điều trị thì phải chặn đường gây nhiễu, chứ không chỉ tăng độ sâu mạng nơ-ron.
 
-### 4. Tương tác và đa cộng tuyến trong cá nhân hóa
+### 4. Tương tác và đa cộng tuyến trong hệ thống cá nhân hóa
 
-Một hệ gợi ý viết “hiệu ứng của giảm giá phụ thuộc vào mức độ mới của người dùng” chính là interaction. Hai embedding gần cộng tuyến sẽ cho posterior rộng trên từng hệ số dù dự báo vẫn tốt—đúng hiện tượng bài 5.3. Trong sản phẩm, điều đó có nghĩa: đừng diễn giải từng tọa độ embedding như một cơ chế; hãy diễn giải các dự báo và các tương tác đã được đặt tên.
+Trong hệ gợi ý, phát biểu "hiệu quả của mã giảm giá phụ thuộc vào mức độ gắn bó của người dùng" chính là một hiệu ứng tương tác. Trong khi đó, hai vector nhúng (embedding) gần cộng tuyến sẽ tạo ra phân phối hậu nghiệm rất rộng cho từng hệ số riêng lẻ dù dự báo tổng thể vẫn chính xác — đúng như hiện tượng đã phân tích ở Bài 5.3. Về mặt thực hành sản phẩm, không nên cố diễn giải từng tọa độ embedding như một cơ chế độc lập, mà nên tập trung vào chất lượng dự báo và các tương tác giữa những khái niệm có ý nghĩa nghiệp vụ rõ ràng.
 
 ## Diễn giải và nhận định
 
-Một khoảng hậu nghiệm hẹp trên $$\beta_{\text{xử lý}}$$ sau khi đã nhồi hai mươi kiểm soát không phải bằng chứng nhân quả. Nó có thể là bad control đã chặn đường hoặc collider đã mở đường. Ngược lại, một khoảng rộng sau khi chỉ điều kiện hóa đúng tập tối thiểu vẫn có thể là ước lượng trung thực. Chương 5 dạy đúng thứ tự: DAG trước, độ hẹp sau.
+Một khoảng hậu nghiệm hẹp cho $$\beta_{\text{xử lý}}$$ sau khi đưa vào hàng chục biến kiểm soát không phải là bằng chứng nhân quả, vì rất có thể biến trung gian đã chặn mất một phần hiệu ứng hoặc collider đã tạo ra thiên lệch. Ngược lại, một khoảng rộng hơn thu được từ tập điều chỉnh tối thiểu hợp lệ lại có thể là ước lượng trung thực hơn. Trình tự đúng của Chương 5 luôn là: xác định cấu trúc DAG trước, đánh giá độ hẹp của khoảng ước lượng sau.
 
 ## Ứng dụng
 
-Thử nghiệm marketplace, nâng hạng có kiểm soát, điều trị cá nhân hóa, và diễn giải embedding đều là multiple regression cộng với một câu hỏi nhân quả. Bayes thêm một thứ mà OLS thường giấu: bất định còn lại sau khi cấu trúc đã được khai báo.
+Thử nghiệm trên nền tảng thị trường, mô hình xếp hạng có kiểm soát, cá nhân hóa điều trị và diễn giải đặc trưng nhúng đều là bài toán hồi quy đa biến kết hợp với câu hỏi nhân quả. Góc nhìn Bayes bổ sung một thông tin mà OLS thường dễ làm mờ đi: mức độ bất định còn lại sau khi đã khai báo rõ cấu trúc mô hình.
 
 ## Giới hạn và hướng mở rộng
 
-Học DAG từ quan sát không giải được tính không nhận diện khi thiếu giả định. Causal Transformer cần giả định về tuần tự thời gian và về khả năng cân bằng biểu diễn. Bài này không thay thế một học phần suy luận nhân quả. Chương 6 sẽ đổi họ likelihood khi $$y$$ không còn Gaussian, nhưng bài toán confounding vẫn đi theo.
+Học DAG thuần túy từ dữ liệu quan sát không giải quyết được tính không nhận diện (non-identifiability) nếu thiếu giả định cấu trúc. Causal Transformer cũng đòi hỏi các giả định về thứ tự thời gian và tính cân bằng biểu diễn. Bài này chỉ giới thiệu cầu nối ứng dụng chứ không thay thế một học phần đầy đủ về suy luận nhân quả. Ở Chương 6, ta sẽ mở rộng họ hàm hợp lý cho các biến kết quả không tuân theo phân phối Chuẩn, nhưng các nguyên tắc về confounding vẫn giữ nguyên giá trị.
 
 ## Video tham khảo
 
-- [A Crash Course in Good and Bad Controls with Carlos Cinelli](https://www.youtube.com/watch?v=IFgHw_E521U) — Spark: a centre for social research innovation, English. **xem trước**. Xem khóa ngắn về kiểm soát đúng và sai, đúng cách bài đọc một hệ số như tuyên bố nhân quả có điều kiện.
-- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Xem các đồ thị good và bad controls, hỗ trợ phần confounding không phải là lỗi của phần mềm hồi quy.
-- [Causality: Closing Back Doors](https://www.youtube.com/watch?v=IajzIKW518M) — Econometrics, Causality, and Coding with Dr. HK, English. Xem đóng backdoor trên DAG, dùng khi bài nối đa cộng tuyến và tương tác với câu hỏi nhân quả.
+- [A Crash Course in Good and Bad Controls with Carlos Cinelli](https://www.youtube.com/watch?v=IFgHw_E521U) — Spark: a centre for social research innovation, English. **xem trước**. Giới thiệu ngắn gọn về biến kiểm soát đúng và sai, phù hợp với cách tiếp cận hệ số hồi quy như phát biểu nhân quả có điều kiện.
+- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Trình bày các sơ đồ good và bad controls, củng cố lập luận rằng confounding là vấn đề cấu trúc dữ liệu chứ không phải lỗi phần mềm.
+- [Causality: Closing Back Doors](https://www.youtube.com/watch?v=IajzIKW518M) — Econometrics, Causality, and Coding with Dr. HK, English. Hướng dẫn cách đóng đường cửa sau trên DAG, kết nối tư duy nhân quả với hồi quy đa biến.
 
 ## Bài tập
 
-1. Vẽ một DAG ba nút cho “hiển thị quảng cáo → nhấp → mua”. Nếu mục tiêu là hiệu ứng của hiển thị lên mua, việc hồi quy có điều kiện trên nhấp là good hay bad control, và vì sao?
-2. Một mô hình cá nhân hóa có hai feature tương quan 0.97. Dự báo hold-out tốt nhưng hai hệ số đổi dấu khi bạn bỏ một phần trăm dữ liệu. Bạn sẽ diễn giải hệ số nào, nếu có?
-3. Causal Transformer tối thiểu hóa khả năng đoán điều trị từ biểu diễn. Câu ấy đang nhắm tới confounding nào của bài 5.2?
-4. DAGMA trả về một đồ thị từ log sản phẩm. Liệt kê hai mũi tên bạn *không* cho phép mô hình tự vẽ trừ khi có kiến thức nghiệp vụ.
+1. Vẽ một DAG ba nút cho chuỗi "hiển thị quảng cáo $$\rightarrow$$ nhấp chuột $$\rightarrow$$ mua hàng". Nếu mục tiêu là ước lượng tác động của việc hiển thị lên hành vi mua hàng, điều kiện hóa trên biến nhấp chuột là *good control* hay *bad control*? Giải thích vì sao.
+2. Một mô hình cá nhân hóa có hai đặc trưng tương quan 0.97. Kết quả dự báo trên tập kiểm tra rất tốt, nhưng dấu của hai hệ số đảo chiều khi loại bỏ 1% dữ liệu. Bạn có nên diễn giải riêng từng hệ số không? Vì sao?
+3. Việc *Causal Transformer* giảm thiểu khả năng dự đoán biến điều trị từ biểu diễn ẩn đang nhằm xử lý dạng gây nhiễu nào đã học ở Bài 5.2?
+4. Giả sử thuật toán DAGMA trả về một đồ thị từ nhật ký sản phẩm. Hãy nêu hai mũi tên nhân quả mà bạn sẽ không cho phép mô hình tự vẽ nếu không có cơ sở nghiệp vụ.
 
 ## Tài liệu tham khảo
 

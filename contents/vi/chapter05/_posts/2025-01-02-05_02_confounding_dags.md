@@ -12,106 +12,85 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu confounding (hiện tượng gây nhiễu) là gì và vì sao nó làm ta đọc sai dữ liệu. Bạn cũng cần biết DAG là công cụ để suy nghĩ về quan hệ nhân quả, từ đó quyết định khi nào nên điều chỉnh một biến và khi nào không nên. Đây là nền móng của causal inference (suy luận nhân quả).
+Sau bài này, bạn sẽ hiểu hiện tượng gây nhiễu (confounding) là gì và vì sao nó dễ khiến ta rút ra kết luận sai từ dữ liệu quan sát. Bạn cũng sẽ biết cách sử dụng đồ thị nhân quả có hướng không chu trình (DAG) để quyết định biến nào cần điều chỉnh và biến nào không nên đưa vào mô hình — nền tảng cốt lõi của suy luận nhân quả (causal inference).
 
-> **Ví dụ mini.** Một bệnh viện thấy rằng bệnh nhân được điều trị mạnh hơn lại có tỷ lệ hồi phục thấp hơn. Kết luận "điều trị mạnh làm mọi chuyện tệ hơn" nghe rất hợp lý, nhưng có thể hoàn toàn sai nếu các ca nặng vốn dĩ đã được điều trị mạnh hơn. Mức độ nặng của bệnh lúc nhập viện có thể là biến gây nhiễu.
+> **Ví dụ ngắn.** Một bệnh viện ghi nhận nhóm bệnh nhân được điều trị tích cực có tỷ lệ hồi phục thấp hơn nhóm điều trị chuẩn. Kết luận rằng "điều trị tích cực làm bệnh nặng hơn" có thể hoàn toàn sai nếu các ca vốn nặng hơn ngay từ lúc nhập viện mới được chỉ định điều trị tích cực. Khi đó, mức độ nặng ban đầu của bệnh chính là biến gây nhiễu.
 >
-> **Câu hỏi tự kiểm tra.** Nếu một biến ảnh hưởng đồng thời tới cả treatment (can thiệp) và outcome (kết quả), chuyện gì có thể xảy ra nếu ta bỏ qua nó?
+> **Câu hỏi tự kiểm tra.** Điều gì có thể xảy ra nếu ta bỏ qua một biến ảnh hưởng đồng thời tới cả biến can thiệp (treatment) lẫn biến kết quả (outcome)?
 
-## 1. Correlation khác causation ở chỗ nào?
+## 1. Tương quan khác quan hệ nhân quả ở chỗ nào?
 
-Trong dữ liệu thực tế, hai biến đi cùng nhau chưa chắc đã có quan hệ nhân quả trực tiếp.
+Trong dữ liệu thực tế, hai biến cùng tăng hoặc cùng giảm không đồng nghĩa với việc biến này gây ra biến kia. Ví dụ kinh điển là doanh số kem và số vụ đuối nước đều tăng vào mùa hè: kem không gây đuối nước, mà cả hai cùng chịu tác động từ một nguyên nhân chung là **thời tiết nóng**. Khi chỉ nhìn vào hệ số tương quan mà bỏ qua cấu trúc sinh dữ liệu phía sau, ta rất dễ nhầm lẫn tương quan thành nhân quả — và hiện tượng gây nhiễu (confounding) là nguyên nhân phổ biến nhất dẫn đến nhầm lẫn này.
 
-Ví dụ rất nổi tiếng là doanh số kem tăng vào mùa hè, còn số vụ đuối nước cũng tăng vào mùa hè. Điều đó không có nghĩa kem gây đuối nước; cả hai cùng tăng vì **thời tiết nóng**. Vấn đề ở đây là ta nhìn thấy một tương quan, nhưng lại không nhìn thấy cấu trúc tạo ra tương quan đó.
+## 2. Biến gây nhiễu (Confounder) là gì?
 
-Confounding chính là một trong những lý do phổ biến nhất khiến ta nhầm từ tương quan sang nhân quả.
+Một biến $$Z$$ được gọi là **biến gây nhiễu (confounder)** nếu nó tác động đồng thời lên biến can thiệp $$X$$ và biến kết quả $$Y$$, đồng thời không nằm trên con đường nhân quả đi từ $$X$$ đến $$Y$$.
 
-## 2. Confounder là gì?
-
-Một biến được gọi là **confounder** (biến gây nhiễu) nếu nó ảnh hưởng đến predictor hay treatment $$X$$, đồng thời ảnh hưởng đến outcome $$Y$$, nhưng lại không nằm trên con đường nhân quả từ $$X$$ đến $$Y$$.
-
-### Ví dụ 1: cà phê và bệnh tim
-
-Giả sử ta quan sát thấy người uống nhiều cà phê có nguy cơ bệnh tim cao hơn. Có thể ta vội kết luận cà phê là thủ phạm. Nhưng nếu những người căng thẳng hơn vừa uống nhiều cà phê hơn vừa có nguy cơ tim mạch cao hơn, thì **stress** có thể là confounder.
-
-### Ví dụ 2: học thêm và điểm thi
-
-Nếu học sinh yếu thường đi học thêm nhiều hơn, còn kết quả thi lại phụ thuộc mạnh vào năng lực ban đầu, thì **trình độ đầu vào** là một confounder khi ta nghiên cứu hiệu quả của học thêm.
+- **Ví dụ 1 – Cà phê và bệnh tim:** Nếu quan sát thấy người uống nhiều cà phê có tỷ lệ mắc bệnh tim cao hơn, ta chưa thể vội kết luận cà phê gây bệnh tim. Nếu người chịu áp lực cao vừa uống nhiều cà phê hơn vừa có nguy cơ tim mạch cao hơn, thì **mức độ căng thẳng (stress)** là biến gây nhiễu.
+- **Ví dụ 2 – Học thêm và điểm thi:** Nếu học sinh có học lực yếu thường đi học thêm nhiều hơn, trong khi điểm thi phụ thuộc mạnh vào năng lực ban đầu, thì **trình độ đầu vào** là biến gây nhiễu khi đánh giá hiệu quả của việc học thêm.
 
 ![Sơ đồ confounding tổng quan]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_confounding_dag_overview.png)
 
-Điểm mấu chốt là confounding tạo ra một đường liên hệ phụ giữa $$X$$ và $$Y$$. Nếu không xử lý, ta dễ quy nhầm ảnh hưởng của confounder thành ảnh hưởng của treatment.
+Điểm cốt lõi là biến gây nhiễu tạo ra một đường liên hệ phi nhân quả giữa $$X$$ và $$Y$$. Nếu không kiểm soát biến này, mô hình sẽ quy nhầm ảnh hưởng của nó thành tác động của $$X$$.
 
-## 3. DAG là gì và vì sao nó hữu ích?
+## 3. Đồ thị nhân quả DAG là gì?
 
-**DAG** là viết tắt của *Directed Acyclic Graph*, có thể hiểu là đồ thị có hướng và không có chu trình. Nói cụ thể hơn, *Directed* nghĩa là các mũi tên có hướng, *Acyclic* nghĩa là không có vòng lặp khép kín, còn *Graph* nghĩa là một sơ đồ biểu diễn quan hệ giữa các biến.
+**DAG** là viết tắt của *Directed Acyclic Graph* (đồ thị có hướng và không có chu trình): các mũi tên có hướng biểu diễn chiều tác động nhân quả giữa các biến và không tạo thành vòng lặp khép kín. DAG giúp trả lời trực tiếp câu hỏi thực hành trước khi chạy hồi quy:
 
-DAG giúp ta trả lời một câu rất thực tế:
+> Với câu hỏi nhân quả đang xét, biến nào cần đưa vào mô hình để điều chỉnh và biến nào không nên đưa vào?
 
-> Trong câu hỏi nhân quả này, biến nào nên đưa vào mô hình, biến nào không nên?
+## 4. Ba cấu trúc cơ bản trong DAG
 
-Thay vì lao ngay vào chạy hồi quy, ta vẽ câu chuyện trước.
+Hầu hết các sơ đồ nhân quả phức tạp đều được ghép từ ba cấu trúc nền tảng sau.
 
-## 4. Ba cấu trúc cơ bản cần nhớ
-
-Hầu hết DAG phức tạp đều được ghép từ ba cấu trúc cơ bản sau.
-
-### 4.1. Fork: nguyên nhân chung
+### 4.1. Cấu trúc chạc (Fork): nguyên nhân chung
 
 $$
 Z \rightarrow X,\quad Z \rightarrow Y
 $$
 
-Đây là cấu trúc của confounding.
-
-Ví dụ, tuổi ảnh hưởng đến mức độ tập luyện và đồng thời cũng ảnh hưởng đến huyết áp. Nếu đang muốn nghiên cứu tập luyện ảnh hưởng thế nào đến huyết áp, **tuổi** là biến nên điều chỉnh.
+Đây chính là cấu trúc của hiện tượng gây nhiễu. Ví dụ, độ tuổi ảnh hưởng đến cả mức độ tập luyện lẫn huyết áp. Khi muốn đo tác động của tập luyện lên huyết áp, ta **cần điều chỉnh cho độ tuổi** để đóng đường liên hệ phi nhân quả này.
 
 ![Cấu trúc fork: nguyên nhân chung gây confounding]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_fork_structure.png)
 
-### 4.2. Chain: biến trung gian
+### 4.2. Cấu trúc chuỗi (Chain): biến trung gian (Mediator)
 
 $$
 X \rightarrow M \rightarrow Y
 $$
 
-Đây là mediator (biến trung gian). Ví dụ, tập luyện làm giảm cân, còn giảm cân lại giúp cải thiện đường huyết.
-
-Nếu ta muốn đo **tổng hiệu quả** của tập luyện lên đường huyết, không nên điều chỉnh cho cân nặng, vì như vậy ta chặn mất một phần đường tác động thật.
+Ở đây $$M$$ là **biến trung gian (mediator)** nằm trên chính con đường tác động từ $$X$$ đến $$Y$$. Chẳng hạn, tập luyện giúp giảm cân, và giảm cân giúp cải thiện đường huyết. Nếu mục tiêu là ước lượng **tổng hiệu ứng** (total effect) của tập luyện lên đường huyết, ta **không nên điều chỉnh cho cân nặng**, vì làm vậy sẽ chặn mất một phần tác động thực sự của tập luyện.
 
 ![Cấu trúc chain: mediator nằm trên đường tác động]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_chain_structure.png)
 
 ![Tổng quan mediation trong câu chuyện nhân quả]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_mediation_overview.png)
 
-### 4.3. Collider: hai mũi tên cùng chụm vào một điểm
+### 4.3. Cấu trúc hội tụ (Collider): hệ quả chung
 
 $$
 X \rightarrow C \leftarrow Y
 $$
 
-Collider rất nguy hiểm vì khi ta điều kiện hóa lên nó, ta có thể tạo ra tương quan giả.
-
-Ví dụ, năng lực và may mắn đều ảnh hưởng đến việc được tuyển dụng; nếu chỉ nhìn nhóm đã được tuyển, ta có thể thấy người "ít may mắn" lại thường "rất giỏi" và ngược lại.
-
-Đó không phải quy luật thật của toàn bộ dân số, mà là hệ quả của việc chỉ nhìn vào collider.
+**Collider** là biến chịu tác động từ cả $$X$$ và $$Y$$. Khác với fork, đường qua collider vốn tự đóng; nhưng nếu ta điều kiện hóa (hoặc lọc dữ liệu) theo $$C$$, ta sẽ vô tình **mở đường** và tạo ra tương quan giả giữa $$X$$ và $$Y$$. Ví dụ, cả năng lực và may mắn đều ảnh hưởng đến khả năng trúng tuyển; trong toàn bộ dân số hai yếu tố này có thể độc lập, nhưng nếu chỉ xét riêng nhóm đã trúng tuyển, người kém may mắn hơn thường phải có năng lực cao hơn, tạo ra tương quan âm giả tạo.
 
 ![Cấu trúc collider: điều kiện hóa có thể mở ra tương quan giả]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_collider_structure.png)
 
 ![Tổng quan collider bias trong sơ đồ nhân quả]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_collider_bias_overview.png)
 
-### Thử nghiệm: confounder làm lệch hệ số và hiệu chỉnh Z sửa nó
+### Thử nghiệm: biến gây nhiễu làm lệch hệ số và điều chỉnh $$Z$$ khắc phục
 
-Mô phỏng fork Z → X, Z → Y: ước lượng ngây thơ, phân tầng (nghịch lý Simpson), rồi hồi quy có Z.
+Mô phỏng cấu trúc fork $$Z \rightarrow X, Z \rightarrow Y$$: so sánh ước lượng bỏ qua $$Z$$, phân tầng theo $$Z$$ (nghịch lý Simpson) và hồi quy có điều chỉnh $$Z$$.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="confound-explainer" data-lang="vi" data-tab="fork"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 5. Quy tắc thực hành: nên control hay không?
+## 5. Quy tắc thực hành: khi nào nên điều chỉnh một biến?
 
-Một bản nhớ ngắn gọn là: **nên control cho confounders**, **không nên control cho mediators nếu mục tiêu là total effect (tổng hiệu ứng)**, và **không nên control cho colliders**. Quy tắc này nghe đơn giản, nhưng muốn áp dụng đúng thì phải có sơ đồ nhân quả đủ rõ.
+Nguyên tắc rút gọn cần ghi nhớ là: **nên điều chỉnh cho biến gây nhiễu (confounder)**, **không điều chỉnh cho biến trung gian (mediator)** nếu mục tiêu là tổng hiệu ứng, và **không điều chỉnh cho collider**. Tuy ngắn gọn, quy tắc này chỉ áp dụng chính xác khi ta đã phác thảo rõ cấu trúc nhân quả bằng DAG.
 
-## 6. Simpson's Paradox: ví dụ khiến nhiều người đổi cách nghĩ
+## 6. Nghịch lý Simpson (Simpson's Paradox)
 
 ![Minh họa nhanh Simpson's Paradox]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_simpsons_paradox_overview.png)
 
@@ -119,41 +98,33 @@ Một bản nhớ ngắn gọn là: **nên control cho confounders**, **không n
 
 ![Tách theo severity cho thấy hiệu quả thật của treatment]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_simpsons_stratified_effect.png)
 
-Simpson's Paradox xảy ra khi nhìn toàn bộ dữ liệu thì một xu hướng xuất hiện, nhưng khi tách theo nhóm quan trọng thì xu hướng ấy lại đảo chiều. Ví dụ trong y khoa, nhìn tổng thể thì nhóm điều trị tích cực có vẻ hồi phục kém hơn, nhưng khi tách bệnh nhân theo mức độ nặng nhẹ, trong từng nhóm mức độ bệnh thì điều trị tích cực lại tốt hơn. Nguyên nhân là vì các ca nặng được điều trị mạnh hơn, trong khi chính các ca nặng ấy vốn cũng khó hồi phục hơn.
-
-Biến "mức độ nặng" đã làm méo quan hệ treatment-outcome khi bị bỏ qua.
+**Nghịch lý Simpson** xảy ra khi một xu hướng xuất hiện rõ rệt trên dữ liệu gộp, nhưng lại đảo chiều hoàn toàn khi tách dữ liệu theo một biến phân tầng quan trọng. Trong ví dụ y khoa, nhìn gộp toàn bộ bệnh nhân thì điều trị tích cực có tỷ lệ hồi phục thấp hơn, nhưng khi tách riêng nhóm ca nặng và nhóm ca nhẹ thì điều trị tích cực đều cho kết quả tốt hơn ở cả hai nhóm. Nguyên nhân là nhóm điều trị tích cực tiếp nhận tỷ lệ ca nặng cao hơn nhiều, khiến biến "mức độ nặng" làm đảo ngược xu hướng khi gộp chung.
 
 ![DAG của Simpson's Paradox khi chưa điều chỉnh confounder]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_simpsons_dag_unadjusted.png)
 
 ![DAG sau khi điều chỉnh severity để lộ causal effect]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_simpsons_dag_adjusted.png)
 
-Đây là một ví dụ rất tốt để tự nhắc mình rằng:
+### 6.1. Bảng số minh họa nghịch lý Simpson
 
-> dữ liệu tổng hợp có thể kể một câu chuyện sai nếu ta không tách đúng cấu trúc.
-
-### 6.1. Một bảng số rất ngắn để thấy nghịch lý này
-
-Giả sử bệnh viện có hai mức điều trị là **điều trị tích cực** và **điều trị chuẩn**, còn bệnh nhân được chia thành hai nhóm là **ca nặng** và **ca nhẹ**:
+Giả sử bệnh viện so sánh hai phác đồ **điều trị tích cực** và **điều trị chuẩn** trên hai nhóm **ca nặng** và **ca nhẹ**:
 
 | Nhóm bệnh nhân | Điều trị tích cực | Điều trị chuẩn |
 |---|---:|---:|
 | Ca nặng | 24/80 hồi phục = 30% | 6/30 hồi phục = 20% |
 | Ca nhẹ | 54/60 hồi phục = 90% | 144/180 hồi phục = 80% |
 
-Trong **từng nhóm mức độ bệnh**, điều trị tích cực đều tốt hơn.
+Trong **cả hai nhóm**, điều trị tích cực đều có tỷ lệ hồi phục cao hơn 10 điểm phần trăm. Tuy nhiên, khi gộp chung toàn bộ bệnh nhân:
 
-Nhưng nếu gộp toàn bộ bệnh nhân lại:
+- Điều trị tích cực: $$78/140 \approx 55.7\%$$ hồi phục.
+- Điều trị chuẩn: $$150/210 \approx 71.4\%$$ hồi phục.
 
-- điều trị tích cực: $$78/140 \approx 55.7\%$$ hồi phục,
-- điều trị chuẩn: $$150/210 \approx 71.4\%$$ hồi phục.
+Tỷ lệ gộp bị đảo ngược không phải vì phác đồ tích cực kém hiệu quả, mà vì phần lớn ca nặng được phân bổ vào nhóm này.
 
-Nhìn tổng thể thì điều trị tích cực lại có vẻ tệ hơn. Lý do không phải vì treatment làm hại bệnh nhân, mà vì nhóm điều trị tích cực chứa tỷ lệ ca nặng nhiều hơn. Đây là một cách rất trực quan để thấy confounding có thể đảo ngược câu chuyện như thế nào.
+## 7. Đường cửa sau (Backdoor Path) là gì?
 
-## 7. Backdoor path là gì?
+**Đường cửa sau (backdoor path)** là mọi đường nối phi nhân quả giữa biến can thiệp $$X$$ và biến kết quả $$Y$$ bắt đầu bằng một mũi tên đi vào $$X$$ (thông qua các nguyên nhân chung). Mục tiêu của việc điều chỉnh (adjustment) là chặn toàn bộ các đường cửa sau đang mở mà không chặn đường tác động nhân quả từ $$X$$ đến $$Y$$ và không vô tình mở ra đường sai mới.
 
-Một **backdoor path** có thể được hiểu là con đường phi nhân quả nối từ treatment $$X$$ tới outcome $$Y$$ thông qua các nguyên nhân chung. Mục tiêu của adjustment (điều chỉnh) là chặn các backdoor paths cần chặn, nhưng không chặn đường tác động nhân quả thật từ $$X$$ đến $$Y$$.
-
-Các ví dụ dưới đây cho thấy backdoor path có thể đơn giản, có nhiều nhánh, bị collider chặn sẵn, hoặc bị mở nhầm bởi M-bias.
+Bốn hình dưới minh họa các tình huống điển hình: đường cửa sau đơn giản, nhiều đường cửa sau cần chặn cùng lúc, đường cửa sau vốn đã bị collider chặn sẵn và cấu trúc M-bias (nơi điều chỉnh nhầm một collider sẽ mở đường cửa sau).
 
 ![Ví dụ backdoor path đơn giản]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_backdoor_simple.png)
 
@@ -163,11 +134,11 @@ Các ví dụ dưới đây cho thấy backdoor path có thể đơn giản, có
 
 ![M-bias: điều chỉnh sai có thể mở backdoor path]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_backdoor_m_bias.png)
 
-Ví dụ, nếu ta muốn biết học thêm $$X$$ ảnh hưởng thế nào tới điểm thi $$Y$$, trong khi năng lực ban đầu $$Z$$ ảnh hưởng cả việc đi học thêm lẫn điểm thi, thì đường $$X \leftarrow Z \rightarrow Y$$ chính là backdoor path. Điều chỉnh cho $$Z$$ sẽ giúp chặn đường này.
+Chẳng hạn, khi đánh giá tác động của học thêm ($$X$$) lên điểm thi ($$Y$$) với năng lực ban đầu ($$Z$$) tác động lên cả hai, đường $$X \leftarrow Z \rightarrow Y$$ là một đường cửa sau và sẽ được đóng lại khi ta điều chỉnh cho $$Z$$.
 
-## 8. Điều chỉnh đủ và điều chỉnh sai khác nhau thế nào?
+## 8. Tập biến điều chỉnh hợp lệ và sai lệch khi điều chỉnh nhầm
 
-So sánh bốn lựa chọn adjustment set dưới đây sẽ giúp thấy rõ khác biệt giữa điều chỉnh đủ, điều chỉnh làm mất mediation, điều chỉnh collider, và không điều chỉnh gì cả.
+Bốn sơ đồ dưới đối chiếu sự khác biệt giữa tập điều chỉnh hợp lệ, tập điều chỉnh chặn nhầm biến trung gian (chỉ còn hiệu ứng trực tiếp), tập điều chỉnh nhầm collider và trường hợp không điều chỉnh.
 
 ![Adjustment set hợp lệ chặn các backdoor paths cần chặn]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_adjustment_valid_z1_z2.png)
 
@@ -177,93 +148,62 @@ So sánh bốn lựa chọn adjustment set dưới đây sẽ giúp thấy rõ k
 
 ![Không điều chỉnh khiến backdoor paths vẫn mở]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_adjustment_invalid_none.png)
 
-Một **adjustment set hợp lệ** là tập biến giúp chặn tất cả backdoor paths cần chặn, không mở ra các đường sai mới, và không vô tình chặn mất phần hiệu quả mà ta đang muốn đo. Vì thế, ta không cần điều chỉnh "càng nhiều càng tốt"; điều quan trọng là phải điều chỉnh **đúng biến**.
+Một **tập điều chỉnh hợp lệ (valid adjustment set)** chặn được mọi đường cửa sau đang mở, không mở đường giả mới và không cắt ngang con đường tác động ta muốn đo. Vì vậy, mục tiêu không phải điều chỉnh càng nhiều biến càng tốt, mà là điều chỉnh **đúng biến**.
 
 ### Ví dụ thực tế
 
-Trong một nghiên cứu về tác động của tập luyện lên sức khỏe tim mạch, **tuổi** và **thói quen ăn uống** có thể là confounders, **cân nặng hiện tại** có thể là mediator, còn **số lần nhập viện** có thể là collider nếu nó vừa chịu ảnh hưởng của sức khỏe vừa liên quan tới khả năng được theo dõi y tế. Nếu ta nhét tất cả vào một mô hình mà không suy nghĩ, ta rất dễ tự tạo bias (thiên lệch).
+Trong nghiên cứu tác động của tập luyện lên sức khỏe tim mạch, `tuổi` và `thói quen ăn uống` có thể là biến gây nhiễu, `cân nặng hiện tại` có thể là biến trung gian, còn `số lần nhập viện` có thể là collider nếu nó vừa chịu ảnh hưởng của tình trạng tim mạch vừa liên quan đến mức độ theo dõi y tế. Khi mục tiêu là tổng hiệu ứng của tập luyện, ta cần điều chỉnh cho `tuổi` và `thói quen ăn uống`, tránh điều chỉnh cho `cân nặng hiện tại` và tuyệt đối không thêm `số lần nhập viện` chỉ vì biến này có sẵn trong tập dữ liệu.
 
-Một cách nói thực dụng hơn là:
-
-- nếu mục tiêu là **total effect** của tập luyện lên sức khỏe tim mạch, ta thường muốn điều chỉnh cho `tuổi` và `thói quen ăn uống`,
-- nhưng không nên vội điều chỉnh cho `cân nặng hiện tại` nếu cân nặng chính là một phần con đường mà tập luyện tạo tác động,
-- và càng không nên thêm `số lần nhập viện` chỉ vì "đã có dữ liệu", nếu biến này đóng vai trò collider.
-
-Điểm quan trọng là adjustment set tốt phải xuất phát từ câu chuyện nhân quả, không phải từ thói quen nhét mọi cột dữ liệu vào mô hình.
-
-## 9. Collider bias: lỗi rất thường gặp khi "control cho mọi thứ"
+## 9. Thiên lệch collider (Collider Bias): rủi ro của thói quen "kiểm soát mọi thứ"
 
 ![Trong dân số chung, hai nguyên nhân của collider có thể độc lập]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_collider_general_population.png)
 
 ![Khi condition lên collider, tương quan giả xuất hiện]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_collider_conditioned_sample.png)
 
-Collider bias thường xuất hiện khi ta chỉ nhìn một nhóm đã được chọn lọc.
+Thiên lệch collider thường phát sinh khi phân tích chỉ giới hạn trên một tập mẫu đã qua chọn lọc hoặc khi đưa một hệ quả chung vào mô hình hồi quy. Trong ví dụ tuyển dụng, dù năng lực và may mắn độc lập ở dân số chung, việc chỉ quan sát nhóm trúng tuyển tạo ra tương quan âm giả giữa hai biến này. Bài học thực hành rất rõ: thêm biến vào mô hình không phải lúc nào cũng giúp ước lượng chính xác hơn.
 
-Ví dụ, năng lực và may mắn đều ảnh hưởng đến việc đỗ vào một công ty cạnh tranh cao. Trong dân số chung, năng lực và may mắn có thể không liên quan, nhưng trong nhóm đã trúng tuyển, người kém may mắn hơn thường phải giỏi hơn để vẫn đỗ.
+### Thử nghiệm: điều kiện hóa theo collider tạo tương quan giả
 
-Kết quả là ta nhìn thấy một tương quan âm giả giữa năng lực và may mắn trong nhóm được chọn.
-
-Bài học rất quan trọng:
-
-> Không phải thêm biến nào vào mô hình cũng làm phân tích tốt hơn.
-
-### Thử nghiệm: điều kiện theo collider tạo tương quan giả
-
-X và Y độc lập nhưng cùng chỉ vào C; chỉ cần lọc theo C là chúng tương quan âm.
+$$X$$ và $$Y$$ độc lập nhưng cùng tác động vào $$C$$; chỉ cần lọc theo $$C$$ là hai biến xuất hiện tương quan âm giả.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="confound-explainer" data-lang="vi" data-tab="collider"></div>
 </div>
 
-## 10. Một quy trình DAG rất thực tế
+## 10. Quy trình bốn bước khi làm việc với DAG
 
-Khi gặp một câu hỏi nhân quả, bạn có thể đi theo bốn bước tương đối thực dụng sau.
-
-### Bước 1. Xác định câu hỏi
-
-Trước hết, hãy xác định xem bạn đang hỏi về ảnh hưởng của $$X$$ lên $$Y$$, hay chỉ đơn giản muốn dự đoán $$Y$$. Nếu mục tiêu là nhân quả, DAG trở nên đặc biệt quan trọng.
-
-### Bước 2. Liệt kê các biến liên quan
-
-Ở bước liệt kê biến, hãy nghĩ bằng ngôn ngữ đời thường: điều gì ảnh hưởng đến treatment, điều gì ảnh hưởng đến outcome, điều gì nằm ở giữa treatment và outcome, và điều gì là kết quả chung của hai thứ khác nhau.
-
-### Bước 3. Vẽ mũi tên theo câu chuyện thực tế
-
-Không cần vẽ đẹp ngay từ đầu. Điều quan trọng là vẽ đúng trực giác chuyên môn.
-
-### Bước 4. Quyết định adjustment set
-
-Ở bước cuối, hãy tự hỏi biến nào cần điều chỉnh để chặn backdoor paths, và biến nào không được điều chỉnh vì thực chất là mediator hoặc collider.
+1. **Xác định rõ mục tiêu:** bạn muốn ước lượng tác động nhân quả của $$X$$ lên $$Y$$ hay chỉ dự đoán $$Y$$? Khi mục tiêu là nhân quả, việc vẽ DAG là bước bắt buộc.
+2. **Liệt kê các biến liên quan:** xác định các yếu tố ảnh hưởng đến can thiệp, các yếu tố ảnh hưởng đến kết quả, các biến nằm giữa can thiệp và kết quả, cũng như các hệ quả chung.
+3. **Vẽ mũi tên theo kiến thức chuyên môn:** tập trung thể hiện đúng giả định về chiều tác động thực tế trước khi chạy mô hình.
+4. **Chọn tập điều chỉnh (adjustment set):** giữ các biến cần thiết để chặn đường cửa sau và loại trừ các biến trung gian hoặc collider không phù hợp với câu hỏi nghiên cứu.
 
 ## 11. Công cụ tương tác để tự luyện DAG
 
-Bạn có thể dùng công cụ DAG Explorer của website để tự vẽ các tình huống trong bài:
+Bạn có thể sử dụng công cụ DAG Explorer của trang web để tự vẽ và kiểm tra các cấu trúc trong bài:
 
 **[Mở Interactive DAG Explorer]({{ site.baseurl }}/tools/dag-explorer/standalone.html){:target="_blank"}**
 
-Gợi ý nên thử là vẽ ví dụ kem và đuối nước, ví dụ học thêm và điểm thi, ví dụ exercise - weight loss - health, rồi thử đổi một biến từ confounder thành collider để xem logic thay đổi ra sao.
+Bạn nên thử vẽ ví dụ doanh số kem – đuối nước, ví dụ học thêm – điểm thi, ví dụ tập luyện – giảm cân – sức khỏe, rồi thử đảo chiều mũi tên để biến một confounder thành collider và quan sát sự thay đổi của tập điều chỉnh.
 
-## 12. Điều quan trọng nhất của bài này
+## 12. Tổng kết bài học
 
-Confounding không phải là lỗi kỹ thuật nhỏ. Nó là vấn đề trung tâm của mọi phân tích muốn bàn đến nguyên nhân.
+Hiện tượng gây nhiễu là vấn đề cốt lõi của mọi phân tích hướng đến nguyên nhân – kết quả. Nếu bỏ qua bước tư duy nhân quả, mô hình hồi quy vẫn có thể chạy hội tụ và cho khoảng hậu nghiệm rất hẹp, nhưng kết luận cuối cùng vẫn sai lệch hoàn toàn.
 
-Nếu không suy nghĩ nhân quả trước, hồi quy có thể chạy rất đẹp, interval có thể trông rất thuyết phục, nhưng câu kết luận cuối cùng vẫn sai.
-
-> **3 ý cần nhớ.** Confounder là biến ảnh hưởng đồng thời tới treatment và outcome, nên nếu bỏ qua nó ta dễ ước lượng sai hiệu quả mình quan tâm; DAG là công cụ để vẽ cấu trúc nhân quả trước khi chạy mô hình, nhờ đó quyết định biến nào nên và không nên điều chỉnh; và không nên "control cho mọi thứ", vì confounders thường cần điều chỉnh, còn mediators và colliders thì phải xử lý cẩn thận tùy câu hỏi.
+> **3 ý cần nhớ.** Biến gây nhiễu ảnh hưởng đồng thời tới cả biến can thiệp và biến kết quả nên cần được điều chỉnh để tránh ước lượng sai; DAG giúp tường minh hóa cấu trúc nhân quả trước khi chạy hồi quy; và nguyên tắc chọn biến là điều chỉnh đúng biến gây nhiễu, tránh kiểm soát tùy tiện biến trung gian hay collider.
 
 ## Video tham khảo
 
-- [Statistical Rethinking 2023 - 05 - Elemental Confounds](https://www.youtube.com/watch?v=mBEA7PKDmiY) — Richard McElreath, English. **xem trước**. Xem confounding được vẽ thành mũi tên chung, đúng phần bài tách tương quan khỏi quan hệ nhân quả trực tiếp.
-- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Xem kiểm soát đúng và kiểm soát sai, hỗ trợ quyết định khi nào nên điều chỉnh một biến.
-- [4.6 - The Backdoor Adjustment](https://www.youtube.com/watch?v=U1S8Rq8IcrY) — Brady Neal - Causal Inference, English. Xem backdoor adjustment, dùng cho đoạn bài biến DAG thành quy tắc có điều chỉnh hay không.
+- [Statistical Rethinking 2023 - 05 - Elemental Confounds](https://www.youtube.com/watch?v=mBEA7PKDmiY) — Richard McElreath, English. **xem trước**. Biểu diễn các cấu trúc gây nhiễu cơ bản bằng đồ thị mũi tên, khớp với phần phân biệt tương quan và nhân quả trong bài.
+- [Statistical Rethinking 2023 - 06 - Good & Bad Controls](https://www.youtube.com/watch?v=uanZZLlzKHw) — Richard McElreath, English. Phân tích các biến kiểm soát nên dùng và nên tránh, hỗ trợ quy tắc chọn biến điều chỉnh.
+- [4.6 - The Backdoor Adjustment](https://www.youtube.com/watch?v=U1S8Rq8IcrY) — Brady Neal - Causal Inference, English. Trình bày tiêu chuẩn điều chỉnh đường cửa sau (backdoor adjustment), củng cố mục 7 và 8.
 
 ## Câu hỏi tự luyện
 
-1. Trong nghiên cứu hiệu quả học thêm lên điểm thi, biến nào có thể là confounder?
-2. Vì sao mediator không nên luôn luôn bị control?
-3. Hãy nghĩ ra một ví dụ collider trong đời sống hoặc công việc của bạn.
-4. Simpson's Paradox dạy ta điều gì về việc đọc dữ liệu gộp?
-5. Hãy thử vẽ một DAG đơn giản cho câu hỏi: "Tập thể dục có giúp ngủ ngon hơn không?"
+1. Trong nghiên cứu hiệu quả của việc học thêm lên điểm thi, những biến nào có thể đóng vai trò biến gây nhiễu?
+2. Vì sao không phải lúc nào cũng nên điều chỉnh cho biến trung gian (mediator)?
+3. Hãy nêu một ví dụ về collider trong đời sống hoặc công việc của bạn.
+4. Nghịch lý Simpson nhắc nhở ta điều gì khi đọc số liệu gộp?
+5. Hãy phác thảo một DAG đơn giản cho câu hỏi: "Tập thể dục có giúp ngủ ngon hơn không?"
 
 ## Tài liệu tham khảo
 

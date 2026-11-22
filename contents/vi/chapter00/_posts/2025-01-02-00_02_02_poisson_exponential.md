@@ -12,13 +12,11 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ mô hình hóa được dữ liệu đếm bằng Poisson, mô hình hóa thời gian chờ bằng Exponential, và hiểu vì sao hai phân phối này là hai mặt của cùng một quá trình sự kiện ngẫu nhiên theo thời gian.
+Sau bài này, bạn sẽ biết cách mô hình hóa dữ liệu đếm bằng phân phối Poisson, mô hình hóa thời gian chờ bằng phân phối Exponential, và hiểu vì sao hai phân phối này là hai góc nhìn của cùng một quá trình sự kiện ngẫu nhiên theo thời gian.
 
 ## 1) Khi nào dùng Poisson?
 
-Poisson phù hợp khi ta đếm số sự kiện trong một khoảng cố định:
-
-Ví dụ điển hình là số cuộc gọi trong 1 giờ, số lỗi trên 1 trang văn bản, hay số tai nạn tại một giao lộ trong 1 tháng.
+Phân phối Poisson phù hợp khi ta đếm số sự kiện xảy ra trong một khoảng cố định, chẳng hạn số cuộc gọi trong 1 giờ, số lỗi trên 1 trang văn bản, hay số tai nạn tại một giao lộ trong 1 tháng.
 
 Nếu $$Y$$ là số sự kiện trong khoảng quan sát:
 
@@ -26,9 +24,7 @@ $$
 Y \sim \text{Poisson}(\lambda), \quad P(Y=k)=\frac{\lambda^k e^{-\lambda}}{k!},\; k=0,1,2,\dots
 $$
 
-Ở đây $$\lambda$$ là số sự kiện trung bình mỗi khoảng.
-
-Tính chất cốt lõi:
+Ở đây, $$\lambda$$ là số sự kiện trung bình trong mỗi khoảng. Tính chất đặc trưng của phân phối Poisson là kỳ vọng và phương sai bằng nhau:
 
 $$
 \mathbb{E}[Y]=\lambda, \qquad \mathrm{Var}(Y)=\lambda.
@@ -36,43 +32,37 @@ $$
 
 ![Poisson mô tả số sự kiện đếm được trong các khoảng thời gian cố định]({{ site.baseurl }}/img/chapter_img/chapter00/poisson_counts_timeline.png)
 
-*Cách đọc hình: Hình này minh họa poisson mô tả số sự kiện đếm được trong các khoảng thời gian cố định. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+*Cách đọc hình: Biểu đồ minh họa cách phân phối Poisson mô tả số sự kiện đếm được trong các khoảng thời gian cố định; hãy đối chiếu trục giá trị đếm với xác suất tương ứng để thấy vị trí đỉnh và độ rộng của phân phối.*
 
 ## 2) Khi nào dùng Exponential?
 
-Exponential phù hợp khi ta quan tâm thời gian chờ đến sự kiện tiếp theo.
-
-Nếu $$T$$ là thời gian chờ:
+Phân phối Exponential phù hợp khi đại lượng quan tâm là thời gian chờ cho đến sự kiện tiếp theo. Nếu $$T$$ là thời gian chờ:
 
 $$
 T \sim \text{Exponential}(\lambda), \quad f(t)=\lambda e^{-\lambda t},\; t\ge 0.
 $$
 
-Kỳ vọng:
+Kỳ vọng của $$T$$ là:
 
 $$
 \mathbb{E}[T]=\frac{1}{\lambda}.
 $$
 
-Nghĩa là tốc độ sự kiện càng cao thì thời gian chờ trung bình càng thấp.
+Điều này hoàn toàn thuận tự nhiên: tốc độ xảy ra sự kiện $$\lambda$$ càng cao thì thời gian chờ trung bình càng ngắn.
 
 ![Exponential mô tả thời gian chờ tới sự kiện kế tiếp]({{ site.baseurl }}/img/chapter_img/chapter00/exponential_waiting_time_curve.png)
 
-*Cách đọc hình: Hình này minh họa exponential mô tả thời gian chờ tới sự kiện kế tiếp. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+*Cách đọc hình: Đường cong minh họa hàm mật độ Exponential cho thời gian chờ tới sự kiện kế tiếp, giảm dần theo hàm mũ khi thời gian chờ tăng lên.*
 
-## 3) Hằng số chuẩn hóa trong Poisson/Exponential
+## 3) Hằng số chuẩn hóa trong Poisson và Exponential
 
-Với Poisson:
+Với phân phối Poisson:
 
 $$
 P(Y=k)=\frac{\lambda^k e^{-\lambda}}{k!},\quad k=0,1,2,\dots
 $$
 
-Trong đó:
-
-Ở đây, $$k!$$ phản ánh số cách sắp xếp các sự kiện trong lập luận đếm tổ hợp, còn $$e^{-\lambda}$$ là nhân tố giúp tổng toàn bộ PMF đóng lại đúng bằng 1.
-
-Thật vậy:
+Trong công thức này, $$k!$$ xuất hiện từ lập luận đếm tổ hợp về số cách sắp xếp các sự kiện, còn $$e^{-\lambda}$$ là hệ số chuẩn hóa bảo đảm tổng toàn bộ PMF bằng đúng 1:
 
 $$
 \sum_{k=0}^{\infty} \frac{\lambda^k e^{-\lambda}}{k!}
@@ -80,33 +70,27 @@ $$
 =e^{-\lambda}e^{\lambda}=1.
 $$
 
-Với Exponential:
+Với phân phối Exponential:
 
 $$
 f(t)=\lambda e^{-\lambda t},\quad t\ge 0.
 $$
 
-Hằng số $$\lambda$$ là nhân tố chuẩn hóa để tích phân mật độ bằng 1:
+Hệ số $$\lambda$$ chính là hằng số chuẩn hóa để tích phân hàm mật độ trên $$[0, \infty)$$ bằng 1:
 
 $$
 \int_0^{\infty} \lambda e^{-\lambda t}\,dt=1.
 $$
 
-Nếu bỏ $$\lambda$$, hàm $$e^{-\lambda t}$$ chỉ là "dạng" giảm mũ, chưa phải mật độ hợp lệ.
+Nếu bỏ $$\lambda$$, biểu thức $$e^{-\lambda t}$$ mới chỉ thể hiện dạng suy giảm theo hàm mũ chứ chưa phải một hàm mật độ xác suất hợp lệ.
 
 ## 4) Liên hệ trực tiếp giữa Poisson và Exponential
 
-Nếu số sự kiện theo thời gian tuân theo quá trình Poisson tốc độ $$\lambda$$, thì:
-
-Số sự kiện trong khoảng dài $$\Delta t$$ sẽ có phân phối Poisson($$\lambda\Delta t$$), còn thời gian giữa hai sự kiện liên tiếp sẽ có phân phối Exponential($$\lambda$$).
-
-Vì vậy, câu hỏi "đếm bao nhiêu sự kiện" và "chờ bao lâu tới sự kiện tiếp" thực ra là cùng một mô hình dưới hai góc nhìn.
+Nếu các sự kiện xảy ra theo một quá trình Poisson với tốc độ $$\lambda$$, thì số sự kiện trong khoảng thời gian dài $$\Delta t$$ tuân theo phân phối $$\text{Poisson}(\lambda\Delta t)$$, còn khoảng thời gian giữa hai sự kiện liên tiếp tuân theo phân phối $$\text{Exponential}(\lambda)$$. Vì vậy, hai câu hỏi "có bao nhiêu sự kiện trong một khoảng thời gian" và "phải chờ bao lâu đến sự kiện tiếp theo" thực chất xuất phát từ cùng một mô hình.
 
 ## 5) Ví dụ ngắn
 
-Một tổng đài nhận trung bình 6 cuộc gọi mỗi giờ.
-
-Khi đó, số cuộc gọi trong 1 giờ có thể được mô hình hóa bằng $$Y\sim\text{Poisson}(6)$$, và xác suất không có cuộc gọi nào trong 10 phút, tức 1/6 giờ, được tính như sau:
+Giả sử một tổng đài nhận trung bình 6 cuộc gọi mỗi giờ. Số cuộc gọi trong 1 giờ có thể mô hình hóa bằng $$Y\sim\text{Poisson}(6)$$. Khi đó, xác suất không có cuộc gọi nào trong 10 phút (tức $$1/6$$ giờ) là:
 
 $$
 P(Y=0)=e^{-6\times(1/6)}=e^{-1}\approx 0.368.
@@ -118,30 +102,28 @@ $$
 \mathbb{E}[T]=\frac{1}{6}\text{ giờ}=10\text{ phút}.
 $$
 
-### 5.1) Cùng một $$\lambda$$, trả lời được hai câu hỏi khác nhau
+### 5.1) Cùng một $$\lambda$$, trả lời hai câu hỏi khác nhau
 
-Vẫn với $$\lambda = 6$$ cuộc gọi mỗi giờ:
+Vẫn với tốc độ $$\lambda = 6$$ cuộc gọi mỗi giờ:
 
-- Trong 30 phút, số cuộc gọi kỳ vọng là $$6 \times 0.5 = 3$$, nên ta có thể hỏi "liệu có quá tải không?" bằng Poisson.
-- Trong 5 phút, xác suất có ít nhất một cuộc gọi là:
+- Trong 30 phút, số cuộc gọi kỳ vọng là $$6 \times 0.5 = 3$$, nên ta dùng phân phối Poisson để đánh giá nguy cơ quá tải theo số cuộc gọi.
+- Trong 5 phút đầu, xác suất xuất hiện ít nhất một cuộc gọi được tính bằng Exponential:
 
 $$
 P(T \leq 5\text{ phút}) = 1 - e^{-6\times(5/60)} = 1 - e^{-0.5} \approx 0.393.
 $$
 
-Nghĩa là trong 5 phút đầu, xác suất tổng đài nhận được ít nhất một cuộc gọi chỉ khoảng 39.3%.
+Nghĩa là trong 5 phút đầu, xác suất tổng đài nhận ít nhất một cuộc gọi vào khoảng 39.3%.
 
-Điểm quan trọng là: Poisson giúp trả lời câu hỏi đếm trong một khoảng thời gian, còn Exponential giúp trả lời câu hỏi chờ bao lâu tới sự kiện tiếp theo. Cả hai đều dùng chung đúng một tốc độ nền $$\lambda$$.
+Điểm mấu chốt là Poisson trả lời câu hỏi về số lần đếm trong một khoảng thời gian cố định, còn Exponential trả lời câu hỏi về thời gian chờ đến sự kiện kế tiếp; cả hai cùng dùng chung một tham số tốc độ $$\lambda$$.
 
 ## 6) Cảnh báo mô hình hóa
 
-Nếu dữ liệu đếm có phương sai lớn hơn trung bình quá nhiều (overdispersion), Poisson thường quá "chặt". Khi đó có thể cần Negative Binomial hoặc mô hình phân cấp.
-
-Nếu tốc độ sự kiện thay đổi theo thời gian (giờ cao điểm/thấp điểm), giả định $$\lambda$$ hằng số cũng không còn phù hợp.
+Nếu dữ liệu đếm có phương sai lớn hơn trung bình đáng kể (hiện tượng quá phân tán — overdispersion), phân phối Poisson thường quá chặt; khi đó nên cân nhắc phân phối Negative Binomial hoặc mô hình phân cấp. Ngoài ra, nếu tốc độ sự kiện thay đổi theo thời gian (như giờ cao điểm và giờ thấp điểm), giả định $$\lambda$$ là hằng số cũng không còn phù hợp.
 
 ## 7) Liên hệ Bayesian
 
-Trong Bayes, prior Gamma cho $$\lambda$$ kết hợp với likelihood Poisson tạo posterior Gamma. Đây là một cặp liên hợp rất hữu ích cho bài toán đếm sự kiện.
+Trong thống kê Bayesian, việc kết hợp phân phối tiên nghiệm Gamma cho $$\lambda$$ với hàm hợp lý (likelihood) Poisson sẽ cho phân phối hậu nghiệm (posterior) cũng thuộc họ Gamma. Đây là cặp liên hợp rất tiện lợi cho các bài toán đếm sự kiện.
 
 ---
 
@@ -149,6 +131,6 @@ Trong Bayes, prior Gamma cho $$\lambda$$ kết hợp với likelihood Poisson t�
 
 ## Video tham khảo
 
-- [An Introduction to the Poisson Distribution](https://www.youtube.com/watch?v=jmqZG6roVqU) — jbstatistics, English. **xem trước**. Xem để nắm Poisson như mô hình đếm số sự kiện trong một khoảng cố định, đúng nửa đầu của bài.
-- [Understanding Exponential vs Poisson Distributions](https://www.youtube.com/watch?v=n7K8s4vryCQ) — Explained by Michael, English. Xem chỗ đối chiếu thời gian chờ với số lần đếm, hỗ trợ luận điểm Exponential và Poisson là hai mặt của cùng một quá trình.
-- [The Exponential Distribution](https://www.youtube.com/watch?v=wtLQUjfomig) — StatQuest with Josh Starmer, English. Xem hình dạng và tham số của Exponential, dùng khi bài chuyển từ đếm sự kiện sang thời gian chờ.
+- [An Introduction to the Poisson Distribution](https://www.youtube.com/watch?v=jmqZG6roVqU) — jbstatistics, English. **Xem trước.** Trình bày phân phối Poisson như mô hình đếm số sự kiện trong một khoảng cố định, khớp với nửa đầu bài học.
+- [Understanding Exponential vs Poisson Distributions](https://www.youtube.com/watch?v=n7K8s4vryCQ) — Explained by Michael, English. Đối chiếu trực tiếp giữa thời gian chờ và số lần đếm, làm rõ mối liên hệ giữa hai phân phối.
+- [The Exponential Distribution](https://www.youtube.com/watch?v=wtLQUjfomig) — StatQuest with Josh Starmer, English. Giải thích hình dạng và tham số của phân phối Exponential cho bài toán thời gian chờ.

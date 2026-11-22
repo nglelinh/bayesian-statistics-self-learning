@@ -12,36 +12,36 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ nắm vai trò của đạo hàm, tích phân, và tối ưu hóa trong suy luận thống kê Bayes. Cụ thể, bạn sẽ hiểu đạo hàm như công cụ phân tích độ nhạy và tìm cực trị, tích phân như phép chuẩn hóa và tính xác suất trên miền liên tục, và tối ưu hóa như bước tìm nghiệm xấp xỉ (ví dụ MAP) trước hoặc song song với lấy mẫu posterior.
+Sau bài này, bạn sẽ hiểu vai trò của đạo hàm, tích phân và tối ưu hóa trong suy luận thống kê Bayesian. Cụ thể, bạn sẽ nắm cách dùng đạo hàm để phân tích độ nhạy và tìm cực trị, dùng tích phân để chuẩn hóa mật độ và tính xác suất trên miền liên tục, và dùng tối ưu hóa để tìm ước lượng xấp xỉ (như MAP) trước hoặc song song với lấy mẫu hậu nghiệm.
 
-## Giới thiệu: vì sao giải tích là lõi của Bayes liên tục?
+## Giới thiệu: Vì sao giải tích là lõi của thống kê Bayesian liên tục?
 
-Nhiều mô hình Bayesian làm việc với tham số liên tục. Khi đó, ba thao tác toán học xuất hiện lặp đi lặp lại: lấy đạo hàm để tối ưu hàm log-posterior, lấy tích phân để chuẩn hóa phân phối và marginalize biến ẩn, và dùng gradient để thiết kế thuật toán tính toán hiệu quả. Vì vậy, giải tích không phải phần phụ trợ; nó là phần lõi giúp biến mô hình xác suất thành suy luận có thể tính được.
+Nhiều mô hình Bayesian làm việc với tham số liên tục, trong đó ba thao tác toán học xuất hiện thường xuyên: lấy đạo hàm để tối ưu hàm log-posterior, lấy tích phân để chuẩn hóa phân phối và biên hóa (marginalize) biến ẩn, và dùng gradient để thiết kế các thuật toán tính toán hiệu quả. Vì vậy, giải tích không phải phần phụ trợ mà là công cụ lõi giúp chuyển mô hình xác suất thành suy luận tính toán được.
 
-Trong bài này, mỗi công thức sẽ được đọc theo hai tầng: tầng hình thức (ký hiệu toán học) và tầng ý nghĩa thống kê (nó trả lời câu hỏi gì trong phân tích dữ liệu). Cách đọc hai tầng này là kỹ năng quan trọng cho các chương MCMC, hồi quy Bayes, và model checking.
+Trong bài này, mỗi công thức được tiếp cận theo hai tầng: ký hiệu toán học hình thức và ý nghĩa thống kê thực tế. Cách đọc hai tầng này sẽ hỗ trợ trực tiếp cho các chương MCMC, hồi quy Bayesian và kiểm tra mô hình (model checking).
 
-## Khung liên hệ với workflow Bayesian
+## Khung liên hệ với quy trình Bayesian
 
-Một workflow điển hình có thể viết ngắn gọn:
+Một quy trình Bayesian điển hình có thể tóm gọn như sau:
 
 $$
 \text{prior} \times \text{likelihood} \propto \text{posterior (unnormalized)}.
 $$
 
-Từ đây, giải tích tham gia ở hai điểm:
+Từ biểu thức này, giải tích tham gia ở hai bước chính:
 
-1. **Đạo hàm**: tìm điểm cực trị của log-posterior (MAP, Laplace approximation).
-2. **Tích phân**: chuẩn hóa posterior hoặc tính xác suất/kỳ vọng trên miền liên tục.
+1. **Đạo hàm**: tìm điểm cực đại của log-posterior (ước lượng MAP, xấp xỉ Laplace).
+2. **Tích phân**: chuẩn hóa phân phối hậu nghiệm hoặc tính xác suất và kỳ vọng trên miền liên tục.
 
 ## 1. Đạo hàm (Derivatives)
 
 ### 1.1. Định nghĩa
 
-**Đạo hàm** đo tốc độ thay đổi của hàm số:
+**Đạo hàm** đo tốc độ thay đổi tức thời của hàm số:
 
 $$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
-**Ý nghĩa hình học**: Độ dốc của tiếp tuyến tại điểm $$x$$.
+**Ý nghĩa hình học**: độ dốc của tiếp tuyến với đồ thị tại điểm $$x$$.
 
 ```python
 import numpy as np
@@ -109,7 +109,7 @@ print(f"  Số: {numerical:.10f}")
 
 **Quy tắc thương**: $$\left(\frac{f}{g}\right)' = \frac{f'g - fg'}{g^2}$$
 
-**Quy tắc chuỗi** (Chain rule): $$(f(g(x)))' = f'(g(x)) \cdot g'(x)$$
+**Quy tắc hàm hợp (Chain rule)**: $$(f(g(x)))' = f'(g(x)) \cdot g'(x)$$
 
 ```python
 # Ví dụ: f(x) = (x² + 1)³
@@ -132,11 +132,9 @@ print(f"  Số: {numerical:.10f}")
 
 ### 1.3. Đạo hàm Riêng (Partial Derivatives)
 
-Cho hàm nhiều biến $$f(x, y)$$, đạo hàm riêng theo $$x$$:
+Với hàm nhiều biến $$f(x, y)$$, đạo hàm riêng theo $$x$$ (khi giữ $$y$$ cố định) là:
 
 $$\frac{\partial f}{\partial x} = \lim_{h \to 0} \frac{f(x+h, y) - f(x, y)}{h}$$
-
-(giữ $$y$$ cố định)
 
 ```python
 # Hàm 2 biến: f(x, y) = x²y + y³
@@ -200,11 +198,11 @@ print(f"  ∂f/∂y = {df_dy(x0, y0)}")
 
 ### 1.4. Gradient
 
-**Gradient** là vector của tất cả đạo hàm riêng:
+**Gradient** là vector gồm tất cả các đạo hàm riêng của hàm số:
 
 $$\nabla f = \begin{bmatrix} \frac{\partial f}{\partial x_1} \\ \frac{\partial f}{\partial x_2} \\ \vdots \\ \frac{\partial f}{\partial x_n} \end{bmatrix}$$
 
-**Ý nghĩa**: Hướng tăng nhanh nhất của hàm số.
+**Ý nghĩa**: vector gradient chỉ hướng tăng nhanh nhất của hàm số.
 
 ```python
 def gradient_f(x, y):
@@ -220,7 +218,7 @@ print(f"Độ lớn: {np.linalg.norm(grad):.4f}")
 
 ### 2.1. Tích phân Xác định
 
-**Ý nghĩa**: Diện tích dưới đường cong.
+**Ý nghĩa hình học**: diện tích (có dấu) giới hạn giữa đồ thị hàm số và trục hoành trên đoạn $$[a, b]$$:
 
 $$\int_a^b f(x) dx$$
 
@@ -270,11 +268,11 @@ plt.show()
 
 ### 2.2. Tích phân trong Xác suất
 
-**PDF** (Probability Density Function) phải thỏa:
+Một **hàm mật độ xác suất (PDF)** hợp lệ phải thỏa mãn điều kiện chuẩn hóa:
 
 $$\int_{-\infty}^{\infty} f(x) dx = 1$$
 
-**Xác suất**:
+Khi đó, **xác suất** để biến ngẫu nhiên $$X$$ rơi vào đoạn $$[a, b]$$ là:
 
 $$P(a \leq X \leq b) = \int_a^b f(x) dx$$
 
@@ -335,13 +333,13 @@ print(f"Giải tích: {analytical}")
 
 ### 3.1. Cực trị
 
-**Điều kiện cần** (Necessary condition):
+**Điều kiện cần** (necessary condition) để điểm $$x$$ là cực trị của hàm khả vi là:
 
 $$f'(x) = 0$$
 
-**Điều kiện đủ** (Sufficient condition):
-- $$f''(x) > 0$$: Cực tiểu (minimum)
-- $$f''(x) < 0$$: Cực đại (maximum)
+**Điều kiện đủ** (sufficient condition) dựa trên đạo hàm bậc hai:
+- $$f''(x) > 0$$: điểm cực tiểu (minimum).
+- $$f''(x) < 0$$: điểm cực đại (maximum).
 
 ```python
 # Hàm số: f(x) = x³ - 6x² + 9x + 1
@@ -399,11 +397,11 @@ plt.show()
 
 ### 3.2. Gradient Descent
 
-**Thuật toán** tìm minimum:
+**Thuật toán** tìm cực tiểu bằng cách cập nhật ngược hướng gradient:
 
 $$x_{n+1} = x_n - \alpha \nabla f(x_n)$$
 
-với $$\alpha$$ là learning rate.
+trong đó $$\alpha$$ là tốc độ học (learning rate).
 
 ```python
 # Hàm 2 biến: f(x, y) = x² + y²
@@ -459,11 +457,11 @@ print(f"Bắt đầu: ({x0}, {y0}), f = {f(x0, y0):.4f}")
 print(f"Kết thúc: ({path[-1, 0]:.6f}, {path[-1, 1]:.6f}), f = {f(path[-1, 0], path[-1, 1]):.6f}")
 ```
 
-### 3.3. Maximum Likelihood Estimation (MLE)
+### 3.3. Ước lượng Hợp lý Cực đại (Maximum Likelihood Estimation — MLE)
 
-**Ví dụ**: Ước lượng tham số $$\mu$$ của Normal distribution.
+**Ví dụ**: ước lượng tham số $$\mu$$ của phân phối Normal khi biết $$\sigma$$.
 
-**Likelihood**:
+**Hàm hợp lý (Likelihood)**:
 
 $$L(\mu) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x_i - \mu)^2}{2\sigma^2}\right)$$
 
@@ -471,7 +469,7 @@ $$L(\mu) = \prod_{i=1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x_i -
 
 $$\ell(\mu) = -\frac{n}{2}\log(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(x_i - \mu)^2$$
 
-**Tìm maximum**: $$\frac{d\ell}{d\mu} = 0$$
+**Tìm cực đại** bằng cách giải $$\frac{d\ell}{d\mu} = 0$$:
 
 $$\Rightarrow \hat{\mu} = \frac{1}{n}\sum_{i=1}^{n} x_i$$
 
@@ -512,21 +510,21 @@ print(f"MLE μ̂: {mu_mle:.4f}")
 print(f"Sample mean: {data.mean():.4f}")
 ```
 
-## 4. Ứng dụng trong Bayesian Statistics
+## 4. Ứng dụng trong Thống kê Bayesian
 
-### 4.1. Posterior Mode (MAP)
+### 4.1. Điểm Cực đại Hậu nghiệm (MAP)
 
-**Maximum A Posteriori** (MAP): Tìm mode của posterior.
+**Maximum A Posteriori (MAP)** tìm mode (điểm có mật độ lớn nhất) của phân phối hậu nghiệm:
 
 $$\hat{\theta}_{MAP} = \arg\max_\theta p(\theta \mid \mathbf{x})$$
 
-Tương đương:
+Tương đương trên thang log:
 
 $$\hat{\theta}_{MAP} = \arg\max_\theta [\log p(\mathbf{x} \mid \theta) + \log p(\theta)]$$
 
-### 4.2. Laplace Approximation
+### 4.2. Xấp xỉ Laplace (Laplace Approximation)
 
-Xấp xỉ posterior bằng Normal distribution tại mode:
+Xấp xỉ phân phối hậu nghiệm bằng một phân phối Normal đặt tâm tại mode $$\hat{\theta}$$:
 
 $$p(\theta \mid \mathbf{x}) \approx \mathcal{N}\left(\hat{\theta}, \left[-\frac{d^2 \log p(\theta \mid \mathbf{x})}{d\theta^2}\bigg|_{\hat{\theta}}\right]^{-1}\right)$$
 
@@ -586,28 +584,28 @@ print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2
 
 ## Video tham khảo
 
-- [The paradox of the derivative | Chapter 2, Essence of calculus](https://www.youtube.com/watch?v=9vKqVkMQHKk) — 3Blue1Brown, English. **xem trước**. Xem đạo hàm như độ nhạy khi đầu vào nhích một chút, đúng phần bài dùng đạo hàm để đọc log-posterior.
-- [Integration and the fundamental theorem of calculus | Chapter 8, Essence of calculus](https://www.youtube.com/watch?v=rfG8ce4nNh0) — 3Blue1Brown, English. Xem tích phân như lũy tích những thay đổi nhỏ, hỗ trợ đoạn chuẩn hóa phân phối và tính xác suất trên miền liên tục.
-- [Gradient descent, how neural networks learn | Deep Learning Chapter 2](https://www.youtube.com/watch?v=IHZwWFHWa-w) — 3Blue1Brown, English. Xem gradient descent như đi ngược hướng dốc nhất; bối cảnh là mạng nơ-ron, nhưng cơ chế đúng phần tối ưu hóa của bài.
+- [The paradox of the derivative | Chapter 2, Essence of calculus](https://www.youtube.com/watch?v=9vKqVkMQHKk) — 3Blue1Brown, English. **Xem trước.** Giải thích trực quan đạo hàm như độ nhạy của hàm số khi đầu vào thay đổi nhỏ.
+- [Integration and the fundamental theorem of calculus | Chapter 8, Essence of calculus](https://www.youtube.com/watch?v=rfG8ce4nNh0) — 3Blue1Brown, English. Trình bày tích phân như phép cộng dồn các phần tử nhỏ, hỗ trợ chuẩn hóa phân phối và tính xác suất liên tục.
+- [Gradient descent, how neural networks learn | Deep Learning Chapter 2](https://www.youtube.com/watch?v=IHZwWFHWa-w) — 3Blue1Brown, English. Minh họa cơ chế đi ngược hướng dốc nhất của gradient descent, áp dụng trực tiếp cho phần tối ưu hóa trong bài.
 
 ## Bài tập
 
-1. **Đạo hàm**: Tính đạo hàm của:
+1. **Đạo hàm**: Tính đạo hàm của các hàm sau:
    - $$f(x) = 3x^4 - 2x^2 + 5$$
    - $$g(x) = e^{x^2}$$
    - $$h(x) = \ln(x^2 + 1)$$
 
 2. **Đạo hàm riêng**: Cho $$f(x, y) = x^2y + xy^2$$. Tính $$\frac{\partial f}{\partial x}$$ và $$\frac{\partial f}{\partial y}$$.
 
-3. **Tích phân**: Tính:
+3. **Tích phân**: Tính các tích phân sau:
    - $$\int_0^1 x^2 dx$$
    - $$\int_1^e \frac{1}{x} dx$$
    - $$\int_{-\infty}^{\infty} e^{-x^2} dx$$ (gợi ý: $$\sqrt{\pi}$$)
 
-4. **Tối ưu**: Tìm cực trị của $$f(x) = x^3 - 3x + 1$$.
+4. **Tối ưu hóa**: Tìm cực trị của hàm số $$f(x) = x^3 - 3x + 1$$.
 
-5. **MLE**: Cho dữ liệu từ Exponential($$\lambda$$). Tìm MLE của $$\lambda$$.
-   - Likelihood: $$L(\lambda) = \prod_{i=1}^{n} \lambda e^{-\lambda x_i}$$
+5. **MLE**: Cho dữ liệu lấy mẫu độc lập từ phân phối $$\text{Exponential}(\lambda)$$. Tìm ước lượng MLE của $$\lambda$$:
+   - Hàm hợp lý: $$L(\lambda) = \prod_{i=1}^{n} \lambda e^{-\lambda x_i}$$
    - Gợi ý: $$\hat{\lambda} = \frac{n}{\sum x_i}$$
 
 ## Tài liệu tham khảo
@@ -615,11 +613,6 @@ print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2
 1. **Stewart, J. (2015).** *Calculus: Early Transcendentals*. Cengage Learning.
 2. **3Blue1Brown - Essence of Calculus** - https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr
 3. **SciPy Integrate** - https://docs.scipy.org/doc/scipy/reference/integrate.html
-
----
-
-*Bài học này hoàn thành phần kiến thức cơ bản. Bạn đã sẵn sàng cho Bayesian Statistics!*
-
 
 ---
 

@@ -10,52 +10,52 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu **Poisson Regression** (hồi quy Poisson) như mô hình chuẩn cho **count data** (dữ liệu đếm), tức những dữ liệu ghi nhận số lần một sự kiện xảy ra. Bạn sẽ thấy vì sao linear regression không phù hợp khi biến kết quả chỉ nhận các số nguyên không âm, vì sao **log link function** (hàm liên kết log) giúp mô hình tạo ra dự đoán hợp lệ, và vì sao hệ số của mô hình nên được diễn giải thông qua **rate ratio** (tỷ số tốc độ) thay vì theo hiệu số cộng đơn giản. Đây là GLM quan trọng thứ hai sau logistic regression.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **hồi quy Poisson (Poisson regression)** như mô hình tiêu chuẩn cho **dữ liệu đếm (count data)**, tức các dữ liệu ghi nhận số lần một sự kiện xảy ra. Bạn sẽ thấy vì sao hồi quy tuyến tính không phù hợp khi biến kết quả chỉ nhận các số nguyên không âm, vì sao **hàm liên kết log (log link function)** giúp mô hình tạo ra dự đoán hợp lệ, và vì sao hệ số của mô hình nên được diễn giải thông qua **tỷ số tốc độ (rate ratio)** thay vì hiệu số cộng đơn giản. Đây là mô hình GLM quan trọng thứ hai sau hồi quy logistic.
 
-## Giới thiệu: Count Data Everywhere
+## Giới thiệu: Dữ liệu đếm trong thực tế
 
-**Count data** (dữ liệu đếm) xuất hiện ở rất nhiều bối cảnh thực tế, chẳng hạn như số khách đến cửa hàng mỗi giờ, số email nhận được mỗi ngày, số tai nạn trên cao tốc mỗi tháng, số bàn thắng trong một trận bóng đá, hay số đột biến trong một đoạn DNA. Điểm chung của các biến này là $$y \in \{0,1,2,3,\ldots\}$$, tức chúng là các số nguyên không âm, thường không có chặn trên rõ ràng, và phương sai thường tăng lên khi giá trị trung bình tăng lên. Điều đó dẫn đến câu hỏi quen thuộc: liệu ta có thể dùng linear regression cho loại dữ liệu này hay không.
+**Dữ liệu đếm (count data)** xuất hiện trong nhiều bối cảnh thực tế, chẳng hạn như số khách đến cửa hàng mỗi giờ, số email nhận được mỗi ngày, số tai nạn trên cao tốc mỗi tháng, số bàn thắng trong một trận bóng đá, hay số đột biến trên một đoạn DNA. Điểm chung của các biến này là $$y \in \{0,1,2,3,\ldots\}$$: chúng là các số nguyên không âm, thường không có chặn trên cố định, và phương sai thường tăng khi giá trị trung bình tăng. Từ đó nảy sinh câu hỏi quen thuộc: liệu ta có thể dùng hồi quy tuyến tính cho loại dữ liệu này hay không?
 
-## 1. Vấn đề của Linear Regression cho Count Data
+## 1. Hạn chế của hồi quy tuyến tính với dữ liệu đếm
 
 ![Poisson Regression Basics]({{ site.baseurl }}/img/chapter_img/chapter06/poisson_regression_basics.png)
 
-Khó khăn cơ bản của linear regression trong bối cảnh này là mô hình tuyến tính có thể cho ra dự đoán âm, trong khi số lần xảy ra của một sự kiện không thể nhỏ hơn 0. Hình minh họa cho thấy ở panel bên trái, đường hồi quy tuyến tính có thể đi vào vùng giá trị âm, còn ở panel bên phải, Poisson regression dùng **log link** để bảo đảm rằng tham số cường độ $$\lambda$$ luôn dương. Nói cách khác, thay vì dự đoán trực tiếp số đếm, ta mô hình hóa log của tốc độ kỳ vọng, nhờ đó đầu ra luôn phù hợp với bản chất của dữ liệu.
+Khó khăn cơ bản của hồi quy tuyến tính trong bối cảnh này là mô hình có thể tạo ra dự đoán âm, trong khi số lần xảy ra của một sự kiện không thể nhỏ hơn 0. Hình minh họa cho thấy ở hình bên trái, đường hồi quy tuyến tính có thể đi vào vùng giá trị âm; còn ở hình bên phải, hồi quy Poisson dùng **hàm liên kết log (log link)** để bảo đảm tham số cường độ $$\lambda$$ luôn dương. Nói cách khác, thay vì dự đoán trực tiếp số đếm, ta mô hình hóa log của tốc độ kỳ vọng để đầu ra luôn phù hợp với bản chất dữ liệu.
 
-## 2. Poisson Regression: Generative Model
+## 2. Hồi quy Poisson dưới góc nhìn mô hình sinh
 
-### 2.1. Log Link Function
+### 2.1. Hàm liên kết log (Log Link Function)
 
-Ý tưởng cốt lõi của Poisson regression là giữ lại phần tuyến tính ở bên trong, nhưng dùng **log link function** để bảo đảm rằng đại lượng cuối cùng, tức tốc độ kỳ vọng $$\lambda$$, luôn lớn hơn 0.
+Ý tưởng cốt lõi của hồi quy Poisson là giữ phần tuyến tính ở bên trong, nhưng dùng **hàm liên kết log** để bảo đảm tốc độ kỳ vọng $$\lambda$$ luôn lớn hơn 0.
 
-**Log link**:
+**Hàm liên kết log**:
 $$
 \log(\lambda) = \alpha + \beta x
 $$
 
-**Inverse** (exponential):
+**Hàm ngược (hàm mũ)**:
 $$
 \lambda = e^{\alpha + \beta x}
 $$
 
-### 2.2. Generative Story
+### 2.2. Câu chuyện sinh dữ liệu (Generative Story)
 
-Theo ngôn ngữ **generative story** (câu chuyện sinh dữ liệu), mô hình được đọc như sau. Từ biến dự báo $$x$$, ta tạo ra một đại lượng tuyến tính $$\eta=\alpha+\beta x$$. Đại lượng này sau đó được đưa qua hàm mũ để tạo ra tốc độ kỳ vọng $$\lambda=\exp(\eta)$$. Cuối cùng, số đếm quan sát được sinh ra từ phân phối Poisson, tức $$y\sim\text{Poisson}(\lambda)$$. Việc tách ba bước này ra rõ ràng giúp ta thấy mô hình vừa giữ được phần tuyến tính thuận tiện cho suy luận, vừa tôn trọng cấu trúc xác suất riêng của dữ liệu đếm.
+Theo ngôn ngữ **câu chuyện sinh dữ liệu (generative story)**, mô hình gồm ba bước. Từ biến dự báo $$x$$, ta tạo ra đại lượng tuyến tính $$\eta=\alpha+\beta x$$. Đại lượng này đi qua hàm mũ để cho tốc độ kỳ vọng $$\lambda=\exp(\eta)$$. Cuối cùng, số đếm quan sát được sinh ra từ phân phối Poisson, tức $$y\sim\text{Poisson}(\lambda)$$. Việc tách rõ ba bước này cho thấy mô hình vừa giữ được cấu trúc tuyến tính thuận tiện cho suy luận, vừa tôn trọng bản chất xác suất của dữ liệu đếm.
 
 Phân phối Poisson có dạng:
 $$
 P(y = k \mid \lambda) = \frac{\lambda^k e^{-\lambda}}{k!}
 $$
 
-Điểm đặc trưng của phân phối này là giá trị trung bình và phương sai đều bằng $$\lambda$$; tính chất đó thường được gọi là **equidispersion** (đồng phương sai theo nghĩa mean bằng variance).
+Điểm đặc trưng của phân phối này là giá trị trung bình và phương sai đều bằng $$\lambda$$; tính chất này được gọi là **đồng phân tán (equidispersion)**.
 
 ![Exponential Function Parameters]({{ site.baseurl }}/img/chapter_img/chapter06/exponential_function_parameters.png)
 
-Hình minh họa giúp ta đọc hàm mũ theo cách trực quan hơn. Ở panel bên trái, hàm cơ bản $$\lambda=e^\eta$$ luôn dương và đi qua điểm $$\lambda=1$$ khi $$\eta=0$$, nên có thể xem đó là mức tốc độ nền. Ở panel giữa, thay đổi $$\alpha$$, tức **intercept** (hệ số chặn), chủ yếu làm dịch chuyển toàn bộ đường cong lên hoặc xuống, qua đó thay đổi mức nền của tốc độ. Ở panel bên phải, thay đổi $$\beta$$, tức **slope** (độ dốc), làm tốc độ tăng nhanh hơn hoặc chậm hơn theo $$x$$, vì vậy nó phản ánh sức mạnh của mối quan hệ giữa biến dự báo và cường độ xảy ra sự kiện.
+Hình minh họa cho thấy vai trò của từng tham số trong hàm mũ. Ở hình bên trái, hàm cơ bản $$\lambda=e^\eta$$ luôn dương và đi qua điểm $$\lambda=1$$ khi $$\eta=0$$, thể hiện mức tốc độ nền. Ở hình giữa, thay đổi **hệ số chặn (intercept)** $$\alpha$$ làm dịch chuyển toàn bộ đường cong lên hoặc xuống, qua đó thay đổi mức nền của tốc độ. Ở hình bên phải, thay đổi **độ dốc (slope)** $$\beta$$ làm tốc độ tăng nhanh hơn hoặc chậm hơn theo $$x$$, phản ánh mức độ liên hệ giữa biến dự báo và cường độ xảy ra sự kiện.
 
-## 3. Bayesian Poisson Regression trong PyMC
+## 3. Hồi quy Poisson Bayes trong PyMC
 
 ```python
 import pymc as pm
@@ -114,36 +114,36 @@ plt.tight_layout()
 plt.show()
 ```
 
-### Thử nghiệm: posterior của hồi quy Poisson và rate ratio
+### Thử nghiệm: Hậu nghiệm của hồi quy Poisson và tỷ số tốc độ
 
-Thêm từng điểm dữ liệu đếm; bó đường λ(x) và rate ratio exp(b) thu hẹp dần.
+Thêm từng điểm dữ liệu đếm để quan sát bó đường $$\lambda(x)$$ và tỷ số tốc độ $$\exp(b)$$ thu hẹp dần.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="glm-explainer" data-lang="vi" data-tab="poisson"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 4. Interpretation: Rate Ratios
+## 4. Diễn giải hệ số: Tỷ số tốc độ (Rate Ratios)
 
-### 4.1. Rate Ratio
+### 4.1. Tỷ số tốc độ
 
-**On log scale**:
+**Trên thang log**:
 $$
 \log(\lambda) = \alpha + \beta x
 $$
 
 Trên thang log, mỗi khi $$x$$ tăng thêm 1 đơn vị thì log của tốc độ kỳ vọng tăng thêm $$\beta$$ đơn vị.
 
-**On rate scale**:
+**Trên thang tốc độ gốc**:
 $$
 \lambda = e^{\alpha + \beta x}
 $$
 
-Khi quay trở về thang gốc, điều đó có nghĩa là tốc độ kỳ vọng được nhân với $$e^\beta$$. Đại lượng $$e^\beta$$ này chính là **rate ratio** (tỷ số tốc độ), và đây là cách diễn giải tự nhiên nhất cho hệ số của Poisson regression.
+Khi quay về thang gốc, tốc độ kỳ vọng được nhân với $$e^\beta$$. Đại lượng $$e^\beta$$ này là **tỷ số tốc độ (rate ratio)**, và là cách diễn giải tự nhiên nhất cho hệ số của hồi quy Poisson.
 
-### 4.2. Một ví dụ cụ thể: số lượt ghé quán tăng ra sao
+### 4.2. Ví dụ cụ thể: Số lượt ghé quán tăng ra sao
 
-Giả sử posterior mean của mô hình là:
+Giả sử trung bình hậu nghiệm của mô hình là:
 
 $$
 \log(\lambda)=2.30 + 0.25x
@@ -155,7 +155,7 @@ trong đó $$x$$ là số chiến dịch quảng cáo đang chạy trong tuần.
 - Nếu $$x=1$$ thì $$\lambda=e^{2.55}\approx 12.8$$.
 - Nếu $$x=2$$ thì $$\lambda=e^{2.80}\approx 16.4$$.
 
-Ở đây $$e^{0.25}\approx 1.28$$, nên mỗi khi thêm 1 chiến dịch quảng cáo, số lượt ghé kỳ vọng được nhân khoảng 1.28 lần, tức tăng gần 28%. Điều này không có nghĩa là luôn tăng cố định thêm 0.25 lượt hay luôn tăng đúng 2.8 lượt. Vì tác động của Poisson regression là **nhân** chứ không phải **cộng**, mức tăng tuyệt đối sẽ phụ thuộc vào nền ban đầu: từ 10 lên 12.8 là tăng khoảng 2.8 lượt, còn từ 12.8 lên 16.4 là tăng khoảng 3.6 lượt.
+Ở đây $$e^{0.25}\approx 1.28$$, nên mỗi khi thêm 1 chiến dịch quảng cáo, số lượt ghé kỳ vọng được nhân khoảng 1.28 lần, tức tăng gần 28%. Điều này không có nghĩa là số lượt ghé luôn tăng cố định 0.25 lượt hay 2.8 lượt. Vì tác động trong hồi quy Poisson có tính **nhân** chứ không phải **cộng**, mức tăng tuyệt đối phụ thuộc vào mức nền ban đầu: từ 10 lên 12.8 là tăng khoảng 2.8 lượt, còn từ 12.8 lên 16.4 là tăng khoảng 3.6 lượt.
 
 ```python
 # Compute rate ratios
@@ -211,7 +211,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-## 5. Posterior Predictive Checks
+## 5. Kiểm tra dự báo hậu nghiệm (Posterior Predictive Checks)
 
 ```python
 # Posterior predictive
@@ -281,9 +281,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-## 6. Overdispersion: Khi Variance > Mean
+## 6. Quá phân tán (Overdispersion): Khi phương sai lớn hơn trung bình
 
-Một giả định trung tâm của Poisson regression là phương sai bằng trung bình. Trong dữ liệu thực, giả định này thường bị phá vỡ vì phương sai lớn hơn trung bình, hiện tượng được gọi là **overdispersion** (quá phân tán). Khi điều đó xảy ra, mô hình Poisson thường tỏ ra quá tự tin và đánh giá thấp độ bất định. Hai hướng xử lý phổ biến là dùng **Negative Binomial regression** khi cần cho phép phương sai lớn hơn mean một cách linh hoạt, hoặc dùng **Zero-Inflated Poisson** nếu dữ liệu có quá nhiều số 0 hơn điều mà Poisson thông thường có thể giải thích.
+Một giả định trung tâm của hồi quy Poisson là phương sai bằng trung bình. Trong dữ liệu thực, giả định này thường bị vi phạm khi phương sai lớn hơn trung bình, hiện tượng được gọi là **quá phân tán (overdispersion)**. Khi đó, mô hình Poisson thường tỏ ra quá tự tin và đánh giá thấp độ bất định. Hai hướng xử lý phổ biến là dùng **hồi quy nhị thức âm (Negative Binomial regression)** để cho phép phương sai lớn hơn trung bình một cách linh hoạt, hoặc dùng **Zero-Inflated Poisson** khi dữ liệu có nhiều giá trị 0 vượt quá mức mô hình Poisson thông thường giải thích được.
 
 ```python
 # Check overdispersion
@@ -305,7 +305,7 @@ print("=" * 70)
 
 ### Thử nghiệm: Poisson hay Negative Binomial?
 
-Từ var/mean đến posterior predictive check: Poisson bị bác bỏ, Negative Binomial mô tả được độ phân tán.
+Từ tỷ số phương sai/trung bình đến kiểm tra dự báo hậu nghiệm: mô hình Poisson bị bác bỏ, trong khi Negative Binomial nắm bắt được độ phân tán của dữ liệu.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="overdisp-explainer" data-lang="vi" data-data="nb"></div>
@@ -313,31 +313,31 @@ Từ var/mean đến posterior predictive check: Poisson bị bác bỏ, Negativ
 
 ## Tóm tắt
 
-Poisson regression là mô hình tự nhiên cho dữ liệu đếm vì nó giải quyết đúng điểm yếu của linear regression: dự đoán của mô hình tuyến tính có thể âm, còn dữ liệu đếm thì không. Bằng cách dùng **log link**, mô hình hóa $$\log(\lambda)=\alpha+\beta x$$ rồi suy ra $$\lambda$$ trên thang gốc, Poisson regression bảo đảm rằng tốc độ kỳ vọng luôn dương. Hệ số của mô hình được hiểu tốt nhất thông qua **rate ratio** $$e^\beta$$, còn giả định quan trọng nhất luôn cần kiểm tra là phương sai có xấp xỉ trung bình hay không. Nếu dữ liệu quá phân tán, ta phải nghĩ đến những mô hình linh hoạt hơn.
+Hồi quy Poisson là mô hình tự nhiên cho dữ liệu đếm vì nó khắc phục trực tiếp điểm yếu của hồi quy tuyến tính: dự đoán tuyến tính có thể âm, còn số đếm thì không. Bằng cách dùng **hàm liên kết log** để mô hình hóa $$\log(\lambda)=\alpha+\beta x$$ rồi chuyển về $$\lambda$$ trên thang gốc, hồi quy Poisson bảo đảm tốc độ kỳ vọng luôn dương. Hệ số của mô hình được diễn giải tốt nhất qua **tỷ số tốc độ** $$e^\beta$$, và giả định quan trọng nhất cần kiểm tra là phương sai có xấp xỉ trung bình hay không. Nếu dữ liệu bị quá phân tán, cần chuyển sang các mô hình linh hoạt hơn.
 
-Điểm cốt lõi cần nhớ là hàm liên kết log không chỉ là một thủ thuật toán học, mà là cơ chế giúp phần tuyến tính của mô hình tương thích với bản chất của dữ liệu đếm và dữ liệu tốc độ.
+Điểm cốt lõi cần nhớ là hàm liên kết log không chỉ là một phép biến đổi toán học, mà là cơ chế giúp phần tuyến tính của mô hình tương thích với bản chất của dữ liệu đếm và dữ liệu tốc độ.
 
-Bài tiếp theo: **Model Evaluation for GLMs**.
+Bài tiếp theo: **Đánh giá mô hình cho GLMs (Model Evaluation for GLMs)**.
 
 ## Video tham khảo
 
-- [Poisson regression - clearly explained](https://www.youtube.com/watch?v=Obpz_Uvo2rQ) — TileStats, English. **xem trước**. Xem hồi quy Poisson cho dữ liệu đếm và vì sao đường thẳng không giữ được số không âm.
-- [Regression with Count Data: Poisson and Negative Binomial](https://www.youtube.com/watch?v=uGKnoAw-PFQ) — Matthew E. Clapham, English. Xem mô hình đếm Poisson cạnh Negative Binomial, hỗ trợ phần bài khi phương sai lớn hơn trung bình.
-- [Statistical Rethinking 2023 - 10 - Counts & Hidden Confounds](https://www.youtube.com/watch?v=jokxu18egu0) — Richard McElreath, English. Xem mô hình đếm đi cùng các confound bị che, dùng cho đoạn viết Poisson như một GLM Bayes.
+- [Poisson regression - clearly explained](https://www.youtube.com/watch?v=Obpz_Uvo2rQ) — TileStats, English. **Xem trước**. Giải thích hồi quy Poisson cho dữ liệu đếm và lý do đường thẳng tuyến tính không bảo đảm được giá trị không âm.
+- [Regression with Count Data: Poisson and Negative Binomial](https://www.youtube.com/watch?v=uGKnoAw-PFQ) — Matthew E. Clapham, English. So sánh mô hình Poisson với Negative Binomial, hỗ trợ phần xử lý khi phương sai lớn hơn trung bình.
+- [Statistical Rethinking 2023 - 10 - Counts & Hidden Confounds](https://www.youtube.com/watch?v=jokxu18egu0) — Richard McElreath, English. Trình bày mô hình đếm cùng các biến nhiễu ẩn, phù hợp với cách tiếp cận Poisson như một GLM Bayes.
 
 ## Bài tập
 
-**Bài tập 1**: Generate count data. Fit Poisson regression. Interpret rate ratio.
+**Bài tập 1**: Sinh dữ liệu đếm, khớp mô hình hồi quy Poisson và diễn giải tỷ số tốc độ (rate ratio).
 
-**Bài tập 2**: Compare linear vs Poisson predictions. Visualize differences.
+**Bài tập 2**: So sánh dự đoán giữa hồi quy tuyến tính và hồi quy Poisson, sau đó trực quan hóa sự khác biệt.
 
-**Bài tập 3**: Multiple predictors Poisson regression. Interpret each coefficient.
+**Bài tập 3**: Xây dựng mô hình hồi quy Poisson với nhiều biến dự báo và diễn giải từng hệ số.
 
-**Bài tập 4**: Real data - predict number of customer visits từ time/weather features.
+**Bài tập 4**: Áp dụng trên dữ liệu thực để dự đoán số lượt khách ghé thăm từ các đặc trưng thời gian và thời tiết.
 
-**Bài tập 5**: Check for overdispersion. If present, try Negative Binomial model.
+**Bài tập 5**: Kiểm tra hiện tượng quá phân tán (overdispersion); nếu có, thử xây dựng mô hình Negative Binomial để thay thế.
 
-## Tài liệu Tham khảo
+## Tài liệu tham khảo
 
 **Gelman, A., & Hill, J. (2006).** *Data Analysis Using Regression and Multilevel/Hierarchical Models*. Cambridge University Press.
 - Chapter 6: Generalized linear models

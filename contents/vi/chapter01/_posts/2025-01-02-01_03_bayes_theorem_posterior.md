@@ -12,19 +12,19 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu định lý Bayes như một quy tắc cập nhật niềm tin chứ không chỉ là một công thức thuộc lòng. Bạn phải đọc được vai trò của prior, likelihood và posterior trong một ví dụ thực tế, và biết vì sao Bayes trở nên tự nhiên trong các bài toán chẩn đoán, dự báo và học từ dữ liệu.
+Sau bài này, bạn cần hiểu định lý Bayes như một quy tắc cập nhật niềm tin chứ không chỉ là một công thức học thuộc. Bạn cần phân biệt rõ vai trò của prior, likelihood và posterior trong các ví dụ thực tế, đồng thời thấy vì sao định lý Bayes phù hợp với các bài toán chẩn đoán, dự báo và học từ dữ liệu.
 
-> **Ví dụ mini.** Một bác sĩ biết bệnh cúm đang phổ biến trong mùa này, nhưng khi bệnh nhân xuất hiện với bộ triệu chứng rất đặc trưng cho COVID-19, niềm tin ban đầu cần được cập nhật. Định lý Bayes chính là công cụ để làm việc đó một cách có nguyên tắc.
+> **Ví dụ mini.** Một bác sĩ biết bệnh cúm đang phổ biến trong mùa này, nhưng khi bệnh nhân xuất hiện với bộ triệu chứng đặc trưng cho COVID-19, niềm tin ban đầu cần được điều chỉnh. Định lý Bayes là công cụ thực hiện bước cập nhật đó một cách có nguyên tắc.
 >
-> **Câu hỏi tự kiểm tra.** Nếu prior là điều bạn tin trước dữ liệu, còn likelihood là mức độ dữ liệu phù hợp với từng giả thuyết, thì posterior nên được hiểu là gì?
+> **Câu hỏi tự kiểm tra.** Nếu prior là điều bạn tin trước khi thấy dữ liệu, còn likelihood là mức độ dữ liệu phù hợp với từng giả thuyết, thì posterior nên được hiểu là gì?
 
-## 1. Bayes bắt đầu từ một câu hỏi rất đời thường
+## 1. Bayes bắt đầu từ một câu hỏi rất quen thuộc
 
-Mỗi ngày, ta vẫn làm một việc rất Bayesian: ban đầu tin một điều gì đó ở mức vừa phải, sau đó thấy thêm thông tin mới, rồi điều chỉnh niềm tin. Điều này xuất hiện khi ta nghe dự báo thời tiết và cập nhật kế hoạch, khi xem kết quả xét nghiệm để cập nhật chẩn đoán, hay khi nhìn doanh số tuần đầu để điều chỉnh niềm tin về nhu cầu thị trường. Định lý Bayes chỉ biến quá trình tưởng như trực giác ấy thành một quy tắc toán học rõ ràng.
+Hằng ngày, chúng ta đều thực hiện một quá trình suy luận gần với Bayes: ban đầu giữ một niềm tin ở mức độ nhất định, sau đó tiếp nhận thông tin mới rồi điều chỉnh lại niềm tin ấy. Quá trình này xuất hiện khi ta nghe dự báo thời tiết để điều chỉnh kế hoạch, xem kết quả xét nghiệm để cập nhật chẩn đoán, hay theo dõi doanh số tuần đầu để điều chỉnh nhận định về nhu cầu thị trường. Định lý Bayes chuyển hóa quá trình trực giác đó thành một quy tắc toán học rõ ràng.
 
-## 2. Một ví dụ dễ hiểu: bác sĩ chẩn đoán bệnh
+## 2. Ví dụ minh họa: bác sĩ chẩn đoán bệnh
 
-Giả sử bác sĩ đang cân nhắc ba khả năng là cúm, COVID-19, và viêm phổi vi khuẩn. Trước khi xem kỹ các triệu chứng cụ thể của bệnh nhân, bác sĩ đã có một niềm tin ban đầu dựa trên mùa đang lưu hành bệnh nào, dịch tễ khu vực, và kinh nghiệm trước đó; đó chính là **prior**. Sau đó, bác sĩ nhìn vào dữ liệu mới như sốt, ho, mất vị giác, hình ảnh X-quang, hay kết quả test; đó là phần thông tin đi vào **likelihood**. Kết hợp hai phần này với nhau, bác sĩ có niềm tin cập nhật về chẩn đoán hợp lý nhất; đó là **posterior**.
+Giả sử bác sĩ đang cân nhắc ba khả năng: cúm, COVID-19 và viêm phổi vi khuẩn. Trước khi xem xét kỹ triệu chứng của bệnh nhân, bác sĩ đã có niềm tin ban đầu dựa trên mùa dịch, tình hình dịch tễ tại khu vực và kinh nghiệm lâm sàng; đó là **prior**. Tiếp theo, bác sĩ thu thập dữ liệu mới như sốt, ho, mất vị giác, phim X-quang hay kết quả xét nghiệm; phần thông tin này đi vào **likelihood**. Khi kết hợp hai thành phần đó lại, bác sĩ thu được niềm tin đã cập nhật về chẩn đoán hợp lý nhất; đó chính là **posterior**.
 
 ![Triệu chứng ban đầu của bệnh nhân]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_doctor_diagnosis_symptoms.png)
 
@@ -36,15 +36,13 @@ Giả sử bác sĩ đang cân nhắc ba khả năng là cúm, COVID-19, và vi�
 
 ## 3. Công thức Bayes
 
-Định lý Bayes viết như sau:
+Định lý Bayes được viết như sau:
 
 $$
 P(\theta \mid D) = \frac{P(D \mid \theta)\,P(\theta)}{P(D)}.
 $$
 
-Ở đây, $$P(\theta \mid D)$$ là **posterior**, $$P(D \mid \theta)$$ là **likelihood**, $$P(\theta)$$ là **prior**, còn $$P(D)$$ là **evidence** hay hằng số chuẩn hóa.
-
-Nếu chỉ cần nhìn cấu trúc, ta thường nhớ dạng ngắn:
+Trong đó, $$P(\theta \mid D)$$ là **posterior** (hậu nghiệm), $$P(D \mid \theta)$$ là **likelihood** (hàm hợp lý), $$P(\theta)$$ là **prior** (tiền nghiệm), còn $$P(D)$$ là **evidence** (bằng chứng) hay hằng số chuẩn hóa. Khi chỉ cần tập trung vào cấu trúc tỉ lệ, ta thường viết gọn:
 
 $$
 \text{posterior} \propto \text{likelihood} \times \text{prior}.
@@ -52,7 +50,7 @@ $$
 
 ### 3.1. Ôn nhanh xác suất có điều kiện và xác suất toàn phần
 
-Trước khi dùng Bayes, ta cần hai mảnh ghép rất ngắn:
+Trước khi áp dụng định lý Bayes, ta cần hai công thức cơ bản:
 
 $$
 P(A\mid B)=\frac{P(A\cap B)}{P(B)}
@@ -61,12 +59,10 @@ $$
 và
 
 $$
-P(B)=\sum_i P(B\mid A_i)P(A_i)
+P(B)=\sum_i P(B\mid A_i)P(A_i),
 $$
 
-trong đó $$\{A_i\}$$ là các trường hợp loại trừ nhau và phủ toàn bộ khả năng.
-
-Với bài toán nhị phân (có bệnh/không bệnh), công thức toàn phần thường viết:
+trong đó $$\{A_i\}$$ là hệ các biến cố xung khắc đôi một và phủ toàn bộ không gian mẫu. Với bài toán nhị phân (có bệnh / không bệnh), công thức xác suất toàn phần có dạng:
 
 $$
 P(B)=P(B\mid A)P(A)+P(B\mid A')P(A').
@@ -76,47 +72,45 @@ $$
 
 ## 4. Đọc công thức bằng lời
 
-Đừng vội nhìn Bayes như một công thức đáng sợ. Hãy đọc nó bằng tiếng Việt đơn giản:
+Thay vì xem định lý Bayes là một biểu thức khó nhớ, bạn có thể diễn đạt nó bằng lời như sau:
 
-> Niềm tin mới của tôi về giả thuyết tỷ lệ với mức độ dữ liệu ủng hộ giả thuyết đó, nhân với mức độ tôi đã tin giả thuyết đó từ trước.
+> Niềm tin mới về một giả thuyết tỉ lệ với mức độ dữ liệu ủng hộ giả thuyết đó nhân với mức độ tin cậy ban đầu dành cho giả thuyết đó.
 
-Đây là một ý cực kỳ tự nhiên.
-
-Nếu một giả thuyết đã có prior cao và dữ liệu cũng hợp với nó, thì posterior của nó sẽ cao. Ngược lại, nếu prior đã thấp và dữ liệu cũng không ủng hộ, thì posterior sẽ thấp.
+Cách đọc này rất trực quan: nếu một giả thuyết có prior cao và dữ liệu cũng phù hợp với nó thì posterior sẽ cao; ngược lại, nếu prior thấp và dữ liệu không ủng hộ thì posterior sẽ thấp.
 
 ## 5. Ví dụ kinh điển: đồng xu thiên lệch
 
-Giả sử ta muốn biết đồng xu có xác suất ra ngửa $$\theta$$ là bao nhiêu.
+Giả sử ta muốn suy luận xác suất ra mặt ngửa $$\theta$$ của một đồng xu.
 
-### Trước dữ liệu
+### Trước khi có dữ liệu
 
-Ta nghĩ đồng xu có thể gần cân bằng, nhưng chưa chắc; đó là prior.
+Ta cho rằng đồng xu có thể gần cân bằng nhưng chưa chắc chắn; niềm tin này được biểu diễn bằng prior.
 
-### Dữ liệu
+### Dữ liệu quan sát
 
-Ta tung 10 lần và thấy 7 mặt ngửa.
+Ta tung 10 lần và thu được 7 mặt ngửa.
 
 ### Cập nhật
 
-Bayes kết hợp prior ban đầu với dữ liệu 7/10 để tạo posterior về $$\theta$$.
+Định lý Bayes kết hợp prior ban đầu với dữ liệu 7/10 để tạo ra phân phối posterior cho $$\theta$$.
 
 ![Bayes với ví dụ đồng xu]({{ site.baseurl }}/img/chapter_img/chapter01/coin_bayes_visualization.png)
 
-Điều quan trọng là posterior không đơn thuần bằng prior, cũng không chỉ bằng tỷ lệ quan sát 0.7. Nó là sự dung hòa giữa điều ta tin trước đó và điều dữ liệu đang nói.
+Điểm cần chú ý là posterior không giữ nguyên ở prior, nhưng cũng không nhảy thẳng về tỷ lệ mẫu 0.7; nó là sự dung hòa giữa kiến thức ban đầu và dữ liệu vừa quan sát.
 
-## 6. Prior, likelihood và posterior thật ra là gì?
+## 6. Vai trò của prior, likelihood và posterior
 
 ### 6.1. Prior
 
-Prior là điều ta tin trước dữ liệu hiện tại. Chẳng hạn, ta có thể biết rằng tỷ lệ đậu môn học trước đây thường quanh 70%, một loại thuốc tương tự thường chỉ hiệu quả ở mức vừa phải, hay đồng xu mua từ cửa hàng thường gần cân bằng.
+Prior biểu diễn niềm tin trước khi có dữ liệu hiện tại. Chẳng hạn, ta biết tỷ lệ qua môn các khóa trước thường quanh 70%, một loại thuốc tương tự thường có hiệu quả ở mức vừa phải, hay đồng xu mua từ cửa hàng thường gần cân bằng.
 
 ### 6.2. Likelihood
 
-Likelihood đo dữ liệu hiện tại hợp với từng giá trị tham số đến đâu. Ví dụ, nếu đồng xu thật sự cân bằng thì dữ liệu 7/10 ngửa hợp lý đến mức nào, hay nếu tỷ lệ đậu thật sự là 0.9 thì dữ liệu hiện tại có còn hợp lý không.
+Likelihood đo mức độ phù hợp của dữ liệu hiện tại với từng giá trị tham số. Ví dụ, nếu đồng xu thực sự cân bằng thì dữ liệu 7/10 mặt ngửa hợp lý đến mức nào, hoặc nếu tỷ lệ qua môn thực sự là 0.9 thì dữ liệu quan sát có còn phù hợp không.
 
 ### 6.3. Posterior
 
-Posterior là niềm tin sau khi cập nhật. Nó là đối tượng trung tâm của Bayesian inference vì từ posterior ta có thể trả lời tham số có khả năng nằm ở đâu, xác suất nó lớn hơn một ngưỡng là bao nhiêu, hay khoảng giá trị hợp lý nhất của nó là gì.
+Posterior là niềm tin sau khi đã cập nhật bằng dữ liệu. Đây là đối tượng trung tâm của suy luận Bayes, vì từ posterior ta có thể xác định vùng giá trị khả dĩ của tham số, tính xác suất tham số vượt qua một ngưỡng cụ thể, hoặc tìm khoảng giá trị hợp lý nhất của nó.
 
 ![Prior trước khi nhìn dữ liệu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayes_theorem_prior.png)
 
@@ -135,29 +129,23 @@ Kéo tỉ lệ nền, độ nhạy và độ đặc hiệu; bấm Bước tiếp
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 7. Một ví dụ rất nổi tiếng: xét nghiệm y khoa
+## 7. Ví dụ kinh điển: xét nghiệm y khoa
 
-Đây là ví dụ giúp người học thấy Bayes mạnh ở đâu.
+Đây là ví dụ minh họa rõ sức mạnh của định lý Bayes. Giả sử một căn bệnh hiếm chỉ ảnh hưởng đến 1% dân số, xét nghiệm có độ nhạy và độ đặc hiệu đều cao, và một người nhận kết quả dương tính. Câu hỏi người bệnh thực sự quan tâm là: “Xác suất tôi thực sự mắc bệnh là bao nhiêu?”
 
-Giả sử có một bệnh hiếm mà chỉ 1% dân số mắc, test có độ nhạy cao và độ đặc hiệu cao, và một người nhận kết quả dương tính. Câu hỏi người bệnh thật sự quan tâm là: “Vậy xác suất tôi thật sự mắc bệnh là bao nhiêu?”
-
-Rất nhiều người nhầm tưởng kết quả dương tính gần như đồng nghĩa với chắc chắn mắc bệnh. Nhưng Bayes cho thấy rằng nếu bệnh rất hiếm thì prior ban đầu rất thấp, nên ngay cả một xét nghiệm khá tốt cũng chưa chắc đẩy posterior lên mức cực cao.
+Nhiều người dễ nhầm rằng kết quả dương tính gần như đồng nghĩa với chắc chắn mắc bệnh. Tuy nhiên, định lý Bayes cho thấy khi bệnh rất hiếm (prior thấp), ngay cả một xét nghiệm có độ chính xác khá cao cũng chưa chắc đẩy xác suất hậu nghiệm lên mức cao. Trong những tình huống như vậy, Bayes cho kết quả chính xác hơn hẳn trực giác cảm tính.
 
 ![Nghịch lý xét nghiệm y khoa]({{ site.baseurl }}/img/chapter_img/chapter01/medical_test_paradox.png)
 
-Đây là một trong những nơi Bayes cho câu trả lời tự nhiên hơn hẳn so với trực giác cảm tính.
-
 ### 7.1. Tính số cụ thể cho bài toán xét nghiệm bệnh hiếm (VD1)
 
-Giả sử $$P(D)=0.001$$ là tỷ lệ mắc bệnh ban đầu, $$P(+\mid D)=0.9$$ là độ nhạy, và $$P(+\mid D')=0.01$$ là tỷ lệ dương tính giả.
-
-Ta cần:
+Giả sử tỷ lệ mắc bệnh ban đầu là $$P(D)=0.001$$, độ nhạy là $$P(+\mid D)=0.9$$, và tỷ lệ dương tính giả là $$P(+\mid D')=0.01$$. Ta cần tính:
 
 $$
 P(D\mid +)=\frac{P(+\mid D)P(D)}{P(+)}.
 $$
 
-Với xác suất toàn phần:
+Áp dụng công thức xác suất toàn phần:
 
 $$
 P(+)=P(+\mid D)P(D)+P(+\mid D')P(D')
@@ -173,63 +161,57 @@ $$
 P(D\mid +)=\frac{0.9\times 0.001}{0.01089}\approx 0.0826.
 $$
 
-Dù test khá tốt, posterior vẫn chỉ khoảng $$8.26\%$$ vì bệnh quá hiếm (base rate thấp).
+Dù xét nghiệm khá tốt, xác suất hậu nghiệm vẫn chỉ khoảng $$8.26\%$$ do tỷ lệ nền (base rate) của bệnh rất thấp.
 
 ### 7.2. Đọc bài toán qua ma trận nhầm lẫn
 
-Trong bài toán chẩn đoán nhị phân, **confusion matrix** giúp đọc đúng ý nghĩa các đại lượng: **True Positive (TP)** là có bệnh và test dương tính, **False Positive (FP)** là không bệnh nhưng test dương tính, **False Negative (FN)** là có bệnh nhưng test âm tính, còn **True Negative (TN)** là không bệnh và test âm tính. Khi đó, độ nhạy là $$P(+\mid D)=\frac{TP}{TP+FN}$$, độ đặc hiệu là $$P(-\mid D')=\frac{TN}{TN+FP}$$, và tỷ lệ dương tính giả là $$P(+\mid D')=1-\text{độ đặc hiệu}$$.
+Trong chẩn đoán nhị phân, **ma trận nhầm lẫn (confusion matrix)** giúp phân biệt rõ các đại lượng: **True Positive (TP)** là có bệnh và xét nghiệm dương tính, **False Positive (FP)** là không bệnh nhưng xét nghiệm dương tính, **False Negative (FN)** là có bệnh nhưng xét nghiệm âm tính, còn **True Negative (TN)** là không bệnh và xét nghiệm âm tính. Khi đó, độ nhạy là $$P(+\mid D)=\frac{TP}{TP+FN}$$, độ đặc hiệu là $$P(-\mid D')=\frac{TN}{TN+FP}$$, và tỷ lệ dương tính giả là $$P(+\mid D')=1-\text{độ đặc hiệu}$$.
 
-Điều người bệnh quan tâm lại là $$P(D\mid +)$$, tức PPV. Đây là lý do phải dùng Bayes: từ các đại lượng theo hàng/cột của confusion matrix để suy ra xác suất hậu nghiệm thực sự cần cho quyết định.
+Điều người bệnh quan tâm lại là $$P(D\mid +)$$, tức giá trị tiên đoán dương (PPV). Định lý Bayes giúp chuyển từ các xác suất điều kiện theo hàng/cột của ma trận nhầm lẫn sang xác suất hậu nghiệm cần thiết cho quyết định lâm sàng.
 
 ### 7.3. Ví dụ điều kiện hóa theo ngữ cảnh (VD2)
 
 Giả sử $$P(\text{Icy})=0.7$$ và $$P(\text{Not Icy})=0.3$$, đồng thời $$P(\text{One crashes}\mid \text{Icy})=0.8$$ còn $$P(\text{One crashes}\mid \text{Not Icy})=0.1$$.
 
-Đầu tiên, dùng xác suất toàn phần:
+Trước hết, áp dụng công thức xác suất toàn phần:
 
 $$
 P(\text{One crashes})=0.8\times 0.7+0.1\times 0.3=0.59.
 $$
 
-Giả sử đã quan sát thấy Watson bị tai nạn. Khi đó:
+Nếu quan sát thấy Watson bị tai nạn, ta cập nhật xác suất đường đóng băng:
 
 $$
 P(\text{Icy}\mid \text{Watson crashes})=\frac{0.8\times 0.7}{0.59}\approx 0.95.
 $$
 
-Xác suất Holmes bị tai nạn sau khi biết Watson bị tai nạn:
+Từ đó, xác suất Holmes cũng bị tai nạn sau khi biết tin về Watson là:
 
 $$
 P(\text{Holmes crashes}\mid \text{Watson crashes})=0.8\times 0.95+0.1\times 0.05=0.765.
 $$
 
-Điểm quan trọng: ta cập nhật niềm tin về điều kiện môi trường (đường băng), rồi suy ra xác suất sự kiện quan tâm.
+Điểm cốt lõi của ví dụ này là ta cập nhật niềm tin về điều kiện môi trường (đường có đóng băng hay không), rồi dùng niềm tin mới đó để suy ra xác suất của sự kiện tiếp theo.
 
-## 8. Evidence có vai trò gì?
+## 8. Vai trò của evidence
 
-Trong công thức:
+Trong công thức Bayes, đại lượng:
 
 $$
 P(D)
 $$
 
-là xác suất quan sát dữ liệu dưới mọi giá trị có thể của tham số.
-
-Bạn có thể nghĩ evidence như một hằng số chuẩn hóa để bảo đảm posterior là một phân phối xác suất hợp lệ.
-
-Trong thực hành, ta thường nhớ:
+là xác suất quan sát được dữ liệu tính trên mọi giá trị có thể của tham số. Bạn có thể xem evidence như hằng số chuẩn hóa giúp đảm bảo posterior là một phân phối xác suất hợp lệ (có tổng hoặc tích phân bằng 1). Trong thực hành, ta thường làm việc trước với dạng tỉ lệ:
 
 $$
 P(\theta \mid D) \propto P(D \mid \theta)P(\theta)
 $$
 
-và để việc chuẩn hóa cho bước sau.
+và thực hiện bước chuẩn hóa ở công đoạn sau.
 
-## 9. Bayes không chỉ dùng một lần
+## 9. Cập nhật tuần tự trong Bayes
 
-Một nét đẹp lớn của Bayes là tính **cập nhật tuần tự**.
-
-Ví dụ, hôm nay bạn có dữ liệu tuần 1, ngày mai thêm dữ liệu tuần 2, rồi tuần sau có thêm dữ liệu tuần 3. Bạn không cần suy nghĩ “làm lại từ đầu” theo kiểu hoàn toàn tách biệt; posterior hiện tại có thể trở thành prior cho lần cập nhật kế tiếp.
+Một tính chất quan trọng của thống kê Bayes là khả năng **cập nhật tuần tự**. Giả sử hôm nay bạn có dữ liệu tuần 1, tuần sau có thêm dữ liệu tuần 2, rồi tuần tiếp theo có thêm dữ liệu tuần 3. Bạn không cần bắt đầu lại từ đầu một cách tách biệt; posterior ở bước hiện tại có thể trở thành prior cho lần cập nhật kế tiếp. Tính chất này đặc biệt phù hợp với bảng điều khiển kinh doanh, giám sát vận hành và mọi bài toán cần học liên tục từ dữ liệu đến theo thời gian.
 
 ![Bước khởi đầu: prior ban đầu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_prior.png)
 
@@ -239,8 +221,6 @@ Ví dụ, hôm nay bạn có dữ liệu tuần 1, ngày mai thêm dữ liệu t
 
 ![So sánh cập nhật tuần tự với cập nhật một lần]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_sequential_updating_batch_comparison.png)
 
-Điều này cực kỳ tự nhiên cho dashboard kinh doanh, giám sát vận hành, và mọi tình huống học tập liên tục từ dữ liệu đến theo thời gian.
-
 ### 9.1. Ví dụ cập nhật tuần tự với hai xét nghiệm (VD3)
 
 Giả sử:
@@ -249,28 +229,22 @@ $$
 P(\theta=1)=0.7,\quad P(\theta=0)=0.3,
 $$
 
-với $$\theta=1$$ nghĩa là có bệnh.
-
-Xét nghiệm đầu tiên $$Y$$ thỏa $$P(Y=1\mid \theta=1)=0.95$$ và $$P(Y=1\mid \theta=0)=0.40$$, và ta quan sát được $$Y=1$$.
-
-Khi đó:
+trong đó $$\theta=1$$ biểu thị trạng thái có bệnh. Xét nghiệm thứ nhất $$Y$$ thỏa mãn $$P(Y=1\mid \theta=1)=0.95$$ và $$P(Y=1\mid \theta=0)=0.40$$, và ta quan sát được $$Y=1$$. Khi đó:
 
 $$
 P(\theta=1\mid Y=1)=\frac{0.95\times 0.7}{0.95\times 0.7+0.40\times 0.3}
 =\frac{0.665}{0.785}\approx 0.847.
 $$
 
-Tiếp theo, có xét nghiệm thứ hai $$W$$ độc lập có điều kiện theo $$\theta$$, với $$P(W=1\mid \theta=1)=0.99$$ nên $$P(W=0\mid \theta=1)=0.01$$, còn $$P(W=1\mid \theta=0)=0.04$$ nên $$P(W=0\mid \theta=0)=0.96$$, và ta quan sát được $$W=0$$.
-
-Cập nhật lần 2:
+Tiếp theo, xét nghiệm thứ hai $$W$$ độc lập có điều kiện theo $$\theta$$, với $$P(W=1\mid \theta=1)=0.99$$ (nên $$P(W=0\mid \theta=1)=0.01$$) và $$P(W=1\mid \theta=0)=0.04$$ (nên $$P(W=0\mid \theta=0)=0.96$$), và ta quan sát được $$W=0$$. Cập nhật lần thứ hai:
 
 $$
 P(\theta=1\mid Y=1,W=0)=
 \frac{P(W=0\mid \theta=1)P(\theta=1\mid Y=1)}{P(W=0\mid Y=1)}
-\approx 0.052.
+\approx 0.055.
 $$
 
-Tức là posterior thay đổi mạnh theo bằng chứng mới: từ $$0.7 \to 0.847 \to 0.052$$.
+Như vậy, xác suất hậu nghiệm thay đổi rõ rệt theo từng bằng chứng mới: từ $$0.7 \to 0.847 \to 0.055$$.
 
 ### Thử nghiệm: cập nhật tuần tự qua từng lần tung
 
@@ -280,18 +254,18 @@ Ba loại đồng xu, mỗi lần tung nhân prior với likelihood rồi chuẩ
 <div data-demo="bayesrule-explainer" data-lang="vi" data-tab="sequential"></div>
 </div>
 
-## 10. Prior mạnh hay yếu thì sao?
+## 10. Ảnh hưởng của prior mạnh và prior yếu
 
-Nếu prior rất mạnh, dữ liệu ít có thể chưa làm posterior thay đổi quá nhiều. Nếu prior yếu, dữ liệu sẽ có ảnh hưởng lớn hơn. Đây không phải lỗi của Bayes mà chính là điều ta mong muốn: khi kiến thức trước đó rất chắc, ta không nên vứt nó đi quá dễ dàng; còn khi prior mơ hồ, dữ liệu nên được nói mạnh hơn.
+Nếu prior rất mạnh, một lượng dữ liệu ít có thể chưa làm posterior dịch chuyển nhiều. Ngược lại, nếu prior yếu, dữ liệu sẽ tác động mạnh hơn đến posterior. Đây không phải hạn chế của Bayes mà là hành vi hợp lý: khi kiến thức nền đã vững chắc, ta không nên từ bỏ nó quá dễ dàng trước vài quan sát lẻ tẻ; còn khi kiến thức ban đầu mơ hồ, dữ liệu mới cần có tiếng nói lớn hơn.
 
-### 10.1. Một ví dụ cụ thể: cùng dữ liệu, prior khác nhau
+### 10.1. Ví dụ cụ thể: cùng dữ liệu, prior khác nhau
 
-Giả sử ta quan sát 6 ca dương tính trong 10 trường hợp.
+Giả sử ta quan sát 6 ca dương tính trong 10 trường hợp:
 
-- Nếu prior yếu là Beta$$(1,1)$$, posterior sẽ là Beta$$(7,5)$$ với posterior mean khoảng $$0.583$$.
-- Nếu prior mạnh hơn và nghiêng sẵn về tỷ lệ cao, chẳng hạn Beta$$(20,5)$$, posterior sẽ là Beta$$(26,9)$$ với posterior mean khoảng $$0.743$$.
+- Nếu dùng prior yếu Beta$$(1,1)$$, posterior là Beta$$(7,5)$$ với trung bình hậu nghiệm khoảng $$0.583$$.
+- Nếu dùng prior mạnh hơn nghiêng về tỷ lệ cao, chẳng hạn Beta$$(20,5)$$, posterior là Beta$$(26,9)$$ với trung bình hậu nghiệm khoảng $$0.743$$.
 
-Cùng một dữ liệu nhưng posterior khác nhau vì prior mang thông tin thật sự vào bài toán. Đây không phải “Bayes tùy hứng”, mà là cách Bayes nói rõ một điều vốn luôn tồn tại trong thực tế: dữ liệu mới luôn được đọc trong bối cảnh của những gì ta đã biết từ trước.
+Cùng một bộ dữ liệu nhưng posterior khác nhau vì prior đưa thông tin thực sự vào bài toán. Điều này phản ánh đúng thực tế: dữ liệu mới luôn được diễn giải trong bối cảnh của những gì ta đã biết từ trước.
 
 ![Prior yếu: niềm tin ban đầu còn khá mở]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_weak_prior.png)
 
@@ -301,19 +275,17 @@ Cùng một dữ liệu nhưng posterior khác nhau vì prior mang thông tin th
 
 ![Khi prior mạnh, posterior thay đổi ít hơn]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_prior_strength_strong_posterior.png)
 
-## 11. Điều Bayes thực sự dạy ta
+## 11. Tư duy cốt lõi của định lý Bayes
 
-Bayes không chỉ dạy một công thức. Nó dạy một cách suy nghĩ, trong đó dữ liệu không tự nói nếu không có mô hình, niềm tin ban đầu không phải điều cấm kỵ, dữ liệu mới phải có quyền sửa niềm tin cũ, và toàn bộ quá trình cập nhật đó cần được trình bày minh bạch.
+Định lý Bayes không chỉ cung cấp một công thức tính xác suất có điều kiện, mà đề xuất một cách suy luận minh bạch: dữ liệu không tự mang ý nghĩa nếu tách khỏi mô hình, kiến thức ban đầu không phải điều cấm kỵ, dữ liệu mới có quyền điều chỉnh niềm tin cũ, và toàn bộ quá trình cập nhật đều được trình bày rõ ràng. Khi nắm được tinh thần đó, các khái niệm prior và posterior sẽ trở nên tự nhiên.
 
-Một khi chấp nhận điều này, bạn sẽ thấy prior và posterior không còn “lạ”, mà cực kỳ tự nhiên.
-
-> **3 ý cần nhớ.** Định lý Bayes là quy tắc cập nhật niềm tin khi có thêm bằng chứng mới; prior, likelihood và posterior không phải ba khái niệm rời nhau mà là ba phần của cùng một quy trình suy luận; và sức mạnh của Bayes nằm ở chỗ nó cho phép ta kết hợp kiến thức cũ với dữ liệu mới một cách minh bạch.
+> **3 ý cần nhớ.** Định lý Bayes là quy tắc cập nhật niềm tin khi có thêm bằng chứng mới; prior, likelihood và posterior không phải ba khái niệm tách rời mà là ba mắt xích của cùng một quy trình suy luận; và giá trị của Bayes nằm ở việc kết hợp kiến thức sẵn có với dữ liệu mới một cách minh bạch.
 
 ## Video tham khảo
 
-- [P01.007 — Định lý Bayes cập nhật niềm tin của mô hình ra sao?](https://www.youtube.com/watch?v=zXtcZ-2adK0) — Phạm Thông, Tiếng Việt. **xem trước**. Xem bằng tiếng Việt cách prior và dữ liệu cùng viết lại niềm tin, đúng cách bài muốn đọc định lý Bayes.
-- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Xem từng thành phần prior, likelihood và hằng số chuẩn hóa trên hình, hỗ trợ phần gọi tên vai trò của chúng.
-- [Statistical Rethinking 2023 - 02 - The Garden of Forking Data](https://www.youtube.com/watch?v=R1vcdhPBlXA) — Richard McElreath, English. Xem ví dụ quả địa cầu nước và đất, nơi định lý Bayes trở thành việc đếm các cách dữ liệu có thể sinh ra.
+- [P01.007 — Định lý Bayes cập nhật niềm tin của mô hình ra sao?](https://www.youtube.com/watch?v=zXtcZ-2adK0) — Phạm Thông, Tiếng Việt. **xem trước**. Giải thích bằng tiếng Việt cách prior và dữ liệu cùng cập nhật niềm tin, phù hợp với cách tiếp cận của bài học.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Minh họa trực quan vai trò của prior, likelihood và hằng số chuẩn hóa trên hình học.
+- [Statistical Rethinking 2023 - 02 - The Garden of Forking Data](https://www.youtube.com/watch?v=R1vcdhPBlXA) — Richard McElreath, English. Trình bày ví dụ quả địa cầu nước và đất, nơi định lý Bayes trở thành bài toán đếm các khả năng sinh dữ liệu.
 
 ## Câu hỏi tự luyện
 

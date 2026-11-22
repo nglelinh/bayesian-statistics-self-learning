@@ -12,15 +12,15 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn nhìn định lý Bayes không còn như công thức chẩn đoán trong sách, mà như quy tắc cập nhật niềm tin đang vận hành trong lọc thư rác, phát hiện gian lận, và lượng hóa bất định của mô hình ngôn ngữ. Điều cần thay đổi là câu hỏi: không hỏi “công thức viết thế nào?”, mà hỏi “prior, likelihood và posterior đang đứng ở đâu trong một hệ thống thật?”.
+Sau bài học tùy chọn này, bạn sẽ nhìn định lý Bayes không chỉ như một công thức chẩn đoán trong sách giáo khoa, mà như quy tắc cập nhật niềm tin đang vận hành trong bộ lọc thư rác, hệ thống phát hiện gian lận và bài toán định lượng bất định của mô hình ngôn ngữ. Trọng tâm cần thay đổi nằm ở câu hỏi: không dừng ở “công thức viết thế nào?”, mà đặt câu hỏi “prior, likelihood và posterior nằm ở đâu trong một hệ thống thực tế?”.
 
 ## Kiến thức cần có
 
-Bài viết dựa trên các bài 1.1–1.4. Nó không viết lại phê phán p-value hay so sánh Bayesian–frequentist. Nó chỉ đưa cùng một sơ đồ cập nhật vào các sản phẩm khoa học máy tính gần đây.
+Bài viết kế thừa các bài 1.1–1.4, không lặp lại phần phê phán p-value hay so sánh Bayesian–frequentist mà đưa trực tiếp cùng một sơ đồ cập nhật vào các ứng dụng khoa học máy tính hiện đại.
 
 ## Mở đầu
 
-Chương 1 đã tạo một căng thẳng: p-value trả lời một câu hỏi mà người dùng thường không đặt, trong khi quyết định thực sự cần xác suất của giả thuyết sau dữ liệu. Lọc thư rác, cổng thanh toán, và chatbot đều sống trong đúng căng thẳng ấy. Chúng phải biến một quan sát mới—một email, một giao dịch, một câu trả lời được sinh ra—thành một niềm tin cập nhật đủ trung thực để hành động. Nếu chỉ có điểm số xếp hạng, hệ thống vẫn chưa biết mình nên im hay nên cảnh báo.
+Chương 1 đã chỉ ra một mâu thuẫn cốt lõi: p-value trả lời một câu hỏi khác với điều người dùng cần, trong khi việc ra quyết định thực tế lại đòi hỏi xác suất của giả thuyết sau khi quan sát dữ liệu. Bộ lọc thư rác, cổng thanh toán và trợ lý hội thoại (chatbot) đều đối mặt với đúng bài toán này. Chúng phải chuyển một quan sát mới — một email, một giao dịch hay một câu trả lời vừa được sinh ra — thành niềm tin đã cập nhật đủ tin cậy để làm cơ sở hành động. Nếu chỉ dừng ở một điểm số xếp hạng, hệ thống vẫn chưa thể xác định nên giữ im lặng hay phát cảnh báo.
 
 ## Phát triển khái niệm
 
@@ -30,50 +30,52 @@ $$
 P(H\mid D)=\frac{P(D\mid H)P(H)}{P(D)},
 $$
 
-vẫn là cùng một phép nhân prior với likelihood rồi chuẩn hóa. Trong sản phẩm, $$H$$ có thể là “thư rác”, “giao dịch gian lận”, hoặc “câu trả lời vừa sinh là đúng”. $$D$$ là bằng chứng quan sát được. Phần khó không phải đại số, mà là prior bị lệch (tỷ lệ nền thư rác thay đổi theo mùa) và likelihood bị đọc như thể đã là posterior.
+vẫn là phép nhân giữa prior và likelihood rồi chuẩn hóa. Trong các hệ thống thực tế, $$H$$ có thể là “thư rác”, “giao dịch gian lận” hoặc “câu trả lời vừa sinh ra là đúng”, còn $$D$$ là bằng chứng quan sát được. Thách thức chính không nằm ở phép biến đổi đại số, mà ở việc prior thay đổi theo bối cảnh (chẳng hạn tỷ lệ nền của thư rác biến động theo mùa) và sai lầm khi đọc likelihood như thể nó đã là posterior.
 
 ## Mô hình như câu chuyện sinh dữ liệu
 
-### 1. Thư rác, lừa đảo và phân loại có hiệu chỉnh
+### 1. Lọc thư rác, phát hiện lừa đảo và phân loại có hiệu chỉnh
 
-Câu chuyện sinh cổ điển của Naive Bayes vẫn còn sống: mỗi token được xem như bằng chứng có điều kiện về nhãn thư rác, rồi các likelihood được nhân dưới giả định độc lập. Hệ thống hiện đại thay từ điển bằng biểu diễn dày hơn, nhưng câu hỏi Bayes không đổi. Prior là tỷ lệ nền của thư rác; likelihood là “email kiểu này xuất hiện nhiều hơn dưới nhãn nào?”; posterior là xác suất thư ấy là rác *sau khi đã đọc nội dung*. Nếu ngưỡng hành động bỏ qua tỷ lệ nền, bạn đang dùng likelihood như thể nó đã là posterior—đúng lỗi mà bài 1.3 cảnh báo trong chẩn đoán y khoa.
+Mô hình sinh cổ điển của Naive Bayes vẫn được vận dụng rộng rãi: mỗi từ hoặc đơn vị văn bản (token) được xem là bằng chứng có điều kiện về nhãn thư rác, sau đó các likelihood được nhân với nhau dưới giả định độc lập có điều kiện. Các hệ thống hiện đại thay từ điển rời rạc bằng các biểu diễn đặc hơn (dense representations), nhưng cấu trúc Bayes không thay đổi: prior là tỷ lệ nền của thư rác; likelihood trả lời câu hỏi “email kiểu này xuất hiện thường xuyên hơn dưới nhãn nào?”; còn posterior là xác suất email là thư rác *sau khi đã đọc nội dung*. Nếu ngưỡng hành động bỏ qua tỷ lệ nền, hệ thống đang nhầm lẫn likelihood với posterior — đúng lỗi mà Bài 1.3 đã chỉ ra trong bài toán chẩn đoán y khoa.
 
-### 2. Gian lận thanh toán như cập nhật dưới tỷ lệ nền cực thấp
+### 2. Phát hiện gian lận thanh toán dưới tỷ lệ nền cực thấp
 
-Gian lận hiếm. Prior $$P(H)$$ vì thế rất nhỏ, nên một tín hiệu “trông khả nghi” vẫn có thể để lại posterior vừa phải. Đó là phiên bản công nghiệp của nghịch lý xét nghiệm hiếm bệnh. Một hệ thống trung thực phải giữ tỷ lệ nền trong công thức, rồi chỉ hành động khi posterior vượt ngưỡng do chi phí bỏ sót và báo động giả quy định. Điểm xếp hạng cao chưa phải niềm tin đã cập nhật.
+Giao dịch gian lận chiếm tỷ lệ rất nhỏ, nên prior $$P(H)$$ rất thấp. Vì vậy, một tín hiệu “trông có vẻ khả nghi” vẫn có thể chỉ cho ra posterior ở mức vừa phải — đây chính là phiên bản công nghiệp của nghịch lý xét nghiệm bệnh hiếm. Một hệ thống đáng tin cậy phải đưa tỷ lệ nền vào phép tính và chỉ kích hoạt hành động khi posterior vượt ngưỡng được xác định từ chi phí bỏ sót gian lận và chi phí báo động giả. Một điểm xếp hạng cao không đồng nghĩa với xác suất hậu nghiệm cao.
 
 ### 3. Mô hình ngôn ngữ tự đánh giá câu trả lời của chính mình
 
-Kadavath et al. (2022) hỏi một câu rất Bayesian: sau khi mô hình đề xuất một câu trả lời, xác suất $$P(\text{True})$$ rằng câu ấy đúng là bao nhiêu? Họ thấy các mô hình lớn có thể được hiệu chỉnh tốt trên nhiệm vụ đúng/sai được định dạng, và việc nhìn nhiều mẫu tự sinh trước khi đánh giá một ứng viên sẽ giúp self-evaluation. Kuhn, Gal và Farquhar (2023) chỉ ra một nút thắt mới: trong ngôn ngữ, nhiều câu khác chữ nhưng cùng nghĩa, nên entropy trên chuỗi token không phải entropy trên giả thuyết. Semantic entropy nhóm các câu tương đương nghĩa rồi mới đo bất định—tức là đo posterior trên không gian giả thuyết, không trên không gian xâu ký tự.
+Kadavath et al. (2022) đặt ra một câu hỏi mang đậm tinh thần Bayes: sau khi mô hình ngôn ngữ đề xuất một câu trả lời, xác suất $$P(\text{True})$$ rằng câu trả lời ấy đúng là bao nhiêu? Nghiên cứu cho thấy các mô hình lớn có thể được hiệu chỉnh tốt trên các tác vụ đúng/sai có định dạng rõ ràng, và việc tham khảo nhiều mẫu tự sinh trước khi đánh giá một phương án ứng viên giúp cải thiện khả năng tự đánh giá.
 
-### 4. Hỏi mô hình lấy độ tin đã hiệu chỉnh
+Kuhn, Gal và Farquhar (2023) chỉ ra thêm một điểm nghẽn quan trọng: trong ngôn ngữ tự nhiên, nhiều câu khác nhau về mặt câu chữ nhưng lại mang cùng một ý nghĩa, nên entropy tính trên chuỗi token không phản ánh đúng entropy trên không gian giả thuyết. Phương pháp *semantic entropy* nhóm các câu trả lời tương đương về nghĩa lại với nhau rồi mới đo độ bất định — tức là đo phân phối hậu nghiệm trên không gian giả thuyết thay vì trên không gian chuỗi ký tự.
 
-Tian et al. (2023) cho thấy, với các mô hình đã tinh chỉnh bằng phản hồi người, xác suất nói thành lời (“tôi tin 70%”) đôi khi được hiệu chỉnh tốt hơn xác suất điều kiện trên token. Điều này không biến chatbot thành một Bayesian sampler, nhưng nó cho thấy sản phẩm đang cố trích một posterior mà người dùng có thể đọc như độ hợp lý (plausibility). Nếu con số ấy không khớp tần suất đúng, ta đang lặp lại khủng hoảng diễn giải mà Chương 1 mở đầu.
+### 4. Khai thác độ tin cậy đã hiệu chỉnh trực tiếp từ mô hình
+
+Tian et al. (2023) cho thấy rằng với các mô hình ngôn ngữ đã được tinh chỉnh bằng phản hồi của con người, xác suất được diễn đạt trực tiếp bằng lời (chẳng hạn “tôi tin 70%”) đôi khi có độ hiệu chỉnh tốt hơn xác suất điều kiện tính trên token. Điều này không biến chatbot thành một bộ suy luận Bayes chuẩn mực, nhưng cho thấy các hệ thống thực tế đang tìm cách trích xuất một giá trị giống posterior mà người dùng có thể đọc như độ hợp lý (plausibility). Nếu con số đó không khớp với tần suất đúng thực tế, ta lại rơi vào chính vấn đề diễn giải sai mà Chương 1 đã nêu ra từ đầu.
 
 ## Diễn giải và nhận định
 
-Posterior trong các hệ thống này trả lời “giả thuyết này còn đáng tin bao nhiêu sau bằng chứng?”. Nó không trả lời “thuật toán đã bác bỏ giả thuyết đối lập”. Một $$P(\text{True})$$ cao trên một câu trả lời ảo giác vẫn có thể xảy ra nếu likelihood quá lạc quan. Bayes không bảo vệ ta khỏi likelihood sai; nó chỉ buộc ta nói rõ prior đang bị dữ liệu kéo đi đâu.
+Posterior trong các hệ thống này trả lời câu hỏi: “giả thuyết này còn đáng tin đến mức nào sau khi có bằng chứng?”, chứ không trả lời “thuật toán đã bác bỏ giả thuyết đối lập hay chưa”. Một giá trị $$P(\text{True})$$ cao trên một câu trả lời ảo giác vẫn có thể xảy ra nếu likelihood được ước lượng quá lạc quan. Định lý Bayes không tự bảo vệ ta khỏi một likelihood sai; nó chỉ buộc ta phải thể hiện minh bạch việc dữ liệu đang kéo prior đi theo hướng nào.
 
 ## Ứng dụng
 
-Ba miền—thư rác/lừa đảo, gian lận, và bất định ngôn ngữ—đều là bài toán ra quyết định dưới tỷ lệ nền lệch và chi phí không đối xứng. Chúng chuẩn bị trực tiếp cho phân tích quyết định ở Chương 8, nhưng đã có thể được hiểu chỉ bằng định lý Bayes.
+Cả ba lĩnh vực — lọc thư rác/lừa đảo, phát hiện gian lận thanh toán và định lượng bất định ngôn ngữ — đều là các bài toán ra quyết định dưới tỷ lệ nền mất cân bằng và chi phí sai sót không đối xứng. Chúng đặt nền móng trực tiếp cho phân tích quyết định ở Chương 8, nhưng bản chất của chúng đã có thể hiểu rõ chỉ từ định lý Bayes.
 
 ## Giới hạn và hướng mở rộng
 
-Naive Bayes độc lập từ là một câu chuyện sinh thô. Semantic entropy cần một mô hình tương đương nghĩa, bản thân nó cũng bất định. Hiệu chỉnh trên một chuẩn đánh giá không bảo đảm hiệu chỉnh sau khi phân phối dịch chuyển. Bài này cố ý không viết lại lý thuyết cập nhật; Chương 2 sẽ biến sơ đồ ấy thành likelihood, prior và posterior tường minh.
+Giả định độc lập giữa các từ trong Naive Bayes là một mô hình sinh khá thô. Semantic entropy phụ thuộc vào một mô hình đánh giá tương đương nghĩa mà bản thân nó cũng chứa độ bất định. Ngoài ra, một mô hình được hiệu chỉnh tốt trên một bộ tiêu chuẩn đánh giá không bảo đảm vẫn giữ nguyên độ hiệu chỉnh khi phân phối dữ liệu dịch chuyển. Bài học này không đi lại vào lý thuyết cập nhật; Chương 2 sẽ trình bày tường minh các thành phần likelihood, prior và posterior.
 
 ## Video tham khảo
 
-- [Naive Bayes từ A-Z: Trực Giác đến Toán Học](https://www.youtube.com/watch?v=SqW_p3311yY) — Gà AI, Tiếng Việt. **xem trước**. Xem Naive Bayes từ trực giác đến công thức, đúng phần bài đặt bộ lọc thư rác vào sơ đồ prior–likelihood–posterior.
-- [Bayes Rule Example of Spam Filter](https://www.youtube.com/watch?v=bc-SL86azrc) — Eric Walden, English. Xem một lá thư được cập nhật xác suất thư rác theo từng bằng chứng, hỗ trợ ví dụ tỷ lệ nền thay đổi.
-- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem bất định của mô hình học sâu; video không nói semantic entropy, nhưng hỗ trợ đoạn bài về việc không đọc điểm token như posterior của giả thuyết.
+- [Naive Bayes từ A-Z: Trực Giác đến Toán Học](https://www.youtube.com/watch?v=SqW_p3311yY) — Gà AI, Tiếng Việt. **xem trước**. Giải thích Naive Bayes từ trực giác đến công thức, minh họa trực tiếp cách đặt bộ lọc thư rác vào sơ đồ prior–likelihood–posterior.
+- [Bayes Rule Example of Spam Filter](https://www.youtube.com/watch?v=bc-SL86azrc) — Eric Walden, English. Trình bày cách cập nhật xác suất thư rác của một email theo từng bằng chứng, hỗ trợ ví dụ về tỷ lệ nền thay đổi.
+- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Giới thiệu về độ bất định trong học sâu; dù không đề cập trực tiếp đến semantic entropy, bài giảng hỗ trợ lập luận không nên đọc điểm số trên token như posterior của giả thuyết.
 
 ## Bài tập
 
-1. Tỷ lệ thư rác tăng từ 5% lên 30% trong mùa lễ. Likelihood của một từ khóa không đổi. Posterior của một email chứa từ khóa ấy đổi thế nào, và vì sao bộ lọc chỉ dùng điểm từ khóa sẽ trượt?
-2. Một cổng thanh toán báo “điểm gian lận 0.95”. Bạn sẽ hỏi thêm hai câu nào trước khi đóng giao dịch, một về prior và một về ngưỡng quyết định?
-3. Vì sao entropy trên các câu trả lời khác chữ có thể phóng đại bất định so với entropy trên các nghĩa? Hãy lấy một câu hỏi có hai cách diễn đạt đúng.
-4. So sánh $$P(\text{True})$$ của Kadavath et al. với posterior $$P(H\mid D)$$ trong ví dụ chẩn đoán của bài 1.3. Cái gì đóng vai trò prior?
+1. Tỷ lệ thư rác tăng từ 5% lên 30% trong mùa lễ, trong khi likelihood của một từ khóa không đổi. Posterior của một email chứa từ khóa đó thay đổi ra sao, và vì sao bộ lọc chỉ dựa vào điểm từ khóa sẽ hoạt động kém chính xác?
+2. Một cổng thanh toán báo “điểm gian lận 0.95”. Trước khi khóa giao dịch, bạn cần hỏi thêm hai câu nào: một câu về prior và một câu về ngưỡng quyết định?
+3. Vì sao entropy tính trên các câu trả lời khác nhau về câu chữ có thể phóng đại độ bất định so với entropy tính trên ý nghĩa? Hãy lấy một câu hỏi có hai cách diễn đạt đều đúng để minh họa.
+4. So sánh $$P(\text{True})$$ của Kadavath et al. với posterior $$P(H\mid D)$$ trong ví dụ chẩn đoán ở Bài 1.3. Thành phần nào đóng vai trò là prior?
 
 ## Tài liệu tham khảo
 
