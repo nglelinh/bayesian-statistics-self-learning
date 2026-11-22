@@ -440,15 +440,15 @@ Think in terms of data stories rather than isolated formulas. If the parameter i
 
 ## 10. Common misunderstandings
 
-### 11.1. “A conjugate prior is always the best prior”
+### 10.1. “A conjugate prior is always the best prior”
 
 No. It is only the most convenient one computationally.
 
-### 11.2. “Memorizing formulas is enough”
+### 10.2. “Memorizing formulas is enough”
 
 No. Without the generative story, the formulas become easy to misuse.
 
-### 11.3. “Conjugacy is obsolete because of MCMC”
+### 10.3. “Conjugacy is obsolete because of MCMC”
 
 No. It is still foundational for intuition and for simple exact solutions.
 

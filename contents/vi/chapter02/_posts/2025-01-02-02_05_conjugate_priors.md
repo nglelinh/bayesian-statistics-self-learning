@@ -567,15 +567,15 @@ Bạn có thể nhớ các cặp này theo câu chuyện dữ liệu thay vì h�
 
 ## 10. Những nhầm lẫn phổ biến
 
-### 11.1. “Conjugate prior là prior tốt nhất”
+### 10.1. “Conjugate prior là prior tốt nhất”
 
 Không. Nó chỉ là prior thuận tiện về mặt tính toán.
 
-### 11.2. “Học thuộc công thức là đủ”
+### 10.2. “Học thuộc công thức là đủ”
 
 Không. Nếu không hiểu câu chuyện sinh dữ liệu và ý nghĩa tham số, bạn sẽ rất dễ lắp sai mô hình.
 
-### 11.3. “Thời đại MCMC rồi thì conjugacy vô dụng”
+### 10.3. “Thời đại MCMC rồi thì conjugacy vô dụng”
 
 Không. Nó vẫn là nền tảng trực giác và là bộ ví dụ chuẩn để học Bayesian updating.
 
