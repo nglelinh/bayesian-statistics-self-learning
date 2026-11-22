@@ -12,68 +12,68 @@ lesson_type: optional
 
 ## Mục tiêu học tập
 
-Sau bài tùy chọn này, bạn không còn nhìn xác suất, phân phối đồng thời (joint distribution), kỳ vọng, log-probability và mô phỏng như phần “ôn trước khi vào Bayes”, mà thấy chúng chính là ngôn ngữ mà khoa học máy tính và khoa học dữ liệu đang dùng khi hỏi một mô hình có được hiệu chỉnh (calibration) hay không, có ổn định số học hay không, và có kể được câu chuyện sinh dữ liệu hay không. Sự chuyển đổi cần đạt được là đổi tư thế: công cụ nền tảng trở thành câu hỏi thiết kế.
+Sau bài đọc mở rộng này, bạn sẽ không còn xem xác suất, phân phối đồng thời (joint distribution), kỳ vọng, log-probability và mô phỏng chỉ là phần "ôn tập trước khi học Bayes", mà nhận ra chúng chính là ngôn ngữ cốt lõi mà khoa học máy tính và khoa học dữ liệu hiện đại sử dụng khi đánh giá một mô hình có được hiệu chỉnh (calibration) hay không, có ổn định số học hay không, và có phản ánh đúng cơ chế sinh dữ liệu hay không. Mục tiêu là thay đổi góc nhìn: đưa các khái niệm nền tảng trở thành câu hỏi thiết kế trực tiếp cho hệ thống thực tế.
 
 ## Kiến thức cần có
 
-Bài viết giả định bạn đã học các bài bắt buộc của Chương 0. Nó không thêm lý thuyết xác suất mới. Nó chỉ hỏi điều gì xảy ra khi những ý tưởng ấy rời lớp học và đi vào bộ phân loại, mô hình ngôn ngữ, và chương trình xác suất.
+Bài viết giả định bạn đã hoàn thành các bài bắt buộc trong Chương 0. Nội dung không bổ sung lý thuyết xác suất mới, mà đặt câu hỏi điều gì xảy ra khi các khái niệm này bước ra khỏi lớp học để đi vào bộ phân loại, mô hình ngôn ngữ và lập trình xác suất.
 
 ## Mở đầu
 
-Một sinh viên vừa học xong Chương 0 có thể tính trung bình, viết mật độ, và mô phỏng một sampling distribution. Các bài toán công nghiệp trông lớn hơn, nhưng chúng thường hỏng vì cùng những lý do nhỏ: một xác suất được báo cáo không phải tần suất dài hạn, một tích các likelihood quá nhỏ bị underflow, hoặc một mô hình đồng thời được viết như thể các biến độc lập. Căng thẳng trí tuệ của bài này vì thế khiêm tốn nhưng hữu ích. Nếu nền tảng đã có, vì sao hệ thống hiện đại vẫn đọc sai bất định? Vì quy mô không thay thế ý nghĩa của một phát biểu xác suất.
+Sau khi học xong Chương 0, bạn đã có thể tính kỳ vọng, viết hàm mật độ và mô phỏng phân phối lấy mẫu. Các hệ thống trong công nghiệp có quy mô lớn hơn nhiều, nhưng thường gặp sự cố từ chính những lỗi nền tảng quen thuộc: con số được báo cáo như xác suất nhưng không khớp tần suất dài hạn, tích các giá trị hợp lý bị underflow về 0, hoặc mô hình đồng thời giả định các biến độc lập trái với thực tế. Câu hỏi trung tâm của bài vì thế giản dị nhưng thiết thực: vì sao nhiều hệ thống hiện đại vẫn ước lượng sai độ bất định dù đã có sẵn lý thuyết nền? Lý do là quy mô dữ liệu hay mô hình không thể thay thế ý nghĩa chặt chẽ của một phát biểu xác suất.
 
 ## Phát triển khái niệm
 
-Một số $$p$$ gắn với dự báo là một tuyên bố về quá trình sinh dữ liệu. Nếu mô hình nói $$p=0.9$$ trên một trăm trường hợp, khoảng chín mươi trường hợp ấy phải đúng nếu con số được hiệu chỉnh. Đó chính là ý tưởng sampling distribution, nay áp vào điểm số học máy thay vì vào trung bình mẫu. Cấu trúc đồng thời quan trọng vì cùng một lý do: khi hai biến cố phụ thuộc, tích các biên không còn là câu chuyện về thế giới. Mô phỏng vẫn là cách rẻ nhất để xem câu chuyện ấy có khả thi hay không.
+Một con số $$p$$ gắn kèm dự báo là một phát biểu về quá trình sinh dữ liệu. Nếu mô hình đưa ra $$p=0.9$$ cho một trăm trường hợp, thì khoảng chín mươi trường hợp trong số đó cần thực sự xảy ra nếu xác suất đó được hiệu chỉnh tốt — đây chính là tinh thần của phân phối lấy mẫu áp dụng cho điểm số học máy thay vì chỉ cho trung bình mẫu. Cấu trúc phân phối đồng thời cũng quan trọng không kém: khi các biến phụ thuộc nhau, tích của các phân phối biên không còn mô tả đúng thực tế. Và mô phỏng vẫn là cách ít tốn kém nhất để kiểm tra xem giả định mô hình có hợp lý hay không.
 
 ## Mô hình như câu chuyện sinh dữ liệu
 
 ### 1. Hiệu chỉnh xác suất của bộ phân loại và mô hình ngôn ngữ
 
-Bộ lọc thư rác, điểm gian lận, và cảnh báo y tế đều xuất ra một số trông giống xác suất. Câu hỏi sinh dữ liệu không phải “mô hình xếp hạng có tốt không?”, mà là “nếu mô hình tuyên bố $$P(\text{dương}\mid x)=0.8$$, có thật tám trên mười trường hợp như vậy xảy ra không?” Kadavath et al. (2022) cho thấy các mô hình ngôn ngữ lớn có thể được hiệu chỉnh khá tốt trên các câu hỏi đúng/sai và trắc nghiệm được định dạng rõ, và có thể được hỏi $$P(\text{True})$$ sau khi chúng đề xuất một câu trả lời. Tian et al. (2023) tiếp tục cho thấy các mô hình tinh chỉnh bằng phản hồi người thường cho độ tin verbalized (nói thành lời) được hiệu chỉnh tốt hơn xác suất token thô. Bài học Chương 0 rất chính xác: một số trong $$[0,1]$$ chưa tự động là xác suất cho đến khi nó chịu được một phép kiểm tra tần suất.
+Bộ lọc thư rác, mô hình phát hiện gian lận và hệ thống cảnh báo y tế đều xuất ra các con số nằm trong đoạn $$[0,1]$$. Câu hỏi đúng theo góc nhìn sinh dữ liệu không chỉ là "mô hình xếp hạng có tốt không?", mà là "khi mô hình dự báo $$P(\text{dương}\mid x)=0.8$$, liệu có đúng khoảng tám trên mười trường hợp như vậy xảy ra không?" Kadavath et al. (2022) cho thấy các mô hình ngôn ngữ lớn có thể đạt mức hiệu chỉnh khá tốt trên các câu hỏi đúng/sai hoặc trắc nghiệm có định dạng rõ ràng khi được hỏi $$P(\text{True})$$ cho câu trả lời vừa sinh. Tian et al. (2023) tiếp tục chỉ ra rằng các mô hình tinh chỉnh theo phản hồi của con người thường cho mức độ tự tin diễn đạt bằng lời (verbalized confidence) được hiệu chỉnh tốt hơn so với xác suất token thô. Bài học từ Chương 0 vẫn giữ nguyên giá trị: một con số nằm trong $$[0,1]$$ chưa tự động là xác suất cho đến khi nó vượt qua phép kiểm tra hiệu chỉnh theo tần suất.
 
 ### 2. Log-probability và ổn định số học trong mô hình lớn
 
-Huấn luyện và suy luận trên mạng hiện đại liên tục đánh giá tích các xác suất. Ở thang log, tích trở thành tổng,
+Quá trình huấn luyện và suy luận trên các mạng nơ-ron hiện đại liên tục phải tính tích của rất nhiều xác suất. Chuyển sang thang log giúp biến tích thành tổng:
 
 $$
 \log p(x_{1:n})=\sum_{i=1}^{n}\log p(x_i\mid x_{<i}),
 $$
 
-đó là lý do Chương 0 nhấn mạnh log-probability. Cùng một đẳng thức ấy giữ cho likelihood của mô hình ngôn ngữ không bị underflow, và biến thủ thuật log-sum-exp thành một nguyên thủy chuẩn. Mô hình tin rằng các token được sinh tuần tự; máy tính chỉ tin câu chuyện đó nếu phép tính không sụp về không.
+đây chính là lý do Chương 0 nhấn mạnh log-probability. Đẳng thức này ngăn hàm hợp lý của mô hình ngôn ngữ bị underflow và biến kỹ thuật log-sum-exp thành một phép toán cơ sở tiêu chuẩn. Về mặt lý thuyết, mô hình giả định các token được sinh tuần tự; về mặt thực thi, máy tính chỉ duy trì được tính đúng đắn đó nếu phép tính không sụp về 0.
 
 ### 3. Phân phối đồng thời trong lập trình xác suất
 
-Một chương trình PyMC hoặc NumPyro là một phân phối đồng thời viết dưới dạng công thức sinh: trước hết lấy mẫu tham số, rồi lấy mẫu dữ liệu cho tham số. Đó đúng là định nghĩa mô hình thống kê của Chương 0, nay được biên dịch để các chương sau có thể điều kiện hóa. Khi các predictor dạng bảng phụ thuộc mạnh, chính joint—chứ không phải một đống tóm tắt một chiều—là đối tượng mà mô hình Bayes sau này phải tôn trọng. Grinsztajn, Oyallon và Varoquaux (2022) nhắc rằng trên nhiều bài toán bảng thông thường, ensemble cây vẫn thắng mạng sâu, một phần vì cấu trúc đồng thời rời rạc, dị thể, và không được một mật độ liên tục chung phục vụ tốt.
+Một chương trình viết bằng PyMC hoặc NumPyro thực chất định nghĩa một phân phối đồng thời dưới dạng quy trình sinh dữ liệu: trước hết lấy mẫu tham số, sau đó sinh dữ liệu có điều kiện theo tham số đó. Đây chính là định nghĩa mô hình thống kê của Chương 0 được biểu diễn thành mã để thực hiện suy diễn ở các chương sau. Khi các biến giải thích dạng bảng có phụ thuộc phức tạp, chính phân phối đồng thời — chứ không phải tập hợp các thống kê tóm tắt một chiều rời rạc — mới là đối tượng mà mô hình Bayesian cần mô tả. Grinsztajn, Oyallon và Varoquaux (2022) cũng chỉ ra rằng trên nhiều bài toán dữ liệu bảng thông thường, các mô hình tổ hợp cây vẫn vượt trội mạng học sâu, một phần vì cấu trúc đồng thời của dữ liệu bảng thường rời rạc, không đồng nhất và khó được biểu diễn tốt bởi một hàm mật độ liên tục trơn.
 
 ### 4. Mô phỏng như phép kiểm tra trực giác
 
-Chương 0 dùng mô phỏng để nhìn thấy biến thiên lấy mẫu. Cùng thói quen ấy nay xuất hiện dưới dạng kiểm tra dự báo hậu nghiệm và simulation-based calibration: lấy tham số từ prior, sinh dữ liệu, khớp lại, rồi hỏi xem bất định thu được có trung thực không (Modrák et al., 2025). Trước khi gặp Markov chain Monte Carlo, bạn đã có câu hỏi đúng. Câu chuyện tính toán có tái tạo được câu chuyện xác suất hay không?
+Chương 0 dùng mô phỏng để quan sát biến thiên lấy mẫu. Cùng nguyên lý đó được mở rộng trong thực hành Bayesian thành kiểm tra dự báo hậu nghiệm (posterior predictive check) và hiệu chỉnh dựa trên mô phỏng (simulation-based calibration): rút tham số từ phân phối tiên nghiệm, sinh dữ liệu giả, khớp lại mô hình rồi kiểm tra xem độ bất định thu được có khớp với quy trình sinh hay không (Modrák et al., 2025). Ngay trước khi bước vào Markov chain Monte Carlo, bạn đã nắm được câu hỏi cốt lõi: thuật toán tính toán có tái tạo chính xác mô hình xác suất ban đầu hay không?
 
 ## Diễn giải và nhận định
 
-Trong mỗi ứng dụng, posterior hay điểm số đều dễ bị đọc quá. Một $$P(\text{True})$$ đã hiệu chỉnh vẫn chưa chứng minh mô hình “biết”. Một log-likelihood ổn định vẫn chưa phải là likelihood đúng. Một chương trình đồng thời chỉ trung thực bằng các giả định độc lập có điều kiện mà nó viết ra. Thói quen hữu ích là hỏi tần suất nào, phụ thuộc nào, và mô phỏng nào sẽ làm bẽ mặt tuyên bố ấy.
+Trong cả bốn ứng dụng trên, phân phối hậu nghiệm hay điểm xác suất đều dễ bị suy diễn quá mức. Một giá trị $$P(\text{True})$$ được hiệu chỉnh tốt chưa đồng nghĩa với việc mô hình thực sự "hiểu" bài toán; một hàm log-likelihood ổn định về mặt số học không biến một hàm hợp lý sai đặc tả thành đúng; và một chương trình xác suất chỉ đáng tin ngang với các giả định độc lập có điều kiện mà nó đặt ra. Thói quen cần duy trì là luôn hỏi: tần suất kiểm chứng là gì, giả định phụ thuộc nào đang được dùng, và phép mô phỏng nào có thể kiểm chứng hoặc bác bỏ tuyên bố đó?
 
 ## Ứng dụng
 
-Bốn bối cảnh trên đã phủ xếp hạng, ngôn ngữ, mô hình bảng, và phần mềm tính Bayes. Chúng không phải chủ đề phụ. Chúng là Chương 0 được nói bằng phương ngữ thực hành CS/DS hiện nay.
+Bốn tình huống trên bao phủ các bài toán xếp hạng, mô hình ngôn ngữ, dữ liệu bảng và phần mềm suy diễn Bayesian. Chúng không phải các chủ đề tách rời, mà là chính kiến thức Chương 0 được thể hiện trong ngôn ngữ thực hành hiện đại của khoa học máy tính và khoa học dữ liệu.
 
 ## Giới hạn và hướng mở rộng
 
-Bài này không thay một học phần deep learning hay probabilistic programming. Hiệu chỉnh có thể hỏng khi phân phối chuyển dịch; số học log không sửa một likelihood sai đặc tả; và kiểm tra bằng mô phỏng chỉ kiểm tra đúng phép tính bạn đã chạy. Các chương tiếp theo bắt đầu cập nhật Bayes.
+Bài viết này không thay thế một học phần về học sâu hay lập trình xác suất. Độ hiệu chỉnh có thể suy giảm khi phân phối dữ liệu dịch chuyển; tính toán trên thang log không khắc phục được mô hình sai đặc tả; và kiểm tra bằng mô phỏng chỉ xác nhận được phần tính toán nằm trong kịch bản bạn đã chạy. Các chương tiếp theo sẽ đi trực tiếp vào quy trình cập nhật Bayesian.
 
 ## Video tham khảo
 
-- [Naive Bayes, Clearly Explained!!!](https://www.youtube.com/watch?v=O2L2Uv9pdDA) — StatQuest with Josh Starmer, English. **xem trước**. Xem Naive Bayes như một bộ phân loại viết bằng xác suất có điều kiện, đúng ví dụ classifier ở phần ứng dụng của bài.
-- [Why Log Probabilities Are Everywhere in AI - Underflow Error in HMMs and Viterbi Algorithm](https://www.youtube.com/watch?v=HghZrdnrNQY) — Algorithms and AI, English. Xem vì sao mô hình ngôn ngữ làm việc trên log-probability, hỗ trợ đoạn bài nối log-probability với hệ thống thật.
-- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Xem bất định trong học sâu; video không chứng minh một định lý của bài, nhưng cho thấy kỳ vọng và phân phối rời lớp học để vào mô hình hiện đại.
+- [Naive Bayes, Clearly Explained!!!](https://www.youtube.com/watch?v=O2L2Uv9pdDA) — StatQuest with Josh Starmer, English. **Xem trước.** Minh họa Naive Bayes như một bộ phân loại xây dựng trực tiếp từ xác suất có điều kiện.
+- [Why Log Probabilities Are Everywhere in AI - Underflow Error in HMMs and Viterbi Algorithm](https://www.youtube.com/watch?v=HghZrdnrNQY) — Algorithms and AI, English. Giải thích vì sao các mô hình chuỗi và mô hình ngôn ngữ bắt buộc làm việc trên thang log-probability.
+- [MIT 6.S191: Uncertainty in Deep Learning](https://www.youtube.com/watch?v=veYq6EWZyVc) — Alexander Amini, English. Giới thiệu bài toán định lượng độ bất định trong học sâu, cho thấy kỳ vọng và phân phối xác suất được dùng ra sao trong các mô hình hiện đại.
 
 ## Bài tập
 
-1. Một mô hình gian lận xuất $$0.99$$ trên mười giao dịch, trong đó ba giao dịch sau đó được xác nhận là gian lận. Trong một đoạn, hãy nói “sai hiệu chỉnh” nghĩa là gì ở đây và bạn sẽ vẽ đối tượng nào của Chương 0.
-2. Giải thích vì sao xác suất token kế tiếp của một mô hình ngôn ngữ có thể trông rất tự tin trên không gian token nhưng vẫn bất định trên không gian nghĩa. Bạn cần thêm tính bất biến nào?
-3. Viết một câu chuyện sinh dữ liệu bốn dòng (bằng lời, không cần mã) cho tỷ lệ chuyển đổi Beta–Binomial. Chỉ ra joint, phần quan sát được, và phần chưa quan sát.
-4. Một đồng nghiệp nói mô phỏng chỉ để dạy học. Dựa trên ý tưởng simulation-based calibration, hãy biện luận một cách dùng trong công nghiệp.
+1. Một mô hình phát hiện gian lận xuất xác suất $$0.99$$ trên mười giao dịch, nhưng thực tế chỉ có ba giao dịch được xác nhận là gian lận. Viết một đoạn ngắn giải thích "sai hiệu chỉnh" ở đây nghĩa là gì và bạn sẽ dùng khái niệm nào của Chương 0 để trực quan hóa vấn đề này.
+2. Giải thích vì sao xác suất token tiếp theo của một mô hình ngôn ngữ có thể rất tự tin trên không gian token nhưng vẫn còn nhiều bất định trên không gian ngữ nghĩa. Để đánh giá đúng độ bất định ngữ nghĩa, cần thêm khái niệm tương đương hay tính bất biến nào?
+3. Viết một câu chuyện sinh dữ liệu gồm bốn dòng (bằng lời, không cần mã nguồn) cho mô hình tỷ lệ chuyển đổi Beta–Binomial, chỉ rõ phân phối đồng thời, phần quan sát được và phần chưa quan sát được.
+4. Giả sử một đồng nghiệp cho rằng mô phỏng chỉ dùng để giảng dạy. Dựa trên ý tưởng simulation-based calibration, hãy lập luận về một ứng dụng thực tiễn của mô phỏng trong công nghiệp.
 
 ## Tài liệu tham khảo
 

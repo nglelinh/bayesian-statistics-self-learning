@@ -12,19 +12,17 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu multicollinearity (đa cộng tuyến) là gì, tại sao nó làm cho việc diễn giải coefficients (các hệ số) trở nên khó khăn, và khi nào nó thực sự đáng lo. Bạn cũng cần phân biệt rõ hai mục tiêu khác nhau của hồi quy, đó là **prediction** (dự đoán) và **interpretation** (diễn giải).
+Sau bài này, bạn sẽ hiểu đa cộng tuyến (multicollinearity) là gì, vì sao nó gây khó khăn cho việc diễn giải từng hệ số hồi quy và trong bối cảnh nào hiện tượng này thực sự đáng lo ngại. Bạn cũng sẽ phân biệt rạch ròi hai mục tiêu khác nhau của hồi quy là **dự đoán** (prediction) và **diễn giải** (interpretation).
 
-> **Ví dụ mini.** Bạn dự đoán giá nhà bằng diện tích và số phòng ngủ. Hai biến này thường đi cùng nhau: nhà rộng hơn thường cũng có nhiều phòng hơn. Khi đó mô hình có thể dự đoán giá khá tốt, nhưng lại lúng túng khi phải trả lời chính xác "giữ mọi thứ khác cố định thì thêm một phòng ngủ làm giá tăng bao nhiêu?".
+> **Ví dụ ngắn.** Khi dự đoán giá nhà từ diện tích và số phòng ngủ, hai biến này thường biến thiên cùng nhau vì nhà rộng hơn thường có nhiều phòng hơn. Mô hình vẫn có thể dự đoán giá tổng thể khá chính xác, nhưng sẽ rất khó trả lời chắc chắn câu hỏi: "giữ nguyên diện tích thì thêm một phòng ngủ làm giá thay đổi bao nhiêu?".
 >
-> **Câu hỏi tự kiểm tra.** Nếu hai predictors gần như đo cùng một thứ, mô hình sẽ gặp khó khăn gì khi tách riêng ảnh hưởng của từng biến?
+> **Câu hỏi tự kiểm tra.** Khi hai biến dự báo gần như đo lường cùng một đặc trưng, mô hình hồi quy sẽ gặp trở ngại gì trong việc tách riêng ảnh hưởng của từng biến?
 
-## 1. Multicollinearity là gì?
+## 1. Đa cộng tuyến (Multicollinearity) là gì?
 
-Multicollinearity xảy ra khi hai hoặc nhiều predictors (biến dự báo) trong cùng một mô hình có tương quan cao với nhau. Nói đơn giản hơn, chúng thường di chuyển cùng nhau, mang thông tin trùng lặp đáng kể, và vì thế mô hình khó biết nên "ghi công" cho biến nào. Những ví dụ rất điển hình là chiều cao tính bằng cm và chiều cao tính bằng inch, diện tích nhà và số phòng ngủ trong một khu chung cư có thiết kế khá giống nhau, hoặc số giờ học và số bài tập đã hoàn thành trong một lớp học kỷ luật cao.
+Đa cộng tuyến xảy ra khi hai hoặc nhiều biến dự báo trong cùng một mô hình có tương quan rất cao với nhau. Vì chúng mang thông tin trùng lặp đáng kể, mô hình gặp khó khăn khi phân chia đóng góp riêng cho từng biến. Các ví dụ quen thuộc gồm chiều cao đo bằng cm và inch, diện tích và số phòng ngủ trong cùng một dự án chung cư có thiết kế đồng nhất, hay số giờ học và số bài tập hoàn thành trong một lớp học có kỷ luật cao.
 
-Vấn đề không phải là dữ liệu sai. Vấn đề là các predictors quá giống nhau về mặt thông tin.
-
-Ba góc nhìn dưới đây tóm tắt trực giác cơ bản nhất của multicollinearity.
+Điều cần nhấn mạnh là đa cộng tuyến không có nghĩa dữ liệu bị sai; nó chỉ phản ánh việc các biến đầu vào đang chia sẻ quá nhiều thông tin giống nhau.
 
 ![Tương quan rất cao giữa hai predictors]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_multicollinearity_predictor_correlation.png)
 
@@ -32,29 +30,13 @@ Ba góc nhìn dưới đây tóm tắt trực giác cơ bản nhất của multi
 
 ![Tóm tắt vì sao multicollinearity làm khó diễn giải]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_multicollinearity_problem_summary.png)
 
-Hình trên cho thấy tình huống rất điển hình: cả hai predictors đều liên quan đến outcome, nhưng chúng cũng quá giống nhau nên mô hình khó tách biệt ai đóng góp bao nhiêu.
+Ba biểu đồ trên minh họa tình huống điển hình: cả hai biến dự báo đều liên quan mạnh đến biến kết quả, nhưng chúng cũng tương quan chặt với nhau nên mô hình khó phân định mức đóng góp riêng của từng biến.
 
-## 2. Tại sao multicollinearity làm hệ số trở nên khó đọc?
+## 2. Vì sao đa cộng tuyến làm hệ số hồi quy khó diễn giải?
 
-Hãy quay lại nguyên tắc của multiple regression:
+Theo nguyên tắc của hồi quy đa biến, mỗi hệ số phản ánh tác động của một biến khi **giữ các biến còn lại cố định**. Tuy nhiên, nếu hai biến hầu như luôn tăng giảm đồng thời trong dữ liệu, việc giữ cố định biến này trong khi thay đổi biến kia rất hiếm khi xuất hiện thực tế. Trong ví dụ diện tích và số phòng ngủ, nếu dữ liệu có rất ít cặp căn nhà cùng diện tích nhưng khác số phòng ngủ, mô hình sẽ thiếu thông tin để ước lượng chắc chắn hệ số riêng của từng biến.
 
-> mỗi hệ số được hiểu là ảnh hưởng của một biến khi giữ các biến khác cố định.
-
-Vấn đề là nếu hai biến thường luôn cùng tăng cùng giảm, điều kiện "giữ biến kia cố định" trở nên khá xa lạ với dữ liệu thật.
-
-### Ví dụ: diện tích và số phòng ngủ
-
-Trong thực tế, căn nhà diện tích lớn thường có nhiều phòng ngủ hơn, còn căn nhỏ thường có ít phòng ngủ hơn.
-
-Nếu hỏi:
-
-> giữa hai căn có cùng diện tích nhưng khác 1 phòng ngủ thì giá chênh bao nhiêu?
-
-đó là một câu hỏi hợp lý. Nhưng nếu dữ liệu của bạn hiếm khi có những cặp nhà như vậy, mô hình sẽ không có nhiều thông tin để trả lời chắc chắn.
-
-Kết quả thường là credible interval (khoảng khả tín) của các hệ số rộng hơn, dấu của hệ số có thể đổi chiều bất ngờ, và các hệ số trở nên rất nhạy với việc thêm bớt chỉ vài quan sát.
-
-So sánh dưới đây cho thấy khác biệt giữa bối cảnh predictor ít tương quan và predictor gần như trùng lặp.
+Hệ quả phổ biến là khoảng tin cậy hậu nghiệm (credible interval) của các hệ số mở rộng đáng kể, dấu của hệ số có thể thay đổi bất ngờ và ước lượng trở nên nhạy cảm chỉ với vài quan sát thêm bớt. Bốn hình dưới so sánh phân phối hậu nghiệm khi hai biến dự báo ít tương quan và khi chúng tương quan rất cao.
 
 ![Trường hợp predictors chỉ tương quan nhẹ]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_low_predictor_correlation.png)
 
@@ -64,162 +46,92 @@ So sánh dưới đây cho thấy khác biệt giữa bối cảnh predictor ít
 
 ![Posterior khi predictors tương quan cao]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_high_correlation_posterior.png)
 
-### 2.1. Một ví dụ bằng con số: mô hình tổng thể ổn nhưng hệ số riêng lúng túng
+### 2.1. Ví dụ bằng con số: mô hình tổng thể ổn nhưng hệ số riêng bất ổn
 
-Giả sử ta dự đoán giá nhà bằng `diện tích` và `số phòng ngủ`, và hai biến này có tương quan rất cao, chẳng hạn khoảng $$0.92$$.
+Giả sử ta dự đoán giá nhà bằng `diện tích` và `số phòng ngủ`, với hệ số tương quan giữa hai biến khoảng $$0.92$$. Nếu khớp riêng từng mô hình một biến:
 
-Nếu fit riêng từng mô hình đơn, ta có thể thấy:
+- Chỉ dùng `diện tích`: tăng 1 m² đi kèm tăng trung bình **35 triệu đồng**.
+- Chỉ dùng `số phòng ngủ`: tăng 1 phòng đi kèm tăng trung bình **700 triệu đồng**.
 
-- mô hình chỉ có `diện tích`: thêm 1 m² đi kèm tăng khoảng **35 triệu đồng**,
-- mô hình chỉ có `số phòng ngủ`: thêm 1 phòng đi kèm tăng khoảng **700 triệu đồng**.
+Cả hai kết quả đều hợp lý vì mỗi biến đang đại diện cho thông tin chung về quy mô căn nhà. Nhưng khi đưa đồng thời cả hai vào mô hình đa biến, ước lượng có thể trở thành:
 
-Hai kết quả này đều nghe hợp lý vì mỗi biến đang đại diện cho gần như cùng một gói thông tin về "độ lớn của căn nhà".
+- `diện tích`: khoảng **32 triệu đồng/m²** với khoảng hậu nghiệm tương đối gọn.
+- `số phòng ngủ`: khoảng **40 triệu đồng/phòng** nhưng khoảng hậu nghiệm rất rộng, chẳng hạn từ **-180** đến **260 triệu đồng**.
 
-Nhưng khi đưa cả hai vào cùng một mô hình, kết quả có thể chuyển thành:
+Mô hình không hề dự đoán kém đi; nó chỉ phản ánh trung thực rằng dữ liệu hiện có chưa đủ để tách bạch rõ giá trị riêng của số phòng ngủ sau khi đã cố định diện tích.
 
-- `diện tích`: khoảng **32 triệu đồng/m²** với interval khá ổn,
-- `số phòng ngủ`: khoảng **40 triệu đồng/phòng** nhưng interval rất rộng, chẳng hạn từ **-180** đến **260 triệu**.
+## 3. Dấu hiệu nhận biết đa cộng tuyến
 
-Ở đây model chưa chắc dự đoán tệ. Điều nó đang nói là: "tôi vẫn biết nhà lớn hơn thường đắt hơn, nhưng dữ liệu này chưa đủ tách thật rõ giá trị riêng của số phòng ngủ sau khi diện tích đã được giữ cố định".
+Trong thực hành, bạn có thể nhận diện đa cộng tuyến qua bốn dấu hiệu: các biến dự báo có tương quan rất cao trên ma trận tương quan hoặc biểu đồ phân tán; hệ số của một biến thay đổi mạnh khi thêm một biến liên quan khác; khoảng tin cậy của từng hệ số rất rộng dù mô hình tổng thể khớp tốt; hoặc dấu của hệ số trái ngược với trực giác chuyên môn. Ví dụ, nếu một doanh nghiệp luôn tăng giảm đồng thời ngân sách quảng cáo Facebook và Instagram, mô hình tổng thể vẫn dự đoán tốt doanh thu từ tổng chi tiêu quảng cáo nhưng khó tách riêng hiệu quả của từng kênh.
 
-Đây là kiểu tình huống rất điển hình của multicollinearity: thông tin tổng thể về nhóm biến vẫn hữu ích, nhưng việc chia công cho từng biến trở nên bất ổn.
+## 4. Đa cộng tuyến có phải lúc nào cũng là vấn đề nghiêm trọng?
 
-## 3. Dấu hiệu nhận biết trong thực tế
+Câu trả lời là **không** — mức độ ảnh hưởng phụ thuộc trực tiếp vào mục tiêu phân tích:
 
-Khi làm việc với dữ liệu, bạn có thể nghi ngờ multicollinearity nếu thấy predictors có tương quan rất cao trên scatter plot hoặc correlation matrix (ma trận tương quan), nếu hệ số của từng biến "nhảy loạn" khi thêm một predictor mới, nếu interval của coefficients rộng dù mô hình tổng thể vẫn fit khá ổn, hoặc nếu dấu của hệ số trái với trực giác chuyên môn. Chẳng hạn, trong mô hình dự đoán doanh thu, ngân sách quảng cáo cho Facebook và Instagram có thể rất giống nhau vì công ty thường tăng giảm chúng cùng lúc; hậu quả là mô hình khó nói kênh nào hiệu quả hơn, dù tổng ngân sách quảng cáo nhìn chung vẫn dự đoán doanh thu tốt.
+- **Khi mục tiêu là dự đoán (prediction):** đa cộng tuyến thường không gây cản trở lớn, vì tổ hợp thông tin chung của nhóm biến vẫn giúp dự báo chính xác biến kết quả (chẳng hạn dùng nhiều chỉ số tài chính tương quan để dự báo rủi ro tín dụng).
+- **Khi mục tiêu là diễn giải (interpretation):** đa cộng tuyến trở thành rào cản đáng kể, bởi lúc này ta cần xác định biến nào đóng góp bao nhiêu cùng dấu và độ lớn ổn định của từng hệ số.
 
-## 4. Multicollinearity có phải lúc nào cũng xấu không?
+## 5. Ví dụ thực tế: lương, học vấn và kỹ năng chuyên môn
 
-Không.
+Giả sử ta giải thích mức lương bằng số năm đi học, bằng cấp cao nhất và điểm đánh giá kỹ năng chuyên môn — ba biến vốn có tương quan mạnh với nhau. Mô hình tổng thể có thể dự đoán lương khá sát, nhưng khó tách bạch riêng phần đóng góp của bằng cấp khi kỹ năng và số năm học cùng biến thiên theo. Cách kết luận trung thực khi đó là:
 
-Đây là điểm rất quan trọng.
+> Nhóm biến phản ánh nền tảng học thuật và chuyên môn liên hệ mạnh với mức lương, nhưng dữ liệu hiện có chưa đủ để tách riêng chính xác đóng góp của từng yếu tố.
 
-### 4.1. Nếu mục tiêu là prediction
+### 5.1. Hình dạng phân phối hậu nghiệm đồng thời trong thống kê Bayes
 
-Nếu mục tiêu chính là prediction, multicollinearity nhiều khi không quá đáng sợ, vì model vẫn có thể dự đoán outcome tốt, tổng thông tin từ nhóm predictors đó vẫn hữu ích, và điều bạn cần chủ yếu là dự báo chính xác chứ không phải giải thích riêng từng coefficient. Ví dụ, một mô hình dự đoán nguy cơ tín dụng có thể dùng nhiều chỉ số tài chính khá giống nhau mà vẫn cho dự báo chấp nhận được.
+Nếu vẽ phân phối hậu nghiệm đồng thời (joint posterior) của hệ số `số năm đi học` và hệ số `kỹ năng chuyên môn`, các mẫu thường không tụ thành một đám mây tròn mà kéo dài thành một **dải chéo dốc xuống**. Điều này cho thấy khi mô hình gán trọng số lớn hơn cho học vấn thì phải giảm trọng số của kỹ năng (và ngược lại), vì nhiều tổ hợp hệ số khác nhau cùng giải thích dữ liệu tốt ngang nhau. Do đó, bên cạnh trung bình hậu nghiệm riêng lẻ, cần quan sát cấu trúc tương quan giữa các hệ số trong phân phối hậu nghiệm đồng thời.
 
-### 4.2. Nếu mục tiêu là interpretation
+## 6. Cơ chế phía sau dải chéo trong phân phối hậu nghiệm
 
-Nếu mục tiêu là interpretation, multicollinearity trở thành vấn đề lớn hơn nhiều, bởi vì lúc này bạn thực sự quan tâm biến nào quan trọng, cường độ ảnh hưởng riêng của từng biến là bao nhiêu, và dấu cũng như độ lớn của coefficients có ổn định hay không. Khi các predictors chồng lấn quá nhiều, toàn bộ sức mạnh diễn giải ấy sẽ yếu đi rõ rệt.
+Trong góc nhìn Bayes, đa cộng tuyến hiện lên trực tiếp ở mối liên hệ âm giữa hai hệ số trong phân phối hậu nghiệm: tổng đóng góp của cả hai biến được dữ liệu xác định khá chắc chắn, nhưng tỷ lệ phân chia giữa từng biến lại có độ bất định lớn. Nhờ giữ lại toàn bộ phân phối hậu nghiệm thay vì chỉ một ước lượng điểm, phương pháp Bayes giúp ta nhìn thấy ngay sự bất định này thay vì bị đánh lừa bởi một con số duy nhất.
 
-## 5. Một ví dụ đời thường: lương và học vấn
+### Thử nghiệm: tăng tương quan làm phân phối hậu nghiệm kéo thành dải chéo
 
-Giả sử bạn muốn giải thích lương bằng số năm đi học, bằng cấp cao nhất, và kỹ năng chuyên môn được kiểm tra.
-
-Ba biến này liên quan khá mạnh với nhau.
-
-Điều có thể xảy ra là mô hình tổng thể vẫn dự đoán lương tương đối tốt, nhưng lại rất khó nói chính xác riêng bằng cấp đóng góp bao nhiêu nếu kỹ năng và số năm đi học cũng tăng theo.
-
-Khi đó, câu trả lời thành thật hơn sẽ là:
-
-> Bộ biến về nền tảng học thuật và chuyên môn liên quan mạnh đến lương, nhưng dữ liệu hiện tại không đủ tách bạch rõ đóng góp riêng của từng thành phần.
-
-Đây là kiểu diễn giải trưởng thành hơn là cố ép mỗi coefficient thành một "sự thật chắc chắn".
-
-### 5.1. Dấu hiệu Bayes rất hay gặp: các posterior kéo thành dải chéo
-
-Nếu bạn vẽ joint posterior của `số năm đi học` và `điểm kỹ năng chuyên môn`, bạn có thể thấy các mẫu không tạo thành một đám mây tròn gọn mà thành một dải chéo đi xuống.
-
-Điều đó thường có nghĩa là:
-
-- khi posterior gán ảnh hưởng lớn hơn cho học vấn, nó sẽ gán ảnh hưởng nhỏ hơn cho kỹ năng,
-- và ngược lại, nhiều tổ hợp khác nhau vẫn giải thích dữ liệu gần như tốt ngang nhau.
-
-Vì vậy, điều nên đọc đầu tiên không phải chỉ là posterior mean của từng hệ số, mà còn là **cấu trúc phụ thuộc giữa các hệ số** trong posterior chung.
-
-## 6. Vì sao posterior của các hệ số thường dính chặt với nhau?
-
-Trong bối cảnh Bayes, multicollinearity thường lộ ra ở joint posterior (hậu nghiệm chung) của coefficients: khi một hệ số tăng thì hệ số kia có xu hướng giảm, bởi vì nhiều tổ hợp khác nhau vẫn có thể tạo ra dự đoán gần giống nhau.
-
-Ta có thể hình dung model đang nói:
-
-> Tôi biết tổng đóng góp của nhóm biến này khá quan trọng, nhưng tôi chưa thật sự chắc nên chia công cho từng biến ra sao.
-
-Đây là lý do ta hay thấy posterior của các hệ số kéo dài theo một hướng chéo thay vì tròn gọn.
-
-### Thử nghiệm: tăng tương quan, posterior thành dải chéo
-
-Tăng ρ giữa hai predictor: sd(b₁) tăng theo √VIF, b₁ và b₂ tương quan âm nhưng tổng b₁ + b₂ vẫn ổn định.
+Tăng hệ số tương quan $$\rho$$ giữa hai biến dự báo để quan sát độ lệch chuẩn của $$b_1$$ tăng theo $$\sqrt{\text{VIF}}$$, $$b_1$$ và $$b_2$$ tương quan âm mạnh trong khi tổng $$b_1 + b_2$$ vẫn ổn định.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="collinear-explainer" data-lang="vi"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 7. Nên xử lý multicollinearity như thế nào?
+## 7. Các hướng xử lý đa cộng tuyến
 
-Không có một đáp án duy nhất cho mọi trường hợp. Ta chọn cách xử lý theo mục tiêu phân tích.
+Không có giải pháp duy nhất cho mọi trường hợp; cách xử lý phụ thuộc vào câu hỏi nghiên cứu:
 
-### 7.1. Giữ một biến đại diện
+1. **Giữ một biến đại diện:** nếu hai biến gần như đo cùng một đại lượng (như diện tích và số phòng ngủ trong tập dữ liệu đồng nhất), có thể chỉ giữ lại biến mang thông tin trực tiếp hơn.
+2. **Gộp thành chỉ số tổng hợp:** kết hợp các biến cùng đo một khái niệm chung (chẳng hạn tạo chỉ số kinh tế – xã hội từ nhiều biến thu nhập và tài sản).
+3. **Mở rộng tính đa dạng của dữ liệu:** thu thập thêm dữ liệu ở những bối cảnh nơi các biến dự báo biến thiên độc lập hơn.
+4. **Sử dụng phân phối tiên nghiệm điều chuẩn (regularizing priors):** trong thống kê Bayes, phân phối tiên nghiệm thông tin yếu hoặc tiên nghiệm co rút giúp ổn định ước lượng khi dữ liệu không đủ mạnh để tách riêng từng hệ số.
+5. **Thừa nhận giới hạn diễn giải:** khi dữ liệu chỉ đủ sức trả lời bài toán dự đoán chứ không đủ để phân rạch từng hệ số, nêu rõ giới hạn này là một kết luận khoa học chuẩn mực.
 
-Nếu hai biến gần như đo cùng một thứ, đôi khi cách đơn giản nhất là chỉ giữ một biến. Ví dụ, ta có thể giữ diện tích và bỏ số phòng ngủ nếu trong bộ dữ liệu hiện tại chúng gần như lặp lại cùng một thông tin.
+## 8. Danh mục câu hỏi kiểm tra nhanh
 
-### 7.2. Gộp thành chỉ số tổng hợp
+Khi nghi ngờ đa cộng tuyến, hãy lần lượt rà soát: mục tiêu chính là dự đoán hay diễn giải; cặp hoặc nhóm biến nào đang trùng lặp thông tin; nếu bỏ bớt một biến thì chất lượng dự đoán có giảm đáng kể không; nếu giữ cả hai thì khoảng tin cậy còn đủ hẹp để diễn giải không; và liệu gộp thành một khái niệm chung có tự nhiên hơn không.
 
-Nếu nhiều biến cùng mô tả một khái niệm, ta có thể tạo composite score (điểm tổng hợp). Ví dụ, nhiều biến về điều kiện kinh tế hộ gia đình có thể gộp lại thành một chỉ số kinh tế xã hội.
+## 9. Ba hiểu lầm phổ biến
 
-### 7.3. Thu thập dữ liệu đa dạng hơn
+- **"Hệ số đổi dấu chứng tỏ mô hình bị sai":** chưa chắc; đó có thể chỉ là hệ quả của việc phân chia đóng góp giữa hai biến tương quan rất cao.
+- **"Các biến dự báo không được phép tương quan với nhau":** trong dữ liệu thực tế, các biến hầu như luôn có mức độ tương quan nhất định; điều quan trọng là hiểu tác động của nó đến độ bất định.
+- **"Càng thêm nhiều biến mô hình càng tốt":** thêm các biến lặp lại thông tin sẵn có thường làm giảm khả năng diễn giải mà ít cải thiện hiệu quả dự báo.
 
-Đây là cách rất hiệu quả nhưng hay bị quên.
+## 10. Kết nối sang hiệu ứng tương tác (Interaction Effects)
 
-Nếu dữ liệu chỉ đến từ một bối cảnh quá đồng nhất, predictors sẽ dễ đi cùng nhau. Mở rộng phạm vi dữ liệu có thể giúp tách bạch tín hiệu tốt hơn.
+Cần phân biệt hai khái niệm ở Bài 5.3 và Bài 5.4: **đa cộng tuyến** hỏi liệu các biến dự báo có đang trùng lặp thông tin với nhau không, còn **hiệu ứng tương tác** hỏi liệu tác động của một biến dự báo lên kết quả có thay đổi tùy theo giá trị của biến dự báo khác hay không.
 
-### 7.4. Dùng prior có tính regularization
-
-Trong Bayes, prior hợp lý có thể giúp ổn định ước lượng khi dữ liệu không đủ mạnh để tách riêng từng hiệu ứng. Các chương sau sẽ quay lại kỹ hơn với regularization.
-
-### 7.5. Chấp nhận giới hạn diễn giải
-
-Đôi khi điều đúng nhất là thừa nhận:
-
-> dữ liệu này phù hợp cho prediction hơn là để diễn giải riêng từng coefficient.
-
-Đó không phải thất bại. Đó là một kết luận khoa học trung thực.
-
-## 8. Một checklist rất thực dụng
-
-Khi nghi ngờ multicollinearity, bạn có thể tự hỏi một chuỗi câu rất thực dụng: mục tiêu của mình là prediction hay interpretation, predictors nào đang trùng lặp thông tin, nếu bỏ bớt một biến thì năng lực dự đoán có giảm nhiều không, nếu giữ cả hai thì mình có còn diễn giải hệ số một cách tự tin hay không, và liệu có nên gộp chúng thành một khái niệm rộng hơn hay không.
-
-## 9. Điều người học hay hiểu sai
-
-### Hiểu sai 1: "Hệ số bị lệch dấu thì mô hình chắc chắn sai"
-
-Chưa chắc. Có thể mô hình đang cố chia công giữa các predictors quá giống nhau.
-
-### Hiểu sai 2: "Tương quan giữa predictors là cấm kỵ"
-
-Không đúng. Dữ liệu đời thật rất thường có predictors tương quan. Điều quan trọng là hiểu hệ quả của chuyện đó.
-
-### Hiểu sai 3: "Cứ thêm biến là tốt"
-
-Nếu biến mới chỉ lặp lại thông tin cũ, bạn có thể làm mô hình khó diễn giải hơn mà không thu thêm được nhiều giá trị.
-
-## 10. Kết nối sang interaction effects
-
-Multicollinearity hỏi:
-
-> các predictors có quá giống nhau không?
-
-Interaction effects ở bài tiếp theo hỏi:
-
-> ảnh hưởng của một predictor có thay đổi theo predictor khác không?
-
-Một bên là vấn đề **trùng lặp thông tin**, một bên là vấn đề **phụ thuộc lẫn nhau về hiệu ứng**. Phân biệt được hai chuyện này sẽ giúp bạn đọc multiple regression chính xác hơn nhiều.
-
-> **3 ý cần nhớ.** Multicollinearity xảy ra khi predictors mang thông tin quá giống nhau, khiến mô hình khó tách riêng ảnh hưởng của từng biến; đây là vấn đề đặc biệt nghiêm trọng khi mục tiêu là diễn giải coefficients, nhưng có thể ít nghiêm trọng hơn nếu mục tiêu chỉ là prediction; và cách xử lý luôn phụ thuộc vào mục tiêu, từ bỏ bớt biến, gộp biến, dùng prior ổn định hơn, thu thập dữ liệu đa dạng hơn cho đến chấp nhận giới hạn diễn giải.
+> **3 ý cần nhớ.** Đa cộng tuyến xảy ra khi các biến dự báo chứa thông tin trùng lặp cao, làm phình to bất định của từng hệ số riêng lẻ; hiện tượng này ảnh hưởng mạnh đến mục tiêu diễn giải nhưng thường ít gây hại hơn cho mục tiêu dự đoán; và hướng xử lý phụ thuộc vào mục tiêu cụ thể — từ chọn biến đại diện, gộp biến, dùng tiên nghiệm điều chuẩn đến chấp nhận giới hạn diễn giải của dữ liệu.
 
 ## Video tham khảo
 
-- [Multicollinearity (in Regression Analysis)](https://www.youtube.com/watch?v=G1WX5GiFSWQ) — numiqo, English. **xem trước**. Xem đa cộng tuyến làm hệ số khó tách phần tín hiệu của từng biến, đúng hiện tượng bài định nghĩa.
-- [Multicollinearity](https://www.youtube.com/watch?v=O4jDva9B3fw) — Ben Lambert, English. Xem multicollinearity trong diễn giải hồi quy, hỗ trợ phần phân biệt dự báo với việc đọc hệ số.
-- [Variance Inflation Factors: testing for multicollinearity](https://www.youtube.com/watch?v=0SBIXgPVex8) — Ben Lambert, English. Xem hệ số phóng đại phương sai, dùng khi bài cần một dấu hiệu chẩn đoán predictors đi cùng nhau.
+- [Multicollinearity (in Regression Analysis)](https://www.youtube.com/watch?v=G1WX5GiFSWQ) — numiqo, English. **xem trước**. Minh họa cách đa cộng tuyến khiến mô hình khó tách riêng tín hiệu của từng biến, khớp với định nghĩa ở đầu bài.
+- [Multicollinearity](https://www.youtube.com/watch?v=O4jDva9B3fw) — Ben Lambert, English. Giải thích ảnh hưởng của đa cộng tuyến trong hồi quy, bổ trợ cho phần phân biệt giữa dự báo và diễn giải hệ số.
+- [Variance Inflation Factors: testing for multicollinearity](https://www.youtube.com/watch?v=0SBIXgPVex8) — Ben Lambert, English. Trình bày hệ số phóng đại phương sai (VIF), hỗ trợ phần chẩn đoán mức độ tương quan giữa các biến dự báo.
 
 ## Câu hỏi tự luyện
 
-1. Vì sao diện tích và số phòng ngủ dễ tạo ra multicollinearity?
-2. Hãy nêu một ví dụ trong công việc của bạn mà prediction vẫn ổn dù coefficients khó diễn giải.
-3. Nếu hai biến gần như trùng lặp thông tin, bạn sẽ cân nhắc giữ một biến hay gộp hai biến? Vì sao?
-4. Trong nghiên cứu lương, vì sao học vấn và kỹ năng chuyên môn có thể gây khó khăn cho việc diễn giải riêng từng hệ số?
+1. Vì sao diện tích và số phòng ngủ thường dễ dẫn tới đa cộng tuyến?
+2. Hãy nêu một tình huống trong công việc của bạn mà mô hình vẫn dự đoán tốt dù khó diễn giải riêng từng hệ số.
+3. Khi hai biến gần như trùng lặp thông tin, bạn sẽ chọn giữ một biến hay gộp cả hai? Giải thích lý do.
+4. Trong bài toán phân tích tiền lương, vì sao học vấn và kỹ năng chuyên môn thường gây khó khăn cho việc tách bạch hệ số riêng?
 
 ## Tài liệu tham khảo
 

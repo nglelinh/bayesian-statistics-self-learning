@@ -12,63 +12,56 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ hiểu ba tiêu chí cốt lõi để đánh giá estimator: bias, variance, consistency; đồng thời nắm được bias-variance tradeoff như một nguyên lý thiết kế mô hình thay vì một khẩu hiệu.
+Sau bài này, bạn sẽ hiểu ba tiêu chí cốt lõi để đánh giá một bộ ước lượng (estimator): độ chệch (bias), phương sai (variance) và tính nhất quán (consistency), đồng thời nắm được sự đánh đổi độ chệch – phương sai (bias–variance tradeoff) như một nguyên lý thực hành khi thiết kế mô hình.
 
-## Giới thiệu: đánh giá estimator không thể chỉ nhìn một con số
+## Giới thiệu: Đánh giá ước lượng không thể chỉ nhìn một mẫu duy nhất
 
-Một estimator tốt không đơn thuần là estimator cho ra kết quả "gần đúng" trong một lần lấy mẫu. Ta cần đánh giá hành vi của nó trên nhiều mẫu khả dĩ: có lệch hệ thống không, có dao động quá lớn không, và khi dữ liệu tăng thì có hội tụ về giá trị thật hay không. Ba tiêu chí bias, variance, consistency được xây dựng để trả lời chính xác các câu hỏi này.
+Một bộ ước lượng tốt không chỉ cho kết quả "gần đúng" trong một lần lấy mẫu ngẫu nhiên. Ta cần xem xét hành vi của nó trên nhiều mẫu khả dĩ: có lệch có hệ thống không, có dao động quá mạnh giữa các mẫu không, và khi cỡ mẫu tăng lên thì có hội tụ về giá trị thật không. Ba tiêu chí bias, variance và consistency được xây dựng để trả lời ba câu hỏi này.
 
 ![Bias variance tradeoff]({{ site.baseurl }}/img/chapter_img/chapter00/bias_variance_tradeoff_curve.png)
 
-*Cách đọc hình: Hình này minh họa bias variance tradeoff. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
-*Hinh 1: Bias giam dan khi do phuc tap tang, variance tang dan, va MSE co diem can bang toi uu.*
+*Hình 1: Khi độ phức tạp mô hình tăng, độ chệch (bias) giảm dần nhưng phương sai (variance) tăng lên, khiến sai số bình phương trung bình (MSE) đạt cực tiểu tại một điểm cân bằng.*
 
 ## 1) Ước lượng điểm là gì?
 
-Ước lượng điểm là một hàm của dữ liệu $$\hat\theta=g(x_1,\dots,x_n)$$ dùng để dự đoán giá trị tham số chưa biết $$\theta$$.
+Ước lượng điểm (point estimator) là một hàm của dữ liệu $$\hat\theta=g(x_1,\dots,x_n)$$ dùng để đưa ra một giá trị ước lượng cụ thể cho tham số chưa biết $$\theta$$. Ví dụ, ta dùng trung bình mẫu $$\bar X$$ để ước lượng $$\mu$$, tỷ lệ mẫu $$\hat p$$ để ước lượng $$p$$, hoặc hệ số hồi quy mẫu để ước lượng độ dốc thật.
 
-Ví dụ:
+## 2) Độ chệch (Bias)
 
-Ta có thể dùng $$\bar X$$ để ước lượng $$\mu$$, dùng tỷ lệ mẫu $$\hat p$$ để ước lượng $$p$$, hoặc dùng hệ số hồi quy mẫu để ước lượng slope thật.
-
-## 2) Bias
-
-Bias đo sai lệch hệ thống:
+Độ chệch đo sai lệch có hệ thống của bộ ước lượng so với giá trị thật:
 
 $$
 \mathrm{Bias}(\hat\theta)=\mathbb{E}[\hat\theta]-\theta
 $$
 
-Khi bias bằng 0, estimator là không chệch; còn khi bias khác 0, estimator có xu hướng lệch có hệ thống về một phía.
+Nếu $$\mathrm{Bias}(\hat\theta) = 0$$, bộ ước lượng được gọi là không chệch (unbiased); nếu khác 0, bộ ước lượng có xu hướng lệch hệ thống về một phía.
 
-## 3) Variance của estimator
+## 3) Phương sai (Variance) của bộ ước lượng
 
-Ngay cả estimator không chệch vẫn có thể dao động mạnh giữa các mẫu khác nhau. Dao động đó được đo bằng $$\mathrm{Var}(\hat\theta)$$.
+Ngay cả một bộ ước lượng không chệch vẫn có thể dao động mạnh từ mẫu này sang mẫu khác. Mức độ dao động đó được đo bằng phương sai $$\mathrm{Var}(\hat\theta)$$. Vì vậy, một bộ ước lượng tốt không chỉ cần ít chệch mà còn cần phương sai đủ nhỏ.
 
-Estimator tốt không chỉ cần ít bias mà còn cần variance hợp lý.
+## 4) MSE và phân rã độ chệch – phương sai
 
-## 4) MSE và bias-variance decomposition
-
-Sai số bình phương kỳ vọng:
+Sai số bình phương trung bình (Mean Squared Error — MSE):
 
 $$
 \mathrm{MSE}(\hat\theta)=\mathbb{E}[(\hat\theta-\theta)^2]
 $$
 
-phân rã thành:
+được phân rã thành hai thành phần:
 
 $$
 \mathrm{MSE}(\hat\theta)=\mathrm{Bias}(\hat\theta)^2+\mathrm{Var}(\hat\theta)
 $$
 
-Đây là nền cho tư duy regularization: chấp nhận một ít bias để giảm variance và cải thiện tổng sai số dự báo.
+Đẳng thức này là nền tảng cho tư duy điều chuẩn (regularization): chấp nhận một chút độ chệch để đổi lấy mức giảm phương sai lớn hơn, qua đó hạ tổng sai số dự báo.
 
-### 4.1) Một ví dụ rất cụ thể về bias-variance trade-off
+### 4.1) Một ví dụ cụ thể về đánh đổi bias – variance
 
-Giả sử cần ước lượng một tham số thật $$\theta = 10$$, và ta có hai estimator:
+Giả sử cần ước lượng tham số thật $$\theta = 10$$ bằng hai bộ ước lượng:
 
-- Estimator A: không chệch, nên $$\mathrm{Bias}=0$$, nhưng variance bằng $$9$$.
-- Estimator B: hơi chệch lên 1 đơn vị, nên $$\mathrm{Bias}=1$$, nhưng variance chỉ bằng $$4$$.
+- Bộ ước lượng A không chệch ($$\mathrm{Bias}=0$$) nhưng có phương sai bằng $$9$$.
+- Bộ ước lượng B chệch lên 1 đơn vị ($$\mathrm{Bias}=1$$) nhưng có phương sai chỉ bằng $$4$$.
 
 Khi đó:
 
@@ -78,42 +71,40 @@ $$
 \mathrm{MSE}(B) = 1^2 + 4 = 5.
 $$
 
-Dù estimator B có bias, nó vẫn tốt hơn theo MSE vì đổi lại được một mức giảm variance lớn hơn. Đây chính là logic đằng sau nhiều kỹ thuật shrinkage và regularization: chấp nhận lệch nhẹ để đổi lấy dự đoán ổn định hơn.
+Dù có độ chệch, bộ ước lượng B vẫn đạt MSE thấp hơn vì giảm được phương sai đáng kể. Đây chính là nguyên lý đứng sau các kỹ thuật co rút (shrinkage) và điều chuẩn (regularization).
 
-## 5) Consistency
+## 5) Tính nhất quán (Consistency)
 
-Estimator $$\hat\theta_n$$ gọi là consistent nếu:
+Bộ ước lượng $$\hat\theta_n$$ được gọi là nhất quán (consistent) nếu nó hội tụ theo xác suất về giá trị thật khi cỡ mẫu tiến ra vô cùng:
 
 $$
 \hat\theta_n \xrightarrow[]{P} \theta \quad \text{khi } n\to\infty
 $$
 
-Nói đơn giản: khi dữ liệu đủ nhiều, estimator tiến gần giá trị thật.
+Nói đơn giản, khi lượng dữ liệu ngày càng lớn, ước lượng sẽ càng tiến sát tham số thật.
 
-## 6) Liên hệ với Bayes
+## 6) Liên hệ với thống kê Bayesian
 
-Trong Bayes, ta không chỉ dùng point estimate mà dùng cả posterior. Tuy nhiên, tư duy bias-variance vẫn rất hữu ích:
-
-Prior mạnh thường làm variance giảm nhưng có thể làm bias tăng, còn prior yếu thường giảm bias nhưng variance lại có thể lớn khi dữ liệu còn ít.
+Trong thống kê Bayesian, ta làm việc với toàn bộ phân phối hậu nghiệm thay vì chỉ một ước lượng điểm. Dù vậy, góc nhìn bias–variance vẫn rất hữu ích: một phân phối tiên nghiệm mạnh thường giúp giảm phương sai ước lượng nhưng có thể kéo theo độ chệch nếu tiên nghiệm đặt lệch; ngược lại, tiên nghiệm yếu ít gây chệch nhưng có thể khiến phương sai lớn khi dữ liệu còn ít.
 
 ## Tóm tắt nhanh
 
-1. Bias đo lệch hệ thống của estimator.
-2. Variance đo độ dao động giữa các mẫu.
-3. MSE = bias^2 + variance.
-4. Consistency nói về hành vi khi cỡ mẫu lớn.
+1. Độ chệch (bias) đo sai lệch hệ thống của bộ ước lượng.
+2. Phương sai (variance) đo độ dao động của bộ ước lượng giữa các mẫu.
+3. $$\mathrm{MSE} = \mathrm{Bias}^2 + \mathrm{Var}$$.
+4. Tính nhất quán (consistency) mô tả sự hội tụ về giá trị thật khi cỡ mẫu lớn.
 
 ## Video tham khảo
 
-- [Unbiasedness vs consistency of estimators - an example](https://www.youtube.com/watch?v=6i7mqDJICzQ) — Ben Lambert, English. **xem trước**. Xem ví dụ tách ước lượng không chệch khỏi ước lượng nhất quán, đúng hai tiêu chí mà bài đặt cạnh nhau.
-- [[Proof] MSE = Variance + Bias²](https://www.youtube.com/watch?v=qmVT35gFW-Q) — math et al, English. Xem phép phân tích MSE thành bình phương độ lệch cộng phương sai, hỗ trợ phần đánh đổi bias–variance của estimator.
-- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Xem ước lượng tham số từ mẫu, dùng cho đoạn bài nói về hành vi của estimator khi dữ liệu tăng.
+- [Unbiasedness vs consistency of estimators - an example](https://www.youtube.com/watch?v=6i7mqDJICzQ) — Ben Lambert, English. **Xem trước.** Minh họa sự khác nhau giữa tính không chệch và tính nhất quán của bộ ước lượng.
+- [[Proof] MSE = Variance + Bias²](https://www.youtube.com/watch?v=qmVT35gFW-Q) — math et al, English. Trình bày phép chứng minh phân rã MSE thành bình phương độ chệch cộng phương sai.
+- [Population and Estimated Parameters, Clearly Explained!!!](https://www.youtube.com/watch?v=vikkiwjQqfU) — StatQuest with Josh Starmer, English. Giải thích mối liên hệ giữa tham số quần thể và ước lượng mẫu khi cỡ mẫu thay đổi.
 
 ## Câu hỏi tự luyện
 
-1. Có thể có estimator bias nhỏ nhưng MSE lớn không? Vì sao?
-2. Vì sao regularization có thể giúp dự báo tốt hơn dù tạo bias?
-3. Consistency có đảm bảo tốt ở mẫu nhỏ không?
+1. Một bộ ước lượng có độ chệch nhỏ nhưng MSE lớn có thể xảy ra không? Vì sao?
+2. Vì sao điều chuẩn (regularization) có thể cải thiện chất lượng dự báo dù làm xuất hiện độ chệch?
+3. Tính nhất quán có bảo đảm bộ ước lượng hoạt động tốt trên mẫu nhỏ không?
 
 ## Tài liệu tham khảo
 

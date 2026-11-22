@@ -12,59 +12,57 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu rằng thống kê mô tả không chỉ là việc tính toán các con số tóm tắt, mà là nghệ thuật kể câu chuyện về dữ liệu. Bạn sẽ học cách sử dụng các thống kê như trung bình, trung vị, và độ lệch chuẩn không phải như những công thức máy móc, mà như những công cụ để hiểu cấu trúc, xu hướng, và sự biến thiên trong dữ liệu. Quan trọng hơn, bạn sẽ phát triển trực giác về khi nào nên sử dụng từng thống kê, và làm thế nào để diễn giải chúng trong bối cảnh của phân tích Bayesian, nơi mà việc hiểu phân phối của dữ liệu là bước đầu tiên quan trọng trước khi xây dựng mô hình.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu rằng thống kê mô tả không chỉ là việc tính các con số tóm tắt, mà là cách nắm bắt cấu trúc, xu hướng và mức độ biến thiên của dữ liệu. Bạn sẽ biết cách diễn giải trung bình, trung vị và độ lệch chuẩn theo bản chất dữ liệu thay vì áp dụng máy móc, đồng thời hình thành trực giác chọn thống kê phù hợp trong phân tích Bayesian — nơi việc khám phá phân phối dữ liệu luôn là bước khởi đầu trước khi xây dựng mô hình.
 
 ## Giới thiệu: Tại sao chúng ta cần Thống kê Mô tả?
 
-Hãy tưởng tượng bạn nhận được một tập dữ liệu chứa chiều cao của 10,000 người trưởng thành. Làm thế nào bạn có thể hiểu được dữ liệu này? Bạn không thể nhìn vào từng con số riêng lẻ và rút ra kết luận có ý nghĩa. Bạn cần một cách để tóm tắt, để nắm bắt bản chất của dữ liệu trong một vài con số hoặc hình ảnh có thể hiểu được.
+Giả sử bạn nhận được tập dữ liệu chiều cao của 10,000 người trưởng thành. Việc nhìn từng giá trị riêng lẻ không thể cho bạn kết luận rõ ràng; bạn cần những đại lượng tóm tắt và biểu đồ để nắm được đặc điểm chính của tập dữ liệu.
 
-Đây chính là vai trò của thống kê mô tả. Chúng cung cấp cho chúng ta một ngôn ngữ để nói về dữ liệu, một cách để truyền đạt những gì chúng ta thấy trong hàng nghìn hoặc hàng triệu điểm dữ liệu thành một vài đặc điểm quan trọng. Thống kê mô tả trả lời các câu hỏi cơ bản: Giá trị "điển hình" là gì? Dữ liệu phân tán như thế nào? Có giá trị bất thường nào không? Phân phối có đối xứng hay lệch?
+Đó là vai trò của thống kê mô tả. Nó giúp thu gọn hàng nghìn hay hàng triệu quan sát thành một số đặc trưng dễ theo dõi, trả lời các câu hỏi nền tảng: giá trị "điển hình" nằm ở đâu, dữ liệu phân tán mạnh hay yếu, có giá trị bất thường nào không, và phân phối đối xứng hay bị lệch?
 
-Trong phân tích Bayesian, thống kê mô tả đóng vai trò đặc biệt quan trọng. Trước khi chúng ta xây dựng một mô hình xác suất phức tạp, chúng ta cần hiểu dữ liệu của mình. Chúng ta cần biết phân phối nào có thể phù hợp, tham số nào cần ước lượng, và giả định nào có thể bị vi phạm. Thống kê mô tả là bước đầu tiên trong hành trình này, giúp chúng ta xây dựng trực giác về dữ liệu trước khi chúng ta bắt đầu mô hình hóa.
+Trong phân tích Bayesian, bước này càng quan trọng. Trước khi thiết lập một mô hình xác suất, ta cần hiểu dữ liệu để chọn họ phân phối phù hợp, xác định tham số cần ước lượng và nhận diện sớm các giả định có nguy cơ bị vi phạm.
 
 ## Thống kê Vị trí Trung tâm: Tìm kiếm Giá trị "Điển hình"
 
-Một trong những câu hỏi đầu tiên chúng ta thường hỏi về một tập dữ liệu là: "Giá trị điển hình là gì?" Nhưng "điển hình" có thể có nhiều ý nghĩa khác nhau, và đó là lý do tại sao chúng ta có nhiều thống kê vị trí trung tâm khác nhau.
+Câu hỏi đầu tiên khi tiếp cận dữ liệu thường là "giá trị điển hình là gì?". Tuy nhiên, khái niệm "điển hình" có nhiều cách hiểu khác nhau, nên ta có nhiều thước đo vị trí trung tâm tương ứng.
 
 ### Trung bình: Điểm Cân bằng
 
-**Trung bình số học** (arithmetic mean) là thống kê vị trí trung tâm quen thuộc nhất. Với một tập dữ liệu $$x_1, x_2, \ldots, x_n$$, trung bình được định nghĩa là:
+**Trung bình số học** (arithmetic mean) là thước đo vị trí trung tâm quen thuộc nhất. Với tập dữ liệu $$x_1, x_2, \ldots, x_n$$, trung bình được định nghĩa là:
 
 $$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
 
-Trung bình có một diễn giải hình học đẹp đẽ: nó là điểm cân bằng của dữ liệu. Nếu bạn tưởng tượng mỗi điểm dữ liệu như một khối lượng trên một thanh thẳng, trung bình là điểm mà thanh sẽ cân bằng. Hình thức hóa hơn, trung bình là giá trị mà tổng các độ lệch từ nó bằng không: $$\sum_{i=1}^{n} (x_i - \bar{x}) = 0$$.
+Về mặt hình học, trung bình đóng vai trò như điểm cân bằng của dữ liệu: nếu coi mỗi điểm dữ liệu là một vật nặng đặt trên một thanh thẳng, thanh sẽ cân bằng tại $$\bar{x}$$. Một cách hình thức, trung bình là giá trị làm tổng các độ lệch so với nó bằng không: $$\sum_{i=1}^{n} (x_i - \bar{x}) = 0$$.
 
-Tuy nhiên, trung bình có một điểm yếu quan trọng: nó rất nhạy cảm với các giá trị ngoại lai (outliers). Một giá trị cực đoan duy nhất có thể kéo trung bình đi xa khỏi phần lớn dữ liệu. Hãy xem xét một ví dụ: thu nhập của 10 người, trong đó 9 người kiếm từ 30,000 đến 50,000 đô la mỗi năm, và một người kiếm 1,000,000 đô la. Trung bình sẽ là khoảng 130,000 đô la, một con số không đại diện cho thu nhập "điển hình" của nhóm này.
+Điểm yếu lớn của trung bình là rất nhạy cảm với giá trị ngoại lai (outlier): chỉ một giá trị cực lớn cũng có thể kéo trung bình ra xa phần lớn dữ liệu. Chẳng hạn, xét thu nhập của 10 người, trong đó 9 người kiếm từ 30,000 đến 50,000 đô la mỗi năm và một người kiếm 1,000,000 đô la. Khi đó trung bình khoảng 130,000 đô la — con số không phản ánh mức thu nhập điển hình của nhóm.
 
-Trong phân tích Bayesian, trung bình thường xuất hiện như tham số vị trí của phân phối chuẩn. Khi chúng ta mô hình hóa dữ liệu như $$y_i \sim \mathcal{N}(\mu, \sigma^2)$$, $$\mu$$ là trung bình của phân phối, và ước lượng tự nhiên của nó từ dữ liệu là trung bình mẫu $$\bar{x}$$.
+Trong phân tích Bayesian, trung bình thường gắn với tham số vị trí của phân phối chuẩn. Khi mô hình hóa dữ liệu dưới dạng $$y_i \sim \mathcal{N}(\mu, \sigma^2)$$, $$\mu$$ là trung bình của phân phối và trung bình mẫu $$\bar{x}$$ là ước lượng tự nhiên từ dữ liệu.
 
 ### Trung vị: Giá trị Giữa
 
-**Trung vị** (median) là giá trị ở giữa khi dữ liệu được sắp xếp theo thứ tự tăng dần. Nếu số lượng quan sát $$n$$ là lẻ, trung vị là giá trị thứ $$(n+1)/2$$. Nếu $$n$$ là chẵn, trung vị thường được định nghĩa là trung bình của hai giá trị giữa.
+**Trung vị** (median) là giá trị nằm chính giữa khi sắp xếp dữ liệu theo thứ tự tăng dần. Nếu số quan sát $$n$$ là lẻ, trung vị là giá trị thứ $$(n+1)/2$$; nếu $$n$$ là chẵn, trung vị là trung bình của hai giá trị ở giữa.
 
-Trung vị có một tính chất quan trọng: nó là **robust** (bền vững) với các giá trị ngoại lai. Bạn có thể thay đổi các giá trị cực đoan trong dữ liệu mà không ảnh hưởng đến trung vị, miễn là bạn không thay đổi thứ tự của các giá trị xung quanh điểm giữa. Trong ví dụ thu nhập ở trên, trung vị sẽ vẫn nằm trong khoảng 30,000-50,000 đô la, phản ánh tốt hơn thu nhập "điển hình".
+Ưu điểm nổi bật của trung vị là tính **bền vững (robust)** trước các giá trị ngoại lai. Việc thay đổi các giá trị cực đoan không làm thay đổi trung vị, miễn là thứ tự quanh điểm giữa giữ nguyên. Trong ví dụ thu nhập ở trên, trung vị vẫn nằm trong khoảng 30,000–50,000 đô la, phản ánh sát hơn thu nhập điển hình của nhóm.
 
-Trung vị cũng có một diễn giải xác suất tự nhiên: nó là giá trị mà xác suất quan sát được một giá trị nhỏ hơn nó bằng 50%, và xác suất quan sát được một giá trị lớn hơn nó cũng bằng 50%. Đây là phân vị thứ 50 (50th percentile) của phân phối.
-
-Trong phân tích Bayesian, trung vị thường được sử dụng để tóm tắt phân phối posterior, đặc biệt khi phân phối không đối xứng. Thay vì báo cáo trung bình posterior (có thể bị ảnh hưởng bởi đuôi dài), chúng ta thường báo cáo trung vị posterior cùng với khoảng tin cậy.
+Trung vị cũng có diễn giải xác suất rõ ràng: xác suất quan sát một giá trị nhỏ hơn trung vị là 50%, và lớn hơn trung vị cũng là 50% (tức phân vị thứ 50). Trong phân tích Bayesian, khi phân phối hậu nghiệm (posterior) bị lệch hoặc có đuôi dài, người ta thường dùng trung vị hậu nghiệm kèm khoảng tin cậy thay vì chỉ báo cáo trung bình hậu nghiệm.
 
 ### So sánh Trung bình và Trung vị: Phát hiện Độ lệch
 
-Mối quan hệ giữa trung bình và trung vị cho chúng ta thông tin về hình dạng của phân phối. Nếu phân phối đối xứng, trung bình và trung vị sẽ gần bằng nhau. Nếu phân phối lệch phải (có đuôi dài ở bên phải), trung bình sẽ lớn hơn trung vị vì nó bị kéo về phía các giá trị lớn. Nếu phân phối lệch trái, trung bình sẽ nhỏ hơn trung vị.
+So sánh trung bình và trung vị giúp nhận diện hình dạng phân phối. Nếu phân phối đối xứng, trung bình và trung vị gần bằng nhau. Nếu phân phối lệch phải (đuôi dài về phía giá trị lớn), trung bình lớn hơn trung vị; nếu lệch trái, trung bình nhỏ hơn trung vị.
 
-Sự khác biệt này không chỉ là một chi tiết kỹ thuật. Nó cho chúng ta biết liệu phân phối chuẩn có phải là mô hình phù hợp hay không. Nếu trung bình và trung vị khác nhau đáng kể, chúng ta có thể cần xem xét các phân phối lệch như log-normal, gamma, hoặc beta, tùy thuộc vào bản chất của dữ liệu.
+Thông tin này có ý nghĩa trực tiếp khi chọn mô hình: nếu trung bình và trung vị chênh lệch rõ rệt, phân phối chuẩn có thể không phù hợp và ta nên cân nhắc các phân phối lệch như log-normal, Gamma hoặc Beta tùy theo bản chất dữ liệu.
 
-*Cách đọc hình: Hai hình dưới đây tách riêng hai trường hợp để bạn nhìn rõ vị trí của trung bình và trung vị trong từng kiểu phân phối.*
+*Cách đọc hình: Hai hình dưới đây tách riêng hai trường hợp để bạn nhìn rõ vị trí tương đối giữa trung bình và trung vị trong từng dạng phân phối.*
 
 ![Phân phối đối xứng với trung bình gần trung vị]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_median_symmetric.png)
 
-*Hình 1a: Ở phân phối gần đối xứng, trung bình và trung vị gần như chồng lên nhau.*
+*Hình 1a: Ở phân phối gần đối xứng, trung bình và trung vị gần như trùng nhau.*
 
 ![Phân phối lệch phải với trung bình bị kéo về phía đuôi]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_mean_median_right_skewed.png)
 
-*Hình 1b: Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị. Đây là dấu hiệu trực quan rất hữu ích trước khi chọn mô hình.*
+*Hình 1b: Khi dữ liệu lệch phải, đuôi dài kéo trung bình sang phải mạnh hơn trung vị — một dấu hiệu trực quan quan trọng trước khi chọn mô hình.*
 
-### Một ví dụ rất ngắn: trung bình và trung vị kể hai câu chuyện khác nhau
+### Một ví dụ ngắn: trung bình và trung vị kể hai câu chuyện khác nhau
 
 Giả sử thu nhập tháng (triệu đồng) của 10 người là:
 
@@ -74,120 +72,114 @@ $$
 
 Khi đó:
 
-- Trung bình là $$42.6$$
-- Trung vị là $$34.5$$
+- Trung bình là $$42.6$$.
+- Trung vị là $$34.5$$.
 
-Nếu chỉ báo cáo trung bình, ta dễ tưởng nhóm này có mức thu nhập “điển hình” hơn 40 triệu. Nhưng thực ra 9/10 người đều nằm trong khoảng 30 đến 38 triệu, còn một giá trị cực lớn đã kéo trung bình lên mạnh. Ví dụ này cho thấy vì sao descriptive statistics luôn nên được đọc cùng nhau, thay vì chỉ nhìn một con số duy nhất.
+Nếu chỉ báo cáo trung bình, người đọc dễ lầm tưởng mức thu nhập điển hình vượt quá 40 triệu, trong khi thực tế 9/10 người nằm trong khoảng 30–38 triệu và chỉ một giá trị cực lớn đã kéo trung bình lên cao. Ví dụ này cho thấy các chỉ số thống kê mô tả cần được đọc song song thay vì dựa vào một con số đơn lẻ.
 
 ## Thống kê Phân tán: Đo lường Sự Không chắc chắn
 
-Biết giá trị trung tâm là không đủ. Hai tập dữ liệu có thể có cùng trung bình nhưng rất khác nhau về độ phân tán. Một tập có thể tập trung chặt chẽ xung quanh trung bình, trong khi tập kia có thể phân tán rộng. Các thống kê phân tán giúp chúng ta định lượng sự biến thiên này.
+Chỉ biết vị trí trung tâm là chưa đủ. Hai tập dữ liệu có thể có cùng trung bình nhưng mức độ biến thiên rất khác nhau: một tập tập trung chặt quanh trung bình, tập kia phân tán rộng. Các thống kê phân tán giúp định lượng sự biến thiên đó.
 
 ### Phương sai và Độ lệch Chuẩn: Độ lệch Bình phương Trung bình
 
-**Phương sai mẫu** (sample variance) đo lường độ phân tán trung bình của dữ liệu xung quanh trung bình:
+**Phương sai mẫu** (sample variance) đo mức độ phân tán trung bình của dữ liệu quanh trung bình mẫu:
 
 $$s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
 
-Lưu ý rằng chúng ta chia cho $$n-1$$ chứ không phải $$n$$. Đây là **hiệu chỉnh Bessel** (Bessel's correction), được sử dụng để làm cho phương sai mẫu là một ước lượng không chệch (unbiased estimator) của phương sai tổng thể. Lý do cho hiệu chỉnh này là chúng ta đã sử dụng dữ liệu để ước lượng trung bình $$\bar{x}$$, và điều này làm giảm một "bậc tự do" (degree of freedom).
+Lưu ý mẫu số là $$n-1$$ thay vì $$n$$. Đây là **hiệu chỉnh Bessel** (Bessel's correction), giúp phương sai mẫu trở thành ước lượng không chệch (unbiased estimator) của phương sai tổng thể, do ta đã dùng dữ liệu để ước lượng $$\bar{x}$$ làm mất đi một bậc tự do (degree of freedom).
 
-Phương sai có một vấn đề thực tế: đơn vị của nó là bình phương của đơn vị dữ liệu gốc. Nếu chúng ta đo chiều cao bằng cm, phương sai sẽ có đơn vị là cm². Điều này làm cho phương sai khó diễn giải. Để khắc phục, chúng ta sử dụng **độ lệch chuẩn** (standard deviation):
+Hạn chế của phương sai là đơn vị đo bị bình phương so với dữ liệu gốc (ví dụ chiều cao đo bằng cm thì phương sai có đơn vị cm²), khiến việc diễn giải trực tiếp kém tự nhiên. Vì vậy, ta thường dùng **độ lệch chuẩn** (standard deviation):
 
 $$s = \sqrt{s^2}$$
 
-Độ lệch chuẩn có cùng đơn vị với dữ liệu gốc và có thể được diễn giải như "độ lệch điển hình" từ trung bình.
+Độ lệch chuẩn có cùng đơn vị với dữ liệu gốc và có thể hiểu như độ lệch điển hình của các quan sát so với trung bình. Trong phân tích Bayesian, phương sai (hoặc độ chính xác — nghịch đảo của phương sai) là tham số then chốt cần ước lượng; chẳng hạn với mô hình $$y_i \sim \mathcal{N}(\mu, \sigma^2)$$, $$\sigma^2$$ là phương sai và $$s^2$$ là ước lượng tự nhiên từ mẫu.
 
-Trong phân tích Bayesian, phương sai (hoặc độ chính xác, nghịch đảo của phương sai) là một tham số quan trọng cần được ước lượng. Khi chúng ta mô hình hóa dữ liệu như $$y_i \sim \mathcal{N}(\mu, \sigma^2)$$, $$\sigma^2$$ là phương sai, và ước lượng tự nhiên của nó là phương sai mẫu $$s^2$$.
+### Phân vị và Khoảng Tứ phân vị: Thống kê Bền vững
 
-### Phân vị và Khoảng Tứ phân vị: Thống kê Robust
+**Phân vị** (quantile hoặc percentile) chia phân phối theo tỷ lệ phần trăm. Phân vị thứ $$p$$ ($$0 < p < 1$$) là giá trị mà $$100p\%$$ dữ liệu nhỏ hơn hoặc bằng nó; ví dụ phân vị 0.25 (tứ phân vị thứ nhất, Q1) là mốc có 25% dữ liệu nhỏ hơn hoặc bằng nó.
 
-**Phân vị** (quantiles hoặc percentiles) chia phân phối thành các phần bằng nhau. Phân vị thứ $$p$$ ($$0 < p < 1$$) là giá trị mà $$100p\%$$ dữ liệu nhỏ hơn hoặc bằng nó. Ví dụ, phân vị thứ 0.25 (còn gọi là tứ phân vị thứ nhất, Q1) là giá trị mà 25% dữ liệu nhỏ hơn hoặc bằng nó.
-
-**Khoảng tứ phân vị** (interquartile range, IQR) là khoảng cách giữa tứ phân vị thứ ba (Q3) và tứ phân vị thứ nhất (Q1):
+**Khoảng tứ phân vị** (interquartile range, IQR) là hiệu giữa tứ phân vị thứ ba (Q3) và tứ phân vị thứ nhất (Q1):
 
 $$\text{IQR} = Q3 - Q1$$
 
-IQR chứa 50% dữ liệu ở giữa và là một thống kê phân tán robust với các giá trị ngoại lai. Nó thường được sử dụng để phát hiện outliers: các giá trị nằm ngoài khoảng $$[Q1 - 1.5 \times \text{IQR}, Q3 + 1.5 \times \text{IQR}]$$ thường được coi là outliers tiềm năng.
+IQR bao phủ 50% dữ liệu ở giữa và bền vững trước giá trị ngoại lai. Quy tắc phổ biến để nhận diện giá trị ngoại lai tiềm năng là kiểm tra các điểm nằm ngoài đoạn $$[Q1 - 1.5 \times \text{IQR}, Q3 + 1.5 \times \text{IQR}]$$.
 
-Trong phân tích Bayesian, phân vị được sử dụng rộng rãi để tóm tắt phân phối posterior. Thay vì chỉ báo cáo trung bình hoặc trung vị, chúng ta thường báo cáo **khoảng tin cậy** (credible interval), ví dụ như khoảng 95% chứa 95% xác suất posterior. Khoảng này thường được xây dựng từ các phân vị, ví dụ từ phân vị thứ 0.025 đến phân vị thứ 0.975.
+Trong phân tích Bayesian, phân vị được dùng rộng rãi để tóm tắt phân phối hậu nghiệm. Bên cạnh trung bình hoặc trung vị, ta thường báo cáo **khoảng tin cậy** (credible interval), chẳng hạn khoảng 95% được xác định từ phân vị 0.025 đến phân vị 0.975, chứa 95% khối lượng xác suất hậu nghiệm.
 
-*Cách đọc hình: Nhóm hình dưới đây tách riêng câu chuyện về độ phân tán và câu chuyện về IQR trong box plot.*
+*Cách đọc hình: Hai hình dưới đây tách riêng câu chuyện về độ phân tán theo độ lệch chuẩn và cách biểu diễn IQR trên biểu đồ hộp (box plot).*
 
 ![Hai phân phối có cùng trung bình nhưng độ phân tán khác nhau]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_spread_same_mean_diff_sd.png)
 
-*Hình 2a: Hai tập dữ liệu có cùng trung bình xấp xỉ như nhau nhưng mức độ phân tán rất khác.*
+*Hình 2a: Hai tập dữ liệu có trung bình gần như bằng nhau nhưng độ phân tán khác nhau rõ rệt.*
 
 ![Box plot thể hiện IQR và outlier]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_boxplot_iqr_outliers.png)
 
-*Hình 2b: Box plot cho thấy hộp chứa 50% dữ liệu ở giữa, trung vị nằm trong hộp, còn các điểm đỏ là outlier tiềm năng theo quy tắc $$1.5 \times \text{IQR}$$.*
+*Hình 2b: Biểu đồ hộp hiển thị phần hộp chứa 50% dữ liệu ở giữa, đường trung vị bên trong hộp, và các điểm đỏ đánh dấu giá trị ngoại lai tiềm năng theo quy tắc $$1.5 \times \text{IQR}$$.*
 
 ## Trực quan hóa: Nhìn thấy Câu chuyện trong Dữ liệu
 
-Các con số tóm tắt là hữu ích, nhưng chúng không thể thay thế được việc nhìn vào dữ liệu. Trực quan hóa cho phép chúng ta thấy các mẫu hình, xu hướng, và bất thường mà các thống kê tóm tắt có thể bỏ lỡ. Trong phân tích Bayesian, trực quan hóa không chỉ là công cụ khám phá ban đầu, mà còn là cách chúng ta kiểm tra mô hình và truyền đạt kết quả.
+Các chỉ số tóm tắt rất hữu ích nhưng không thể thay thế việc quan sát trực tiếp dữ liệu. Trực quan hóa giúp phát hiện cấu trúc, xu hướng và điểm bất thường mà các con số tóm tắt dễ bỏ sót. Trong phân tích Bayesian, biểu đồ vừa phục vụ bước khám phá ban đầu, vừa hỗ trợ kiểm tra mô hình và trình bày kết quả.
 
 ### Histogram: Ước lượng Phân phối
 
-**Histogram** là một trong những công cụ trực quan hóa cơ bản nhất. Nó chia dữ liệu thành các khoảng (bins) và đếm số lượng quan sát trong mỗi khoảng. Chiều cao của mỗi thanh tỷ lệ với tần số (hoặc mật độ) của dữ liệu trong khoảng đó.
+**Histogram** chia miền dữ liệu thành các khoảng (bin) và đếm số quan sát rơi vào từng khoảng, với chiều cao mỗi cột tỷ lệ với tần số hoặc mật độ trong khoảng đó.
 
-Histogram có thể được xem như một ước lượng thô của hàm mật độ xác suất. Khi số lượng dữ liệu tăng và độ rộng của bins giảm, histogram tiến gần đến PDF thực sự của phân phối. Đây là ý tưởng đằng sau **ước lượng mật độ kernel** (kernel density estimation), một kỹ thuật tinh vi hơn để ước lượng PDF từ dữ liệu.
-
-Một câu hỏi quan trọng khi vẽ histogram là: nên sử dụng bao nhiêu bins? Quá ít bins sẽ làm mất chi tiết, trong khi quá nhiều bins sẽ tạo ra nhiễu. Không có câu trả lời hoàn hảo, nhưng các quy tắc như quy tắc Sturges ($$k = \lceil \log_2 n \rceil + 1$$) hoặc quy tắc Scott có thể cung cấp điểm khởi đầu tốt.
+Có thể xem histogram như một ước lượng thô của hàm mật độ xác suất (PDF). Khi cỡ mẫu tăng và độ rộng khoảng giảm, histogram tiến gần tới PDF thực của phân phối — đây cũng là nền tảng của **ước lượng mật độ hạt nhân** (kernel density estimation, KDE). Khi vẽ histogram, việc chọn số lượng bin rất quan trọng: quá ít bin làm mất chi tiết hình dạng, còn quá nhiều bin dễ gây nhiễu. Các quy tắc kinh nghiệm như quy tắc Sturges ($$k = \lceil \log_2 n \rceil + 1$$) hoặc quy tắc Scott thường là điểm khởi đầu hợp lý.
 
 ### Box Plot: Tóm tắt Năm Số
 
-**Box plot** (biểu đồ hộp) là một cách trực quan hóa năm thống kê tóm tắt quan trọng: giá trị nhỏ nhất, Q1, trung vị, Q3, và giá trị lớn nhất. Hộp chứa 50% dữ liệu ở giữa (từ Q1 đến Q3), đường trong hộp là trung vị, và các "râu" (whiskers) kéo dài đến các giá trị cực đoan (thường là $$1.5 \times \text{IQR}$$ từ các cạnh của hộp). Các điểm nằm ngoài râu được vẽ riêng như outliers tiềm năng.
+**Box plot** (biểu đồ hộp) trực quan hóa năm mốc tóm tắt: giá trị nhỏ nhất, Q1, trung vị, Q3 và giá trị lớn nhất. Phần hộp bao phủ 50% dữ liệu ở giữa (từ Q1 đến Q3), vạch ngang trong hộp là trung vị, còn hai râu (whiskers) kéo dài tới các quan sát cực trị trong ngưỡng (thường tối đa $$1.5 \times \text{IQR}$$ tính từ hai cạnh hộp); những điểm vượt ngoài ngưỡng được vẽ riêng như giá trị ngoại lai tiềm năng.
 
-Box plot đặc biệt hữu ích để so sánh nhiều nhóm. Chúng ta có thể vẽ nhiều box plots cạnh nhau để so sánh phân phối của các nhóm khác nhau, giúp phát hiện sự khác biệt về vị trí trung tâm, độ phân tán, và độ lệch.
+Biểu đồ hộp đặc biệt tiện lợi khi so sánh nhiều nhóm song song, giúp nhận ra nhanh sự khác biệt về vị trí trung tâm, độ phân tán và độ lệch giữa các nhóm.
 
 ### Scatter Plot: Khám phá Mối quan hệ
 
-Khi chúng ta có hai biến, **scatter plot** (biểu đồ phân tán) cho phép chúng ta thấy mối quan hệ giữa chúng. Mỗi điểm đại diện cho một quan sát, với tọa độ x và y tương ứng với giá trị của hai biến.
-
-Scatter plot giúp chúng ta trả lời các câu hỏi như: Hai biến có tương quan không? Mối quan hệ có tuyến tính hay phi tuyến? Có outliers hoặc nhóm riêng biệt nào không? Những câu hỏi này rất quan trọng trong phân tích Bayesian, vì chúng hướng dẫn chúng ta trong việc lựa chọn mô hình phù hợp.
+Với hai biến số, **scatter plot** (biểu đồ phân tán) biểu diễn mỗi quan sát bằng một điểm có tọa độ $$(x, y)$$. Biểu đồ này giúp kiểm tra hai biến có tương quan hay không, quan hệ có dạng tuyến tính hay phi tuyến, và dữ liệu có giá trị ngoại lai hay tách thành nhiều cụm riêng biệt hay không — những thông tin trực tiếp định hướng việc chọn mô hình Bayesian.
 
 ## Tương quan: Đo lường Mối quan hệ Tuyến tính
 
-Khi chúng ta quan sát mối quan hệ giữa hai biến trong scatter plot, chúng ta thường muốn định lượng mức độ mạnh của mối quan hệ đó. **Hệ số tương quan Pearson** cung cấp một thước đo cho mối quan hệ tuyến tính:
+Để định lượng độ mạnh của mối quan hệ tuyến tính thấy trên biểu đồ phân tán, ta dùng **hệ số tương quan Pearson**:
 
 $$r = \frac{\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum_{i=1}^{n} (x_i - \bar{x})^2} \sqrt{\sum_{i=1}^{n} (y_i - \bar{y})^2}}$$
 
-Hệ số tương quan luôn nằm giữa -1 và 1. Giá trị $$r = 1$$ chỉ ra mối quan hệ tuyến tính dương hoàn hảo, $$r = -1$$ chỉ ra mối quan hệ tuyến tính âm hoàn hảo, và $$r = 0$$ chỉ ra không có mối quan hệ tuyến tính.
+Hệ số $$r$$ luôn nằm trong đoạn $$[-1, 1]$$: $$r = 1$$ ứng với quan hệ tuyến tính dương hoàn hảo, $$r = -1$$ ứng với quan hệ tuyến tính âm hoàn hảo, và $$r = 0$$ cho thấy không có quan hệ tuyến tính.
 
-Tuy nhiên, cần cẩn thận khi diễn giải tương quan. Đầu tiên, tương quan chỉ đo lường mối quan hệ **tuyến tính**. Hai biến có thể có mối quan hệ phi tuyến mạnh nhưng tương quan bằng không. Thứ hai, **tương quan không ngụ ý nhân quả**. Việc hai biến tương quan không có nghĩa là một biến gây ra biến kia; có thể có một biến thứ ba ẩn ảnh hưởng đến cả hai, hoặc mối quan hệ có thể là ngẫu nhiên.
+Cần lưu ý hai điểm quan trọng khi diễn giải tương quan. Thứ nhất, hệ số Pearson chỉ đo lường quan hệ **tuyến tính**: hai biến có thể liên hệ phi tuyến rất chặt nhưng vẫn có $$r \approx 0$$. Thứ hai, **tương quan không đồng nghĩa với nhân quả**: hai biến tương quan có thể cùng chịu ảnh hưởng từ một biến ẩn thứ ba hoặc chỉ trùng hợp ngẫu nhiên.
 
-*Cách đọc hình: Ba hình dưới đây tách riêng từng kiểu quan hệ để bạn thấy vì sao một hệ số tương quan duy nhất có thể che khuất nhiều điều quan trọng.*
+*Cách đọc hình: Ba hình dưới đây tách riêng từng dạng quan hệ để cho thấy vì sao một hệ số tương quan duy nhất có thể che khuất cấu trúc thật của dữ liệu.*
 
 ![Quan hệ tuyến tính dương trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_linear.png)
 
-*Hình 3a: Quan hệ tuyến tính dương là trường hợp Pearson $$r$$ mô tả khá tốt.*
+*Hình 3a: Với quan hệ tuyến tính dương, hệ số Pearson $$r$$ phản ánh khá sát xu hướng dữ liệu.*
 
 ![Quan hệ phi tuyến trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_nonlinear.png)
 
-*Hình 3b: Quan hệ phi tuyến có thể rất rõ bằng mắt nhưng Pearson $$r$$ lại đánh giá thấp.*
+*Hình 3b: Quan hệ phi tuyến rất rõ trên biểu đồ nhưng lại bị hệ số Pearson $$r$$ đánh giá thấp.*
 
 ![Tương quan do nhóm ẩn trong scatter plot]({{ site.baseurl }}/img/chapter_img/chapter00/descriptive_correlation_hidden_groups.png)
 
-*Hình 3c: Tương quan có thể xuất hiện do một biến nhóm ẩn tạo ra, nên ta luôn nên nhìn biểu đồ trước khi tin vào một hệ số tóm tắt.*
+*Hình 3c: Tương quan tổng thể có thể phát sinh do cấu trúc nhóm ẩn, nên luôn cần quan sát biểu đồ trước khi tin vào một con số tóm tắt.*
 
-Trong phân tích Bayesian, chúng ta thường mô hình hóa tương quan một cách rõ ràng thông qua các tham số trong mô hình. Ví dụ, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ mã hóa mối quan hệ giữa biến dự đoán và biến phản hồi, và chúng ta có thể định lượng sự không chắc chắn về mối quan hệ này thông qua phân phối posterior của $$\beta$$.
+Trong phân tích Bayesian, mối quan hệ giữa các biến thường được mô hình hóa tường minh qua tham số mô hình. Chẳng hạn, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ biểu diễn mối liên hệ giữa biến giải thích và biến phản hồi, còn phân phối hậu nghiệm của $$\beta$$ định lượng độ bất định quanh ước lượng đó.
 
 ## Video tham khảo
 
-- [StatQuest: Histograms, Clearly Explained](https://www.youtube.com/watch?v=qBigTkBLU6g) — StatQuest with Josh Starmer, English. **xem trước**. Xem để thấy histogram là cách kể hình dạng dữ liệu trước khi tính một con số tóm tắt, đúng tinh thần mở đầu của bài.
-- [Finding mean, median, and mode | Descriptive statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=k3aKKasOmIw) — Khan Academy, English. Xem cách trung bình, trung vị và yếu vị trả lời những câu hỏi khác nhau, hỗ trợ phần thống kê vị trí.
-- [Pearson's Correlation, Clearly Explained!!!](https://www.youtube.com/watch?v=xZ_z8KWkhXE) — StatQuest with Josh Starmer, English. Xem hệ số tương quan Pearson và giới hạn của nó, dùng cho đoạn bài đo mối quan hệ tuyến tính.
+- [StatQuest: Histograms, Clearly Explained](https://www.youtube.com/watch?v=qBigTkBLU6g) — StatQuest with Josh Starmer, English. **Xem trước.** Giải thích cách dùng histogram để quan sát hình dạng phân phối trước khi tóm tắt bằng số liệu.
+- [Finding mean, median, and mode | Descriptive statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=k3aKKasOmIw) — Khan Academy, English. Phân biệt vai trò của trung bình, trung vị và yếu vị (mode) trong thống kê vị trí.
+- [Pearson's Correlation, Clearly Explained!!!](https://www.youtube.com/watch?v=xZ_z8KWkhXE) — StatQuest with Josh Starmer, English. Trình bày ý nghĩa và giới hạn của hệ số tương quan Pearson.
 
 ## Bài tập
 
-**Bài tập 1: Tính toán Thống kê Mô tả.** Cho dữ liệu điểm thi của 20 sinh viên: [45, 67, 78, 82, 55, 90, 88, 76, 95, 20, 85, 72, 68, 91, 77, 83, 65, 89, 74, 80]. (a) Tính trung bình, trung vị, và mode. (b) Tính phương sai, độ lệch chuẩn, và IQR. (c) Phát hiện outliers sử dụng quy tắc $$1.5 \times \text{IQR}$$. (d) Giải thích tại sao trung bình và trung vị khác nhau, và điều này nói gì về phân phối của dữ liệu.
+**Bài tập 1: Tính toán Thống kê Mô tả.** Cho dữ liệu điểm thi của 20 sinh viên: [45, 67, 78, 82, 55, 90, 88, 76, 95, 20, 85, 72, 68, 91, 77, 83, 65, 89, 74, 80]. (a) Tính trung bình, trung vị và yếu vị (mode). (b) Tính phương sai, độ lệch chuẩn và IQR. (c) Xác định giá trị ngoại lai theo quy tắc $$1.5 \times \text{IQR}$$. (d) Giải thích vì sao trung bình và trung vị khác nhau, và điều này phản ánh gì về hình dạng phân phối dữ liệu.
 
-**Bài tập 2: Trực quan hóa và Diễn giải.** Sử dụng Python để sinh 1000 quan sát từ: (a) Phân phối chuẩn $$\mathcal{N}(50, 10^2)$$. (b) Phân phối log-normal với tham số $$\mu = 3.5, \sigma = 0.5$$. Với mỗi phân phối, vẽ histogram và box plot, tính trung bình và trung vị, và giải thích sự khác biệt giữa hai phân phối dựa trên các thống kê và biểu đồ.
+**Bài tập 2: Trực quan hóa và Diễn giải.** Dùng Python sinh 1000 quan sát từ: (a) phân phối chuẩn $$\mathcal{N}(50, 10^2)$$, và (b) phân phối log-normal với tham số $$\mu = 3.5, \sigma = 0.5$$. Với mỗi phân phối, vẽ histogram và box plot, tính trung bình và trung vị, rồi giải thích sự khác biệt giữa hai phân phối dựa trên thống kê và biểu đồ.
 
-**Bài tập 3: Tương quan và Nhân quả.** Xem xét hai biến: (a) Doanh số bán kem và số vụ đuối nước (cả hai đều cao vào mùa hè). (b) Số giờ học và điểm thi. Đối với mỗi cặp, thảo luận: Chúng có tương quan không? Có mối quan hệ nhân quả không? Nếu có tương quan nhưng không có nhân quả, giải thích tại sao. Điều này dạy chúng ta gì về việc diễn giải tương quan?
+**Bài tập 3: Tương quan và Nhân quả.** Xét hai cặp biến: (a) doanh số bán kem và số vụ đuối nước (cả hai cùng tăng vào mùa hè), và (b) số giờ học và điểm thi. Với mỗi cặp, hãy phân tích: hai biến có tương quan không, có quan hệ nhân quả không, và nếu có tương quan mà không có nhân quả thì nguyên nhân là gì? Điều này rút ra lưu ý gì khi diễn giải tương quan?
 
-**Bài tập 4: Phát hiện Phân phối.** Cho ba tập dữ liệu (bạn có thể sinh chúng hoặc sử dụng dữ liệu thực): (a) Chiều cao của người trưởng thành. (b) Số lượng email nhận được mỗi ngày. (c) Thời gian chờ đợi giữa các cuộc gọi đến tổng đài. Với mỗi tập dữ liệu, vẽ histogram, tính các thống kê mô tả, và đề xuất một phân phối xác suất phù hợp (chuẩn, Poisson, mũ, v.v.). Giải thích lý do lựa chọn của bạn.
+**Bài tập 4: Nhận diện Phân phối.** Xét ba tập dữ liệu (có thể tự mô phỏng hoặc lấy dữ liệu thực): (a) chiều cao người trưởng thành, (b) số email nhận được mỗi ngày, và (c) thời gian chờ giữa hai cuộc gọi đến tổng đài. Với mỗi tập dữ liệu, vẽ histogram, tính thống kê mô tả và đề xuất một phân phối xác suất phù hợp (chuẩn, Poisson, mũ, v.v.), kèm giải thích.
 
-**Bài tập 5: Khám phá Dữ liệu Thực tế.** Tải một dataset thực tế (ví dụ: Iris, Boston Housing, hoặc bất kỳ dataset nào bạn quan tâm). Thực hiện phân tích khám phá dữ liệu đầy đủ: (a) Tính các thống kê mô tả cho tất cả các biến số. (b) Vẽ histogram và box plot cho các biến liên tục. (c) Vẽ scatter plot và tính tương quan cho các cặp biến. (d) Phát hiện và thảo luận về outliers. (e) Viết một đoạn văn ngắn tóm tắt những gì bạn học được về dữ liệu, và đề xuất các phân phối và mô hình có thể phù hợp cho phân tích Bayesian.
+**Bài tập 5: Khám phá Dữ liệu Thực tế.** Chọn một tập dữ liệu thực tế (ví dụ Iris, Boston Housing hoặc tập dữ liệu bạn quan tâm) và thực hiện phân tích khám phá: (a) tính thống kê mô tả cho các biến số, (b) vẽ histogram và box plot cho các biến liên tục, (c) vẽ scatter plot và tính tương quan theo cặp biến, (d) phát hiện và bàn luận về giá trị ngoại lai, (e) viết một đoạn tóm tắt ngắn về đặc điểm dữ liệu cùng đề xuất phân phối và mô hình phù hợp cho phân tích Bayesian.
 
 ## Tài liệu Tham khảo
 

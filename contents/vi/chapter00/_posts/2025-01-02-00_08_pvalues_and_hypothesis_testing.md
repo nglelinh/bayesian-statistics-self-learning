@@ -12,53 +12,45 @@ lesson_type: required
 
 ## Mục tiêu Học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu sâu sắc về **p-values** và kiểm định giả thuyết theo quan điểm tần suất (**frequentist**), không chỉ để áp dụng chúng một cách đúng đắn, mà quan trọng hơn là để nhận ra những hạn chế cơ bản của chúng. Bạn sẽ hiểu tại sao **p-values** thường bị hiểu sai, tại sao chúng không trả lời những câu hỏi mà nhà khoa học thực sự quan tâm, và tại sao **phương pháp Bayesian cung cấp một cách tiếp cận tự nhiên và mạch lạc hơn cho suy diễn thống kê**. Bài học này không phải để bạn từ bỏ hoàn toàn kiểm định giả thuyết, mà để bạn sử dụng nó một cách có phê phán và biết khi nào nên tìm kiếm các phương pháp thay thế.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ bản chất của **p-value** và kiểm định giả thuyết theo quan điểm tần suất (**frequentist**), không chỉ để áp dụng đúng mà quan trọng hơn là nhận diện rõ các giới hạn của chúng. Bạn sẽ hiểu vì sao p-value thường bị diễn giải sai, vì sao nó không trả lời trực tiếp nhiều câu hỏi mà nhà khoa học quan tâm, và vì sao **phương pháp Bayesian mang lại cách tiếp cận tự nhiên và mạch lạc hơn cho suy diễn thống kê**. Mục tiêu không phải loại bỏ hoàn toàn kiểm định giả thuyết, mà là sử dụng nó một cách phản biện và biết khi nào cần chuyển sang công cụ khác.
 
 ## Giới thiệu: Tại sao chúng ta cần nói về P-values?
 
-Trong khóa học về phân tích dữ liệu Bayesian, tại sao chúng ta lại dành thời gian để thảo luận về p-values và kiểm định giả thuyết theo quan điểm tần suất? Câu trả lời có ba lý do quan trọng.
+Trong một khóa học về phân tích dữ liệu Bayesian, việc tìm hiểu kỹ p-value và kiểm định giả thuyết theo trường phái tần suất xuất phát từ ba lý do chính:
 
-1. Thứ nhất, p-values và kiểm định giả thuyết vẫn là công cụ thống kê được sử dụng rộng rãi nhất trong nghiên cứu khoa học hiện đại. Cho dù bạn làm việc trong y học, tâm lý học, kinh tế học, hay bất kỳ lĩnh vực nào khác, bạn sẽ gặp p-values trong hầu hết các bài báo khoa học mà bạn đọc. Để có thể đọc và đánh giá nghiên cứu một cách phê phán, bạn cần hiểu p-values thực sự có nghĩa là gì.
-
-2. Thứ hai, p-values là một trong những khái niệm thống kê bị hiểu sai nhiều nhất, ngay cả trong cộng đồng nghiên cứu. Nhiều nhà khoa học sử dụng p-values hàng ngày nhưng không thực sự hiểu chúng đo lường điều gì. Việc hiểu đúng về p-values sẽ giúp bạn tránh những sai lầm phổ biến và nguy hiểm này.
-
-3. Thứ ba, và quan trọng nhất, việc hiểu rõ những hạn chế của p-values sẽ giúp bạn đánh giá cao sức mạnh và sự tự nhiên của phương pháp Bayesian. Khi bạn thấy rõ những gì p-values không thể cho bạn biết, bạn sẽ hiểu tại sao phương pháp Bayesian lại cung cấp một cách tiếp cận tốt hơn cho nhiều câu hỏi nghiên cứu.
-
-Bài học này sẽ xây dựng một sự hiểu biết sâu sắc về p-values, không phải để bạn trở thành người ủng hộ chúng, mà để bạn có thể sử dụng chúng một cách có trách nhiệm và biết khi nào nên vượt qua chúng.
+1. **Tính phổ biến trong nghiên cứu**: p-value và kiểm định giả thuyết vẫn là công cụ được dùng rộng rãi nhất trong y học, tâm lý học, kinh tế học và nhiều ngành khoa học khác. Để đọc và đánh giá bài báo khoa học một cách phản biện, cần hiểu chính xác ý nghĩa của p-value.
+2. **Tần suất hiểu sai rất cao**: p-value thuộc nhóm khái niệm thống kê dễ bị hiểu nhầm nhất, kể cả trong cộng đồng nghiên cứu. Nắm đúng định nghĩa giúp tránh các diễn giải sai lệch.
+3. **Động lực cho cách tiếp cận Bayesian**: thấy rõ những câu hỏi mà p-value không trả lời được sẽ giúp bạn hiểu vì sao khuôn khổ Bayesian phù hợp và trực tiếp hơn trong nhiều bài toán suy luận.
 
 ## Khung Kiểm định Giả thuyết: Một Cách Tiếp cận Gián tiếp
 
-Kiểm định giả thuyết theo quan điểm tần suất dựa trên một logic gián tiếp có phần phản trực giác. Thay vì trực tiếp đánh giá bằng chứng cho giả thuyết mà chúng ta quan tâm, chúng ta xây dựng một **giả thuyết không** (null hypothesis), thường ký hiệu là $$H_0$$, đại diện cho trạng thái "không có hiệu ứng" hoặc "không có sự khác biệt", và sau đó cố gắng tìm bằng chứng chống lại nó.
+Kiểm định giả thuyết theo quan điểm tần suất dựa trên lập luận gián tiếp. Thay vì đánh giá trực tiếp bằng chứng ủng hộ giả thuyết ta quan tâm, ta đặt ra một **giả thuyết không** (null hypothesis), ký hiệu $$H_0$$, biểu thị trạng thái "không có hiệu ứng" hay "không có sự khác biệt", rồi tìm bằng chứng chống lại nó.
 
-Ví dụ, giả sử chúng ta muốn biết liệu một loại thuốc mới có hiệu quả trong việc giảm huyết áp hay không. Thay vì trực tiếp hỏi "Thuốc này có hiệu quả không?" hoặc "Hiệu quả của thuốc là bao nhiêu?", khung kiểm định giả thuyết yêu cầu chúng ta thiết lập:
+Ví dụ, khi đánh giá một loại thuốc mới có làm giảm huyết áp hay không, thay vì hỏi trực tiếp "thuốc có hiệu quả không?" hoặc "mức giảm huyết áp là bao nhiêu?", khung kiểm định giả thuyết yêu cầu thiết lập: **giả thuyết không** $$H_0$$ (thuốc không có tác dụng, mức thay đổi huyết áp trung bình bằng 0) và **giả thuyết thay thế** $$H_1$$ (thuốc có tác dụng, mức thay đổi trung bình khác 0).
 
-**Giả thuyết không** $$H_0$$ nói rằng thuốc không có hiệu quả, tức sự thay đổi trung bình trong huyết áp bằng 0, trong khi **giả thuyết thay thế** $$H_1$$ nói rằng thuốc có hiệu quả, tức sự thay đổi trung bình đó khác 0.
+Logic kiểm định là: **nếu dữ liệu quan sát được rất khó xảy ra trong trường hợp $$H_0$$ đúng, thì ta có bằng chứng chống lại $$H_0$$ và có thể "bác bỏ" nó**. Lập luận này tương tự phép chứng minh phản chứng trong toán học, nhưng có một điểm khác biệt cơ bản: **trong thống kê, ta không chứng minh tuyệt đối được điều gì mà chỉ định lượng mức độ bất thường của dữ liệu dưới $$H_0$$**.
 
-Logic của kiểm định giả thuyết là: **nếu dữ liệu quan sát được sẽ rất bất thường nếu $$H_0$$ đúng, thì chúng ta có bằng chứng chống lại $$H_0$$ và có thể "bác bỏ" nó**. Đây là một hình thức suy luận bằng phản chứng (proof by contradiction), tương tự như trong toán học, nhưng với một điểm khác biệt quan trọng: **trong thống kê, chúng ta không bao giờ có thể chứng minh điều gì một cách chắc chắn, chỉ có thể nói về mức độ bất thường của dữ liệu**.
-
-Cách tiếp cận gián tiếp này có nguồn gốc lịch sử từ công trình của Ronald Fisher, Jerzy Neyman, và Egon Pearson vào đầu thế kỷ 20. Nó được thiết kế để cung cấp một quy trình khách quan cho việc đưa ra quyết định dựa trên dữ liệu. Tuy nhiên, như chúng ta sẽ thấy, tính khách quan này đi kèm với một cái giá đắt.
+Khung tư duy này được phát triển từ đầu thế kỷ 20 bởi Ronald Fisher, Jerzy Neyman và Egon Pearson nhằm tạo ra một quy trình ra quyết định khách quan từ dữ liệu. Tuy nhiên, như ta sẽ thấy dưới đây, cách tiếp cận gián tiếp này cũng kéo theo nhiều giới hạn thực tế.
 
 ## P-value: Định nghĩa Chính xác
 
-P-value là khái niệm trung tâm của kiểm định giả thuyết, nhưng cũng là một trong những khái niệm bị hiểu sai nhiều nhất trong thống kê. Hãy bắt đầu với định nghĩa chính xác:
+Hãy bắt đầu bằng định nghĩa chuẩn xác của p-value:
 
-**P-value là xác suất quan sát được dữ liệu ít nhất bất thường như dữ liệu thực tế (hoặc bất thường hơn), với điều kiện giả thuyết không là đúng.**
+**P-value là xác suất quan sát được dữ liệu ít nhất bất thường như dữ liệu thực tế (hoặc cực đoan hơn), với điều kiện giả thuyết không $$H_0$$ là đúng.**
 
-Hình thức hóa, nếu $$T$$ là một **thống kê kiểm định** (test statistic) được tính từ dữ liệu, và $$t_{obs}$$ là giá trị quan sát được của nó, thì:
+Một cách hình thức, nếu $$T$$ là **thống kê kiểm định** (test statistic) tính từ dữ liệu và $$t_{obs}$$ là giá trị quan sát được, thì (với kiểm định một phía bên phải):
 
 $$p = P(T \geq t_{obs} \mid H_0)$$
 
-(đối với kiểm định một phía, hoặc công thức tương tự cho kiểm định hai phía)
+(và công thức tương tự cho kiểm định một phía bên trái hoặc hai phía).
 
-Hãy phân tích cẩn thận định nghĩa này, vì mỗi phần đều quan trọng:
+Định nghĩa này gồm ba thành phần then chốt:
 
-1. **"Xác suất"**: P-value là một xác suất, nằm giữa 0 và 1.
+1. **"Xác suất"**: p-value là một số nằm trong đoạn $$[0, 1]$$.
+2. **"Ít nhất bất thường như dữ liệu thực tế"**: không chỉ tính xác suất của riêng kết quả quan sát được mà gộp cả mọi kết quả cực đoan hơn theo hướng kiểm định.
+3. **"Với điều kiện giả thuyết không là đúng"**: p-value **không** phải xác suất để $$H_0$$ đúng, mà là xác suất của dữ liệu **nếu** $$H_0$$ đúng.
 
-2. **"Quan sát được dữ liệu ít nhất bất thường như..."**: Chúng ta không chỉ tính xác suất của dữ liệu chính xác mà chúng ta quan sát, mà là xác suất của dữ liệu này cộng với tất cả các kết quả "cực đoan hơn" theo một hướng nhất định.
-
-3. **"Với điều kiện giả thuyết không là đúng"**: Đây là phần quan trọng nhất và thường bị bỏ qua. P-value **không** cho bạn biết xác suất giả thuyết không đúng. Nó cho bạn biết xác suất của dữ liệu **nếu** giả thuyết không đúng.
-
-Sự khác biệt giữa $$P(\text{dữ liệu} \mid H_0)$$ và $$P(H_0 \mid \text{dữ liệu})$$ là cơ bản. P-value cho bạn cái trước, nhưng những gì nhà khoa học thực sự muốn biết thường là cái sau. Đây chính là một trong những nguồn gốc chính của sự hiểu sai về p-values.
+Sự khác biệt giữa $$P(\text{dữ liệu} \mid H_0)$$ và $$P(H_0 \mid \text{dữ liệu})$$ mang tính nền tảng. P-value cho biết vế thứ nhất, trong khi câu hỏi nhà nghiên cứu thường muốn trả lời lại là vế thứ hai.
 
 ---
 
@@ -66,82 +58,63 @@ Sự khác biệt giữa $$P(\text{dữ liệu} \mid H_0)$$ và $$P(H_0 \mid \te
 
 #### (1) "Giả thuyết không là đúng" ($$H_0$$ đúng)
 
-Điều kiện này cực kỳ quan trọng:
-
-Ta luôn **giả sử trước** rằng $$H_0$$ đúng, rồi mới hỏi: nếu $$H_0$$ đúng thật, thì dữ liệu có dạng như thế này có hiếm không?
-
-**Ví dụ:**
-
-Nếu $$H_0$$ nói rằng thuốc không có tác dụng nhưng dữ liệu lại cho cảm giác thuốc có vẻ hiệu quả, thì p-value sẽ trả lời câu hỏi: nếu thuốc thật sự không có tác dụng, xác suất để vẫn quan sát được kết quả ít nhất cực đoan như thế này là bao nhiêu?
+Ta luôn **giả định trước** rằng $$H_0$$ đúng, rồi hỏi: nếu $$H_0$$ đúng thật, xác suất để dữ liệu xuất hiện cực đoan như thế này có thấp không? Ví dụ, nếu $$H_0$$ cho rằng thuốc không có tác dụng nhưng dữ liệu lại có vẻ khả quan, p-value trả lời câu hỏi: "nếu thuốc thực sự vô tác dụng, xác suất để vẫn quan sát được kết quả ít nhất cực đoan như vậy là bao nhiêu?"
 
 #### (2) "Dữ liệu bất thường" nghĩa là gì?
 
-"Bất thường" không phải là cảm tính, mà được định nghĩa bằng:
-
-"Bất thường" ở đây không phải là cảm giác chủ quan mà được định nghĩa thông qua **thống kê kiểm định** như z-score, t-statistic hay $$\chi^2$$, tức mức độ mà dữ liệu nằm xa kỳ vọng dưới $$H_0$$.
-
-Ví dụ, trung bình mẫu có thể lệch xa trung bình dự kiến theo $$H_0$$, sai khác giữa hai nhóm có thể rất lớn, hoặc giá trị thống kê có thể rơi sâu vào phần đuôi của phân phối; càng xa tâm kỳ vọng, dữ liệu càng cực đoan và vì thế càng bị xem là bất thường.
+"Bất thường" không phải cảm nhận chủ quan mà được đo bằng **thống kê kiểm định** như z-score, t-statistic hay $$\chi^2$$, phản ánh khoảng cách giữa dữ liệu quan sát và kỳ vọng dưới $$H_0$$. Trung bình mẫu lệch càng xa giá trị giả thuyết, chênh lệch giữa hai nhóm càng lớn, hay giá trị thống kê rơi càng sâu vào phần đuôi phân phối, dữ liệu càng được xem là cực đoan.
 
 #### (3) "Ít nhất bất thường như dữ liệu quan sát (hoặc bất thường hơn)"
 
-Đây là phần hay bị bỏ sót nhưng rất quan trọng.
+P-value **không chỉ** tính xác suất của đúng giá trị quan sát được, mà tính:
 
-P-value **không chỉ** tính xác suất đúng bằng kết quả bạn thấy, mà tính:
+> Xác suất của kết quả quan sát được **và toàn bộ các kết quả còn cực đoan hơn**.
 
-> Xác suất của kết quả quan sát được **và tất cả kết quả còn cực đoan hơn**.
-
-**Ví dụ (kiểm định hai phía):** giả sử ta quan sát được $$z = 2.1$$. Khi đó, p-value là $$P(\mid Z \mid \geq 2.1 \mid H_0 \text{ đúng})$$. Nói cách khác, ta không chỉ tính xác suất đúng bằng 2.1, mà còn tính cả những giá trị như 2.5, 3.0, và mọi giá trị còn cực đoan hơn ở cả hai phía.
+**Ví dụ (kiểm định hai phía):** nếu quan sát được $$z = 2.1$$, p-value là $$P(\mid Z \mid \geq 2.1 \mid H_0 \text{ đúng})$$, tức gộp cả các giá trị như 2.5, 3.0 và mọi giá trị cực đoan hơn ở cả hai phía đuôi phân phối.
 
 ---
 
 ### Những điều P-value KHÔNG nói
 
-Đây là điểm rất hay bị hiểu sai: p-value không phải là xác suất giả thuyết không sai, không phải là xác suất kết quả "do ngẫu nhiên", và cũng không phải là thước đo trực tiếp của kích thước hiệu ứng.
+P-value không phải xác suất giả thuyết không đúng hay sai, không phải xác suất kết quả "xảy ra do ngẫu nhiên", và cũng không đo trực tiếp kích thước hiệu ứng.
 
-**Ví dụ sai:**
+**Diễn giải sai:**
 
-> "P-value = 0.03 nghĩa là 97% khả năng $$H_0$$ sai" ❌
+> "P-value = 0.03 nghĩa là 97% khả năng $$H_0$$ sai." ❌
 
 **Diễn giải đúng:**
 
-> "Nếu $$H_0$$ đúng, thì xác suất quan sát được dữ liệu ít nhất cực đoan như thế này là 3%." ✅
+> "Nếu $$H_0$$ đúng, xác suất quan sát được dữ liệu ít nhất cực đoan như thế này là 3%." ✅
 
 ---
 
 ### Diễn giải trực giác ngắn gọn
 
-Một cách nói đơn giản nhưng đúng bản chất:
+Có thể gói gọn bản chất của p-value như sau: **p-value đo mức độ khó tin của dữ liệu dưới giả định rằng $$H_0$$ đúng.** Khi p-value nhỏ, dữ liệu khó phù hợp với $$H_0$$ nên ta có lý do nghi ngờ $$H_0$$; khi p-value lớn, dữ liệu chưa mâu thuẫn mạnh với $$H_0$$.
 
-**P-value đo mức độ "khó tin" của dữ liệu, nếu ta tin rằng giả thuyết không là đúng.**
-
-Nói gọn hơn, p nhỏ cho thấy dữ liệu khó xảy ra nếu $$H_0$$ đúng nên ta có lý do để nghi ngờ $$H_0$$ hơn, còn p lớn chỉ cho thấy dữ liệu không mâu thuẫn mạnh với $$H_0$$.
 ---
 
 ## Một Ví dụ Cụ thể: Kiểm định T
 
-Hãy xem xét một ví dụ cụ thể để làm rõ các khái niệm. Giả sử chúng ta muốn kiểm tra liệu chiều cao trung bình của nam sinh viên tại một trường đại học có khác 170 cm hay không. Chúng ta đo chiều cao của 25 nam sinh viên được chọn ngẫu nhiên và tính được chiều cao trung bình mẫu là $$\bar{x} = 172.5$$ cm với độ lệch chuẩn mẫu $$s = 6.2$$ cm.
+Giả sử ta muốn kiểm tra chiều cao trung bình của nam sinh viên tại một trường đại học có khác 170 cm hay không. Ta đo ngẫu nhiên 25 nam sinh viên và thu được trung bình mẫu $$\bar{x} = 172.5$$ cm, độ lệch chuẩn mẫu $$s = 6.2$$ cm.
 
-Chúng ta thiết lập $$H_0$$ rằng $$\mu = 170$$, tức chiều cao trung bình quần thể là 170 cm, còn $$H_1$$ rằng $$\mu \neq 170$$, tức chiều cao trung bình quần thể khác 170 cm.
-
-Thống kê kiểm định t được tính bằng:
+Ta thiết lập $$H_0: \mu = 170$$ (chiều cao trung bình quần thể bằng 170 cm) và $$H_1: \mu \neq 170$$ (chiều cao trung bình quần thể khác 170 cm). Thống kê kiểm định t là:
 
 $$t = \frac{\bar{x} - \mu_0}{s / \sqrt{n}} = \frac{172.5 - 170}{6.2 / \sqrt{25}} = \frac{2.5}{1.24} \approx 2.02$$
 
-Với $$n - 1 = 24$$ bậc tự do, chúng ta tra bảng phân phối t (hoặc sử dụng phần mềm) để tìm xác suất quan sát được giá trị $$\mid t \mid \geq 2.02$$ nếu $$H_0$$ đúng. Giả sử chúng ta tìm được $$p \approx 0.054$$.
+Với $$n - 1 = 24$$ bậc tự do, xác suất để quan sát được $$\mid t \mid \geq 2.02$$ nếu $$H_0$$ đúng (kiểm định hai phía) là $$p \approx 0.054$$.
 
 ![Minh họa P-value trong Kiểm định T]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_ttest_illustration.png)
 
-*Cách đọc hình: Hình này minh họa minh họa p-value trong kiểm định t. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+*Cách đọc hình: Đường cong biểu diễn phân phối t dưới giả thuyết $$H_0$$; phần diện tích tô màu ở hai đuôi ngoài mốc $$\pm 2.02$$ chính là p-value hai phía.*
 
-Điều này có nghĩa là gì? Nó có nghĩa là **nếu** chiều cao trung bình quần thể thực sự là 170 cm, và chúng ta lặp lại thí nghiệm này nhiều lần (mỗi lần lấy 25 mẫu ngẫu nhiên), thì khoảng 5.4% số lần chúng ta sẽ quan sát được một giá trị t có độ lớn ít nhất bằng 2.02.
+Kết quả này có nghĩa là: **nếu** chiều cao trung bình quần thể thực sự bằng 170 cm và ta lặp lại việc lấy mẫu ngẫu nhiên 25 người rất nhiều lần, khoảng 5.4% số lần sẽ cho trị tuyệt đối của thống kê t lớn hơn hoặc bằng 2.02. Nó không cho biết xác suất $$H_0$$ đúng là 5.4%, không cho biết xác suất $$H_1$$ đúng là 94.6%, và cũng không nói lên độ lớn hay ý nghĩa thực tiễn của sự chênh lệch.
 
-P-value này không cho biết xác suất $$H_0$$ đúng là 5.4%, cũng không cho biết xác suất $$H_1$$ đúng là 94.6%; nó cũng không nói trực tiếp kích thước hiệu ứng là bao nhiêu hay nghiên cứu có ý nghĩa thực tiễn đến mức nào.
+### Cách đọc hợp lý hơn cho $$p = 0.054$$
 
-### Một cách đọc đúng hơn cho $$p = 0.054$$
+Con số $$0.054$$ nằm rất sát ngưỡng 0.05. Thay vì coi đó là "thất bại hoàn toàn", cách hiểu hợp lý hơn là dữ liệu tạo ra mức mâu thuẫn vừa phải với $$H_0$$ nhưng chưa đủ mạnh theo quy ước truyền thống. Một nghiên cứu tương tự cho ra $$p = 0.049$$ thực chất mang lượng bằng chứng gần như tương đương.
 
-Con số $$0.054$$ thường gây khó chịu vì nó nằm rất sát ngưỡng 0.05. Cách đọc hợp lý hơn không phải là “thất bại hoàn toàn”, mà là: dữ liệu này tạo ra mức mâu thuẫn vừa phải với $$H_0$$, nhưng chưa đủ mạnh để đưa ra kết luận dứt khoát theo quy ước truyền thống. Nếu một nghiên cứu gần như y hệt cho ra $$p=0.049$$, về mặt bằng chứng thực tế hai kết quả này gần như không khác nhau.
-
-Đây là lý do nhiều nhà thống kê khuyên không nên biến p-value thành công tắc nhị phân kiểu bật/tắt. Điều quan trọng hơn là nhìn thêm effect size, confidence interval, chất lượng thiết kế nghiên cứu, và bối cảnh khoa học của câu hỏi đang xét.
+Vì thế, nhiều nhà thống kê khuyến nghị không dùng p-value như một công tắc bật/tắt nhị phân, mà cần đọc song song với kích thước hiệu ứng (effect size), khoảng tin cậy (confidence interval), chất lượng thiết kế nghiên cứu và bối cảnh khoa học.
 
 ### Thử nghiệm: p-value dưới H₀ phân phối đều
 
@@ -154,23 +127,19 @@ Lặp thí nghiệm nhiều lần: khi không có hiệu ứng vẫn có ~5% th�
 
 ## Ngưỡng Ý nghĩa và Quyết định: Quy ước $$\alpha = 0.05$$
 
-Trong thực hành, p-values thường được so sánh với một **mức ý nghĩa** (significance level) được định trước, thường ký hiệu là $$\alpha$$. Quy ước phổ biến nhất là $$\alpha = 0.05$$, mặc dù các giá trị khác như 0.01 hoặc 0.10 cũng đôi khi được sử dụng.
+Trong thực hành, p-value thường được so sánh với **mức ý nghĩa** (significance level) định trước $$\alpha$$, phổ biến nhất là $$\alpha = 0.05$$ (đôi khi là 0.01 hoặc 0.10).
 
-#### Quy tắc quyết định đơn giản:
+#### Quy tắc quyết định truyền thống:
 
-Theo quy ước truyền thống, nếu $$p < \alpha$$ thì ta bác bỏ $$H_0$$ và gọi kết quả là "có ý nghĩa thống kê"; còn nếu $$p \geq \alpha$$ thì ta không bác bỏ $$H_0$$ và nói rằng chưa có đủ bằng chứng thống kê để chống lại nó.
+Nếu $$p < \alpha$$, ta bác bỏ $$H_0$$ và gọi kết quả là "có ý nghĩa thống kê"; nếu $$p \geq \alpha$$, ta không bác bỏ $$H_0$$ và kết luận chưa đủ bằng chứng chống lại nó.
 
-Trong ví dụ chiều cao của chúng ta, với $$p = 0.054$$ và $$\alpha = 0.05$$, chúng ta sẽ **không bác bỏ** $$H_0$$. Chúng ta sẽ kết luận rằng không có đủ bằng chứng để nói rằng chiều cao trung bình khác 170 cm.
-
-Nhưng hãy dừng lại và suy nghĩ về điều này. Sự khác biệt giữa $$p = 0.054$$ và $$p = 0.049$$ là rất nhỏ, nhưng nó dẫn đến hai kết luận hoàn toàn khác nhau theo quy tắc này. Một kết quả được gọi là "có ý nghĩa thống kê" và kết quả kia "không có ý nghĩa thống kê", mặc dù bằng chứng trong dữ liệu gần như giống hệt nhau.
+Trong ví dụ chiều cao ở trên, với $$p = 0.054$$ và $$\alpha = 0.05$$, ta **không bác bỏ** $$H_0$$. Tuy nhiên, hãy chú ý rằng chênh lệch giữa $$p = 0.054$$ và $$p = 0.049$$ rất nhỏ nhưng lại dẫn đến hai kết luận trái ngược nhau ("không có ý nghĩa thống kê" so với "có ý nghĩa thống kê"), dù bằng chứng thực tế trong dữ liệu gần như giống nhau.
 
 ![Hai p-value gần nhau nhưng rơi hai phía của ngưỡng alpha]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_misinterpretation_alpha_cutoff.png)
 
-*Hình minh họa: Khi p-value nằm sát ngưỡng $$\alpha = 0.05$$, một khác biệt rất nhỏ vẫn có thể bị diễn giải thành hai kết luận nhị phân hoàn toàn khác nhau.*
+*Hình minh họa: Khi p-value nằm sát ngưỡng $$\alpha = 0.05$$, một chênh lệch rất nhỏ vẫn bị chia cắt thành hai kết luận nhị phân trái ngược.*
 
-Hơn nữa, ngưỡng $$\alpha = 0.05$$ là hoàn toàn tùy ý. Ronald Fisher, người đề xuất nó, đã nói rõ ràng rằng đây chỉ là một hướng dẫn thô, không phải là một quy tắc cứng nhắc. Tuy nhiên, trong thực hành, nó đã trở thành một ngưỡng ma thuật mà các nhà nghiên cứu cảm thấy phải vượt qua để công bố kết quả của họ.
-
-Việc dựa vào ngưỡng cứng nhắc này có nhiều hậu quả tiêu cực: nó khuyến khích "p-hacking", đẩy người nghiên cứu vào tư duy nhị phân kiểu "có hay không có hiệu ứng", và làm lu mờ những thông tin quan trọng hơn như kích thước hiệu ứng hay độ không chắc chắn của ước lượng.
+Bản thân ngưỡng $$\alpha = 0.05$$ cũng mang tính quy ước. Ronald Fisher khi đề xuất mốc này đã nhấn mạnh đây chỉ là chỉ dẫn sơ bộ, không phải ranh giới cứng nhắc. Việc áp dụng máy móc ngưỡng 0.05 dẫn đến nhiều hệ quả tiêu cực: khuyến khích hành vi "p-hacking", thu hẹp suy luận thành câu hỏi nhị phân "có hay không có hiệu ứng", và làm mờ đi kích thước hiệu ứng cùng độ bất định của ước lượng.
 
 ### Thử nghiệm: công suất của t-test
 
@@ -182,113 +151,101 @@ Công suất tăng theo cỡ mẫu và độ lớn hiệu ứng; tại d = 0 nó
 
 ## Những Hiểu lầm Phổ biến về P-values
 
-P-values là một trong những khái niệm bị hiểu sai nhiều nhất trong khoa học. Hãy xem xét một số hiểu lầm phổ biến:
+Dưới đây là năm hiểu lầm hay gặp nhất khi diễn giải p-value:
 
 ### Hiểu lầm 1: P-value là xác suất giả thuyết không đúng
 
-**Sai:** "$$p = 0.03$$ có nghĩa là có 3% cơ hội giả thuyết không đúng."
+**Sai:** "$$p = 0.03$$ nghĩa là có 3% khả năng giả thuyết không đúng."
 
-**Đúng:** P-value là xác suất của dữ liệu (hoặc dữ liệu cực đoan hơn) **nếu** giả thuyết không là đúng, chứ không phải xác suất giả thuyết không là đúng sau khi đã thấy dữ liệu.
-
-Sự khác biệt này là cơ bản. Để tính $$P(H_0 \mid \text{dữ liệu})$$, chúng ta cần định lý Bayes và một prior probability cho $$H_0$$, điều mà khung tần suất không cung cấp.
+**Đúng:** P-value là xác suất của dữ liệu (hoặc dữ liệu cực đoan hơn) **khi giả định** $$H_0$$ đúng, không phải xác suất $$H_0$$ đúng sau khi đã quan sát dữ liệu. Muốn tính $$P(H_0 \mid \text{dữ liệu})$$, cần dùng định lý Bayes cùng xác suất tiên nghiệm cho $$H_0$$ — điều mà khung tần suất không cung cấp.
 
 ![P-value không phải là xác suất của giả thuyết không]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_misinterpretation_h0_probability.png)
 
-*Hình minh họa: P-value sống ở hướng $$P(\text{dữ liệu} \mid H_0)$$, không phải ở hướng $$P(H_0 \mid \text{dữ liệu})$$ mà nhà nghiên cứu thường thực sự muốn biết.*
+*Hình minh họa: P-value phản ánh xác suất theo chiều $$P(\text{dữ liệu} \mid H_0)$$, chứ không phải chiều $$P(H_0 \mid \text{dữ liệu})$$ mà nhà nghiên cứu thường muốn biết.*
 
 ### Hiểu lầm 2: $$1 - p$$ là xác suất giả thuyết thay thế đúng
 
-**Sai:** "Nếu $$p = 0.05$$, thì có 95% cơ hội giả thuyết thay thế đúng."
+**Sai:** "Nếu $$p = 0.05$$ thì có 95% khả năng giả thuyết thay thế đúng."
 
-**Đúng:** P-value không cho bạn bất kỳ thông tin trực tiếp nào về xác suất của giả thuyết thay thế.
+**Đúng:** P-value không cung cấp thông tin trực tiếp về xác suất của giả thuyết thay thế.
 
 ### Hiểu lầm 3: P-value nhỏ có nghĩa là hiệu ứng lớn
 
-**Sai:** "$$p < 0.001$$ có nghĩa là hiệu ứng rất mạnh."
+**Sai:** "$$p < 0.001$$ nghĩa là hiệu ứng rất mạnh."
 
-**Đúng:** P-value nhỏ chỉ có nghĩa là dữ liệu sẽ rất bất thường nếu $$H_0$$ đúng. Điều này có thể xảy ra do hiệu ứng lớn, nhưng cũng có thể xảy ra do kích thước mẫu lớn với hiệu ứng nhỏ.
-
-Ví dụ, với mẫu đủ lớn, bạn có thể tìm thấy sự khác biệt "có ý nghĩa thống kê" giữa hai nhóm ngay cả khi sự khác biệt thực tế là rất nhỏ và không có ý nghĩa thực tiễn.
+**Đúng:** P-value nhỏ chỉ cho thấy dữ liệu rất khó xảy ra nếu $$H_0$$ đúng. Điều đó có thể đến từ hiệu ứng lớn, nhưng cũng có thể đến từ cỡ mẫu rất lớn kèm một hiệu ứng thực tế cực nhỏ và không có ý nghĩa ứng dụng.
 
 ![P-value nhỏ không đồng nghĩa hiệu ứng lớn]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_misinterpretation_small_p_large_effect.png)
 
-*Hình minh họa: Một p-value rất nhỏ vẫn có thể đến từ hiệu ứng nhỏ nếu cỡ mẫu đủ lớn.*
+*Hình minh họa: Một p-value rất nhỏ vẫn có thể xuất hiện với hiệu ứng nhỏ nếu cỡ mẫu đủ lớn.*
 
 ![Mẫu lớn với hiệu ứng nhỏ]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_large_n_small_effect.png)
 
-*Hình 1a: Với mẫu lớn (n = 1000), một hiệu ứng rất nhỏ vẫn có thể cho p-value "có ý nghĩa thống kê".*
+*Hình 1a: Với cỡ mẫu lớn (n = 1000), một hiệu ứng rất nhỏ vẫn có thể đạt ngưỡng "có ý nghĩa thống kê".*
 
 ![Mẫu nhỏ với hiệu ứng lớn]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_small_n_large_effect.png)
 
-*Hình 1b: Với mẫu nhỏ (n = 20), ngay cả hiệu ứng lớn cũng có thể không đạt ngưỡng ý nghĩa thống kê. P-value vì thế không đo trực tiếp kích thước hiệu ứng.*
+*Hình 1b: Với cỡ mẫu nhỏ (n = 20), ngay cả hiệu ứng lớn cũng có thể không đạt ngưỡng ý nghĩa thống kê. Vì vậy, p-value không đo trực tiếp kích thước hiệu ứng.*
 
 ### Hiểu lầm 4: P-value lớn chứng minh giả thuyết không đúng
 
-**Sai:** "$$p = 0.80$$ có nghĩa là giả thuyết không đúng."
+**Sai:** "$$p = 0.80$$ chứng tỏ giả thuyết không là đúng."
 
-**Đúng:** P-value lớn chỉ có nghĩa là dữ liệu không bất thường nếu $$H_0$$ đúng. Điều này có thể xảy ra vì $$H_0$$ thực sự đúng, hoặc vì chúng ta không có đủ dữ liệu để phát hiện sự khác biệt.
-
-"Không có bằng chứng về hiệu ứng" không giống với "bằng chứng về không có hiệu ứng".
+**Đúng:** P-value lớn chỉ cho biết dữ liệu không mâu thuẫn mạnh với $$H_0$$. Nguyên nhân có thể là $$H_0$$ thực sự đúng, hoặc đơn giản là cỡ mẫu quá nhỏ chưa đủ công suất để phát hiện sự khác biệt. "Không có bằng chứng về hiệu ứng" không đồng nghĩa với "bằng chứng rằng không có hiệu ứng".
 
 ![P-value lớn không chứng minh giả thuyết không đúng]({{ site.baseurl }}/img/chapter_img/chapter00/pvalue_misinterpretation_large_p_h0_true.png)
 
-*Hình minh họa: P-value lớn chỉ cho thấy dữ liệu không mâu thuẫn mạnh với $$H_0$$; nó không chứng minh $$H_0$$ là đúng.*
+*Hình minh họa: P-value lớn chỉ cho thấy dữ liệu không mâu thuẫn mạnh với $$H_0$$, chứ không chứng minh $$H_0$$ đúng.*
 
 ### Hiểu lầm 5: P-value đo lường khả năng tái lập
 
-**Sai:** "$$p = 0.05$$ có nghĩa là nếu tôi lặp lại nghiên cứu, tôi có 95% cơ hội tìm thấy kết quả tương tự."
+**Sai:** "$$p = 0.05$$ nghĩa là nếu lặp lại nghiên cứu, tôi có 95% cơ hội thu được kết quả tương tự."
 
-**Đúng:** P-value không cho bạn biết gì về khả năng tái lập. Trên thực tế, nghiên cứu cho thấy nhiều kết quả với $$p$$ gần 0.05 không thể tái lập được.
+**Đúng:** P-value không đo khả năng tái lập. Trên thực tế, nhiều kết quả có $$p$$ sát mốc 0.05 rất khó tái lập trong các nghiên cứu độc lập sau đó.
 
 ## Vấn đề với Kiểm định Giả thuyết Không
 
-Một vấn đề cơ bản với khung kiểm định giả thuyết là bản thân giả thuyết không thường không hợp lý. Trong nhiều tình huống thực tế, chúng ta biết trước rằng giả thuyết không chắc chắn là sai.
+Một hạn chế nền tảng của kiểm định giả thuyết là bản thân $$H_0$$ dạng điểm thường khó xảy ra chính xác trong thực tế. Chẳng hạn, giả thuyết "thuốc A và thuốc B có hiệu quả hoàn toàn bằng nhau" gần như chắc chắn sai ở mức sai khác rất nhỏ. Khi cỡ mẫu đủ lớn, ta gần như luôn bác bỏ được $$H_0$$, nhưng kết quả đó không cho biết sự khác biệt có đủ lớn để có giá trị lâm sàng hay thực tiễn hay không.
 
-Ví dụ, xem xét giả thuyết không "thuốc A và thuốc B có hiệu quả hoàn toàn giống nhau". Trong thực tế, hai loại thuốc khác nhau gần như chắc chắn sẽ có một số khác biệt, dù nhỏ đến mức nào, trong hiệu quả của chúng. Với mẫu đủ lớn, chúng ta luôn có thể bác bỏ giả thuyết không này, nhưng điều đó không cho chúng ta biết điều gì hữu ích về việc liệu sự khác biệt có đủ lớn để quan trọng hay không.
-
-Câu hỏi thực sự mà nhà khoa học quan tâm thường không phải là "Có hiệu ứng nào không?" mà là "Hiệu ứng lớn như thế nào?" và "Chúng ta có chắc chắn về ước lượng của mình đến mức nào?" Kiểm định giả thuyết không trả lời những câu hỏi này một cách trực tiếp.
+Câu hỏi trọng tâm của nghiên cứu khoa học thường là "hiệu ứng lớn đến mức nào?" và "độ bất định của ước lượng ra sao?" — những câu hỏi mà kiểm định giả thuyết không trả lời trực tiếp.
 
 ![Một ví dụ false positive khi kiểm định lặp lại nhiều lần]({{ site.baseurl }}/img/chapter_img/chapter00/multiple_testing_false_positive_example.png)
 
-*Hình 2a: Khi thực hiện nhiều kiểm định độc lập, chỉ riêng ngẫu nhiên cũng có thể tạo ra một vài kết quả vượt ngưỡng ý nghĩa thống kê.*
+*Hình 2a: Khi thực hiện nhiều kiểm định độc lập, chỉ riêng biến động ngẫu nhiên cũng dễ tạo ra một vài kết quả vượt ngưỡng ý nghĩa thống kê.*
 
 ![Phân phối p-value gần uniform khi H0 đúng]({{ site.baseurl }}/img/chapter_img/chapter00/multiple_testing_uniform_pvalues.png)
 
-*Hình 2b: Khi $$H_0$$ đúng, p-values có xu hướng trải gần đều trên $$[0,1]$$, nên việc thử đủ nhiều lần gần như đảm bảo sẽ có vài p-value rất nhỏ.*
+*Hình 2b: Khi $$H_0$$ đúng, p-value phân bố đều trên đoạn $$[0,1]$$, nên thử đủ nhiều kiểm định gần như chắc chắn sẽ xuất hiện vài p-value nhỏ.*
 
-Đó chính là bản chất của vấn đề multiple testing (p-hacking): khi thực hiện 20 kiểm định độc lập với $$\alpha = 0.05$$, ngay cả khi $$H_0$$ đúng cho tất cả các kiểm định (không có hiệu ứng thực sự), chúng ta vẫn kỳ vọng tìm thấy khoảng 1 kết quả "có ý nghĩa thống kê" do ngẫu nhiên. Đây là một trong những nguồn gốc chính của khủng hoảng tái lập trong khoa học.
+Đây chính là bản chất của bài toán kiểm định bội (multiple testing) và p-hacking: khi chạy 20 kiểm định độc lập với $$\alpha = 0.05$$ dù tất cả $$H_0$$ đều đúng, ta vẫn kỳ vọng gặp trung bình 1 kết quả "có ý nghĩa thống kê" thuần túy do ngẫu nhiên. Đây là một nguyên nhân lớn dẫn đến khủng hoảng tái lập trong khoa học.
 
 ## Khoảng Tin cậy: Một Cách Tiếp cận Tốt hơn?
 
-Một phương pháp tần suất thay thế cho kiểm định giả thuyết là **khoảng tin cậy** (confidence intervals). Khoảng tin cậy 95% cho một tham số $$\theta$$ là một khoảng $$[L, U]$$ được xây dựng từ dữ liệu sao cho:
+Một công cụ tần suất khác thường được khuyến nghị thay cho việc chỉ báo cáo p-value là **khoảng tin cậy** (confidence interval). Khoảng tin cậy 95% cho tham số $$\theta$$ là một khoảng ngẫu nhiên $$[L, U]$$ xây dựng từ dữ liệu sao cho:
 
 $$P(L \leq \theta \leq U) = 0.95$$
 
-trong đó xác suất được tính trên tất cả các mẫu có thể (với $$\theta$$ cố định).
+trong đó xác suất được tính trên toàn bộ các mẫu lặp lại có thể (với $$\theta$$ là hằng số cố định).
 
-Khoảng tin cậy có vẻ hấp dẫn hơn p-values vì chúng cung cấp thông tin về kích thước hiệu ứng và độ không chắc chắn. Tuy nhiên, chúng vẫn có một vấn đề diễn giải cơ bản.
+Khoảng tin cậy cung cấp thêm thông tin về độ lớn hiệu ứng và độ bất định, nhưng cách diễn giải chuẩn vẫn dễ gây nhầm lẫn:
 
-**Diễn giải đúng:** "Nếu chúng ta lặp lại thí nghiệm nhiều lần và tính khoảng tin cậy 95% mỗi lần, thì 95% các khoảng sẽ chứa giá trị thật của $$\theta$$."
+**Diễn giải đúng:** "Nếu lặp lại quy trình lấy mẫu và dựng khoảng tin cậy 95% rất nhiều lần, thì 95% số khoảng thu được sẽ chứa giá trị thật của $$\theta$$."
 
 ![Nhiều confidence interval qua các lần lặp thí nghiệm]({{ site.baseurl }}/img/chapter_img/chapter00/confidence_interval_repeated_experiments.png)
 
-*Hình 3a: Confidence interval là một phát biểu về thủ tục lặp lại; nhìn trên nhiều thí nghiệm, khoảng 95% các khoảng mới chứa giá trị thật.*
+*Hình 3a: Khoảng tin cậy tần suất là phát biểu về quy trình lặp lại thí nghiệm: trên nhiều lần lặp, khoảng 95% số khoảng chứa giá trị thật.*
 
-**Diễn giải sai (nhưng phổ biến):** "Có 95% cơ hội giá trị thật của $$\theta$$ nằm trong khoảng này."
+**Diễn giải sai (nhưng rất phổ biến):** "Có 95% khả năng giá trị thật của $$\theta$$ nằm trong khoảng cụ thể này."
 
-Sự khác biệt là tinh tế nhưng quan trọng. Trong khung tần suất, $$\theta$$ là một giá trị cố định (dù không biết), không phải một biến ngẫu nhiên, vì vậy không có ý nghĩa khi nói về "xác suất" của nó. Xác suất trong định nghĩa khoảng tin cậy là về các khoảng, không phải về tham số.
-
-Tuy nhiên, những gì nhà khoa học thực sự muốn biết là diễn giải thứ hai: cho dữ liệu cụ thể này, khả năng tham số nằm trong khoảng này là bao nhiêu? Đây chính xác là những gì **khoảng tin cậy Bayesian** (credible intervals) cung cấp.
+Trong khung tần suất, $$\theta$$ là hằng số chưa biết chứ không phải biến ngẫu nhiên, nên xác suất 95% gắn với bản thân quy trình tạo khoảng, không phải với $$\theta$$. Trong khi đó, phát biểu thứ hai — đánh giá trực tiếp xác suất tham số nằm trong một khoảng dựa trên dữ liệu hiện có — lại chính là ý nghĩa của **khoảng tin cậy Bayesian** (credible interval).
 
 ![Một credible interval trên posterior của một thí nghiệm cụ thể]({{ site.baseurl }}/img/chapter_img/chapter00/credible_interval_single_posterior.png)
 
-*Hình 3b: Credible interval là phát biểu trực tiếp trên posterior của thí nghiệm hiện tại, nên ta có thể nói ngay về xác suất tham số nằm trong khoảng đó.*
+*Hình 3b: Khoảng credible được xác định trực tiếp từ phân phối hậu nghiệm của thí nghiệm hiện tại, cho phép phát biểu trực tiếp về xác suất tham số nằm trong khoảng đó.*
 
 ## Tại sao P-values Vẫn Được Sử dụng Rộng rãi?
 
-Với tất cả những vấn đề này, tại sao p-values và kiểm định giả thuyết vẫn chiếm ưu thế trong nghiên cứu khoa học? Lý do đầu tiên là lịch sử và quán tính học thuật: p-values đã được dạy và sử dụng suốt nhiều thập kỷ, nên việc thay đổi thực hành thống kê của cả cộng đồng khoa học diễn ra rất chậm. Lý do thứ hai là tính đơn giản bề ngoài của chúng: chỉ một con số và một quy tắc quyết định tưởng như rõ ràng, dù sự đơn giản đó thực ra che giấu nhiều vấn đề. Lý do thứ ba đến từ cơ chế xuất bản, vì nhiều tạp chí vẫn ưu tiên các kết quả "có ý nghĩa thống kê" với $$p < 0.05$$. Cuối cùng, rất nhiều nhà nghiên cứu chưa được đào tạo đầy đủ về các phương pháp thay thế như Bayesian hoặc các phương pháp thống kê hiện đại khác.
-
-Tuy nhiên, có những dấu hiệu cho thấy điều này đang thay đổi. Nhiều tổ chức thống kê và tạp chí khoa học đã đưa ra các tuyên bố cảnh báo về việc lạm dụng p-values và khuyến khích các phương pháp thay thế.
+Bất chấp các hạn chế trên, p-value vẫn phổ biến vì bốn lý do chính: quán tính lịch sử và giảng dạy kéo dài nhiều thập kỷ; vẻ ngoài đơn giản khi gói gọn phân tích vào một con số và một ngưỡng quyết định; áp lực xuất bản khi nhiều tạp chí vẫn ưu tiên kết quả có $$p < 0.05$$; và việc nhiều nhà nghiên cứu chưa được đào tạo bài bản về các phương pháp thay thế như Bayesian. Dù vậy, xu hướng đang dần thay đổi khi nhiều hiệp hội thống kê và tạp chí khoa học lớn đã lên tiếng cảnh báo việc lạm dụng p-value.
 
 ### Thử nghiệm: khoảng tin cậy và khoảng đáng tin
 
@@ -300,63 +257,50 @@ Lặp thí nghiệm nhiều lần để thấy ý nghĩa tần suất của “9
 
 ## Phương pháp Bayesian: Một Cách Tiếp cận Tự nhiên hơn
 
-Phương pháp Bayesian cung cấp một cách tiếp cận tự nhiên và trực tiếp hơn cho các câu hỏi mà kiểm định giả thuyết cố gắng trả lời. Thay vì hỏi "Dữ liệu này sẽ bất thường như thế nào nếu giả thuyết không đúng?", phương pháp Bayesian hỏi "Cho dữ liệu này, niềm tin của chúng ta về tham số nên là gì?"
+Thay vì hỏi gián tiếp "dữ liệu này bất thường đến mức nào nếu $$H_0$$ đúng?", phương pháp Bayesian hỏi trực tiếp: "với dữ liệu quan sát được, niềm tin của ta về tham số nên phân bố ra sao?" Quy trình gồm ba bước:
 
-Trong khung Bayesian:
-
-1. **Chúng ta bắt đầu với một prior**: Trước khi thấy dữ liệu, chúng ta mã hóa niềm tin ban đầu của mình về tham số trong một phân phối prior $$P(\theta)$$.
-
-2. **Chúng ta cập nhật với dữ liệu**: Sử dụng định lý Bayes, chúng ta kết hợp prior với likelihood của dữ liệu để có được phân phối posterior:
+1. **Thiết lập phân phối tiên nghiệm (prior)**: mã hóa hiểu biết ban đầu về tham số bằng phân phối $$P(\theta)$$.
+2. **Cập nhật bằng dữ liệu qua định lý Bayes**: kết hợp prior với hàm hợp lý (likelihood) để thu được phân phối hậu nghiệm (posterior):
 
 $$P(\theta \mid \text{dữ liệu}) = \frac{P(\text{dữ liệu} \mid \theta) \cdot P(\theta)}{P(\text{dữ liệu})}$$
 
-3. **Chúng ta diễn giải posterior trực tiếp**: Phân phối posterior cho chúng ta biết trực tiếp về xác suất của các giá trị khác nhau của $$\theta$$ cho dữ liệu quan sát được.
+3. **Diễn giải trực tiếp phân phối hậu nghiệm**: đọc ngay xác suất của các vùng giá trị tham số dựa trên dữ liệu đã quan sát.
 
-Ví dụ, thay vì nói "chúng ta bác bỏ giả thuyết rằng hiệu quả thuốc là 0 với $$p = 0.03$$", chúng ta có thể nói "cho dữ liệu này, có 95% xác suất posterior rằng hiệu quả thuốc nằm giữa 2 và 8 mmHg". Câu sau trả lời trực tiếp câu hỏi mà nhà khoa học quan tâm.
-
-Hơn nữa, phương pháp Bayesian cho phép ta tính xác suất của các giả thuyết khác nhau, kết hợp thông tin từ nhiều nghiên cứu một cách tự nhiên, đưa ra dự đoán cho dữ liệu tương lai, và định lượng độ không chắc chắn theo cách trực tiếp, dễ diễn giải hơn.
+Ví dụ, thay vì phát biểu "bác bỏ giả thuyết hiệu quả thuốc bằng 0 với $$p = 0.03$$", ta có thể nói trực tiếp: "với dữ liệu này, có 95% xác suất hậu nghiệm rằng hiệu quả giảm huyết áp của thuốc nằm trong khoảng từ 2 đến 8 mmHg". Ngoài ra, khung Bayesian còn cho phép tính xác suất giữa các giả thuyết, kết hợp thông tin từ nhiều nghiên cứu, và đưa ra phân phối dự đoán cho dữ liệu mới.
 
 ## Khi nào Nên Sử dụng P-values?
 
-Mặc dù có nhiều hạn chế, p-values không phải lúc nào cũng vô dụng. Chúng vẫn có thể hữu ích như một công cụ sàng lọc nhanh để phát hiện những mẫu dữ liệu đáng được điều tra thêm, như một cách kiểm tra sơ bộ mức phù hợp của mô hình, hoặc trong những bối cảnh thật sự cần quyết định nhị phân rõ ràng, chẳng hạn một số bài toán kiểm soát chất lượng.
-
-Tuy nhiên, ngay cả trong những trường hợp này, p-values nên được sử dụng với sự hiểu biết đầy đủ về hạn chế của chúng và nên được bổ sung bằng các thước đo khác như kích thước hiệu ứng và khoảng tin cậy.
+Dù có nhiều giới hạn, p-value vẫn hữu ích trong một số trường hợp: làm công cụ sàng lọc nhanh để phát hiện tín hiệu đáng xem xét thêm, kiểm tra sơ bộ độ phù hợp mô hình, hoặc hỗ trợ một số bài toán ra quyết định nhị phân có quy trình rõ ràng (như kiểm soát chất lượng). Ngay cả khi đó, p-value cần đi kèm kích thước hiệu ứng và khoảng tin cậy.
 
 ## Hướng dẫn Thực hành
 
-Nếu buộc phải sử dụng hoặc diễn giải p-values, bạn không nên chỉ báo cáo riêng p-value mà cần đi kèm kích thước hiệu ứng, khoảng tin cậy, và kích thước mẫu; cũng không nên dùng một ngưỡng cứng nhắc để biến việc suy luận thành quyết định nhị phân đơn giản. Điều quan trọng là luôn nhớ p-value là $$P(\text{dữ liệu} \mid H_0)$$ chứ không phải $$P(H_0 \mid \text{dữ liệu})$$, đồng thời phải đặt kết quả vào bối cảnh của kích thước hiệu ứng, ý nghĩa thực tiễn, và chất lượng thiết kế nghiên cứu. Trong nhiều câu hỏi, Bayesian hoặc các phương pháp dựa trên ước lượng sẽ là lựa chọn phù hợp hơn.
+Khi sử dụng hoặc đọc p-value, không nên báo cáo p-value đơn lẻ mà luôn kèm kích thước hiệu ứng, khoảng tin cậy và cỡ mẫu; tránh biến ngưỡng $$\alpha$$ thành ranh giới nhị phân cứng nhắc; luôn nhớ p-value là $$P(\text{dữ liệu} \mid H_0)$$ chứ không phải $$P(H_0 \mid \text{dữ liệu})$$; và luôn đặt kết quả trong bối cảnh thực tiễn cùng chất lượng thiết kế nghiên cứu. Với nhiều câu hỏi ước lượng và ra quyết định, tiếp cận Bayesian sẽ rõ ràng và phù hợp hơn.
 
 ## Ý nghĩa cho Phân tích Dữ liệu Bayesian
 
-Bài học này về p-values và kiểm định giả thuyết không chỉ là một bài tập học thuật. Nó cung cấp động lực quan trọng cho việc học phương pháp Bayesian.
-
-Khi bạn tiến xa hơn trong khóa học này, bạn sẽ thấy rằng phương pháp Bayesian giải quyết nhiều vấn đề mà chúng ta đã thảo luận. Nó cho phép ta nói trực tiếp về xác suất của giả thuyết và tham số, cung cấp các ước lượng độ không chắc chắn dễ diễn giải hơn, không phụ thuộc vào những ngưỡng quyết định tùy ý, hỗ trợ việc kết hợp kiến thức trước đó một cách tự nhiên, và chuyển trọng tâm từ kiểm định đơn thuần sang ước lượng và dự đoán.
-
-Tuy nhiên, phương pháp Bayesian không phải là một giải pháp ma thuật cho tất cả các vấn đề. Nó có những thách thức riêng của nó, đặc biệt là về mặt tính toán và việc lựa chọn prior. Nhưng đối với nhiều câu hỏi nghiên cứu, nó cung cấp một cách tiếp cận tự nhiên và mạch lạc hơn so với kiểm định giả thuyết truyền thống.
+Hiểu rõ kiểm định giả thuyết tần suất là nền tảng giúp bạn đánh giá đúng vai trò của thống kê Bayesian. Phương pháp Bayesian chuyển trọng tâm từ kiểm định nhị phân sang ước lượng tham số và dự đoán, cho phép diễn giải trực tiếp xác suất của tham số, không phụ thuộc ngưỡng cắt tùy ý và tích hợp minh bạch thông tin tiên nghiệm. Tất nhiên, thống kê Bayesian không phải lời giải vạn năng — nó có những thách thức riêng về tính toán và lựa chọn prior — nhưng đem lại một khung suy luận nhất quán cho rất nhiều bài toán thực tế.
 
 ## Video tham khảo
 
-- [p-values: What they are and how to interpret them](https://www.youtube.com/watch?v=vemZtEM63GY) — StatQuest with Josh Starmer, English. **xem trước**. Xem định nghĩa p-value như xác suất của dữ liệu cực đoan dưới giả thuyết không, đúng phần bài muốn đọc p-value đúng cách.
-- [Hypothesis Testing and The Null Hypothesis, Clearly Explained!!!](https://www.youtube.com/watch?v=0oc49DyA3hU) — StatQuest with Josh Starmer, English. Xem vai trò của giả thuyết không và quy trình kiểm định, hỗ trợ nửa đầu bài về khung frequentist.
-- [Confidence Intervals, Clearly Explained!!!](https://www.youtube.com/watch?v=TqOeMYtOc1w) — StatQuest with Josh Starmer, English. Xem khoảng tin cậy frequentist được xây từ mẫu lặp lại thế nào, để đối chiếu với phần bài nói về giới hạn của diễn giải này.
+- [p-values: What they are and how to interpret them](https://www.youtube.com/watch?v=vemZtEM63GY) — StatQuest with Josh Starmer, English. **Xem trước.** Giải thích rõ định nghĩa p-value như xác suất của dữ liệu cực đoan dưới giả thuyết không.
+- [Hypothesis Testing and The Null Hypothesis, Clearly Explained!!!](https://www.youtube.com/watch?v=0oc49DyA3hU) — StatQuest with Josh Starmer, English. Trình bày vai trò của giả thuyết không và quy trình kiểm định tần suất.
+- [Confidence Intervals, Clearly Explained!!!](https://www.youtube.com/watch?v=TqOeMYtOc1w) — StatQuest with Josh Starmer, English. Minh họa cách dựng khoảng tin cậy qua lấy mẫu lặp lại để đối chiếu với khoảng credible Bayesian.
 
 ## Bài tập
 
-**Bài tập 1: Diễn giải P-values.** Một nghiên cứu so sánh hai phương pháp giảng dạy và báo cáo "$$p = 0.04$$". Viết ba diễn giải: (a) một diễn giải đúng về ý nghĩa của p-value này, (b) một diễn giải sai phổ biến, và (c) giải thích tại sao diễn giải sai là sai và tại sao sự khác biệt quan trọng.
+**Bài tập 1: Diễn giải P-value.** Một nghiên cứu so sánh hai phương pháp giảng dạy và báo cáo "$$p = 0.04$$". Hãy viết: (a) một diễn giải đúng về p-value này, (b) một diễn giải sai phổ biến, và (c) giải thích vì sao cách hiểu sai đó không hợp lệ và gây hậu quả gì.
 
-**Bài tập 2: Kích thước Mẫu và P-values.** Giả sử chiều cao trung bình của nam giới trong quần thể A là 175.0 cm và trong quần thể B là 175.5 cm (sự khác biệt rất nhỏ). Độ lệch chuẩn trong cả hai quần thể là 7 cm. (a) Sử dụng công thức kiểm định t cho hai mẫu, ước lượng kích thước mẫu cần thiết để có $$p < 0.05$$ khi so sánh hai quần thể này. (b) Thảo luận về ý nghĩa của kết quả này: liệu "ý nghĩa thống kê" có tương đương với "ý nghĩa thực tiễn" không?
+**Bài tập 2: Kích thước Mẫu và P-value.** Giả sử chiều cao trung bình của nam giới ở quần thể A là 175.0 cm và ở quần thể B là 175.5 cm (chênh lệch rất nhỏ), với độ lệch chuẩn ở cả hai quần thể là 7 cm. (a) Dựa vào kiểm định t hai mẫu, ước lượng cỡ mẫu cần thiết để thu được $$p < 0.05$$. (b) Thảo luận xem "ý nghĩa thống kê" có đồng nghĩa với "ý nghĩa thực tiễn" hay không.
 
 ![Tính toán Kích thước Mẫu]({{ site.baseurl }}/img/chapter_img/chapter00/sample_size_calculation.png)
 
-*Cách đọc hình: Hình này minh họa tính toán kích thước mẫu. Hãy đọc nhãn trục/chú thích trước, rồi so sánh xu hướng chính giữa các đường, cột hoặc nhóm điểm thay vì chỉ nhìn từng điểm lẻ.*
+*Hình minh họa: Đường cong thể hiện mối quan hệ giữa kích thước hiệu ứng và cỡ mẫu cần thiết ở mức power = 0.80, $$\alpha = 0.05$$. Để phát hiện hiệu ứng nhỏ (0.5 cm) cần hơn 1,500 người mỗi nhóm, trong khi hiệu ứng lớn (2.0 cm) chỉ cần khoảng 100 người mỗi nhóm.*
 
-Hình trên cho thấy mối quan hệ giữa kích thước hiệu ứng và kích thước mẫu cần thiết để phát hiện hiệu ứng đó với power = 0.80 và α = 0.05. Lưu ý rằng để phát hiện hiệu ứng nhỏ (0.5 cm), chúng ta cần mẫu rất lớn (hơn 1500 người mỗi nhóm), trong khi hiệu ứng lớn (2.0 cm) chỉ cần khoảng 100 người mỗi nhóm.
+**Bài tập 3: Kiểm định bội và P-hacking.** Một nhà nghiên cứu kiểm tra riêng rẽ 20 biến khác nhau xem có tương quan với biến kết quả hay không, mỗi kiểm định dùng mức $$\alpha = 0.05$$. (a) Nếu thực tế không biến nào có tương quan và các kiểm định độc lập, xác suất tìm thấy ít nhất một kết quả "có ý nghĩa thống kê" là bao nhiêu? (b) Đây là ví dụ của vấn đề gì? (c) Đề xuất hai biện pháp khắc phục.
 
-**Bài tập 3: P-hacking.** Một nhà nghiên cứu thu thập dữ liệu về 20 biến khác nhau và kiểm định xem mỗi biến có tương quan với một kết quả quan tâm hay không, sử dụng $$\alpha = 0.05$$ cho mỗi kiểm định. (a) Nếu thực tế không có biến nào tương quan với kết quả, xác suất tìm thấy ít nhất một kết quả "có ý nghĩa thống kê" là bao nhiêu? (b) Đây là một ví dụ của vấn đề gì? (c) Đề xuất hai cách để giải quyết vấn đề này.
+**Bài tập 4: So sánh Khoảng Tin cậy và Khoảng Credible.** Giả sử bạn đọc hai báo cáo: (a) "Khoảng tin cậy 95% cho hiệu quả thuốc là [2, 8] mmHg" (tần suất), và (b) "Khoảng credible 95% cho hiệu quả thuốc là [2, 8] mmHg" (Bayesian). Hãy viết diễn giải chuẩn xác cho từng báo cáo và giải thích khoảng nào trả lời trực tiếp hơn câu hỏi của bác sĩ.
 
-**Bài tập 4: So sánh Khoảng Tin cậy và Credible Intervals.** Giả sử bạn đọc hai báo cáo: (a) "Khoảng tin cậy 95% cho hiệu quả thuốc là [2, 8] mmHg" (tần suất), và (b) "Khoảng credible 95% cho hiệu quả thuốc là [2, 8] mmHg" (Bayesian). Viết diễn giải chính xác cho mỗi khoảng. Khoảng nào trả lời trực tiếp hơn câu hỏi mà bác sĩ quan tâm? Tại sao?
-
-**Bài tập 5: Nghiên cứu Trường hợp.** Tìm một bài báo khoa học trong lĩnh vực bạn quan tâm sử dụng p-values. (a) Tác giả có diễn giải p-values đúng không? (b) Họ có báo cáo kích thước hiệu ứng và khoảng tin cậy không? (c) Nếu bạn là người phản biện, bạn sẽ đề xuất những cải tiến gì cho phân tích thống kê? (d) Liệu phương pháp Bayesian có phù hợp hơn cho câu hỏi nghiên cứu này không? Tại sao?
+**Bài tập 5: Nghiên cứu Trường hợp.** Tìm một bài báo khoa học trong lĩnh vực bạn quan tâm có sử dụng p-value. (a) Tác giả có diễn giải p-value chính xác không? (b) Bài báo có trình bày kích thước hiệu ứng và khoảng tin cậy không? (c) Nếu làm phản biện, bạn sẽ đề xuất cải thiện phân tích thống kê ra sao? (d) Phương pháp Bayesian có phù hợp hơn cho câu hỏi nghiên cứu đó không và vì sao?
 
 ## Tài liệu Tham khảo
 

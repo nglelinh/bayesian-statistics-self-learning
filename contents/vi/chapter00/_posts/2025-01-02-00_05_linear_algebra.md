@@ -12,30 +12,30 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ hiểu vì sao đại số tuyến tính là hạ tầng toán học của mô hình thống kê Bayes: dữ liệu được biểu diễn dưới dạng vector-ma trận, tham số hồi quy được viết thành toán tử tuyến tính, và nhiều thuật toán suy luận dựa trực tiếp vào các phép biến đổi tuyến tính. Bạn cũng sẽ đọc được ý nghĩa hình học của các công thức thay vì chỉ thao tác ký hiệu.
+Sau bài này, bạn sẽ hiểu vì sao đại số tuyến tính là nền tảng toán học của mô hình thống kê Bayesian: dữ liệu được biểu diễn dưới dạng vector và ma trận, tham số hồi quy được viết thành toán tử tuyến tính, và nhiều thuật toán suy diễn dựa trực tiếp vào các phép biến đổi tuyến tính. Bạn cũng sẽ nắm được ý nghĩa hình học của các phép toán thay vì chỉ thao tác ký hiệu.
 
-## Giới thiệu: từ công thức rời rạc đến cấu trúc tuyến tính
+## Giới thiệu: Từ công thức rời rạc đến cấu trúc tuyến tính
 
-Khi số biến tăng, việc viết mô hình bằng từng phương trình riêng lẻ trở nên khó theo dõi. Đại số tuyến tính giải quyết vấn đề này bằng cách gom các đại lượng vào vector và ma trận, giúp ta nhìn mô hình như một cấu trúc thống nhất. Đây là bước chuyển quan trọng vì hầu hết mô hình Bayes hiện đại (hồi quy tuyến tính, GLM, mô hình phân cấp) đều được hiện thực hiệu quả trên cấu trúc này.
+Khi số biến tăng lên, việc viết mô hình bằng từng phương trình riêng lẻ trở nên rườm rà và khó theo dõi. Đại số tuyến tính giải quyết vấn đề này bằng cách gom các đại lượng vào vector và ma trận, giúp nhìn mô hình như một cấu trúc gọn gàng và thống nhất. Hầu hết mô hình Bayesian hiện đại — từ hồi quy tuyến tính, GLM đến mô hình phân cấp — đều được biểu diễn và tính toán hiệu quả trên nền tảng này.
 
-Về mặt phương pháp luận, bạn có thể xem bài này như phần "ngôn ngữ hình thức" cho các chương mô hình hóa: nếu chương 0.7 cung cấp công cụ lập trình, thì bài này cung cấp khuôn toán học để diễn đạt và suy luận.
+Nếu Bài 0.7 cung cấp công cụ lập trình bằng Python, thì bài học này cung cấp ngôn ngữ toán học tương ứng cho các chương mô hình hóa phía sau.
 
 ## Cầu nối sang suy luận Bayesian
 
-Nhiều biểu thức Bayesian cơ bản có thể viết gọn bằng đại số tuyến tính. Chẳng hạn mô hình hồi quy Gaussian:
+Nhiều mô hình Bayesian cơ bản có thể viết gọn bằng ký hiệu ma trận. Chẳng hạn, mô hình hồi quy Gaussian được viết là:
 
 $$
 \mathbf{y}=\mathbf{X}\boldsymbol{\beta}+\boldsymbol{\epsilon},\qquad
 \boldsymbol{\epsilon}\sim\mathcal{N}(\mathbf{0},\sigma^2\mathbf{I}).
 $$
 
-Biểu diễn này cho phép ta tách rõ ba thành phần: dữ liệu $$\mathbf{X}$$, tham số $$\boldsymbol{\beta}$$, và cấu trúc nhiễu. Khi đi tiếp sang posterior inference, các đối tượng này sẽ xuất hiện lặp lại trong cả công thức lẫn mã tính toán.
+Cách viết này tách rõ ba thành phần: ma trận dữ liệu $$\mathbf{X}$$, vector tham số $$\boldsymbol{\beta}$$ và cấu trúc nhiễu $$\boldsymbol{\epsilon}$$. Khi sang bước suy diễn hậu nghiệm, các đối tượng này sẽ xuất hiện xuyên suốt cả trong công thức lẫn mã tính toán.
 
 ## 1. Vectors (Vectơ)
 
 ### 1.1. Định nghĩa
 
-**Vector** là một mảng số có thứ tự. Có thể biểu diễn điểm trong không gian hoặc hướng.
+**Vector** là một mảng số có thứ tự, có thể dùng để biểu diễn một điểm hoặc một hướng trong không gian.
 
 **Vector cột** (thường dùng):
 
@@ -140,7 +140,7 @@ ax.set_aspect('equal')
 plt.show()
 ```
 
-#### Nhân Scalar
+#### Nhân với số vô hướng (Scalar)
 
 $$c \mathbf{x} = \begin{bmatrix} c x_1 \\ c x_2 \\ \vdots \\ c x_n \end{bmatrix}$$
 
@@ -204,13 +204,13 @@ print(f"Góc giữa v và w: {theta_deg:.2f}°")
 ```
 
 **Tính chất quan trọng**:
-- Nếu $$\mathbf{x} \cdot \mathbf{y} = 0$$: 2 vectors vuông góc (orthogonal)
-- Nếu $$\mathbf{x} \cdot \mathbf{y} > 0$$: Góc nhọn
-- Nếu $$\mathbf{x} \cdot \mathbf{y} < 0$$: Góc tù
+- Nếu $$\mathbf{x} \cdot \mathbf{y} = 0$$: hai vector vuông góc (orthogonal).
+- Nếu $$\mathbf{x} \cdot \mathbf{y} > 0$$: góc giữa hai vector là góc nhọn.
+- Nếu $$\mathbf{x} \cdot \mathbf{y} < 0$$: góc giữa hai vector là góc tù.
 
 #### Độ dài (Norm)
 
-**Euclidean norm (L2 norm)**:
+**Chuẩn Euclid (L2 norm)**:
 
 $$\|\mathbf{x}\| = \sqrt{\sum_{i=1}^{n} x_i^2} = \sqrt{\mathbf{x} \cdot \mathbf{x}}$$
 
@@ -229,7 +229,7 @@ print(f"Độ dài: {np.linalg.norm(v_unit)}")  # 1.0
 
 ### 2.1. Định nghĩa
 
-**Matrix** là mảng 2 chiều các số.
+**Ma trận (matrix)** là một mảng số hai chiều:
 
 $$\mathbf{A} = \begin{bmatrix} 
 a_{11} & a_{12} & \cdots & a_{1n} \\
@@ -238,7 +238,7 @@ a_{21} & a_{22} & \cdots & a_{2n} \\
 a_{m1} & a_{m2} & \cdots & a_{mn}
 \end{bmatrix}$$
 
-**Kích thước**: $$m \times n$$ (m hàng, n cột)
+**Kích thước**: $$m \times n$$ ($$m$$ hàng, $$n$$ cột).
 
 ```python
 # Tạo matrices
@@ -258,7 +258,7 @@ Z = np.zeros((2, 4))  # Ma trận 0
 O = np.ones((3, 2))  # Ma trận 1
 ```
 
-### 2.2. Phép toán với Matrices
+### 2.2. Phép toán với Ma trận
 
 #### Cộng/Trừ (cùng kích thước)
 
@@ -273,7 +273,7 @@ print("\nA - B =")
 print(A - B)
 ```
 
-#### Nhân Scalar
+#### Nhân với số vô hướng
 
 ```python
 c = 2
@@ -283,9 +283,7 @@ print(c * A)
 
 #### Nhân Ma trận
 
-**Điều kiện**: Số cột của A = Số hàng của B
-
-Nếu $$\mathbf{A}$$ là $$m \times n$$ và $$\mathbf{B}$$ là $$n \times p$$, thì $$\mathbf{C} = \mathbf{AB}$$ là $$m \times p$$:
+**Điều kiện**: số cột của $$\mathbf{A}$$ phải bằng số hàng của $$\mathbf{B}$$. Nếu $$\mathbf{A}$$ có kích thước $$m \times n$$ và $$\mathbf{B}$$ có kích thước $$n \times p$$, thì $$\mathbf{C} = \mathbf{AB}$$ có kích thước $$m \times p$$ với phần tử:
 
 $$c_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}$$
 
@@ -323,11 +321,11 @@ print("\n(A^T)^T = A?", np.array_equal(A_T.T, A))
 
 ### 2.3. Ma trận Nghịch đảo
 
-Cho ma trận vuông $$\mathbf{A}$$ ($$n \times n$$), ma trận nghịch đảo $$\mathbf{A}^{-1}$$ thỏa:
+Với ma trận vuông $$\mathbf{A}$$ kích thước $$n \times n$$, ma trận nghịch đảo $$\mathbf{A}^{-1}$$ (nếu tồn tại) thỏa mãn:
 
 $$\mathbf{A} \mathbf{A}^{-1} = \mathbf{A}^{-1} \mathbf{A} = \mathbf{I}$$
 
-**Lưu ý**: Không phải ma trận nào cũng có nghịch đảo (singular matrix).
+**Lưu ý**: không phải ma trận vuông nào cũng khả nghịch; những ma trận không có nghịch đảo được gọi là ma trận suy biến (singular matrix).
 
 ```python
 A = np.array([[1, 2],
@@ -355,15 +353,13 @@ except np.linalg.LinAlgError:
 
 ### 2.4. Định thức (Determinant)
 
-Cho ma trận vuông $$\mathbf{A}$$:
-
-**2×2**:
+Cho ma trận vuông $$\mathbf{A}$$, với trường hợp $$2 \times 2$$:
 
 $$\det(\mathbf{A}) = \begin{vmatrix} a & b \\ c & d \end{vmatrix} = ad - bc$$
 
 **Tính chất**:
-- $$\det(\mathbf{A}) \neq 0$$: Ma trận khả nghịch
-- $$\det(\mathbf{A}) = 0$$: Ma trận singular
+- $$\det(\mathbf{A}) \neq 0$$: ma trận khả nghịch.
+- $$\det(\mathbf{A}) = 0$$: ma trận suy biến (không khả nghịch).
 
 ```python
 A = np.array([[1, 2],
@@ -381,7 +377,7 @@ print(f"det(singular) = {det_singular:.10f}")  # ≈ 0
 
 ## 3. Hệ Phương trình Tuyến tính
 
-Hệ phương trình:
+Xét hệ phương trình tuyến tính:
 
 $$\begin{cases}
 a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n = b_1 \\
@@ -390,9 +386,9 @@ a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n = b_2 \\
 a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n = b_m
 \end{cases}$$
 
-**Dạng ma trận**: $$\mathbf{Ax} = \mathbf{b}$$
+**Dạng ma trận**: $$\mathbf{Ax} = \mathbf{b}$$.
 
-**Nghiệm** (nếu A khả nghịch): $$\mathbf{x} = \mathbf{A}^{-1}\mathbf{b}$$
+**Nghiệm** (khi $$\mathbf{A}$$ vuông và khả nghịch): $$\mathbf{x} = \mathbf{A}^{-1}\mathbf{b}$$. Trong tính toán số, nên dùng `np.linalg.solve` thay vì tính trực tiếp ma trận nghịch đảo để nhanh và ổn định hơn.
 
 ```python
 # Hệ phương trình:
@@ -416,15 +412,15 @@ print(f"Nghiệm (dùng solve): x = {x_solve}")
 print(f"Kiểm tra Ax = b: {np.allclose(A @ x, b)}")
 ```
 
-## 4. Eigenvalues và Eigenvectors
+## 4. Trị riêng và Vector riêng (Eigenvalues và Eigenvectors)
 
-Cho ma trận vuông $$\mathbf{A}$$, nếu:
+Cho ma trận vuông $$\mathbf{A}$$, nếu tồn tại số $$\lambda$$ và vector khác không $$\mathbf{v}$$ sao cho:
 
 $$\mathbf{A}\mathbf{v} = \lambda \mathbf{v}$$
 
-thì $$\lambda$$ là **eigenvalue** và $$\mathbf{v}$$ là **eigenvector** tương ứng.
+thì $$\lambda$$ được gọi là **trị riêng (eigenvalue)** và $$\mathbf{v}$$ là **vector riêng (eigenvector)** tương ứng.
 
-**Ý nghĩa**: Vector $$\mathbf{v}$$ chỉ bị scale (không đổi hướng) khi nhân với $$\mathbf{A}$$.
+**Ý nghĩa hình học**: khi chịu phép biến đổi tuyến tính $$\mathbf{A}$$, vector $$\mathbf{v}$$ không đổi phương mà chỉ bị co giãn theo hệ số $$\lambda$$.
 
 ```python
 A = np.array([[4, 2],
@@ -453,15 +449,13 @@ for i in range(len(eigenvalues)):
     print(f"Khớp? {np.allclose(Av, lambda_v)}")
 ```
 
-## 5. Ứng dụng trong Statistics
+## 5. Ứng dụng trong Thống kê
 
-### 5.1. Covariance Matrix
+### 5.1. Ma trận Hiệp phương sai (Covariance Matrix)
 
-Cho dữ liệu $$\mathbf{X}$$ ($$n \times p$$), ma trận covariance:
+Với ma trận dữ liệu $$\mathbf{X}$$ kích thước $$n \times p$$ đã được căn tâm (trừ đi trung bình từng cột), ma trận hiệp phương sai mẫu được tính bằng:
 
 $$\mathbf{\Sigma} = \frac{1}{n-1} \mathbf{X}^T \mathbf{X}$$
-
-(sau khi center dữ liệu)
 
 ```python
 # Tạo dữ liệu
@@ -495,11 +489,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 5.2. Linear Regression
+### 5.2. Hồi quy Tuyến tính (Linear Regression)
 
-Mô hình: $$\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}$$
-
-**Nghiệm OLS** (Ordinary Least Squares):
+Xét mô hình $$\mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\epsilon}$$. **Nghiệm bình phương tối thiểu thông thường (OLS — Ordinary Least Squares)** là:
 
 $$\hat{\boldsymbol{\beta}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$$
 
@@ -545,19 +537,19 @@ print(f"\nR² = {r_squared:.4f}")
 
 | Phép toán | Ký hiệu | Công thức |
 |-----------|---------|-----------|
-| Dot product | $$\mathbf{x} \cdot \mathbf{y}$$ | $$\sum_{i=1}^{n} x_i y_i$$ |
-| Norm | $$\|\mathbf{x}\|$$ | $$\sqrt{\sum_{i=1}^{n} x_i^2}$$ |
-| Matrix multiplication | $$\mathbf{AB}$$ | $$c_{ij} = \sum_{k} a_{ik}b_{kj}$$ |
-| Transpose | $$\mathbf{A}^T$$ | $$(\mathbf{A}^T)_{ij} = a_{ji}$$ |
-| Inverse | $$\mathbf{A}^{-1}$$ | $$\mathbf{AA}^{-1} = \mathbf{I}$$ |
-| Determinant | $$\det(\mathbf{A})$$ | Scalar value |
-| Eigenvalue | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
+| Tích vô hướng (Dot product) | $$\mathbf{x} \cdot \mathbf{y}$$ | $$\sum_{i=1}^{n} x_i y_i$$ |
+| Chuẩn (Norm) | $$\|\mathbf{x}\|$$ | $$\sqrt{\sum_{i=1}^{n} x_i^2}$$ |
+| Nhân ma trận | $$\mathbf{AB}$$ | $$c_{ij} = \sum_{k} a_{ik}b_{kj}$$ |
+| Chuyển vị (Transpose) | $$\mathbf{A}^T$$ | $$(\mathbf{A}^T)_{ij} = a_{ji}$$ |
+| Nghịch đảo (Inverse) | $$\mathbf{A}^{-1}$$ | $$\mathbf{AA}^{-1} = \mathbf{I}$$ |
+| Định thức (Determinant) | $$\det(\mathbf{A})$$ | Giá trị vô hướng |
+| Trị riêng (Eigenvalue) | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
 
 ## Video tham khảo
 
-- [Vectors | Chapter 1, Essence of linear algebra](https://www.youtube.com/watch?v=fNk_zzaMoSs) — 3Blue1Brown, English. **xem trước**. Xem để nhìn vector như một đối tượng hình học, đúng phần bài gom dữ liệu và tham số thành vector.
-- [Matrix multiplication as composition | Chapter 4, Essence of linear algebra](https://www.youtube.com/watch?v=XkY2DOUCWMU) — 3Blue1Brown, English. Xem nhân ma trận như phép biến đổi, hỗ trợ đoạn viết hồi quy thành một toán tử tuyến tính.
-- [Eigenvectors and eigenvalues | Chapter 14, Essence of linear algebra](https://www.youtube.com/watch?v=PFDu9oVAE-g) — 3Blue1Brown, English. Xem trị riêng và vector riêng, dùng cho mục eigenvalues trong bài khi nói về cấu trúc của ma trận.
+- [Vectors | Chapter 1, Essence of linear algebra](https://www.youtube.com/watch?v=fNk_zzaMoSs) — 3Blue1Brown, English. **Xem trước.** Giúp hình dung vector như đối tượng hình học trước khi dùng để biểu diễn dữ liệu và tham số.
+- [Matrix multiplication as composition | Chapter 4, Essence of linear algebra](https://www.youtube.com/watch?v=XkY2DOUCWMU) — 3Blue1Brown, English. Giải thích phép nhân ma trận như phép hợp các biến đổi tuyến tính, gắn với cách viết mô hình hồi quy.
+- [Eigenvectors and eigenvalues | Chapter 14, Essence of linear algebra](https://www.youtube.com/watch?v=PFDu9oVAE-g) — 3Blue1Brown, English. Trình bày trực quan về trị riêng và vector riêng để hiểu cấu trúc hình học của ma trận.
 
 ## Bài tập
 
@@ -567,7 +559,7 @@ print(f"\nR² = {r_squared:.4f}")
    - $$\|\mathbf{v}\|$$
    - Góc giữa $$\mathbf{v}$$ và $$\mathbf{w}$$
 
-2. **Matrices**: Cho $$\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$$ và $$\mathbf{B} = \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix}$$. Tính:
+2. **Ma trận**: Cho $$\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$$ và $$\mathbf{B} = \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix}$$. Tính:
    - $$\mathbf{A} + \mathbf{B}$$
    - $$\mathbf{AB}$$
    - $$\mathbf{A}^T$$
@@ -577,20 +569,15 @@ print(f"\nR² = {r_squared:.4f}")
 3. **Hệ phương trình**: Giải hệ:
    $$\begin{cases} 3x + 2y = 7 \\ x - y = 1 \end{cases}$$
 
-4. **Eigenvalues**: Tìm eigenvalues và eigenvectors của $$\mathbf{A} = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}$$
+4. **Trị riêng và vector riêng**: Tìm trị riêng và vector riêng của $$\mathbf{A} = \begin{bmatrix} 3 & 1 \\ 1 & 3 \end{bmatrix}$$.
 
-5. **Linear Regression**: Tạo dữ liệu $$y = 3x_1 - 2x_2 + \epsilon$$ với 100 samples. Ước lượng $$\beta$$ bằng công thức OLS.
+5. **Hồi quy tuyến tính**: Sinh 100 quan sát theo mô hình $$y = 3x_1 - 2x_2 + \epsilon$$ rồi ước lượng $$\boldsymbol{\beta}$$ bằng công thức OLS.
 
 ## Tài liệu tham khảo
 
 1. **Strang, G. (2016).** *Introduction to Linear Algebra*. Wellesley-Cambridge Press.
 2. **3Blue1Brown - Essence of Linear Algebra** - https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab
 3. **NumPy Linear Algebra** - https://numpy.org/doc/stable/reference/routines.linalg.html
-
----
-
-*Bài học này kết thúc phần kiến thức cơ bản. Bạn đã sẵn sàng bắt đầu khóa học Bayesian Statistics!*
-
 
 ---
 

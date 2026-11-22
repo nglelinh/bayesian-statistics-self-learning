@@ -10,35 +10,35 @@ categories:
 lesson_type: required
 ---
 
-## Mục tiêu Học tập
+## Mục tiêu học tập
 
-Sau khi hoàn thành bài học này, bạn sẽ hiểu **feature selection** (chọn biến) như bài toán xác định predictor nào thật sự quan trọng khi ta có rất nhiều ứng viên. Bài học sẽ đi qua các Bayesian approaches như Laplace priors, spike-and-slab, và horseshoe priors, đồng thời so sánh chúng với những frequentist methods quen thuộc như Lasso hay stepwise procedures. Mục tiêu không chỉ là biết công cụ nào tồn tại, mà là hiểu mỗi công cụ đang mã hóa giả định gì về độ thưa của mô hình, và khi nào mỗi cách tiếp cận là hợp lý hơn trong bối cảnh dữ liệu có số chiều cao.
+Sau khi hoàn thành bài học này, bạn sẽ hiểu **chọn biến (feature selection)** như bài toán xác định những biến dự báo thực sự quan trọng trong số rất nhiều biến ứng viên. Bài học trình bày các hướng tiếp cận Bayes như tiên nghiệm Laplace, spike-and-slab và horseshoe, đồng thời so sánh với các phương pháp tần suất quen thuộc như Lasso hay chọn biến từng bước (stepwise). Mục tiêu không chỉ là biết các công cụ hiện có, mà là hiểu mỗi công cụ mã hóa giả định gì về độ thưa của mô hình và khi nào nên áp dụng từng cách tiếp cận trong dữ liệu nhiều chiều.
 
-## Giới thiệu: Vấn đề của Many Predictors
+## Giới thiệu: Bài toán khi có quá nhiều biến dự báo
 
-Hãy xét tình huống bạn có 100 **potential predictors** nhưng chỉ khoảng 5 biến trong số đó thật sự có tín hiệu. Nếu giữ tất cả các biến, mô hình dễ overfit; nếu thử mọi tổ hợp có thể, chi phí tính toán sẽ bùng nổ vì số mô hình cần xét lên đến $$2^{100}$$; còn nếu kiểm định từng biến riêng lẻ, ta lại đối mặt với nguy cơ **false discoveries** do multiple testing. Vì vậy, mục tiêu của feature selection không đơn thuần là “làm mô hình gọn hơn”, mà là nhận diện một cách có nguyên tắc những biến thật sự liên quan trong khi vẫn kiểm soát được độ bất định và chi phí mô hình hóa.
+Giả sử bạn có 100 biến dự báo tiềm năng nhưng chỉ khoảng 5 biến trong số đó thực sự mang tín hiệu. Nếu giữ toàn bộ biến, mô hình dễ bị quá khớp; nếu thử mọi tổ hợp có thể, chi phí tính toán sẽ bùng nổ vì số mô hình lên tới $$2^{100}$$; còn nếu kiểm định từng biến riêng lẻ, ta lại đối mặt với nguy cơ **phát hiện sai (false discoveries)** do kiểm định lặp nhiều lần (multiple testing). Vì vậy, mục tiêu của chọn biến không chỉ là làm mô hình gọn hơn, mà là nhận diện một cách có nguyên tắc các biến thực sự liên quan trong khi vẫn kiểm soát được độ bất định và chi phí tính toán.
 
-## 1. Frequentist Approaches
+## 1. Các phương pháp tần suất (Frequentist Approaches)
 
-### 1.1. Lasso (L1 Regularization)
+### 1.1. Lasso (Điều chuẩn L1)
 
-**Lasso** sets some coefficients **exactly to 0** → automatic feature selection.
+**Lasso** có khả năng đưa một số hệ số về **đúng bằng 0**, nhờ đó thực hiện chọn biến tự động.
 
 ![Lasso Feature Selection]({{ site.baseurl }}/img/chapter_img/chapter07/lasso_feature_selection.png)
 
-Ví dụ trong hình dùng một dataset có 20 features nhưng chỉ 5 feature đầu có hệ số thật sự khác 0. Khi $$\alpha$$ còn rất nhỏ như 0.001 hoặc 0.01, regularization quá yếu nên mô hình vẫn giữ lại khoảng 13 feature, nghĩa là còn nhiều biến nhiễu lọt vào mô hình. Khi tăng lên mức trung bình như 0.1, các hệ số bắt đầu co mạnh hơn về 0 nhưng số biến được giữ lại vẫn còn khá lớn. Chỉ khi $$\alpha$$ đủ mạnh, chẳng hạn 0.5, ta mới thấy rõ hiệu ứng thưa hơn: nhiều hệ số bị đẩy về 0 và số feature được chọn giảm xuống. Bài học trực tiếp từ ví dụ này là Lasso thực hiện feature selection bằng cách ép một số hệ số về đúng 0, và mức độ **sparsity** tăng lên khi regularization mạnh hơn.
+Ví dụ trong hình sử dụng một tập dữ liệu gồm 20 đặc trưng, trong đó chỉ 5 đặc trưng đầu có hệ số thật khác 0. Khi $$\alpha$$ còn rất nhỏ như 0.001 hoặc 0.01, điều chuẩn quá yếu nên mô hình vẫn giữ khoảng 13 đặc trưng, tức còn nhiều biến nhiễu lọt vào. Khi tăng lên mức trung bình như 0.1, các hệ số bắt đầu co mạnh hơn về 0 nhưng số biến được giữ lại vẫn còn lớn. Chỉ khi $$\alpha$$ đủ mạnh (chẳng hạn 0.5), hiệu ứng thưa mới thể hiện rõ: nhiều hệ số bị ép về đúng 0 và số đặc trưng được chọn giảm xuống. Như vậy, Lasso chọn biến bằng cách triệt tiêu trực tiếp một số hệ số, và mức độ **thưa (sparsity)** tăng lên khi cường độ điều chuẩn mạnh hơn.
 
-### 1.2. Cross-Validation để Chọn α
+### 1.2. Chọn $$\alpha$$ bằng kiểm định chéo (Cross-Validation)
 
 ![Lasso CV and Regularization Path]({{ site.baseurl }}/img/chapter_img/chapter07/lasso_cv_regularization_path.png)
 
-Kết quả cross-validation trong ví dụ này chọn $$\alpha=1.0$$ như mức regularization tốt nhất theo năng lực dự báo ngoài mẫu. Ở mức đó, mô hình giữ lại 7 feature, nhiều hơn một chút so với 5 feature thật sự liên quan, nhưng vẫn khá gần với cấu trúc thưa thật của dữ liệu. Regularization path ở panel bên phải bổ sung một trực giác rất quan trọng: khi $$\alpha$$ còn nhỏ, hầu hết hệ số đều khác 0 và có độ lớn đáng kể; khi $$\alpha$$ tăng dần, các hệ số co lại về 0 theo những tốc độ khác nhau; và những feature mang tín hiệu thật thường “trụ” lâu hơn các biến nhiễu. Vì vậy, cross-validation không chỉ giúp chọn mức regularization tối ưu mà còn cho ta một cách nhìn động về việc từng biến rời khỏi mô hình như thế nào.
+Kết quả kiểm định chéo trong ví dụ này chọn $$\alpha=1.0$$ làm mức điều chuẩn tối ưu theo năng lực dự báo ngoài mẫu. Ở mức này, mô hình giữ lại 7 đặc trưng — nhiều hơn một chút so với 5 đặc trưng thật sự liên quan nhưng đã khá sát với cấu trúc thưa của dữ liệu. Đường điều chuẩn (regularization path) ở hình bên phải bổ sung một trực giác quan trọng: khi $$\alpha$$ nhỏ, phần lớn hệ số khác 0 và có độ lớn đáng kể; khi $$\alpha$$ tăng dần, các hệ số co về 0 với tốc độ khác nhau, và những đặc trưng mang tín hiệu thật thường tồn tại lâu hơn các biến nhiễu. Nhờ vậy, kiểm định chéo không chỉ chọn mức điều chuẩn tối ưu mà còn cho thấy trình tự từng biến rời khỏi mô hình.
 
-## 2. Bayesian Approaches
+## 2. Các phương pháp Bayes (Bayesian Approaches)
 
-### 2.1. Laplace Prior (Bayesian Lasso)
+### 2.1. Tiên nghiệm Laplace (Bayesian Lasso)
 
-**Laplace prior** = Bayesian equivalent of Lasso.
+**Tiên nghiệm Laplace** là phiên bản tương ứng trong thống kê Bayes của hồi quy Lasso:
 
 $$
 \beta_j \sim \text{Laplace}(0, b)
@@ -96,9 +96,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 2.2. Horseshoe Prior
+### 2.2. Tiên nghiệm Horseshoe (Horseshoe Prior)
 
-**Horseshoe prior** linh hoạt hơn Laplace prior vì nó vừa cho phép một số hệ số thật sự lớn tồn tại nhờ phần đuôi dày, vừa co rất mạnh những hệ số nhỏ về gần 0. Chính khả năng vừa “tha” cho tín hiệu mạnh vừa “phạt” mạnh nhiễu yếu khiến horseshoe trở thành một prior đặc biệt hấp dẫn trong các bài toán sparse signals.
+**Tiên nghiệm Horseshoe** linh hoạt hơn tiên nghiệm Laplace vì nó vừa cho phép một số hệ số thực sự lớn tồn tại nhờ phần đuôi dày, vừa co rất mạnh các hệ số nhỏ về gần 0. Nhờ cơ chế đồng thời giữ lại tín hiệu mạnh và nén chặt nhiễu yếu, horseshoe trở thành lựa chọn rất hiệu quả trong các bài toán có tín hiệu thưa.
 
 ```python
 # Horseshoe prior
@@ -115,7 +115,7 @@ with pm.Model() as horseshoe_model:
     mu = alpha + pm.math.dot(X_z, beta)
     y_obs = pm.Normal('y_obs', mu=mu, sigma=sigma, observed=y_z)
     
-    trace_horseshoe = pm.sample(1000, tune=500, chains=2, random_state=42,
+    trace_horseshoe = pm.sample(1000, tune=500, chains=2, random_seed=42,
                                return_inferencedata=True, progressbar=False)
 
 # Extract
@@ -155,18 +155,18 @@ print(f"Horseshoe: {np.sum(np.abs(beta_horseshoe) > 0.1)} selected")
 print("=" * 70)
 ```
 
-### Thử nghiệm: Gaussian, Laplace và Horseshoe co rút khác nhau thế nào
+### Thử nghiệm: So sánh cơ chế co rút của Gaussian, Laplace và Horseshoe
 
-50 hệ số, chỉ 5 cái lớn: so sánh posterior mean của từng prior và đường cong co rút.
+Với 50 hệ số nhưng chỉ 5 hệ số thật sự lớn, hãy so sánh trung bình hậu nghiệm và đường cong co rút của từng loại tiên nghiệm.
 
 <div class="interactive-demo" markdown="1">
 <div data-demo="horseshoe-explainer" data-lang="vi"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 3. Posterior Inclusion Probabilities
+## 3. Xác suất hậu nghiệm chọn biến (Posterior Inclusion Probabilities)
 
-Ưu điểm quan trọng của cách tiếp cận Bayesian là nó không chỉ đưa ra một danh sách biến được chọn, mà còn định lượng được độ bất định của chính quá trình lựa chọn đó. **Posterior Inclusion Probability (PIP)** được hiểu như xác suất hậu nghiệm để một hệ số đủ khác 0 theo một tiêu chuẩn thực dụng, và nhờ vậy nó cho phép ta nói về mức độ chắc chắn của tầm quan trọng biến, thay vì chỉ nói “được chọn” hay “không được chọn”.
+Ưu điểm quan trọng của cách tiếp cận Bayes là không chỉ trả về một danh sách biến được chọn, mà còn định lượng được độ bất định của chính việc lựa chọn đó. **Xác suất hậu nghiệm chọn biến (Posterior Inclusion Probability — PIP)** đo xác suất hậu nghiệm để độ lớn của một hệ số vượt qua một ngưỡng thực dụng khác 0, cho phép ta đánh giá mức độ chắc chắn về tầm quan trọng của từng biến thay vì chỉ đưa ra quyết định nhị phân chọn hoặc bỏ.
 
 ```python
 # Compute PIPs
@@ -218,9 +218,9 @@ print("\n→ Bayesian approach quantifies uncertainty!")
 print("=" * 70)
 ```
 
-## 4. Applied Case Study (Phan 3): Stability selection + interpretation risk
+## 4. Nghiên cứu tình huống ứng dụng (Phần 3): Độ ổn định chọn biến và rủi ro diễn giải
 
-Trong bai toan thuc te, mot feature duoc chon 1 lan chua du de ket luan no quan trong. Ta can kiem tra **do on dinh cua feature selection** qua nhieu lan resampling.
+Trong bài toán thực tế, một đặc trưng được chọn trong một lần chạy đơn lẻ chưa đủ để khẳng định nó thực sự quan trọng. Ta cần kiểm tra **độ ổn định của việc chọn biến (stability selection)** qua nhiều lần lấy mẫu lại (resampling).
 
 ```python
 import numpy as np
@@ -250,69 +250,69 @@ stable_features = np.where(stability >= 0.7)[0]
 print("Stable features (freq >= 0.7):", stable_features)
 ```
 
-### 4.1. Uncertainty-aware thresholds
+### 4.1. Phân tầng ngưỡng theo độ bất định
 
-Thay vi mot nguong co dinh duy nhat, hay bao cao ket qua theo nhieu muc:
+Thay vì dùng một ngưỡng cắt cứng duy nhất, nên báo cáo kết quả theo nhiều mức độ tin cậy:
 
-- **Nong (>= 0.9)**: bang chung rat manh, de dua vao mo hinh dien giai chinh.
-- **Am (0.7 - 0.9)**: kha on dinh, can doi chieu domain knowledge.
-- **Yeu (< 0.7)**: chua on dinh, uu tien xem nhu feature du phong.
+- **Mức cao ($$\ge 0.9$$)**: bằng chứng rất mạnh, phù hợp để đưa vào mô hình diễn giải chính.
+- **Mức trung bình ($$0.7 - 0.9$$)**: khá ổn định, cần đối chiếu thêm với kiến thức chuyên môn.
+- **Mức thấp ($$< 0.7$$)**: chưa ổn định, chỉ nên xem là đặc trưng dự phòng.
 
-Voi Bayesian models, ban co the ghep them nguong PIP (vi du PIP >= 0.8) de bao cao selection uncertainty mot cach minh bach.
+Với mô hình Bayes, ta có thể kết hợp thêm ngưỡng PIP (ví dụ $$\text{PIP} \ge 0.8$$) để trình bày minh bạch độ bất định của việc chọn biến.
 
-### 4.2. Interpretation risks trong machine learning
+### 4.2. Rủi ro diễn giải trong học máy
 
-Ngay ca khi feature duoc chon on dinh, dien giai van co rui ro:
+Ngay cả khi một đặc trưng được chọn ổn định, việc diễn giải vẫn tiềm ẩn nhiều rủi ro:
 
-1. **Collinearity**: feature duoc chon co the la dai dien cho mot cum bien tuong quan, khong nhat thiet la nguyen nhan truc tiep.
-2. **Proxy bias**: feature co the dong vai tro bien thay the cho dac trung nhay cam.
-3. **Data drift**: tan suat duoc chon co the thay doi theo thoi gian khi phan phoi du lieu doi.
-4. **Actionability gap**: feature quan trong ve mat du bao chua chac da huu ich cho quyet dinh van hanh.
+1. **Đa cộng tuyến (Collinearity)**: đặc trưng được chọn có thể chỉ đại diện cho một cụm biến tương quan với nhau, không nhất thiết là nguyên nhân trực tiếp.
+2. **Thiên lệch biến đại diện (Proxy bias)**: đặc trưng có thể vô tình đóng vai trò biến thay thế cho các thuộc tính nhạy cảm.
+3. **Trôi dữ liệu (Data drift)**: tần suất được chọn có thể thay đổi theo thời gian khi phân phối dữ liệu biến động.
+4. **Khoảng cách với khả năng hành động (Actionability gap)**: một đặc trưng quan trọng về mặt dự báo chưa chắc đã can thiệp được trong vận hành thực tế.
 
-**Decision checkpoint 3 (ket thuc case study)**:
-- Bao cao dong thoi: performance ngoai mau + uncertainty (PIP/stability) + canh bao dien giai.
-- Chi chot danh sach feature "hanh dong" sau khi da qua 3 lop kiem tra tren.
+**Điểm kiểm tra quyết định 3 (kết thúc nghiên cứu tình huống)**:
+- Báo cáo đồng thời hiệu năng ngoài mẫu, độ bất định chọn biến (PIP/stability) và các cảnh báo diễn giải.
+- Chỉ chốt danh sách đặc trưng phục vụ hành động sau khi đã kiểm tra đầy đủ cả ba lớp trên.
 
-Neu ban muon tai lap toan bo case study da trinh bay xuyen suot 7.1 -> 7.3, co the chay script:
+Nếu muốn tái lập toàn bộ nghiên cứu tình huống xuyên suốt các bài 7.1 đến 7.3, bạn có thể chạy script:
 
 `python img/chapter_img/chapter07/generate_applied_ml_workflow_tradeoffs.py`
 
-## 5. Khi nào Dùng Method Nào?
+## 5. Khi nào nên dùng phương pháp nào?
 
-| Method | Pros | Cons | When to Use |
+| Phương pháp | Ưu điểm | Hạn chế | Khi nào nên dùng |
 |--------|------|------|-------------|
-| **Lasso** | Fast, sparse | No uncertainty | Large n, quick results |
-| **Bayesian Lasso** | Uncertainty, flexible | Slower | Need uncertainty quantification |
-| **Horseshoe** | Heavy tails, flexible | Complex | Strong sparsity assumption |
-| **Spike-and-Slab** | Explicit selection | Very slow | Small p, explicit probabilities |
+| **Lasso** | Nhanh, tạo lời giải thưa | Không định lượng độ bất định | Cỡ mẫu lớn, cần kết quả nhanh |
+| **Bayesian Lasso** | Có độ bất định, linh hoạt | Chậm hơn | Cần định lượng độ bất định của hệ số |
+| **Horseshoe** | Đuôi dày, co rút thích nghi linh hoạt | Phức tạp hơn | Giả định tín hiệu có độ thưa mạnh |
+| **Spike-and-Slab** | Chọn biến tường minh | Rất chậm | Số biến $$p$$ nhỏ, cần xác suất chọn biến trực tiếp |
 
 ## Tóm tắt
 
-Feature selection là bài toán chọn ra những predictor thật sự liên quan khi số biến ứng viên lớn và nguy cơ overfitting hiện hữu. Lasso giải bài toán này bằng cách dùng L1 penalty để tạo lời giải thưa, Bayesian Lasso diễn giải cùng ý tưởng ấy qua Laplace prior, còn horseshoe prior mang lại một cơ chế co rút tinh tế hơn, đặc biệt hữu ích khi ta tin rằng chỉ có một số ít tín hiệu mạnh nổi bật giữa rất nhiều biến yếu. Quan trọng hơn, cách tiếp cận Bayesian còn cung cấp **uncertainty quantification** cho chính việc chọn biến, chẳng hạn qua Posterior Inclusion Probabilities, thay vì chỉ trả về một danh sách biến có vẻ tối ưu.
+Chọn biến (feature selection) nhằm nhận diện các biến dự báo thực sự liên quan khi số biến ứng viên lớn và nguy cơ quá khớp cao. Lasso sử dụng phạt L1 để tạo lời giải thưa, Bayesian Lasso biểu diễn cùng ý tưởng qua tiên nghiệm Laplace, còn tiên nghiệm horseshoe mang lại cơ chế co rút chọn lọc hơn khi chỉ có một số ít tín hiệu mạnh nằm lẫn giữa nhiều biến nhiễu. Quan trọng hơn, hướng tiếp cận Bayes cung cấp khả năng **định lượng độ bất định** cho quá trình chọn biến (chẳng hạn qua Posterior Inclusion Probabilities), thay vì chỉ trả về một danh sách cố định.
 
-Điểm quan trọng nhất của bài là chọn biến không nên được hiểu như một thao tác lọc cơ học, mà là một phần của quá trình suy luận về cấu trúc tín hiệu trong dữ liệu.
+Chọn biến không nên bị xem như thao tác lọc cơ học, mà là một phần của quá trình suy luận về cấu trúc tín hiệu trong dữ liệu.
 
-**Chapter 07 Complete!** Regularization, Bias-Variance, Feature Selection.
+Kết thúc Chương 07 về điều chuẩn (Regularization), đánh đổi độ lệch – phương sai (Bias-Variance) và chọn biến (Feature Selection).
 
 ## Video tham khảo
 
-- [Regularization Part 2: Lasso (L1) Regression](https://www.youtube.com/watch?v=NGf0voTMlcs) — StatQuest with Josh Starmer, English. **xem trước**. Xem L1 có thể đưa một số hệ số đúng về không, đúng hướng chọn biến mà bài đối chiếu với tìm mọi tổ hợp.
-- [Lecture 31 Bayesian Regression and Variable Selection (Part A)](https://www.youtube.com/watch?v=Mv6MSIVKEIc) — Nicholas Zabaras, English. Xem hồi quy Bayes và chọn biến trong một bài giảng, hỗ trợ các prior co hệ số khi có quá nhiều predictor.
-- [Regularized Horseshoe - Aki Vehtari](https://www.youtube.com/watch?v=EuhvfvY8ISc) — Stan, English. Xem regularized horseshoe, dùng cho phần bài về prior thưa trên hệ số chứ không chỉ phạt kiểu lasso.
+- [Regularization Part 2: Lasso (L1) Regression](https://www.youtube.com/watch?v=NGf0voTMlcs) — StatQuest with Josh Starmer, English. **Xem trước**. Giải thích vì sao phạt L1 có thể đưa một số hệ số về đúng 0 để chọn biến.
+- [Lecture 31 Bayesian Regression and Variable Selection (Part A)](https://www.youtube.com/watch?v=Mv6MSIVKEIc) — Nicholas Zabaras, English. Trình bày hồi quy Bayes và bài toán chọn biến bằng các phân phối tiên nghiệm co rút khi có nhiều biến dự báo.
+- [Regularized Horseshoe - Aki Vehtari](https://www.youtube.com/watch?v=EuhvfvY8ISc) — Stan, English. Giới thiệu tiên nghiệm regularized horseshoe cho bài toán tín hiệu thưa trong thống kê Bayes.
 
 ## Bài tập
 
-**Bài tập 1**: Generate sparse data. Compare Lasso, Bayesian Lasso, Horseshoe. Which recovers true features best?
+**Bài tập 1**: Sinh dữ liệu có cấu trúc thưa, so sánh Lasso, Bayesian Lasso và Horseshoe để xem phương pháp nào khôi phục các đặc trưng thật tốt nhất.
 
-**Bài tập 2**: Compute PIPs. Threshold at 0.5, 0.7, 0.9. How does selection change?
+**Bài tập 2**: Tính xác suất hậu nghiệm chọn biến (PIP) và kiểm tra tập biến được chọn thay đổi ra sao ở các ngưỡng 0.5, 0.7 và 0.9.
 
-**Bài tập 3**: Regularization path: Plot coefficients vs λ. Observe when features enter/exit.
+**Bài tập 3**: Vẽ đường điều chuẩn (regularization path) của các hệ số theo $$\lambda$$ và quan sát thời điểm từng đặc trưng đi vào hoặc rời khỏi mô hình.
 
-**Bài tập 4**: Real high-dimensional data. Perform feature selection. Interpret selected features.
+**Bài tập 4**: Thực hiện chọn biến trên một tập dữ liệu thực nhiều chiều và diễn giải các đặc trưng được chọn.
 
-**Bài tập 5**: Compare computational time: Lasso vs Bayesian approaches. Trade-offs?
+**Bài tập 5**: So sánh thời gian tính toán giữa Lasso và các phương pháp Bayes, đồng thời phân tích những đánh đổi đi kèm.
 
-## Tài liệu Tham khảo
+## Tài liệu tham khảo
 
 **Carvalho, C. M., et al. (2010).** "The horseshoe estimator for sparse signals." *Biometrika*, 97(2), 465-480.
 

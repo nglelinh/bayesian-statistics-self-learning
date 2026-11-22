@@ -12,78 +12,66 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần biết cách chọn prior (phân phối tiên nghiệm) cho regression một cách có nguyên tắc. Bạn cũng cần hiểu vì sao standardization (chuẩn hóa) rất quan trọng, vì sao weakly informative priors (các prior thông tin yếu) thường là điểm khởi đầu tốt, và vì sao prior predictive check (kiểm tra dự báo từ prior) là bước kiểm tra gần như bắt buộc trước khi fit model.
+Sau bài này, bạn sẽ biết cách lựa chọn phân phối tiên nghiệm (prior) cho mô hình hồi quy một cách có nguyên tắc. Bạn cũng sẽ hiểu vì sao chuẩn hóa dữ liệu (standardization) là bước nền quan trọng, vì sao phân phối tiên nghiệm thông tin yếu (weakly informative prior) thường là điểm khởi đầu phù hợp, và vì sao kiểm tra dự báo tiên nghiệm (prior predictive check) cần được thực hiện trước khi khớp mô hình.
 
-> **Ví dụ mini.** Nếu bạn đặt prior cho slope quá rộng, mô hình có thể ngầm cho phép những đường hồi quy điên rồ mà kiến thức miền nói ngay là vô lý. Prior cho regression không phải “điền đại cho đủ”, mà là cách giữ mô hình đứng trên mặt đất.
+> **Ví dụ ngắn.** Nếu đặt phân phối tiên nghiệm cho hệ số dốc quá rộng, mô hình có thể ngầm chấp nhận những đường hồi quy hoàn toàn phi thực tế theo kiến thức chuyên môn. Chọn phân phối tiên nghiệm cho hồi quy không phải là thao tác hình thức, mà là cách đặt ra biên giới hợp lý cho mô hình ngay từ đầu.
 >
-> **Câu hỏi tự kiểm tra.** Vì sao cùng một prior có thể trông hợp lý ở thang đo này nhưng vô lý ở thang đo khác?
+> **Câu hỏi tự kiểm tra.** Vì sao cùng một phân phối tiên nghiệm có thể hợp lý ở thang đo này nhưng lại bất hợp lý ở thang đo khác?
 
-## 1. Chọn prior cho regression khó ở đâu?
+## 1. Khó khăn khi chọn phân phối tiên nghiệm cho hồi quy
 
-Trong regression, ta thường có ít nhất ba loại tham số là intercept (hệ số chặn) $$\alpha$$, slope (hệ số dốc) $$\beta$$, và noise (độ nhiễu) $$\sigma$$. Nếu không cẩn thận, prior có thể quá rộng và cho phép các giá trị vô lý, quá hẹp và bóp méo posterior (phân phối hậu nghiệm), hoặc đơn giản là khiến sampler (bộ lấy mẫu) chạy khó khăn hơn mức cần thiết.
+Trong hồi quy tuyến tính cơ bản, ta có ít nhất ba tham số cần đặt phân phối tiên nghiệm: hệ số chặn $$\alpha$$, hệ số dốc $$\beta$$ và độ nhiễu $$\sigma$$. Nếu chọn thiếu cân nhắc, phân phối tiên nghiệm có thể quá rộng và cho phép những giá trị vô lý, quá hẹp và làm sai lệch phân phối hậu nghiệm, hoặc khiến bộ lấy mẫu (sampler) hoạt động kém ổn định. Do đó, chọn phân phối tiên nghiệm vừa đòi hỏi hiểu biết thống kê, vừa đòi hỏi nắm vững thang đo và bối cảnh thực tế của dữ liệu.
 
-Đây là lý do chọn prior cho regression vừa là chuyện thống kê, vừa là chuyện hiểu thang đo và bối cảnh của dữ liệu.
+## 2. Chuẩn hóa dữ liệu: bước nên thực hiện trước khi đặt tiên nghiệm
 
-## 2. Standardization (chuẩn hóa): bước rất nên làm trước khi nghĩ về prior
-
-Một trong những cách đơn giản nhất để làm prior selection (việc chọn prior) dễ hơn là standardize (chuẩn hóa) dữ liệu. Chẳng hạn, ta có thể viết:
+Một trong những cách đơn giản và hiệu quả nhất để việc chọn phân phối tiên nghiệm trở nên nhất quán hơn là chuẩn hóa (standardize) các biến đầu vào và đầu ra:
 
 $$
 x_{std} = \frac{x-\bar{x}}{\mathrm{SD}(x)}, \qquad
 y_{std} = \frac{y-\bar{y}}{\mathrm{SD}(y)}.
 $$
 
-Sau bước này, biến có mean gần 0, độ lệch chuẩn gần 1, và vì thế các prior “chuẩn” cũng trở nên dễ chọn hơn nhiều.
+Sau phép biến đổi này, các biến đều có trung bình bằng 0 và độ lệch chuẩn bằng 1, giúp việc chọn phân phối tiên nghiệm theo thang đo chuẩn trở nên trực quan hơn nhiều.
 
 ![Dữ liệu ở thang đo gốc trước khi standardize]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_standardization_raw_data.png)
 
 ![Dữ liệu sau khi standardize về mean 0 và SD 1]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_standardization_standardized_data.png)
 
-### Vì sao standardization (chuẩn hóa) giúp nhiều?
+### Ba lợi ích chính của chuẩn hóa dữ liệu
 
-#### 1. Intercept dễ diễn giải hơn
+1. **Hệ số chặn dễ diễn giải hơn.** Sau khi dịch tâm hoặc chuẩn hóa, hệ số chặn tương ứng với giá trị kỳ vọng của $$y$$ tại mức trung bình của $$x$$, thay vì tại mốc $$x = 0$$ vốn có thể vô nghĩa.
+2. **Phân phối tiên nghiệm ít phụ thuộc vào đơn vị đo.** Cùng một công thức tiên nghiệm có thể mang ý nghĩa rất khác nhau nếu đổi đơn vị từ cm sang m hoặc từ kg sang pound. Chuẩn hóa loại bỏ sự lệ thuộc này.
+3. **Bộ lấy mẫu hội tụ ổn định hơn.** Khi các biến nằm trên cùng một thang đo, hình dạng phân phối hậu nghiệm thường cân đối hơn, giúp các thuật toán lấy mẫu như HMC/NUTS hoạt động hiệu quả hơn.
 
-Sau khi center (đưa về quanh trung tâm) hoặc standardize (chuẩn hóa), intercept thường gần giá trị trung bình của $$y$$ tại mức $$x$$ trung tâm, nên việc diễn giải nó trở nên tự nhiên hơn.
+### 2.1. Ví dụ minh họa: cùng một tiên nghiệm trước và sau khi chuẩn hóa
 
-#### 2. Prior không còn phụ thuộc quá mạnh vào đơn vị đo
-
-Ví dụ, cm so với m, hoặc kg so với pound, có thể làm prior “cùng chữ viết” trở nên hoàn toàn khác ý nghĩa nếu không chuẩn hóa.
-
-#### 3. Sampler thường chạy ổn hơn
-
-Khi các biến cùng scale tương đối giống nhau, posterior thường thân thiện hơn với HMC/NUTS, tức các thuật toán lấy mẫu Hamiltonian thường dùng trong Bayes hiện đại.
-
-### 2.1. Một ví dụ cụ thể: cùng một prior trước và sau standardize
-
-Giả sử $$x$$ là chiều cao tính bằng cm, nằm chủ yếu trong khoảng 150 đến 190, còn $$y$$ là cân nặng tính bằng kg, nằm khoảng 45 đến 90.
-
-Nếu bạn chưa standardize mà đặt luôn:
+Giả sử $$x$$ là chiều cao tính bằng cm (chủ yếu trong khoảng 150–190 cm) và $$y$$ là cân nặng tính bằng kg (khoảng 45–90 kg). Nếu chưa chuẩn hóa mà đặt trực tiếp:
 
 $$
 \alpha \sim \mathcal{N}(0,1), \qquad \beta \sim \mathcal{N}(0,1),
 $$
 
-thì hai prior này nghe có vẻ "đẹp" nhưng thực ra lại khó chấp nhận về mặt ngữ nghĩa.
+thì hai phân phối này tuy gọn về mặt ký hiệu nhưng bất hợp lý về mặt ngữ nghĩa:
 
-- Prior $$\alpha \sim \mathcal{N}(0,1)$$ đang ngầm nói rằng khi $$x=0$$ cm, cân nặng trung bình sẽ quanh 0 kg, điều này rõ ràng vô nghĩa trong bối cảnh chiều cao - cân nặng.
-- Prior $$\beta \sim \mathcal{N}(0,1)$$ có khoảng 95% xấp xỉ từ $$-2$$ đến $$2$$ kg/cm. Điều đó có nghĩa chỉ cần chênh 20 cm chiều cao, mô hình đã sẵn sàng chấp nhận chênh lệch trung bình từ $$-40$$ đến $$40$$ kg, thường là quá rộng cho nhiều bài toán thực tế.
+- Tiên nghiệm $$\alpha \sim \mathcal{N}(0,1)$$ ngầm cho rằng khi $$x = 0$$ cm, cân nặng trung bình nằm quanh 0 kg — một phát biểu không có ý nghĩa thực tế.
+- Tiên nghiệm $$\beta \sim \mathcal{N}(0,1)$$ có khoảng 95% xấp xỉ $$[-2, 2]$$ kg/cm. Nghĩa là chỉ cần chênh lệch 20 cm chiều cao, mô hình đã cho phép mức chênh cân nặng trung bình từ $$-40$$ đến $$40$$ kg, quá rộng so với thực tế.
 
-Nhưng nếu bạn standardize cả $$x$$ lẫn $$y$$ thành $$x_{std}, y_{std}$$ rồi mới đặt:
+Ngược lại, sau khi chuẩn hóa $$x$$ và $$y$$ thành $$x_{std}$$ và $$y_{std}$$, cùng cặp phân phối tiên nghiệm:
 
 $$
-\alpha \sim \mathcal{N}(0,1), \qquad \beta \sim \mathcal{N}(0,1),
+\alpha \sim \mathcal{N}(0,1), \qquad \beta \sim \mathcal{N}(0,1)
 $$
 
-thì ý nghĩa đổi hẳn:
+lại mang ý nghĩa rõ ràng và hợp lý hơn nhiều:
 
-- $$\alpha$$ quanh 0 giờ có nghĩa là giá trị trung bình của $$y$$ tại mức $$x$$ trung tâm cũng nằm quanh mức trung bình của dữ liệu, rất tự nhiên.
-- $$\beta$$ quanh 0 với độ lệch chuẩn 1 giờ có nghĩa là khi $$x$$ tăng 1 độ lệch chuẩn, $$y$$ thường thay đổi trong vùng cỡ vài độ lệch chuẩn, tức vẫn đủ linh hoạt nhưng không còn "bay khỏi mặt đất".
+- $$\alpha$$ quanh 0 có nghĩa là tại mức chiều cao trung bình, cân nặng kỳ vọng cũng nằm quanh mức trung bình của tập dữ liệu.
+- $$\beta$$ quanh 0 với độ lệch chuẩn 1 có nghĩa là khi $$x$$ tăng thêm 1 độ lệch chuẩn, $$y$$ thường thay đổi trong phạm vi vài độ lệch chuẩn — đủ linh hoạt cho dữ liệu nhưng loại bỏ được các giá trị cực đoan.
 
-Đây là lý do standardization không chỉ là mẹo kỹ thuật. Nó biến prior từ chỗ khó hiểu thành một phát biểu có thể đọc được bằng trực giác.
+Như vậy, chuẩn hóa không chỉ là kỹ thuật tính toán mà còn giúp ta diễn giải phân phối tiên nghiệm một cách trực quan.
 
-## 3. Prior cho intercept $$\alpha$$
+## 3. Phân phối tiên nghiệm cho hệ số chặn $$\alpha$$
 
-Sau khi chuẩn hóa, intercept thường nên nằm quanh 0 với độ bất định vừa phải. Vì vậy một prior kiểu:
+Sau khi chuẩn hóa dữ liệu, hệ số chặn thường nằm gần 0 với mức độ bất định vừa phải. Vì vậy, những lựa chọn như:
 
 $$
 \alpha \sim \mathcal{N}(0,1)
@@ -95,9 +83,7 @@ $$
 \alpha \sim \mathcal{N}(0,2)
 $$
 
-thường là khởi đầu hợp lý.
-
-Ba tình huống tương phản dưới đây cho thấy prior cho intercept có thể quá rộng, vừa phải, hoặc quá hẹp.
+thường là điểm khởi đầu phù hợp. Ba biểu đồ dưới đây minh họa sự khác biệt giữa phân phối tiên nghiệm quá rộng, thông tin yếu (vừa phải) và quá hẹp cho hệ số chặn.
 
 ![Prior quá rộng cho intercept]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_intercept_too_wide.png)
 
@@ -105,25 +91,17 @@ Ba tình huống tương phản dưới đây cho thấy prior cho intercept có
 
 ![Prior quá hẹp cho intercept]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_intercept_too_narrow.png)
 
-Trực giác ở đây khá đơn giản: prior quá rộng sẽ cho phép những giá trị không thực tế, prior quá hẹp sẽ ép mô hình quá mạnh, còn một prior vừa phải sẽ giữ được tính regularization nhưng vẫn đủ linh hoạt để cho dữ liệu lên tiếng.
+Nguyên tắc chung ở đây khá rõ: tiên nghiệm quá rộng cho phép các giá trị thiếu thực tế, tiên nghiệm quá hẹp áp đặt ràng buộc quá mạnh lên ước lượng, còn tiên nghiệm vừa phải vừa có tác dụng điều chuẩn (regularization) vừa để dữ liệu đóng vai trò chính.
 
-## 4. Prior cho slope $$\beta$$
+## 4. Phân phối tiên nghiệm cho hệ số dốc $$\beta$$
 
-Sau standardization, slope có ý nghĩa rất rõ: $$x$$ tăng 1 độ lệch chuẩn thì $$y$$ thay đổi trung bình bao nhiêu độ lệch chuẩn.
-
-Khi đó một prior như:
+Trên thang đo chuẩn hóa, hệ số dốc $$\beta$$ biểu thị mức thay đổi trung bình của $$y$$ (tính theo độ lệch chuẩn) khi $$x$$ tăng thêm 1 độ lệch chuẩn. Khi chưa có thông tin chuyên sâu về độ lớn của tác động, một phân phối tiên nghiệm thông tin yếu như:
 
 $$
 \beta \sim \mathcal{N}(0,1)
 $$
 
-thường khá hợp lý cho nhiều bài toán.
-
-Prior này nói rằng ta mong slope không quá cực đoan, nhưng vẫn mở cho cả hiệu ứng dương lẫn âm.
-
-Nếu bạn chưa có kiến thức prior mạnh, đây là một lựa chọn weakly informative rất tốt.
-
-Ba lựa chọn sau giúp bạn nhìn rõ sự khác nhau giữa prior quá rộng, weakly informative, và quá hẹp cho slope.
+thường là lựa chọn hợp lý. Phân phối này cho phép cả mối quan hệ dương lẫn âm, đồng thời hạn chế các hệ số dốc quá cực đoan. Ba hình dưới đây so sánh trực quan ba mức độ rộng khác nhau của tiên nghiệm cho hệ số dốc.
 
 ![Prior quá rộng cho slope]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_slope_too_wide.png)
 
@@ -131,11 +109,9 @@ Ba lựa chọn sau giúp bạn nhìn rõ sự khác nhau giữa prior quá rộ
 
 ![Prior quá hẹp cho slope]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_slope_too_narrow.png)
 
-## 5. Prior cho noise $$\sigma$$
+## 5. Phân phối tiên nghiệm cho độ nhiễu $$\sigma$$
 
-Vì $$\sigma > 0$$, ta thường dùng các prior dương như HalfNormal, Exponential, hoặc đôi khi HalfStudentT.
-
-Một lựa chọn phổ biến sau standardization là:
+Do $$\sigma > 0$$, ta cần chọn các phân phối chỉ nhận giá trị dương như HalfNormal, Exponential hoặc HalfStudentT. Sau khi chuẩn hóa dữ liệu, một lựa chọn phổ biến là:
 
 $$
 \sigma \sim \mathrm{HalfNormal}(1).
@@ -143,37 +119,31 @@ $$
 
 ![Đường prior HalfNormal cho noise sigma]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_noise_halfnormal_curve.png)
 
-Trực giác ở đây là ta mong noise ở mức vừa phải, nhưng vẫn muốn để mô hình còn đủ không gian để chấp nhận dữ liệu nhiễu hơn nếu điều đó thực sự được quan sát.
+Lựa chọn này phản ánh kỳ vọng rằng độ nhiễu nằm ở mức vừa phải trên thang chuẩn hóa, đồng thời vẫn đủ mở để mô hình thích ứng nếu dữ liệu thực tế có độ phân tán lớn hơn.
 
 ![Tóm tắt cách đọc prior cho noise sigma]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_noise_halfnormal_summary.png)
 
-## 6. Weakly informative priors là gì và vì sao thường nên bắt đầu từ đó?
+## 6. Phân phối tiên nghiệm thông tin yếu là gì và vì sao nên bắt đầu từ đó?
 
-Weakly informative prior không có nghĩa là “tôi không biết gì”. Điều nó thực sự có nghĩa là tôi không muốn áp một niềm tin quá mạnh, nhưng tôi vẫn muốn loại bớt những giá trị phi lý mà kiến thức miền có thể bác bỏ ngay từ đầu.
+Phân phối tiên nghiệm thông tin yếu (weakly informative prior) không mang nghĩa "hoàn toàn không có thông tin". Ngược lại, nó thể hiện mục tiêu không áp đặt niềm tin quá chặt lên mô hình, nhưng vẫn loại bỏ được những vùng tham số phi lý mà kiến thức chuyên môn có thể bác bỏ ngay từ đầu. Trong hồi quy, loại tiên nghiệm này giúp điều chuẩn mô hình, ổn định phân phối hậu nghiệm và giảm nguy cơ bộ lấy mẫu đi vào những vùng tham số không có ý nghĩa.
 
-Trong regression, đây là cách rất hữu ích để regularize (ổn định hóa) mô hình, giúp posterior ổn định hơn, và khiến sampler ít bị kéo vào những vùng tham số vô nghĩa.
+## 7. Kiểm tra dự báo tiên nghiệm (prior predictive check)
 
-## 7. Prior predictive check (kiểm tra dự báo từ prior): bước quan trọng nhất của bài này
-
-Nếu chỉ nhìn prior trên tham số, nhiều khi ta khó biết nó có hợp lý không. Nhưng nếu dùng prior đó để sinh ra dữ liệu giả lập, mọi thứ trở nên rất rõ.
-
-Ý tưởng là lấy mẫu $$\alpha,\beta,\sigma$$ từ prior, sinh ra nhiều đường hồi quy giả từ các mẫu ấy, rồi xem những đường đó có tạo ra dữ liệu hợp lý về mặt thực tế hay không.
+Nếu chỉ quan sát biểu đồ mật độ trên không gian tham số, đôi khi rất khó đánh giá một phân phối tiên nghiệm có hợp lý hay không. Cách kiểm tra hiệu quả hơn là dùng chính các phân phối tiên nghiệm đó để mô phỏng dữ liệu giả lập: rút nhiều mẫu $$(\alpha, \beta, \sigma)$$ từ tiên nghiệm, vẽ các đường hồi quy tương ứng và xem liệu dữ liệu được sinh ra có phù hợp với thực tế hay không.
 
 ![Prior predictive với slope weakly informative]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_predictive_weakly_informative.png)
 
-Ví dụ, nếu prior của slope cho ra các đường dốc phi lý, hoặc sinh ra những dự báo như cân nặng âm, điểm thi 300 điểm, hay doanh thu tăng bùng nổ vô lý, thì prior đang có vấn đề, dù về mặt toán học nó “hợp lệ”.
+Nếu phân phối tiên nghiệm sinh ra các đường hồi quy có độ dốc cực đoan hoặc tạo ra những dự đoán vô lý như cân nặng âm, điểm thi 300 điểm hay doanh thu tăng giảm phi thực tế, thì phân phối tiên nghiệm cần được điều chỉnh lại — dù về mặt toán học nó hoàn toàn hợp lệ.
 
 ![Prior predictive với slope quá rộng]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_predictive_too_wide.png)
 
-## 8. Một ví dụ trực quan: quảng cáo và doanh thu
+## 8. Ví dụ trực quan: chi phí quảng cáo và doanh thu
 
-Giả sử bạn mô hình hóa $$x$$ là chi phí quảng cáo còn $$y$$ là doanh thu. Nếu prior cho slope quá rộng, mô hình có thể ngầm chấp nhận rằng tăng rất ít ngân sách nhưng doanh thu tăng bùng nổ một cách vô lý, hoặc ngược lại, chỉ tăng quảng cáo một chút mà doanh thu lại sụp xuống rất mạnh.
+Giả sử $$x$$ là chi phí quảng cáo và $$y$$ là doanh thu. Nếu phân phối tiên nghiệm của hệ số dốc quá rộng, mô hình sẽ ngầm cho phép kịch bản tăng rất ít ngân sách nhưng doanh thu tăng đột biến phi thực tế, hoặc ngược lại, tăng nhẹ ngân sách nhưng doanh thu sụt giảm nghiêm trọng. Trước khi nhìn vào dữ liệu, kiến thức thực tế đã cho thấy những kịch bản đó không hợp lý, và phân phối tiên nghiệm cần phản ánh điều này.
 
-Trước khi nhìn dữ liệu, bạn đã biết nhiều kịch bản trong số đó là phi thực tế. Prior cần phản ánh điều đó.
+### 8.1. Đọc kết quả kiểm tra dự báo tiên nghiệm bằng con số
 
-### 8.1. Prior predictive đọc bằng con số ra sao?
-
-Giả sử bạn đã standardize dữ liệu quảng cáo và doanh thu, rồi đang phân vân giữa hai prior cho slope:
+Giả sử dữ liệu quảng cáo và doanh thu đã được chuẩn hóa, và bạn đang cân nhắc giữa hai phân phối tiên nghiệm cho hệ số dốc:
 
 $$
 \beta \sim \mathcal{N}(0,3)
@@ -185,13 +155,13 @@ $$
 \beta \sim \mathcal{N}(0,0.5).
 $$
 
-Với prior đầu tiên, khoảng 95% cho $$\beta$$ xấp xỉ là $$[-6,6]$$. Nếu một chiến dịch mới nằm ở mức $$x_{std}=2$$, tức cao hơn trung bình 2 độ lệch chuẩn, thì riêng phần trung bình dự đoán:
+Với lựa chọn thứ nhất, khoảng 95% của $$\beta$$ xấp xỉ $$[-6, 6]$$. Khi một chiến dịch có chi phí ở mức $$x_{std} = 2$$ (cao hơn trung bình 2 độ lệch chuẩn), chỉ riêng giá trị trung bình dự đoán:
 
 $$
 \mu = \alpha + \beta x_{std}
 $$
 
-đã có thể bị kéo ra vùng cỡ $$-12$$ đến $$12$$ độ lệch chuẩn của $$y$$, còn chưa tính thêm noise. Với nhiều bài toán kinh doanh, đây là dấu hiệu quá rộng đến mức phi thực tế.
+đã có thể dao động quanh khoảng $$-12$$ đến $$12$$ độ lệch chuẩn của $$y$$, chưa kể phần nhiễu. Trong hầu hết bối cảnh kinh doanh, biên độ này rộng một cách phi thực tế.
 
 Ngược lại, với
 
@@ -199,23 +169,21 @@ $$
 \beta \sim \mathcal{N}(0,0.5),
 $$
 
-khoảng 95% cho slope chỉ còn xấp xỉ $$[-1,1]$$. Ở cùng mức $$x_{std}=2$$, mô hình chủ yếu cho phép giá trị trung bình dự đoán nằm trong vùng cỡ $$-2$$ đến $$2$$ độ lệch chuẩn quanh trung tâm. Đó vẫn là một không gian đủ mở, nhưng đã gần với trực giác thực tế hơn nhiều.
+khoảng 95% của hệ số dốc thu gọn về xấp xỉ $$[-1, 1]$$. Tại cùng mức $$x_{std} = 2$$, giá trị trung bình dự đoán chủ yếu nằm trong phạm vi $$-2$$ đến $$2$$ độ lệch chuẩn quanh mức trung tâm — vẫn đủ linh hoạt nhưng sát với thực tế hơn nhiều. Ví dụ này cho thấy kiểm tra dự báo tiên nghiệm hữu ích hơn việc chỉ nhìn vào tham số vì nó chuyển đổi phân phối tiên nghiệm sang chính ngôn ngữ của dữ liệu quan sát.
 
-Ví dụ này cho thấy vì sao prior predictive check mạnh hơn việc chỉ nhìn đồ thị prior trên tham số: nó ép ta đọc prior bằng ngôn ngữ của dữ liệu mà model sẽ sinh ra.
+## 9. Phân tích độ nhạy của phân phối tiên nghiệm (prior sensitivity analysis)
 
-## 9. Prior sensitivity analysis (phân tích độ nhạy của prior)
-
-Sau khi fit model, một câu hỏi rất nên đặt ra là: **Nếu tôi đổi prior hợp lý khác đi một chút, posterior có đổi nhiều không?** Nếu posterior thay đổi mạnh, điều đó có thể báo rằng dữ liệu chưa đủ mạnh, prior đang ảnh hưởng đáng kể, và vì thế bạn cần minh bạch hơn khi báo cáo kết luận.
+Sau khi ước lượng mô hình, một bước kiểm tra quan trọng là đặt câu hỏi: **Nếu thay đổi phân phối tiên nghiệm sang một vài phương án hợp lý lân cận, phân phối hậu nghiệm có biến đổi đáng kể không?** Nếu kết quả thay đổi mạnh, điều đó cho thấy dữ liệu chưa đủ mạnh để áp đảo tiên nghiệm và kết luận chịu ảnh hưởng rõ rệt từ giả định ban đầu — một thông tin cần được trình bày minh bạch khi báo cáo.
 
 ![Posterior khi thay đổi các prior hợp lý khác nhau]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_sensitivity_posterior_overlay.png)
 
-Sensitivity analysis (phân tích độ nhạy) không phải để tìm một prior “đúng tuyệt đối”. Mục tiêu của nó là để hiểu kết luận của bạn đang phụ thuộc vào prior đến mức nào.
+Phân tích độ nhạy không nhằm tìm ra một phân phối tiên nghiệm "duy nhất đúng", mà nhằm đo lường mức độ phụ thuộc của kết luận vào lựa chọn tiên nghiệm.
 
 ![Tóm tắt cách đọc prior sensitivity analysis]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_sensitivity_summary.png)
 
-## 10. Một bộ prior khởi đầu rất thực dụng
+## 10. Bộ phân phối tiên nghiệm khởi đầu thực dụng
 
-Với dữ liệu đã standardize, một bộ prior khởi đầu tốt cho hồi quy tuyến tính đơn giản thường là:
+Với dữ liệu đã được chuẩn hóa, một bộ phân phối tiên nghiệm khởi đầu hợp lý cho hồi quy tuyến tính đơn giản thường là:
 
 $$
 \alpha \sim \mathcal{N}(0,1)
@@ -229,40 +197,29 @@ $$
 \sigma \sim \mathrm{HalfNormal}(1)
 $$
 
-Đây không phải chân lý cố định cho mọi bài toán, nhưng là một default (lựa chọn mặc định khởi đầu) rất lành mạnh để bắt đầu.
+Đây không phải công thức cố định cho mọi bài toán, nhưng là điểm xuất phát an toàn để bắt đầu và điều chỉnh tiếp theo bối cảnh cụ thể.
 
-## 11. Sai lầm phổ biến khi chọn prior cho regression
+## 11. Những sai lầm phổ biến khi chọn phân phối tiên nghiệm
 
-### 11.1. Chọn prior mà quên nhìn thang đo dữ liệu
+- **Bỏ qua thang đo dữ liệu:** đặt tiên nghiệm theo thói quen mà không kiểm tra đơn vị đo là lỗi thường gặp nhất.
+- **Dùng tiên nghiệm quá rộng và xem là "không thông tin":** tiên nghiệm trải quá phẳng thường gây khó khăn cho bộ lấy mẫu, tạo dự báo tiên nghiệm phi thực tế và làm giảm độ ổn định của ước lượng.
+- **Bỏ qua bước kiểm tra dự báo tiên nghiệm:** nếu không mô phỏng dữ liệu từ tiên nghiệm, ta rất dễ bỏ sót các giả định vô lý ẩn sau công thức.
+- **Không thực hiện phân tích độ nhạy:** ngay cả khi tiên nghiệm ban đầu có vẻ hợp lý, vẫn nên đối chiếu với một vài lựa chọn lân cận để đánh giá độ vững của kết luận.
 
-Đây là lỗi rất hay gặp.
-
-### 11.2. Dùng prior cực rộng rồi gọi là “không thông tin”
-
-Prior quá rộng nhiều khi lại gây hậu quả xấu như khó sampling (lấy mẫu), prior predictive vô lý, và posterior cũng trở nên khó đọc hơn.
-
-### 11.3. Không làm prior predictive check
-
-Đây là mất đi một bước kiểm tra cực mạnh.
-
-### 11.4. Không kiểm tra độ nhạy
-
-Một prior có vẻ hợp lý nhưng vẫn nên được thử thách bằng vài lựa chọn lân cận.
-
-> **3 ý cần nhớ.** Standardization thường là bước tốt nhất để làm prior cho regression trở nên dễ chọn và dễ diễn giải hơn; weakly informative priors giúp loại bớt các giá trị phi lý mà vẫn để dữ liệu nói mạnh; và prior predictive check cùng sensitivity analysis là hai công cụ quan trọng để đánh giá prior trong regression.
+> **3 ý cần nhớ.** Chuẩn hóa dữ liệu giúp việc chọn và diễn giải phân phối tiên nghiệm trong hồi quy trở nên đơn giản và nhất quán hơn; phân phối tiên nghiệm thông tin yếu giúp loại bỏ các giá trị phi thực tế mà vẫn để dữ liệu đóng vai trò quyết định; và kiểm tra dự báo tiên nghiệm cùng phân tích độ nhạy là hai công cụ cốt lõi để thẩm định lựa chọn tiên nghiệm.
 
 ## Video tham khảo
 
-- [Bayesian Priors Explained | Prior Modelling & Prior Predictive Checks](https://www.youtube.com/watch?v=G3ludfAUAng) — stats 4 good, English. **xem trước**. Xem cách phát biểu prior rồi kiểm tra bằng prior predictive, đúng thói quen bài muốn khi chọn prior cho hồi quy.
-- [Keynote 2: Weakly Informative Priors -- Andrew Gelman](https://www.youtube.com/watch?v=UH6-9FU6bRg) — AISTATS 2014, English. Xem lập luận cho prior thông tin yếu, hỗ trợ phần bài lấy weakly informative prior làm điểm xuất phát.
-- [Standardized variables in a simple regression](https://www.youtube.com/watch?v=RTFnrK5ZZ8E) — Jos Dornschneider-Elkink, English. Xem hệ số thay đổi nghĩa sau khi chuẩn hóa biến, dùng cho đoạn bài nói vì sao standardization đi trước khi đặt prior.
+- [Bayesian Priors Explained | Prior Modelling & Prior Predictive Checks](https://www.youtube.com/watch?v=G3ludfAUAng) — stats 4 good, English. **xem trước**. Trình bày cách xây dựng phân phối tiên nghiệm và kiểm tra bằng dự báo tiên nghiệm, khớp với quy trình thực hành trong bài.
+- [Keynote 2: Weakly Informative Priors -- Andrew Gelman](https://www.youtube.com/watch?v=UH6-9FU6bRg) — AISTATS 2014, English. Giải thích cơ sở của phân phối tiên nghiệm thông tin yếu, bổ trợ cho phần lấy tiên nghiệm loại này làm điểm khởi đầu.
+- [Standardized variables in a simple regression](https://www.youtube.com/watch?v=RTFnrK5ZZ8E) — Jos Dornschneider-Elkink, English. Minh họa sự thay đổi ý nghĩa của các hệ số hồi quy sau khi chuẩn hóa biến, làm rõ lý do nên chuẩn hóa trước khi đặt tiên nghiệm.
 
 ## Câu hỏi tự luyện
 
-1. Vì sao standardization lại giúp prior selection dễ hơn?
-2. Hãy giải thích bằng lời một prior weakly informative cho slope đang nói điều gì.
-3. Prior predictive check đang kiểm tra điều gì mà nhìn prior trên tham số chưa chắc cho ta thấy?
-4. Trong một bài toán regression của bạn, tham số nào là nơi cần prior cẩn thận nhất?
+1. Vì sao chuẩn hóa dữ liệu giúp việc lựa chọn phân phối tiên nghiệm trở nên dễ dàng hơn?
+2. Hãy diễn giải bằng lời ý nghĩa của một phân phối tiên nghiệm thông tin yếu đặt cho hệ số dốc.
+3. Kiểm tra dự báo tiên nghiệm giúp phát hiện điều gì mà việc chỉ quan sát phân phối tiên nghiệm trên tham số có thể bỏ sót?
+4. Trong một bài toán hồi quy thuộc lĩnh vực của bạn, tham số nào đòi hỏi phải chọn phân phối tiên nghiệm cẩn thận nhất?
 
 ## Tài liệu tham khảo
 

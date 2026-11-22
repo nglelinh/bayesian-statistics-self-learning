@@ -12,63 +12,49 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần hiểu vì sao Bayesian statistics xem xác suất là **mức độ hợp lý của niềm tin** chứ không chỉ là tần suất dài hạn. Bạn cũng cần thấy được điểm mạnh của cách hiểu này trong những bài toán thật, nơi ta phải nói về các biến cố chỉ xảy ra một lần, về giả thuyết, và về tham số chưa biết.
+Sau bài này, bạn cần hiểu vì sao thống kê Bayes xem xác suất là **mức độ hợp lý của niềm tin** chứ không chỉ là tần suất dài hạn. Bạn cũng cần thấy được lợi thế của cách hiểu này trong những bài toán thực tế, nơi ta cần đánh giá các biến cố chỉ xảy ra một lần, các giả thuyết và các tham số chưa biết.
 
-> **Ví dụ mini.** Khi nghe “70% khả năng mưa ngày mai”, bạn hiểu đó là mức độ tin tưởng hiện tại để quyết định mang ô, chứ không phải tần số quan sát được từ vô số lần lặp của “ngày mai”.
+> **Ví dụ mini.** Khi nghe “70% khả năng mưa ngày mai”, bạn hiểu đó là mức độ tin cậy hiện tại để quyết định có mang ô hay không, chứ không phải tần suất thu được từ vô số lần lặp lại của “ngày mai”.
 >
-> **Câu hỏi tự kiểm tra.** Vì sao câu “xác suất trời mưa ngày mai là 70%” lại khó diễn giải theo nghĩa tần suất nhưng rất tự nhiên theo nghĩa Bayes?
+> **Câu hỏi tự kiểm tra.** Vì sao câu “xác suất trời mưa ngày mai là 70%” khó diễn giải theo nghĩa tần suất nhưng lại rất tự nhiên theo quan điểm Bayes?
 
-## 1. Một câu hỏi tưởng đơn giản: xác suất thật ra là gì?
+## 1. Một câu hỏi tưởng đơn giản: xác suất thực chất là gì?
 
-Trong nhiều khóa thống kê truyền thống, xác suất thường được giới thiệu như tần suất xảy ra của một sự kiện trong rất nhiều lần lặp lại. Định nghĩa này hoạt động khá ổn với những ví dụ như tung đồng xu, gieo xúc xắc, hay rút thẻ từ một bộ bài. Nhưng nó bắt đầu gặp khó khi ta hỏi những câu rất đời thường như xác suất trời mưa ngày mai là bao nhiêu, xác suất bệnh nhân này mắc bệnh A hay B là bao nhiêu, hay xác suất mô hình này đúng hơn mô hình kia là bao nhiêu.
+Trong nhiều khóa thống kê truyền thống, xác suất thường được giới thiệu là tần suất xuất hiện của một sự kiện qua rất nhiều lần lặp lại. Định nghĩa này hoạt động tốt với những ví dụ như tung đồng xu, gieo xúc xắc hay rút thẻ từ bộ bài. Tuy nhiên, nó bắt đầu bộc lộ giới hạn khi ta đặt ra các câu hỏi rất thực tế như: xác suất trời mưa ngày mai là bao nhiêu, xác suất bệnh nhân này mắc bệnh A hay B là bao nhiêu, hay xác suất mô hình này đúng hơn mô hình kia là bao nhiêu. Những sự kiện như vậy khó có thể hiểu theo nghĩa “lặp lại vô hạn lần” một cách cơ học.
 
-Các sự kiện ấy không dễ được hiểu như “lặp lại vô hạn lần” theo nghĩa máy móc.
+## 2. Quan điểm tần suất: xác suất là tần suất dài hạn
 
-## 2. Quan điểm tần suất: xác suất là tần số dài hạn
+Theo quan điểm tần suất (frequentist), xác suất của một sự kiện là tần suất tương đối của nó khi số lần lặp tiến tới rất lớn. Ví dụ, với một đồng xu cân bằng, khi tung rất nhiều lần thì tỷ lệ mặt ngửa sẽ tiến gần về 0.5. Đây là một ý tưởng chặt chẽ và có vai trò quan trọng, nhưng nó có hai giới hạn lớn.
 
-Theo quan điểm frequentist, xác suất của một sự kiện là tần suất tương đối của nó khi số lần lặp đi tới rất lớn.
+### 2.1. Khó áp dụng cho sự kiện chỉ xảy ra một lần
 
-Ví dụ, nếu đồng xu cân bằng, thì khi tung rất nhiều lần, tỷ lệ mặt ngửa sẽ tiến gần tới 0.5.
+Những biến cố như ngày mai có mưa hay không, ca phẫu thuật này có thành công hay không, hay thị trường tuần tới tăng hay giảm đều là các sự kiện đơn lẻ. Ta không thể “lặp lại vô hạn lần” đúng cùng một ngày mai để định nghĩa xác suất theo nghĩa tần suất thuần túy.
 
-Đây là một ý tưởng đẹp và quan trọng. Nhưng nó có hai giới hạn lớn.
+### 2.2. Khó phát biểu trực tiếp về tham số chưa biết
 
-### 2.1. Nó khó áp dụng cho sự kiện chỉ xảy ra một lần
-
-Ví dụ như ngày mai mưa hay không, ca phẫu thuật này thành công hay không, hay thị trường tuần sau tăng hay giảm.
-
-Bạn không thể “lặp lại vô hạn lần” đúng y hệt cùng một ngày mai để định nghĩa xác suất theo nghĩa thuần tần suất.
-
-### 2.2. Nó không thoải mái khi nói về tham số chưa biết
-
-Trong frequentist statistics, tham số $$\theta$$ được xem là cố định nhưng chưa biết, còn dữ liệu là ngẫu nhiên. Vì vậy, họ không thích câu “xác suất $$\theta$$ nằm giữa 0.4 và 0.6 là 95%”.
-
-Với họ, $$\theta$$ đâu có ngẫu nhiên để mà gán xác suất.
+Trong thống kê tần suất, tham số $$\theta$$ được xem là một hằng số cố định nhưng chưa biết, còn dữ liệu mới là đại lượng ngẫu nhiên. Vì vậy, trường phái này tránh nói “xác suất để $$\theta$$ nằm giữa 0.4 và 0.6 là 95%”, bởi theo quan điểm của họ, $$\theta$$ không phải biến ngẫu nhiên để có thể gán xác suất.
 
 ## 3. Quan điểm Bayes: xác suất là độ hợp lý
 
-Bayesian statistics đi theo một hướng tự nhiên hơn cho nhiều bài toán thực tế.
-
-Xác suất không chỉ là tần số dài hạn. Nó còn là mức độ tin tưởng, mức độ hợp lý, hay mức độ mà ta nên đặt cược vào một mệnh đề, dựa trên thông tin hiện có. Vì vậy, câu “70% khả năng mưa ngày mai” có thể được hiểu rất tự nhiên là: với thông tin hiện tại, mệnh đề “ngày mai mưa” đáng tin ở mức 70%.
-
-Đây không phải là một cách nói lỏng lẻo. Nó chính là nền tảng của Bayesian reasoning.
+Thống kê Bayes đi theo một hướng phù hợp hơn với nhiều bài toán thực tế: xác suất không chỉ là tần suất dài hạn, mà còn là mức độ tin cậy, mức độ hợp lý hay mức độ sẵn sàng đặt cược vào một mệnh đề dựa trên thông tin hiện có. Nhờ đó, phát biểu “70% khả năng mưa ngày mai” được hiểu một cách tự nhiên là: với thông tin hiện tại, mệnh đề “ngày mai có mưa” đáng tin ở mức 70%. Đây không phải cách nói cảm tính, mà là nền tảng của suy luận Bayes.
 
 ![Câu chuyện Linh và chiếc ô]({{ site.baseurl }}/img/chapter_img/chapter01/linh_umbrella_story.png)
 
-## 4. Vì sao cách hiểu Bayesian lại gần đời sống hơn?
+## 4. Vì sao cách hiểu Bayes gần với đời sống hơn?
 
-Bởi vì con người suy nghĩ như vậy gần như mỗi ngày.
+Cách hiểu này phản ánh đúng cách con người suy luận hằng ngày trong nhiều tình huống quen thuộc.
 
 ### 4.1. Dự báo thời tiết
 
-Khi nghe “70% khả năng mưa”, bạn không suy nghĩ về vô số thế giới song song, mà nghĩ đơn giản rằng trời khá dễ mưa nên tốt hơn là mang ô.
+Khi nghe “70% khả năng mưa”, bạn không nghĩ về vô số thế giới song song, mà đơn giản hiểu rằng khả năng mưa khá cao nên mang theo ô là hợp lý.
 
 ### 4.2. Chẩn đoán y khoa
 
-Bác sĩ không chỉ nhìn triệu chứng hiện tại. Họ còn dùng tần suất bệnh trong cộng đồng, tuổi tác và tiền sử bệnh, cũng như các kết quả xét nghiệm trước đó. Đó chính là tư duy cập nhật niềm tin dựa trên thông tin.
+Bác sĩ không chỉ nhìn vào triệu chứng trước mắt, mà còn kết hợp tỷ lệ mắc bệnh trong cộng đồng, tuổi tác, tiền sử bệnh và các kết quả xét nghiệm trước đó. Quá trình ấy chính là cập nhật niềm tin dựa trên thông tin.
 
 ### 4.3. Kinh doanh
 
-Một startup thấy 3 khách hàng đầu tiên đều mua hàng. Không ai kết luận ngay rằng tỷ lệ mua hàng thật là 100%. Ta giữ một mức bất định hợp lý, rồi tiếp tục cập nhật khi có thêm dữ liệu.
+Một công ty khởi nghiệp thấy 3 khách hàng đầu tiên đều mua hàng. Không ai kết luận ngay rằng tỷ lệ mua hàng thực sự là 100%; thay vào đó, ta giữ một mức bất định hợp lý và tiếp tục cập nhật khi có thêm dữ liệu.
 
 ![Nghe tiếng động lạ rồi cập nhật giả thuyết nguyên nhân]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_bayesian_daily_life_night_noise.png)
 
@@ -80,98 +66,86 @@ Một startup thấy 3 khách hàng đầu tiên đều mua hàng. Không ai k�
 
 ## 5. Ví dụ trực quan: đồng xu của người bạn
 
-Giả sử bạn của bạn đưa một đồng xu và nói: “Tôi vừa tung 10 lần, ra 8 mặt ngửa.” Câu hỏi bạn thật sự muốn trả lời là xác suất ra ngửa của đồng xu này có thể là bao nhiêu.
+Giả sử bạn của bạn đưa một đồng xu và nói: “Tôi vừa tung 10 lần, ra 8 mặt ngửa.” Câu hỏi bạn thực sự muốn trả lời là xác suất ra ngửa của đồng xu này có thể nằm ở mức nào.
 
-### Frequentist sẽ nói gì?
+### Theo quan điểm tần suất
 
-Họ sẽ nói đại loại rằng tham số thật là một hằng số cố định, và ta chỉ có thể ước lượng nó rồi dựng khoảng tin cậy.
+Nhà thống kê tần suất xem tham số thực là một hằng số cố định; ta chỉ có thể ước lượng nó từ mẫu và dựng khoảng tin cậy.
 
-### Bayesian sẽ nói gì?
+### Theo quan điểm Bayes
 
-Bayesian sẽ nói rằng trước dữ liệu, tôi có một prior về $$\theta$$; sau dữ liệu 8/10, tôi cập nhật prior đó thành posterior; và posterior cho biết vùng nào của $$\theta$$ đang hợp lý hơn.
+Nhà thống kê Bayes đặt một phân phối tiền nghiệm (prior) cho $$\theta$$ trước khi thấy dữ liệu; sau khi quan sát 8/10 mặt ngửa, prior đó được cập nhật thành phân phối hậu nghiệm (posterior), cho biết vùng giá trị nào của $$\theta$$ hiện đang hợp lý hơn.
 
 ![Cách nhà thống kê tần suất nhìn bài toán đồng xu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_coin_flip_frequentist.png)
 
 ![Cách nhà thống kê Bayesian nhìn bài toán đồng xu]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_coin_flip_bayesian.png)
 
-Điểm mạnh ở đây là Bayes cho phép ta nói trực tiếp về tham số chưa biết, mức độ tin tưởng hiện tại, và cách niềm tin đó thay đổi theo dữ liệu.
+Điểm mạnh của cách tiếp cận Bayes là cho phép phát biểu trực tiếp về tham số chưa biết, mức độ tin cậy hiện tại và cách niềm tin đó dịch chuyển theo dữ liệu.
 
-### Một cách đọc bằng con số
+### Cách đọc bằng con số
 
-Nếu ta bắt đầu với prior đều Beta$$(1,1)$$ và quan sát 8 mặt ngửa trong 10 lần tung, posterior sẽ là Beta$$(9,3)$$. Posterior mean lúc này là:
+Nếu bắt đầu với prior đều Beta$$(1,1)$$ và quan sát 8 mặt ngửa trong 10 lần tung, posterior sẽ là Beta$$(9,3)$$. Trung bình hậu nghiệm lúc này là:
 
 $$
 \frac{9}{9+3}=0.75.
 $$
 
-Ta thậm chí còn có thể hỏi trực tiếp những câu như “xác suất đồng xu thiên về ngửa nhiều hơn công bằng là bao nhiêu?”, tức $$P(\theta>0.5\mid D)$$, và giá trị đó lúc này vào khoảng $$0.97$$. Đây chính là tinh thần “xác suất là độ hợp lý”: nó cho phép ta nói thẳng mức độ hợp lý của các giá trị tham số sau khi đã nhìn dữ liệu.
+Ta cũng có thể hỏi trực tiếp: “xác suất đồng xu thiên về mặt ngửa cao hơn mức cân bằng là bao nhiêu?”, tức $$P(\theta>0.5\mid D)$$, và giá trị này vào khoảng $$0.97$$. Đây chính là tinh thần xem xác suất như độ hợp lý: nó cho phép định lượng trực tiếp mức độ hợp lý của các giá trị tham số sau khi đã quan sát dữ liệu.
 
-## 6. “Chủ quan” có phải là điểm yếu không?
+## 6. Tính “chủ quan” có phải là điểm yếu không?
 
-Nhiều người nghe đến “degree of belief” thì lo rằng Bayes quá chủ quan. Nhưng cần phân biệt giữa **chủ quan có nguyên tắc** và tùy tiện. Trong Bayes, bạn không được gán xác suất một cách vô lý; các xác suất vẫn phải nhất quán, tuân theo các quy tắc của xác suất, và có thể bị dữ liệu sửa lại. Nói cách khác, Bayes cho phép niềm tin cá nhân xuất hiện, nhưng buộc niềm tin đó phải có cấu trúc logic và phải chịu trách nhiệm trước dữ liệu.
+Nhiều người khi nghe đến “mức độ tin cậy” (degree of belief) thường lo ngại rằng thống kê Bayes quá chủ quan. Tuy nhiên, cần phân biệt giữa **chủ quan có nguyên tắc** và sự tùy tiện. Trong thống kê Bayes, bạn không được gán xác suất một cách vô căn cứ; các xác suất phải nhất quán, tuân thủ các tiên đề xác suất và chịu sự điều chỉnh của dữ liệu. Nói cách khác, Bayes cho phép đưa kiến thức ban đầu vào mô hình, nhưng buộc niềm tin đó phải có cấu trúc logic rõ ràng và sẵn sàng thay đổi trước bằng chứng mới.
 
-## 7. Dutch book trực giác: vì sao niềm tin phải nhất quán?
+## 7. Trực giác Dutch book: vì sao niềm tin phải nhất quán?
 
-Một cách nghĩ rất hay là thế này: nếu hệ thống xác suất của bạn không nhất quán, người khác có thể dàn xếp các cược khiến bạn thua chắc chắn.
-
-Ý tưởng này được gọi là Dutch book argument.
-
-Bạn không cần đào sâu phần triết học này ngay lập tức. Chỉ cần nhớ một điều:
-
-**Bayesian probability không phải “muốn tin gì thì tin”. Nó là niềm tin có kỷ luật.**
+Một lập luận nổi tiếng gọi là **Dutch book argument** chỉ ra rằng nếu hệ thống xác suất của bạn không nhất quán, người khác có thể thiết kế một tổ hợp kèo cược khiến bạn chắc chắn thua bất kể kết quả nào xảy ra. Bạn chưa cần đi sâu vào khía cạnh triết học này ngay lúc đầu; điều quan trọng cần nhớ là **xác suất Bayes không phải “muốn tin gì thì tin”, mà là niềm tin có kỷ luật logic**.
 
 ![Dutch book cartoon]({{ site.baseurl }}/img/chapter_img/chapter01/dutch_book_cartoon.png)
 
 ## 8. Cox và ý tưởng “xác suất là logic mở rộng”
 
-Một cách diễn đạt rất đẹp là logic cổ điển xử lý những gì chắc chắn đúng hoặc chắc chắn sai, còn xác suất xử lý những gì chưa chắc chắn hoàn toàn.
+Logic cổ điển xử lý các mệnh đề chắc chắn đúng hoặc chắc chắn sai, trong khi xác suất xử lý những mệnh đề chưa chắc chắn hoàn toàn. Theo tinh thần đó, xác suất Bayes có thể được xem như một dạng **logic mở rộng cho thế giới có bất định**. Điều này giải thích vì sao cách tiếp cận Bayes trở nên tự nhiên: khi chưa có dữ liệu, ta giữ một mức độ tin cậy ban đầu; khi dữ liệu mới xuất hiện, ta cập nhật niềm tin ấy một cách nhất quán.
 
-Theo tinh thần đó, xác suất Bayesian có thể xem như một dạng **logic mở rộng cho thế giới bất định**.
+## 9. Đại lượng nào ngẫu nhiên, đại lượng nào cố định?
 
-Điều này giải thích vì sao Bayes thấy tự nhiên: khi chưa có dữ liệu, ta giữ một mức độ tin tưởng ban đầu; khi có dữ liệu mới, ta cập nhật nó.
+Đây là khác biệt cốt lõi giữa hai trường phái Frequentist và Bayesian.
 
-## 9. Ai là ngẫu nhiên? Ai là cố định?
+### Trường phái Frequentist
 
-Đây là khác biệt cốt lõi giữa Frequentist và Bayesian.
+Tham số là đại lượng cố định nhưng chưa biết, còn dữ liệu là đại lượng ngẫu nhiên.
 
-### Frequentist
+### Trường phái Bayesian
 
-Với frequentist, tham số là cố định nhưng chưa biết, còn dữ liệu là ngẫu nhiên.
+Dữ liệu đã quan sát là cố định, còn tham số chưa biết được mô tả bằng phân phối xác suất.
 
-### Bayesian
-
-Với Bayesian, dữ liệu quan sát đã cố định, còn tham số chưa biết nên được mô tả bằng phân phối xác suất.
-
-Điều này dẫn đến khác biệt rất lớn trong cách diễn giải kết quả.
+Sự khác biệt nền tảng này dẫn đến hai cách diễn giải kết quả rất khác nhau.
 
 ![Frequentist nhìn xác suất theo dữ liệu lặp lại]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_frequentist.png)
 
 ![Bayesian nhìn xác suất như bất định về tham số]({{ site.baseurl }}/img/chapter_img/chapter01/chapter01_philosophy_bayesian.png)
 
-## 10. Vì sao chương này rất quan trọng cho phần sau?
+## 10. Vì sao bài học này quan trọng cho các phần sau?
 
-Nếu bạn không chấp nhận được rằng xác suất có thể mô tả niềm tin hợp lý, thì toàn bộ Bayes phía sau sẽ trông rất lạ. Nhưng một khi bạn thấy được điều này, các khái niệm như prior, posterior, credible interval, hay xác suất của giả thuyết sẽ trở nên rất tự nhiên.
+Nếu chưa chấp nhận rằng xác suất có thể biểu diễn mức độ hợp lý của niềm tin, toàn bộ các khái niệm Bayes ở những chương sau sẽ trở nên khó hiểu. Ngược lại, khi đã nắm rõ quan điểm này, những khái niệm như prior, posterior, khoảng tin cậy Bayes (credible interval) hay xác suất của giả thuyết sẽ trở nên mạch lạc và tự nhiên.
 
-## 11. Một cách nhớ ngắn gọn
+## 11. Tóm lược ngắn gọn
 
-Nếu phải tóm lại chỉ trong hai câu, thì Frequentist gắn xác suất với tần suất dài hạn của dữ liệu có thể lặp lại, còn Bayesian gắn xác suất với mức độ hợp lý của điều ta tin trong điều kiện thông tin hiện có.
+Nếu tóm gọn trong một câu: trường phái tần suất gắn xác suất với tần suất dài hạn của dữ liệu có thể lặp lại, còn trường phái Bayes gắn xác suất với mức độ hợp lý của niềm tin dựa trên thông tin hiện có. Không phải một bên hoàn toàn sai và bên kia hoàn toàn đúng trong mọi bối cảnh, nhưng cách hiểu Bayes linh hoạt hơn nhiều đối với các câu hỏi khoa học thực tế.
 
-Không phải một bên hoàn toàn sai và bên kia hoàn toàn đúng trong mọi tình huống. Nhưng Bayes linh hoạt hơn rất nhiều cho các câu hỏi khoa học thật sự.
-
-> **3 ý cần nhớ.** Frequentist và Bayesian khác nhau trước hết ở cách định nghĩa xác suất, không chỉ ở kỹ thuật tính toán; quan điểm Bayes xem xác suất như độ hợp lý nên áp dụng tự nhiên cho giả thuyết, tham số và các sự kiện chỉ xảy ra một lần; và “chủ quan” trong Bayes không có nghĩa là tùy tiện, vì niềm tin vẫn phải tuân theo các quy tắc nhất quán của xác suất.
+> **3 ý cần nhớ.** Frequentist và Bayesian khác nhau trước hết ở cách định nghĩa xác suất chứ không chỉ ở kỹ thuật tính toán; quan điểm Bayes xem xác suất là độ hợp lý nên áp dụng tự nhiên cho giả thuyết, tham số và các sự kiện chỉ xảy ra một lần; và tính “chủ quan” trong Bayes không đồng nghĩa với tùy tiện vì mọi niềm tin đều phải tuân thủ quy tắc nhất quán của xác suất.
 
 ## Video tham khảo
 
-- [The Bayesian Trap](https://www.youtube.com/watch?v=R13BD8qKeTg) — Veritasium, English. **xem trước**. Xem xác suất được dùng như mức độ tin vào một giả thuyết, đúng chuyển nghĩa từ tần suất dài hạn sang độ hợp lý.
-- [Bayes' Theorem (with Example!)](https://www.youtube.com/watch?v=akClB1J6b28) — Steve Brunton, English. Xem định lý Bayes như bài toán ngược từ triệu chứng về nguyên nhân, hỗ trợ các tình huống chỉ xảy ra một lần trong bài.
-- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Xem niềm tin được cập nhật bằng diện tích, dùng khi bài cần một hình ảnh cho xác suất như plausibility.
+- [The Bayesian Trap](https://www.youtube.com/watch?v=R13BD8qKeTg) — Veritasium, English. **xem trước**. Minh họa cách dùng xác suất như mức độ tin vào giả thuyết, làm rõ bước chuyển từ tần suất dài hạn sang độ hợp lý.
+- [Bayes' Theorem (with Example!)](https://www.youtube.com/watch?v=akClB1J6b28) — Steve Brunton, English. Trình bày định lý Bayes như bài toán suy luận ngược từ dấu hiệu về nguyên nhân, hỗ trợ các tình huống xảy ra một lần trong bài.
+- [Bayes theorem, the geometry of changing beliefs](https://www.youtube.com/watch?v=HZGCoVF3YvM) — 3Blue1Brown, English. Trực quan hóa quá trình cập nhật niềm tin bằng diện tích, giúp hình dung rõ xác suất theo nghĩa độ hợp lý (plausibility).
 
 ## Câu hỏi tự luyện
 
-1. Vì sao dự báo “70% khả năng mưa ngày mai” là ví dụ rất tự nhiên cho cách hiểu Bayesian về xác suất?
-2. Trong bài toán đồng xu 8/10 mặt ngửa, Frequentist và Bayesian khác nhau ở chỗ nào quan trọng nhất?
+1. Vì sao dự báo “70% khả năng mưa ngày mai” là ví dụ tự nhiên cho cách hiểu Bayes về xác suất?
+2. Trong bài toán đồng xu 8/10 mặt ngửa, điểm khác biệt quan trọng nhất giữa Frequentist và Bayesian là gì?
 3. Hãy nêu một ví dụ trong công việc hoặc đời sống mà cách hiểu xác suất như độ hợp lý hữu ích hơn cách hiểu tần suất.
-4. Vì sao Bayes vẫn có tính kỷ luật logic dù cho phép đưa niềm tin ban đầu vào mô hình?
+4. Vì sao thống kê Bayes vẫn giữ được tính kỷ luật logic dù cho phép đưa niềm tin ban đầu vào mô hình?
 
 ## Tài liệu tham khảo
 

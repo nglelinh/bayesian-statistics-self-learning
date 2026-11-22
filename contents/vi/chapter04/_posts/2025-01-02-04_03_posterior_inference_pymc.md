@@ -12,41 +12,37 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần biết cách biến regression Bayes từ generative story (câu chuyện sinh dữ liệu) thành model chạy được trong PyMC. Bạn cũng cần hiểu một workflow (quy trình làm việc) thực hành cơ bản: chuẩn hóa dữ liệu, viết prior, khai báo likelihood (hàm hợp lý), lấy mẫu posterior, đọc diagnostics (chẩn đoán) và diễn giải kết quả.
+Sau bài này, bạn sẽ biết cách chuyển một mô hình hồi quy tuyến tính Bayes từ công thức trên giấy thành mã nguồn chạy được trong PyMC. Bạn cũng sẽ nắm được quy trình thực hành chuẩn: chuẩn hóa dữ liệu, khai báo phân phối tiên nghiệm và hàm hợp lý, lấy mẫu phân phối hậu nghiệm bằng MCMC, kiểm tra các chỉ số chẩn đoán và diễn giải kết quả.
 
-> **Ví dụ mini.** Sau khi đã hiểu generative story và biết chọn prior hợp lý, bước tiếp theo là viết model thật trong PyMC để lấy posterior của intercept (hệ số chặn), slope (hệ số dốc) và noise (độ nhiễu). PyMC không thay bạn nghĩ mô hình; nó giúp bạn triển khai mô hình ấy hiệu quả hơn.
+> **Ví dụ ngắn.** Sau khi đã xác định quá trình sinh dữ liệu và chọn phân phối tiên nghiệm hợp lý, bước tiếp theo là triển khai mô hình trong PyMC để suy luận phân phối hậu nghiệm cho hệ số chặn, hệ số dốc và độ nhiễu. PyMC không thay bạn tư duy về mô hình, mà giúp thực thi tính toán một cách nhất quán và hiệu quả.
 >
-> **Câu hỏi tự kiểm tra.** Nếu PyMC đã chạy được posterior rồi, vì sao ta vẫn phải nhìn diagnostics trước khi diễn giải kết quả?
+> **Câu hỏi tự kiểm tra.** Khi PyMC đã chạy xong và trả về mẫu hậu nghiệm, vì sao ta vẫn phải kiểm tra các chỉ số chẩn đoán trước khi diễn giải kết quả?
 
-## 1. Từ mô hình trên giấy sang mô hình trong code
+## 1. Từ mô hình trên giấy sang mã nguồn
 
-Ở bài 4.1 và 4.2, ta đã có đủ ba thành phần: generative story (câu chuyện sinh dữ liệu), prior cho các tham số, và trực giác về regression Bayes.
+Ở hai bài 4.1 và 4.2, ta đã nắm được ba nền tảng: quá trình sinh dữ liệu, cách chọn phân phối tiên nghiệm và trực giác về hồi quy Bayes. Bài này tập trung vào bước triển khai thực hành: dịch mô hình thống kê thành mã nguồn PyMC theo một quy trình rõ ràng — chuẩn bị và chuẩn hóa dữ liệu, khai báo tiên nghiệm, khai báo hàm hợp lý, chạy bộ lấy mẫu, kiểm tra chẩn đoán rồi mới diễn giải phân phối hậu nghiệm.
 
-Bài này chủ yếu làm một bước dịch rất thực tế: chuyển từ suy nghĩ thống kê sang một mô hình có thể chạy được trong PyMC.
+## 2. Vì sao cần MCMC? Khi công thức dạng đóng không còn tồn tại
 
-Workflow tối thiểu ở đây là chuẩn bị dữ liệu, chuẩn hóa nếu cần, khai báo prior, khai báo likelihood, chạy sampler (bộ lấy mẫu), kiểm tra diagnostics (chẩn đoán), rồi mới đọc posterior.
+### 2.1. Từ mô hình liên hợp sang mô hình không liên hợp
 
-## 2. Tại sao cần MCMC? Vì không có công thức closed-form
+Ở Chương 2, ta đã làm quen với các **phân phối tiên nghiệm liên hợp (conjugate priors)**:
 
-### 2.1. Từ conjugacy đến non-conjugacy
+- **Beta–Binomial:** tiên nghiệm Beta + hàm hợp lý Binomial $$\to$$ hậu nghiệm Beta.
+- **Gamma–Poisson:** tiên nghiệm Gamma + hàm hợp lý Poisson $$\to$$ hậu nghiệm Gamma.
+- **Normal–Normal:** tiên nghiệm Normal + hàm hợp lý Normal $$\to$$ hậu nghiệm Normal.
 
-Trong Chapter 2, ta đã học về **conjugate priors** (prior liên hợp):
-
-- **Beta-Binomial**: Prior Beta + Likelihood Binomial → Posterior Beta
-- **Gamma-Poisson**: Prior Gamma + Likelihood Poisson → Posterior Gamma
-- **Normal-Normal**: Prior Normal + Likelihood Normal → Posterior Normal
-
-Với các cặp liên hợp này, ta có **công thức closed-form** (công thức đóng) để tính posterior trực tiếp:
+Với những cặp liên hợp này, phân phối hậu nghiệm có **công thức dạng đóng (closed-form)**, ví dụ:
 
 $$
 \theta \mid D \sim \text{Beta}(\alpha_0 + k, \beta_0 + n - k)
 $$
 
-Chỉ cần thay số vào công thức là xong. **Không cần máy tính mạnh, không cần lấy mẫu.**
+Ta chỉ cần thay số trực tiếp vào công thức mà không cần mô phỏng hay lấy mẫu.
 
-### 2.2. Regression Bayesian: không còn công thức đơn giản
+### 2.2. Hồi quy Bayes không còn công thức giải tích đơn giản
 
-Nhưng với **Bayesian regression**, tình huống phức tạp hơn:
+Xét một mô hình hồi quy tuyến tính Bayes tiêu chuẩn:
 
 $$
 \begin{aligned}
@@ -57,35 +53,38 @@ y_i &\sim \mathcal{N}(\beta_0 + \beta_1 x_i, \sigma^2)
 \end{aligned}
 $$
 
-**Vấn đề:**
-- Ba tham số ($\beta_0, \beta_1, \sigma$) phải cập nhật **đồng thời**
-- Prior là Normal + HalfNormal (không phải conjugate với likelihood)
-- Posterior là phân phối **joint** 3 chiều, không có công thức đơn giản
+Trong mô hình này:
+
+- Ba tham số ($$\beta_0, \beta_1, \sigma$$) phải được cập nhật đồng thời.
+- Tổ hợp tiên nghiệm Normal và HalfNormal không liên hợp với hàm hợp lý.
+- Phân phối hậu nghiệm đồng thời 3 chiều không có công thức dạng đóng:
 
 $$
 p(\beta_0, \beta_1, \sigma \mid D) = \frac{p(D \mid \beta_0, \beta_1, \sigma) \cdot p(\beta_0) \cdot p(\beta_1) \cdot p(\sigma)}{p(D)}
 $$
 
-Với $p(D) = \int\int\int p(D \mid \beta_0, \beta_1, \sigma) \cdot p(\beta_0) \cdot p(\beta_1) \cdot p(\sigma) \, d\beta_0 \, d\beta_1 \, d\sigma$
+với hằng số chuẩn hóa là tích phân 3 chiều:
 
-**Tích phân này không tính được bằng tay!**
+$$
+p(D) = \iiint p(D \mid \beta_0, \beta_1, \sigma) \cdot p(\beta_0) \cdot p(\beta_1) \cdot p(\sigma) \, d\beta_0 \, d\beta_1 \, d\sigma.
+$$
 
-### 2.3. MCMC: lấy mẫu thay vì tính công thức
+Tích phân này không thể tính bằng công thức giải tích thông thường.
 
-Khi không có công thức closed-form, ta dùng **MCMC (Markov Chain Monte Carlo)**:
+### 2.3. MCMC: lấy mẫu thay vì tính tích phân trực tiếp
 
-> **Ý tưởng cốt lõi:** Thay vì tính toán toán học phức tạp, ta **lấy mẫu** từ posterior.
->
-> Giống như khảo sát dư luận: không hỏi cả 10 triệu người, chỉ cần hỏi 4000 người đại diện.
+Khi không có công thức dạng đóng, ta sử dụng **MCMC (Markov Chain Monte Carlo)** để rút mẫu trực tiếp từ phân phối hậu nghiệm.
 
-**MCMC hoạt động như sau:**
+> **Ý tưởng cốt lõi:** Thay vì giải tích phân nhiều chiều, ta rút một tập mẫu đại diện từ phân phối hậu nghiệm — tương tự như khảo sát một mẫu đại diện gồm vài nghìn người thay vì hỏi toàn bộ hàng triệu dân.
 
-1. **Bắt đầu** từ một điểm ngẫu nhiên trong không gian tham số
-2. **Di chuyển** đến điểm mới theo quy tắc thông minh (ưu tiên vùng có xác suất cao)
-3. **Lặp lại** hàng nghìn lần để tạo "chuỗi" các mẫu
-4. **Kết quả:** Tập mẫu phản ánh đúng phân phối posterior
+Quy trình MCMC gồm bốn bước:
 
-**Ví dụ minh họa:**
+1. Khởi tạo tại một điểm trong không gian tham số.
+2. Dịch chuyển sang điểm mới theo quy tắc xác suất ưu tiên vùng mật độ hậu nghiệm cao.
+3. Lặp lại hàng nghìn lần để tạo thành chuỗi mẫu.
+4. Dùng tập mẫu thu được để xấp xỉ phân phối hậu nghiệm.
+
+**Ví dụ minh họa trong PyMC:**
 
 ```python
 # Thay vì tính công thức phức tạp:
@@ -109,81 +108,63 @@ with pm.Model() as model:
 # Mỗi bộ là một "thế giới có thể" phù hợp với data
 ```
 
-**Kết quả MCMC:**
+**Mẫu kết quả thu được từ MCMC:**
 
-| Sample | β₀ | β₁ | σ |
-|--------|----|----|---|
+| Mẫu | $$\beta_0$$ | $$\beta_1$$ | $$\sigma$$ |
+|---|---:|---:|---:|
 | 1 | 6.8 | 2.1 | 0.6 |
 | 2 | 6.5 | 2.2 | 0.5 |
 | ... | ... | ... | ... |
 | 2000 | 6.9 | 2.0 | 0.7 |
 
-Từ 2000 mẫu này, ta tính được:
-- **Posterior mean:** Trung bình của các mẫu
-- **95% Credible Interval:** Percentile 2.5% và 97.5%
-- **Xác suất β₁ > 0:** Đếm bao nhiêu mẫu có β₁ > 0
+Từ 2000 bộ mẫu này, ta dễ dàng tính các đại lượng suy luận:
 
-### 2.4. So sánh conjugacy vs MCMC
+- **Trung bình hậu nghiệm:** trung bình cộng của các mẫu.
+- **Khoảng tin cậy hậu nghiệm 95%:** lấy phân vị 2.5% và 97.5% của tập mẫu.
+- **Xác suất $$\beta_1 > 0$$:** tỷ lệ số mẫu có giá trị $$\beta_1 > 0$$.
 
-| | Conjugate Priors | MCMC (Regression) |
+### 2.4. So sánh phương pháp liên hợp và MCMC
+
+| Tiêu chí | Tiên nghiệm liên hợp | MCMC (Hồi quy) |
 |---|---|---|
-| **Prior** | Beta, Gamma, Normal đơn giản | Nhiều priors phức tạp |
-| **Likelihood** | Binomial, Poisson, Normal | Normal với nhiều tham số |
-| **Posterior** | Công thức closed-form | Không có công thức |
-| **Tính toán** | Thay số vào công thức | Lấy mẫu bằng MCMC |
-| **Kết quả** | Phân phối chính xác | Xấp xỉ từ mẫu |
-| **Ví dụ** | Beta(17, 103) | 2000 samples (β₀, β₁, σ) |
-| **Thời gian** | < 1 giây | 10-60 giây |
-| **Độ chính xác** | 100% | ~99% (với đủ mẫu) |
+| **Tiên nghiệm** | Beta, Gamma, Normal đơn giản | Linh hoạt cho nhiều phân phối khác nhau |
+| **Hàm hợp lý** | Binomial, Poisson, Normal tương thích | Normal hoặc các mô hình nhiều tham số |
+| **Hậu nghiệm** | Có công thức dạng đóng | Không có công thức dạng đóng |
+| **Cách tính** | Thay số trực tiếp vào công thức | Lấy mẫu mô phỏng bằng MCMC |
+| **Bản chất kết quả** | Phân phối giải tích chính xác | Xấp xỉ số hội tụ về phân phối đúng |
+| **Ví dụ** | Beta(17, 103) | 2000 bộ mẫu ($$\beta_0, \beta_1, \sigma$$) |
+| **Thời gian chạy** | Dưới 1 giây | Vài giây đến vài chục giây |
+| **Độ chính xác** | Chính xác giải tích (100%) | Sai số Monte Carlo rất nhỏ khi đủ mẫu |
 
-### 2.5. PyMC ẩn đi phức tạp của MCMC
+### 2.5. PyMC tự động hóa phần tính toán của MCMC
 
-Điều tuyệt vời của PyMC là bạn không cần hiểu sâu về:
-- Metropolis-Hastings algorithm
-- Gibbs sampling
-- NUTS (No-U-Turn Sampler)
-- Hamiltonian Monte Carlo
+Một ưu điểm thực tế của PyMC là bạn không cần tự lập trình lại các thuật toán như Metropolis–Hastings, Gibbs sampling, HMC hay NUTS. Thay vào đó, bạn chỉ cần tập trung vào bốn việc: khai báo mô hình (tiên nghiệm và hàm hợp lý), gọi `pm.sample()`, kiểm tra các chỉ số chẩn đoán ($$\hat{R}$$, ESS) và diễn giải kết quả. PyMC sẽ tự động chọn bộ lấy mẫu phù hợp (thường là NUTS), điều chỉnh tham số trong giai đoạn làm nóng (warm-up), chạy song song nhiều chuỗi và cảnh báo nếu phát hiện vấn đề hội tụ.
 
-Bạn chỉ cần:
-1. Khai báo model (priors + likelihood)
-2. Gọi `pm.sample()`
-3. Kiểm tra diagnostics (R-hat, ESS)
-4. Đọc kết quả
+### 2.6. Khi nào dùng công thức dạng đóng, khi nào dùng MCMC?
 
-**PyMC tự động:**
-- Chọn sampler tốt nhất (thường là NUTS)
-- Tự động tune (điều chỉnh) trong giai đoạn warm-up
-- Song song hóa nhiều chains
-- Phát hiện vấn đề và cảnh báo
+| Tình huống | Phương pháp phù hợp |
+|---|---|
+| Mô hình liên hợp, ít tham số | Công thức dạng đóng |
+| Mô hình không liên hợp hoặc nhiều tham số | MCMC |
+| Hồi quy từ 3 tham số trở lên | MCMC (PyMC) |
+| Mô hình phân cấp (Hierarchical models) | MCMC |
+| Mô hình hỗn hợp (Mixture models) | MCMC |
 
-### 2.6. Tóm tắt: Khi nào dùng MCMC?
+> **Nguyên tắc thực hành:** Khi phân phối hậu nghiệm không thể tính gọn bằng công thức dạng đóng, hãy sử dụng MCMC.
 
-| Tình huống | Phương pháp |
-|------------|-------------|
-| Conjugate priors + 1 tham số | ✅ Công thức closed-form |
-| Non-conjugate hoặc nhiều tham số | ✅ MCMC |
-| Regression với >2 tham số | ✅ MCMC (PyMC) |
-| Hierarchical models | ✅ MCMC |
-| Mixture models | ✅ MCMC |
+## 3. Cấu trúc một mô hình hồi quy Bayes tối giản trong PyMC
 
-**Quy tắc đơn giản:**
-> Nếu bạn không tính được posterior bằng tay trong 5 phút → Dùng MCMC!
-
-## 3. Một regression Bayes đơn giản trong PyMC có cấu trúc ra sao?
-
-Tư duy đúng là luôn bắt đầu từ prior cho $$\alpha$$, prior cho $$\beta$$, prior cho $$\sigma$$, rồi mới đi đến likelihood:
+Khi viết mã trong PyMC, hãy bám sát thứ tự của mô hình thống kê: khai báo tiên nghiệm cho $$\alpha$$, $$\beta$$, $$\sigma$$, rồi khai báo hàm hợp lý:
 
 $$
 y_i \sim \mathcal{N}(\alpha + \beta x_i,\sigma).
 $$
 
-Trong PyMC, bạn chỉ đang viết lại câu chuyện đó bằng code.
+Mã nguồn cần phản ánh đúng cấu trúc của mô hình toán học, thay vì thay đổi mô hình chỉ để chiều theo cú pháp thư viện.
 
-Điều quan trọng là code nên phản ánh mô hình, chứ không phải mô hình bị bóp méo chỉ để khớp với một API cụ thể.
+### 3.1. Ví dụ tối giản chạy được bằng PyMC
 
-### 3.1. Một ví dụ PyMC tối thiểu nhưng chạy được
-
-Giả sử bạn có một dataset rất nhỏ về chiều cao và cân nặng:
+Xét một tập dữ liệu nhỏ về chiều cao và cân nặng:
 
 ```python
 import numpy as np
@@ -215,78 +196,58 @@ with pm.Model() as reg_model:
 az.summary(idata, var_names=["alpha", "beta", "sigma"])
 ```
 
-Điều đáng chú ý là từng khối code đều ánh xạ thẳng sang câu chuyện thống kê:
+Từng khối lệnh trong đoạn mã ánh xạ trực tiếp sang mô hình thống kê:
 
-- `alpha`, `beta`, `sigma` là ba prior cho ba tham số cốt lõi,
-- `mu = alpha + beta * x_z` là đường trung bình của hồi quy,
-- `y_obs = pm.Normal(...)` là likelihood, tức cách dữ liệu được sinh ra quanh đường trung bình đó,
-- `pm.sample(...)` là bước lấy mẫu từ posterior thay vì tìm một ước lượng điểm duy nhất.
+- `alpha`, `beta`, `sigma` là phân phối tiên nghiệm của ba tham số cốt lõi.
+- `mu = alpha + beta * x_z` biểu diễn xu hướng trung bình tuyến tính.
+- `y_obs = pm.Normal(...)` là hàm hợp lý mô tả cách dữ liệu dao động quanh đường trung bình.
+- `pm.sample(...)` thực hiện lấy mẫu từ phân phối hậu nghiệm thay vì tìm một ước lượng điểm duy nhất.
 
-Nếu bạn còn giữ được mối liên hệ một-một giữa mô hình trên giấy và đoạn code này, bạn đang đi đúng hướng.
+Giữ được sự tương ứng một-một giữa công thức trên giấy và mã nguồn là dấu hiệu cho thấy bạn đang triển khai mô hình đúng hướng.
 
-## 4. Vì sao nên chuẩn hóa dữ liệu trước khi fit?
+## 4. Vì sao nên chuẩn hóa dữ liệu trước khi lấy mẫu?
 
-Regression Bayes thường chạy ổn hơn khi biến được scale tốt.
+Chuẩn hóa biến trước khi chạy hồi quy Bayes mang lại bốn lợi ích đồng thời: phân phối tiên nghiệm dễ chọn hơn, hệ số chặn dễ diễn giải hơn, bộ lấy mẫu hội tụ ổn định hơn và phân phối hậu nghiệm ít bị méo do sự chênh lệch đơn vị đo giữa các biến. Vì vậy, chuẩn hóa thường là bước tiền xử lý nên thực hiện trong thực hành.
 
-Lợi ích của việc chuẩn hóa là prior dễ chọn hơn, intercept dễ diễn giải hơn, sampler thường hội tụ ổn hơn, và posterior cũng ít bị “méo vì đơn vị đo” hơn.
+## 5. Sau khi lấy mẫu, cần đọc gì đầu tiên?
 
-Vì vậy, trong rất nhiều trường hợp, chuẩn hóa là một bước thực hành nên có.
+Người mới thường xem ngay trung bình hậu nghiệm và khoảng tin cậy, nhưng thứ cần kiểm tra đầu tiên phải là các **chỉ số chẩn đoán (diagnostics)**: đồ thị vệt mẫu (trace plot) có trộn đều không, $$\hat{R}$$ có gần 1 không, số mẫu hiệu dụng (ESS) có đủ lớn không, và bộ lấy mẫu có phát sinh cảnh báo (như divergence) hay không. Nếu các chỉ số này chưa đạt, mọi diễn giải thống kê phía sau chỉ nên xem là tạm thời.
 
-## 5. Sau khi chạy mẫu, ta đọc gì đầu tiên?
+## 6. Diễn giải phân phối hậu nghiệm trong hồi quy
 
-Nhiều người mới học hay nhảy thẳng vào posterior mean và interval. Nhưng thứ nên nhìn đầu tiên thực ra là diagnostics, nghĩa là trace plot (đồ thị vệt mẫu) có ổn không, R-hat có gần 1 không, ESS (số mẫu hiệu dụng) có đủ không, và sampler có phát ra warning (cảnh báo) gì không.
+Khi quá trình lấy mẫu đã đạt yêu cầu chẩn đoán, ta bắt đầu diễn giải từng tham số:
 
-Nếu phần này chưa tốt, mọi diễn giải posterior sau đó đều nên được xem là tạm thời.
+- **Hệ số chặn $$\alpha$$:** với dữ liệu đã chuẩn hóa hoặc dịch tâm, $$\alpha$$ biểu thị giá trị trung bình của $$y$$ tại mức trung tâm của $$x$$.
+- **Hệ số dốc $$\beta$$:** phân phối hậu nghiệm của $$\beta$$ cho biết chiều hướng (dương hay âm), độ lớn và mức độ bất định của mối quan hệ; đồng thời cho phép tính trực tiếp các xác suất như $$P(\beta > 0 \mid D)$$.
+- **Độ nhiễu $$\sigma$$:** cho biết mức độ phân tán của dữ liệu quanh đường hồi quy, phản ánh phần biến thiên mà mô hình chưa giải thích được.
 
-## 6. Diễn giải posterior trong regression
+### 6.1. Ví dụ: cập nhật từ tiên nghiệm sang hậu nghiệm
 
-Khi model chạy ổn, ta mới quay lại các câu hỏi thống kê.
+Giả sử sau khi khớp một mô hình hồi quy tuyến tính một biến bằng PyMC, ta thu được các kết quả sau:
 
-### 6.1. Intercept
-
-Với dữ liệu đã standardize (chuẩn hóa) hoặc centered (đưa về quanh trung tâm), intercept thường dễ đọc hơn vì nó mô tả giá trị trung bình của $$y$$ khi $$x$$ ở mức trung tâm.
-
-### 6.2. Slope
-
-Posterior của slope cho biết mối quan hệ đang dương hay âm, mạnh hay yếu, và ta chắc đến đâu về điều đó. Điểm hay của Bayes là bạn có thể hỏi trực tiếp xác suất $$\beta > 0$$ là bao nhiêu.
-
-### 6.3. Noise
-
-Posterior của $$\sigma$$ cho biết mức độ dữ liệu phân tán quanh đường hồi quy, tức là model còn bỏ lại bao nhiêu biến thiên chưa giải thích.
-
-### 6.4. Ví dụ: cập nhật từ prior sang posterior cho tham số hồi quy
-
-Giả sử sau khi fit mô hình tuyến tính một biến với PyMC, ta thu được tóm tắt sau:
-
-- Prior: $$\alpha\sim\mathcal N(60,20),\;\beta\sim\mathcal N(0,2),\;\sigma\sim\text{HalfNormal}(5)$$.
-- Posterior summary:
+- **Tiên nghiệm:** $$\alpha\sim\mathcal N(60,20),\;\beta\sim\mathcal N(0,2),\;\sigma\sim\text{HalfNormal}(5)$$.
+- **Tóm tắt hậu nghiệm:**
   - $$\alpha\mid D\approx \mathcal N(63.2,\,1.1^2)$$
   - $$\beta\mid D\approx \mathcal N(0.78,\,0.09^2)$$
   - $$\sigma\mid D$$ có trung bình hậu nghiệm khoảng $$2.4$$.
 
-Diễn giải nhanh:
+Từ kết quả trên, có thể rút ra ba nhận xét: dữ liệu đã kéo hệ số chặn từ vùng tiên nghiệm quanh 60 lên khoảng 63.2; hệ số dốc dương rõ rệt với độ lệch chuẩn nhỏ (0.09); và độ nhiễu còn lại quanh đường hồi quy khoảng 2.4 đơn vị của biến phản hồi.
 
-- dữ liệu đã kéo intercept từ vùng prior quanh 60 lên khoảng 63.2,
-- slope dương rõ rệt với bất định nhỏ (SD 0.09),
-- độ nhiễu còn lại khoảng 2.4 đơn vị phản hồi.
-
-Nếu cần khoảng hậu nghiệm gần 95% cho slope (xấp xỉ Normal):
+Nếu tính khoảng hậu nghiệm xấp xỉ 95% cho hệ số dốc theo phân phối Chuẩn:
 
 $$
 0.78\pm 1.96\times 0.09\Rightarrow [0.604,\;0.956].
 $$
 
-Khoảng này không cắt 0, nên bằng chứng hậu nghiệm ủng hộ quan hệ dương khá rõ.
+Khoảng này nằm hoàn toàn phía trên 0, cho thấy bằng chứng hậu nghiệm ủng hộ rõ rệt mối quan hệ dương.
 
-## 7. Từ posterior tham số tới dự đoán
+## 7. Chuyển từ suy luận tham số sang dự đoán
 
-Regression Bayes không chỉ để biết slope là bao nhiêu. Nó còn để dự đoán. Chẳng hạn, với một giá trị $$x$$ mới, ta muốn biết cân nặng hoặc điểm thi dự đoán sẽ ở đâu, và khoảng bất định đi kèm với dự đoán đó rộng đến mức nào.
+Hồi quy Bayes không dừng lại ở việc ước lượng hệ số dốc, mà còn cung cấp dự đoán kèm mức độ bất định cho các quan sát mới. Khi đã có các mẫu rút từ phân phối hậu nghiệm (posterior draws), việc tính phân phối dự báo hậu nghiệm (posterior predictive) trong PyMC diễn ra rất trực tiếp.
 
-Đây là nơi PyMC rất tiện, vì sau khi đã có posterior draws (các mẫu rút ra từ posterior), ta có thể chuyển thẳng sang posterior predictive (dự báo hậu nghiệm) tương đối tự nhiên.
+### 7.1. Ví dụ minh họa: dự đoán cân nặng cho người cao 175 cm
 
-### 7.1. Một ví dụ cụ thể: dự đoán cho người cao 175 cm
-
-Với model ở trên, giả sử bạn muốn dự đoán cho một người cao 175 cm. Ta có thể lấy trực tiếp posterior draws rồi lan truyền chúng sang dự đoán:
+Với mô hình ở mục 3.1, ta rút các mẫu hậu nghiệm và lan truyền bất định sang dự đoán tại chiều cao 175 cm:
 
 ```python
 posterior = az.extract(idata, group="posterior")
@@ -304,77 +265,49 @@ mu_new = mu_new_z * weight.std() + weight.mean()
 y_new = y_new_z * weight.std() + weight.mean()
 ```
 
-Hai đối tượng ở đây phục vụ hai câu hỏi khác nhau:
+Hai biến thu được trả lời hai câu hỏi khác nhau:
 
-- `mu_new` là phân phối cho **giá trị trung bình dự đoán**, tức trung bình cân nặng của nhóm người cao 175 cm theo mô hình.
-- `y_new` là phân phối cho **một quan sát mới**, tức cân nặng của một cá nhân cụ thể cao 175 cm.
+- `mu_new` biểu diễn phân phối cho **giá trị trung bình dự đoán** của nhóm người cao 175 cm.
+- `y_new` biểu diễn phân phối cho **một quan sát mới** — tức cân nặng của một cá nhân cụ thể cao 175 cm.
 
-Giả sử sau khi tóm tắt các mẫu này, bạn thấy:
+Giả sử sau khi tóm tắt mẫu, trung bình của `mu_new` vào khoảng 71 kg với khoảng 89% từ 69 đến 73 kg, còn `y_new` có khoảng dự đoán 89% rộng hơn, từ 63 đến 79 kg. Kết quả này phản ánh đúng tinh thần Bayes: mô hình khá chắc chắn về xu hướng trung bình tại chiều cao 175 cm, nhưng vẫn ghi nhận đầy đủ độ phân tán khi dự đoán cho một cá nhân riêng lẻ.
 
-- trung bình của `mu_new` vào khoảng 71 kg với khoảng 89% khoảng từ 69 đến 73 kg,
-- còn `y_new` có khoảng dự đoán 89% rộng hơn, chẳng hạn từ 63 đến 79 kg.
+## 8. Quy trình thực hành tối thiểu với PyMC
 
-Lúc đó bạn nên đọc kết quả theo đúng ngôn ngữ Bayes:
+Bạn có thể tổ chức quy trình làm việc thành ba giai đoạn nối tiếp nhau:
 
-- mô hình khá chắc về **xu hướng trung bình** ở vùng chiều cao 175 cm,
-- nhưng vẫn thành thật rằng **một cá nhân mới** có thể lệch khỏi trung bình khá nhiều.
+- **Trước khi chạy:** kiểm tra xem biến có cần chuẩn hóa không, phân phối tiên nghiệm có hợp lý theo thang đo dữ liệu không và quá trình sinh dữ liệu đã được viết rõ ràng chưa.
+- **Trong khi chạy:** theo dõi xem bộ lấy mẫu có phát sinh cảnh báo hay không và giai đoạn khởi động (warm-up) đã đủ dài chưa.
+- **Sau khi chạy:** kiểm tra trace plot, $$\hat{R}$$ và ESS trước; sau đó mới diễn giải phân phối hậu nghiệm của tham số và kiểm tra phân phối dự báo hậu nghiệm.
 
-Đây chính là nơi posterior inference chuyển thành prediction một cách rất tự nhiên: ta không đổi mô hình, chỉ tiếp tục kể câu chuyện sinh dữ liệu thêm một bước nữa.
+### Ghi chú về bối cảnh biết trước và chưa biết phương sai nhiễu
 
-## 8. Một workflow tối thiểu lành mạnh khi dùng PyMC cho regression
+Trong thực hành với PyMC, ta thường suy luận đồng thời $$\sigma$$, nên khoảng tin cậy hậu nghiệm của hệ số dốc đã tự động phản ánh bất định về nhiễu. Nếu cố định trước $$\sigma$$ trong một bài toán đặc thù, khoảng ước lượng của hệ số dốc sẽ hẹp hơn. Do đó, khi báo cáo kết quả, cần nêu rõ $$\sigma$$ được ước lượng hay được cố định.
 
-Bạn có thể ghi nhớ workflow (quy trình) này như ba chặng nối tiếp nhau, trong đó mỗi chặng đều có một câu hỏi trung tâm cần được trả lời rõ ràng trước khi sang bước kế tiếp:
+## 9. Những lỗi thường gặp khi mới dùng PyMC
 
-### Trước khi chạy
+- **Xem PyMC như hộp đen:** nếu không nắm vững mô hình thống kê phía sau, bạn sẽ khó đánh giá ý nghĩa của tiên nghiệm, không hiểu cảnh báo của bộ lấy mẫu và khó nhận ra khi nào kết quả hậu nghiệm không đáng tin cậy.
+- **Chỉ báo cáo trung bình hậu nghiệm:** một con số trung bình không đủ để truyền đạt kết quả Bayes; cần trình bày thêm khoảng bất định, xác suất vượt ngưỡng, hình dạng phân phối và bất định dự đoán.
+- **Bỏ qua bước kiểm tra mô hình:** khớp xong mô hình mới là một nửa công việc. Bài tiếp theo sẽ trình bày chi tiết về kiểm tra dự báo hậu nghiệm, phân tích phần dư và đánh giá chất lượng dự đoán.
 
-Trước khi chạy, hãy hỏi biến có cần chuẩn hóa không, prior có hợp lý theo đúng thang đo dữ liệu không, và generative story đã thật sự rõ chưa.
+## 10. Tổng kết bài học
 
-### Trong khi chạy
+Mục tiêu của bài này không phải là ghi nhớ thuộc lòng từng hàm của PyMC, mà là thấy được sự liền mạch giữa tư duy mô hình hóa và mã nguồn triển khai. PyMC chỉ là công cụ tính toán; phần quyết định chất lượng phân tích vẫn nằm ở cấu trúc mô hình, phân phối tiên nghiệm, chẩn đoán hội tụ và cách diễn giải kết quả.
 
-Trong khi chạy, hãy để ý sampler có cảnh báo gì không và giai đoạn warm-up (làm nóng) có đủ hay chưa.
-
-### Sau khi chạy
-
-Sau khi chạy, hãy xem trace plot có ổn không, R-hat và ESS có tốt không, posterior của tham số đang nói gì, và posterior predictive có hợp lý hay không.
-
-### Ghi chú cho bối cảnh biết/không biết phương sai
-
-Trong thực hành PyMC, ta thường suy luận cả $$\sigma$$ nên interval của slope đã phản ánh bất định về nhiễu. Nếu bạn cố định $$\sigma$$ từ trước (bài toán đặc thù), interval cho slope thường hẹp hơn. Khi báo cáo kết quả, nên nêu rõ bạn đang ở kịch bản nào.
-
-## 9. Những lỗi phổ biến của người mới dùng PyMC cho regression
-
-### 9.1. Xem PyMC như hộp đen
-
-Đây là lỗi lớn nhất.
-
-Nếu không hiểu mô hình, bạn sẽ không biết prior đang nói gì, warning đang báo điều gì, và posterior có thật sự đáng tin hay không.
-
-### 9.2. Chỉ đọc posterior mean
-
-Posterior mean là chưa đủ. Bạn cần xem interval (khoảng bất định), xác suất vượt ngưỡng, hình dạng posterior, và cả prediction uncertainty (bất định dự đoán).
-
-### 9.3. Quên model checking
-
-Regression fit xong chưa phải là xong. Bài sau sẽ nhấn mạnh posterior predictive checks (kiểm tra dự báo hậu nghiệm), residual analysis (phân tích phần dư), và prediction quality (chất lượng dự đoán).
-
-## 10. Điều bài này muốn bạn giữ lại
-
-Mục tiêu không phải là nhớ từng dòng API PyMC. Mục tiêu là nhìn thấy regression Bayes có thể được triển khai rất tự nhiên miễn là bạn giữ đúng workflow tư duy. PyMC chỉ là công cụ; phần quan trọng nhất vẫn là câu chuyện mô hình, prior, diagnostics, và cách diễn giải posterior.
-
-> **3 ý cần nhớ.** PyMC giúp triển khai regression Bayes theo đúng cấu trúc prior + likelihood + posterior mà bạn đã học; sau khi fit model, diagnostics luôn phải đi trước việc diễn giải posterior; và giá trị thật của posterior inference không chỉ nằm ở ước lượng tham số mà còn ở khả năng chuyển sang dự đoán và kiểm tra mô hình.
+> **3 ý cần nhớ.** PyMC cho phép triển khai hồi quy Bayes theo đúng cấu trúc tiên nghiệm + hàm hợp lý + hậu nghiệm; sau khi lấy mẫu, chẩn đoán hội tụ luôn phải được kiểm tra trước khi diễn giải tham số; và giá trị đầy đủ của suy luận hậu nghiệm nằm ở cả việc ước lượng tham số lẫn tạo dự đoán có kèm bất định.
 
 ## Video tham khảo
 
-- [[114] Getting Started with PyMC (Chris Fonnesbeck)](https://www.youtube.com/watch?v=jrU0UBr2z3k) — Data Umbrella, English. **xem trước**. Xem một mô hình PyMC được khai báo rồi lấy mẫu, đúng bước bài đi từ câu chuyện sinh sang code.
-- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Xem hồi quy tuyến tính trong PyMC và cách đọc hệ số, hỗ trợ workflow chuẩn hóa, prior và likelihood của bài.
-- [Chris Fonnesbeck - Probabilistic Python: An Introduction to Bayesian Modeling with PyMC](https://www.youtube.com/watch?v=911d4A1U0BE) — PyData, English. Xem bản giới thiệu dài hơn về mô hình hóa Bayes bằng PyMC, dùng khi cần thấy cả prior lẫn kiểm tra sau khi sample.
+- [[114] Getting Started with PyMC (Chris Fonnesbeck)](https://www.youtube.com/watch?v=jrU0UBr2z3k) — Data Umbrella, English. **xem trước**. Hướng dẫn khai báo mô hình và lấy mẫu trong PyMC, khớp với bước chuyển từ mô hình trên giấy sang mã nguồn trong bài.
+- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Trình bày hồi quy tuyến tính trong PyMC và cách diễn giải hệ số, bổ trợ cho quy trình chuẩn hóa, tiên nghiệm và hàm hợp lý.
+- [Chris Fonnesbeck - Probabilistic Python: An Introduction to Bayesian Modeling with PyMC](https://www.youtube.com/watch?v=911d4A1U0BE) — PyData, English. Bài giới thiệu đầy đủ hơn về mô hình hóa Bayes với PyMC, bao gồm cả đặt tiên nghiệm và kiểm tra sau lấy mẫu.
 
 ## Câu hỏi tự luyện
 
-1. Hãy liệt kê 5 bước tối thiểu của một workflow regression Bayes với PyMC.
-2. Vì sao chuẩn hóa dữ liệu thường giúp cả prior selection lẫn sampling?
-3. Nếu posterior của slope trông hợp lý nhưng R-hat chưa tốt, bạn nên làm gì?
-4. Trong regression Bayes, tại sao prediction là phần quan trọng không kém estimation?
+1. Hãy liệt kê 5 bước tối thiểu trong một quy trình hồi quy Bayes với PyMC.
+2. Vì sao chuẩn hóa dữ liệu hỗ trợ đồng thời cho cả việc chọn phân phối tiên nghiệm lẫn quá trình lấy mẫu?
+3. Nếu phân phối hậu nghiệm của hệ số dốc trông hợp lý nhưng chỉ số $$\hat{R}$$ chưa đạt yêu cầu, bạn cần xử lý thế nào?
+4. Trong hồi quy Bayes, vì sao bước dự đoán có vai trò quan trọng không kém bước ước lượng tham số?
 
 ## Tài liệu tham khảo
 

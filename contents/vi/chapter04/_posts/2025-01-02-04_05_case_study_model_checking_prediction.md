@@ -12,322 +12,204 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn cần làm được một workflow (quy trình) đầy đủ và có chiều sâu trên một dataset cụ thể: xây mô hình Bayes, đánh giá chất lượng sampling, kiểm tra model bằng posterior predictive checks (PPC), phân tích residual (phần dư), báo cáo prediction (dự đoán) đúng loại bất định, và đề xuất model revision (sửa mô hình) dựa trên bằng chứng.
+Sau bài này, bạn sẽ thực hành trọn vẹn một quy trình hồi quy Bayes trên tập dữ liệu cụ thể: xây dựng mô hình, đánh giá chất lượng lấy mẫu, kiểm tra mô hình bằng dự báo hậu nghiệm (PPC), phân tích phần dư, báo cáo dự đoán kèm đúng loại bất định và đề xuất điều chỉnh mô hình dựa trên bằng chứng định lượng.
 
-> **Ví dụ mini.** Bạn dự đoán tiền tip từ tổng hóa đơn trong dữ liệu nhà hàng. Model tuyến tính có thể cho slope rất đẹp, nhưng câu hỏi thực chiến là: model đó có thực sự sinh ra dữ liệu giống thực tế và dự đoán đáng tin cho khách mới hay không?
+> **Ví dụ ngắn.** Khi dự đoán tiền boa (`tip`) từ tổng hóa đơn (`total_bill`) tại nhà hàng, một mô hình tuyến tính có thể cho hệ số dốc rất rõ ràng. Tuy nhiên, câu hỏi thực tế là: mô hình đó có tái tạo được đặc trưng của dữ liệu thực tế và đưa ra khoảng dự đoán đáng tin cậy cho các bàn ăn mới hay không?
 >
-> **Câu hỏi tự kiểm tra.** Nếu slope hậu nghiệm dương rõ rệt nhưng PPC thất bại ở vùng hóa đơn lớn, bạn nên tin điều gì?
+> **Câu hỏi tự kiểm tra.** Nếu phân phối hậu nghiệm cho hệ số dốc dương rõ rệt nhưng PPC thất bại ở vùng hóa đơn lớn, bạn nên rút ra kết luận gì?
 
-## 1. Dataset cụ thể: `tips` (seaborn)
+## 1. Giới thiệu tập dữ liệu `tips`
 
-Ta dùng dataset `tips`, trong đó:
+Ta sử dụng tập dữ liệu `tips` (từ thư viện `seaborn`), trong đó mỗi dòng tương ứng với một bàn ăn, `total_bill` là tổng hóa đơn và `tip` là tiền boa. Mục tiêu chính là mô hình hóa và dự đoán `tip` theo `total_bill`; mục tiêu quan trọng không kém là kiểm tra xem mô hình tuyến tính Gaussian cơ sở có đủ phù hợp hay không thay vì mặc nhiên tin vào hệ số dốc.
 
-- `total_bill`: tổng hóa đơn,
-- `tip`: tiền tip,
-- mỗi dòng là một bàn ăn.
+Tập dữ liệu này đủ gọn để dễ quan sát trực giác, đồng thời đủ thực tế để bộc lộ các vấn đề kinh điển trong kiểm tra mô hình: khả năng phi tuyến nhẹ, phương sai tăng theo quy mô hóa đơn và hành vi vùng đuôi không hoàn toàn phù hợp với phân phối Chuẩn đơn giản.
 
-Mục tiêu chính: mô hình hóa và dự đoán `tip` theo `total_bill`.
+### 1.1. Trích đoạn dữ liệu
 
-Mục tiêu phụ: kiểm tra xem một mô hình tuyến tính Gaussian cơ sở có đủ tốt hay không, thay vì mặc định tin vào slope hậu nghiệm.
-
-Lý do dataset này phù hợp cho bài 4.5 là nó đủ nhỏ để đọc trực giác, nhưng đủ thực tế để thấy các vấn đề model checking: có thể phi tuyến nhẹ, phương sai tăng theo mức hóa đơn, và tail behavior (hành vi đuôi phân phối) không hoàn toàn lý tưởng cho Normal đơn giản.
-
-### 1.1. Xem nhanh một phần dữ liệu
-
-Bảng dưới là 5 dòng đầu của dataset `tips` để bạn có cảm giác trực quan về dữ liệu:
+Bảng dưới trình bày 5 dòng đầu của tập dữ liệu `tips`:
 
 | total_bill | tip | sex | smoker | day | time | size |
 |---:|---:|---|---|---|---|---:|
 | 16.99 | 1.01 | Female | No | Sun | Dinner | 2 |
 | 10.34 | 1.66 | Male | No | Sun | Dinner | 3 |
 | 21.01 | 3.50 | Male | No | Sun | Dinner | 3 |
-| 23.68 | 3.31 | Male | No | Sun | Dinner | 2 |
+| 23.68 | 3.31 | Male | No | Sun | Dinner | 3 |
 | 24.59 | 3.61 | Female | No | Sun | Dinner | 4 |
 
-### 1.2. Tóm tắt dữ liệu trước khi modeling
+### 1.2. Tóm tắt dữ liệu trước khi mô hình hóa
 
 Trên toàn bộ 244 quan sát:
 
-- `total_bill`: trung bình khoảng 19.79, độ lệch chuẩn khoảng 8.90, min 3.07, max 50.81,
-- `tip`: trung bình khoảng 3.00, độ lệch chuẩn khoảng 1.38, min 1.00, max 10.00,
-- tương quan tuyến tính giữa `total_bill` và `tip` khoảng 0.676 (dương, mức vừa đến khá).
+- `total_bill`: trung bình khoảng 19.79, độ lệch chuẩn khoảng 8.90, nhỏ nhất 3.07, lớn nhất 50.81.
+- `tip`: trung bình khoảng 3.00, độ lệch chuẩn khoảng 1.38, nhỏ nhất 1.00, lớn nhất 10.00.
+- Tương quan tuyến tính giữa `total_bill` và `tip` đạt khoảng 0.676 (dương, mức trung bình đến khá).
 
-Điểm quan trọng cho bước checking sau này:
+Một điểm đáng lưu ý cho bước kiểm tra phía sau: chỉ khoảng 2.9% quan sát có `tip > 6`, nhưng đây lại là vùng phản ánh hành vi đuôi phải (tail behavior) — nơi mô hình tuyến tính Gaussian thường dễ sai lệch:
 
-- chỉ khoảng 2.9% quan sát có `tip > 6`,
-- nhưng đây lại là vùng quyết định hành vi đuôi (tail behavior), nơi mô hình tuyến tính Gaussian thường dễ sai.
-
-Làm rõ luận điểm này:
-
-- **Vì sao 2.9% vẫn quan trọng?** Trong bài toán dự báo, lỗi ở đuôi thường gắn với các trường hợp có ảnh hưởng lớn (hóa đơn lớn, tip lớn). Dù hiếm, các điểm này quyết định chất lượng dự báo ở kịch bản rủi ro hoặc giá trị cao.
-- **Vì sao mô hình Gaussian tuyến tính dễ sai ở đuôi?** Mô hình cơ sở giả định sai số đối xứng và có một độ nhiễu chung $$\sigma$$ cho mọi mức `total_bill`. Thực tế dữ liệu dịch vụ thường có phương sai tăng theo mức hóa đơn, nên đuôi phải có thể dày hơn dự đoán của Normal đơn giản.
-- **Hệ quả nếu bỏ qua vùng đuôi:** mô hình có thể vẫn khớp mean tốt nhưng đánh giá thấp xác suất tip rất cao, làm prediction interval ở vùng hóa đơn lớn bị hẹp giả tạo.
-- **Cách kiểm tra đúng trong PPC:** ngoài mean/variance, nên kiểm tra thêm statistic theo đuôi, ví dụ
+- **Vì sao tỷ lệ 2.9% vẫn quan trọng?** Các trường hợp ở đuôi phải thường gắn với những giao dịch có giá trị lớn; dù ít gặp, chúng quyết định độ chính xác của dự báo trong các kịch bản rủi ro hoặc doanh thu cao.
+- **Vì sao mô hình Gaussian cơ sở dễ lệch ở đuôi?** Mô hình giả định sai số đối xứng và dùng một độ lệch chuẩn nhiễu $$\sigma$$ cố định cho mọi mức hóa đơn. Trong dữ liệu dịch vụ, độ phân tán tiền boa thường tăng theo mức hóa đơn, khiến đuôi phải dày hơn so với dự báo của phân phối Chuẩn đồng phương sai.
+- **Hệ quả nếu bỏ qua vùng đuôi:** mô hình có thể khớp tốt giá trị trung bình nhưng đánh giá thấp xác suất xuất hiện tiền boa cao, khiến khoảng dự đoán ở vùng hóa đơn lớn bị hẹp hơn thực tế.
+- **Cách kiểm tra trong PPC:** bên cạnh trung bình và phương sai, cần bổ sung các thống kê kiểm tra vùng đuôi như:
 
 $$
-T(y)=\mathbf 1(y>6),\quad T(y)=\max(y),\quad T(y)=Q_{0.95}(y).
+T_1(y)=\frac{1}{n}\sum_{i=1}^{n}\mathbf 1(y_i>6),\quad T_2(y)=\max(y),\quad T_3(y)=Q_{0.95}(y).
 $$
 
-Nếu $$T(y_{obs})$$ nằm ở rìa hoặc ngoài phân phối $$T(y_{rep})$$, đó là dấu hiệu model chưa tái tạo được tail behavior.
+Nếu giá trị quan sát $$T(y_{obs})$$ rơi ra rìa hoặc nằm ngoài phân phối mô phỏng $$T(y_{rep})$$, đó là bằng chứng cho thấy mô hình chưa tái hiện tốt hành vi vùng đuôi.
 
-### 1.3. Diễn giải các kết quả lập luận bằng công thức
+### 1.3. Cơ sở định lượng cho các nhận định ban đầu
 
-Để tránh kiểu kết luận "nhìn hình rồi đoán", ta ghi rõ công thức phía sau các nhận định quan trọng.
-
-Hệ số tương quan tuyến tính mẫu (Pearson) giữa `total_bill` và `tip` được tính bởi:
+Để tránh đánh giá cảm tính, ta gắn mỗi nhận định với công thức thống kê cụ thể. Hệ số tương quan Pearson giữa `total_bill` và `tip` là:
 
 $$
 r_{xy}=\frac{\sum_{i=1}^{n}(x_i-\bar x)(y_i-\bar y)}{\sqrt{\sum_{i=1}^{n}(x_i-\bar x)^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar y)^2}}.
 $$
 
-Với dataset này, $$r_{xy}\approx 0.676$$, nên ta có hai kết luận tách bạch:
-
-- dấu dương: hóa đơn tăng thì tip có xu hướng tăng,
-- độ lớn khoảng 0.68: quan hệ tuyến tính ở mức vừa đến khá, không yếu nhưng cũng chưa phải gần hoàn hảo.
-
-Tỷ lệ vùng đuôi phải (`tip > 6`) được tính bởi:
-
-$$
-\hat p_{\text{tip}>6}=\frac{1}{n}\sum_{i=1}^{n}\mathbf 1(y_i>6),
-$$
-
-và cho giá trị khoảng 0.029 (2.9%). Vì tỷ lệ này nhỏ, mọi kết luận về tail phải được kiểm tra bằng PPC thay vì chỉ nhìn mean.
-
-Một liên hệ nhanh để đọc mức giải thích tuyến tính là:
+Giá trị $$r_{xy}\approx 0.676$$ cho thấy hai điều rõ ràng: chiều hướng dương (hóa đơn cao hơn đi kèm tiền boa có xu hướng cao hơn) và cường độ ở mức vừa đến khá. Trong hồi quy tuyến tính một biến, hệ số xác định thỏa mãn:
 
 $$
 R^2 \approx r_{xy}^2.
 $$
 
-Do đó, với $$r_{xy}\approx 0.676$$ thì $$R^2\approx 0.46$$, nghĩa là mô hình tuyến tính mới giải thích khoảng 46% biến thiên của `tip`. Đây là lý do ta phải tiếp tục model checking và residual analysis.
+Với $$r_{xy}\approx 0.676$$, ta có $$R^2\approx 0.46$$ — nghĩa là đường thẳng đơn giản mới giải thích khoảng 46% biến thiên của `tip`. Tỷ lệ quan sát ở vùng đuôi phải (`tip > 6`) được định nghĩa bởi:
 
-Cuối cùng, để nhận diện nhanh heteroskedasticity, ta nhìn tương quan giữa độ lớn residual và predictor:
+$$
+\hat p_{\text{tip}>6}=\frac{1}{n}\sum_{i=1}^{n}\mathbf 1(y_i>6)\approx 0.029.
+$$
+
+Cuối cùng, để phát hiện sớm hiện tượng phương sai thay đổi (heteroskedasticity), ta tính tương quan giữa độ lớn phần dư và biến dự báo:
 
 $$
 \operatorname{corr}(|e_i|,x_i), \quad e_i=y_i-\hat y_i.
 $$
 
-Nếu chỉ báo này dương đáng kể, biên độ sai số có xu hướng tăng theo `total_bill`, và giả định sai số đồng nhất cần được xem xét lại.
+Nếu chỉ số này dương đáng kể, biên độ sai số tăng theo `total_bill` và giả định nhiễu đồng nhất cần được xem xét lại.
 
-## 2. Bước 1 - Viết generative story và fit model cơ sở
+## 2. Bước 1 – Xây dựng và khớp mô hình cơ sở
 
-Model cơ sở (baseline) của case study:
+Mô hình cơ sở (baseline) có dạng:
 
 $$
 \text{tip}_i \sim \mathcal{N}(\mu_i, \sigma), \quad \mu_i = \alpha + \beta\,x_i,
 $$
 
-với $$x_i$$ là `total_bill` đã chuẩn hóa.
+trong đó $$x_i$$ là `total_bill` đã chuẩn hóa. Cơ chế sinh dữ liệu ở đây giả định mỗi bàn ăn có mức tiền boa kỳ vọng tuyến tính theo hóa đơn, dao động quanh đường trung bình với một độ nhiễu chung $$\sigma$$, cùng phân phối tiên nghiệm thông tin yếu nhằm tránh quá khớp ở vùng hóa đơn rất lớn. Kết quả ước lượng sẽ cho hệ số dốc dương rõ rệt, nhưng ta chỉ coi đây là điểm xuất phát để tiến hành kiểm định.
 
-Diễn giải generative story:
+## 3. Bước 2 – Kiểm tra chẩn đoán bộ lấy mẫu
 
-- mỗi bàn ăn có một kỳ vọng tip phụ thuộc tuyến tính vào mức hóa đơn,
-- quanh kỳ vọng đó, tip dao động với một độ nhiễu chung $$\sigma$$,
-- prior nên đủ regularize để tránh overfit ở vùng dữ liệu thưa (hóa đơn rất lớn).
+Trước khi diễn giải bất kỳ tham số nào, cần xác nhận quá trình lấy mẫu MCMC đạt yêu cầu: trace plot trộn đều giữa các chuỗi, $$\hat{R}$$ tiệm cận 1.00 cho các tham số chính, ESS đủ lớn để ước lượng ổn định cả vùng đuôi và không có cảnh báo divergence có hệ thống. Mọi kết quả PPC phía sau chỉ có ý nghĩa khi các mẫu hậu nghiệm đã thực sự đáng tin cậy.
 
-Kết quả fit tuyến tính thường cho slope dương rõ rệt. Tuy nhiên, ở bài này ta coi đó chỉ là điểm xuất phát, không phải kết luận cuối.
+## 4. Bước 3 – Kiểm tra dự báo hậu nghiệm (PPC)
 
-## 3. Bước 2 - Kiểm tra sampler diagnostics trước khi nói về ý nghĩa
-
-Trước khi diễn giải slope/intercept, cần xem:
-
-- trace plot có trộn tốt không,
-- `r_hat` có gần 1 không,
-- ESS có đủ lớn không,
-- có warning về divergence hoặc sampling pathologies không.
-
-Nếu diagnostics không ổn, các kết luận về posterior và prediction đều chưa đáng tin.
-
-Mốc thực hành nên bám:
-
-- `r_hat` tiệm cận 1.00 cho các tham số chính,
-- ESS đủ lớn để ước lượng ổn định tail quantiles,
-- không có divergence có hệ thống.
-
-Lý do cần nghiêm túc bước này: PPC tốt/xấu chỉ có ý nghĩa khi posterior samples đã đáng tin.
-
-## 4. Bước 3 - Posterior predictive distribution và PPC
-
-Theo bài 4.4, ta dùng:
+Dựa trên phân phối dự báo hậu nghiệm từ Bài 4.4:
 
 $$
-p(\tilde y \mid y)=\int p(\tilde y \mid \theta)\,p(\theta\mid y)\,d\theta.
+p(\tilde y \mid y)=\int p(\tilde y \mid \theta)\,p(\theta\mid y)\,d\theta,
 $$
 
-Trong ngữ cảnh dataset `tips`, câu hỏi PPC là:
+ta kiểm tra xem dữ liệu `tip` mô phỏng từ mô hình cơ sở có khớp với dữ liệu thực tế ở cả vùng trung tâm lẫn vùng đuôi hay không.
 
-> Nếu model cơ sở đúng, dữ liệu tip giả lập có giống dữ liệu tip thật ở cả vùng trung tâm lẫn vùng đuôi không?
+### 4.1. Đối chiếu phân phối tổng thể
 
-### 4.1. So sánh phân phối tổng thể
-
-So `y` quan sát với `y_rep` từ posterior predictive:
-
-- histogram/density có trùng nhau tương đối không,
-- đuôi phải (tip rất cao) có bị model đánh giá quá thấp không,
-- min/max mô phỏng có hợp lý không.
+So sánh dữ liệu quan sát `y` với dữ liệu mô phỏng `y_rep` để kiểm tra độ trùng khớp của đường mật độ, khả năng tái tạo đuôi phải (tiền boa cao) và miền giá trị cực tiểu/cực đại.
 
 ![Hình 2 - So sánh quan sát và posterior predictive trên toàn phân phối]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_observed_vs_predicted.png)
 
-### 4.2. So sánh mean, variance, và statistic chuyên biệt
+### 4.2. Đối chiếu trung bình, phương sai và thống kê đuôi
 
-Tính statistic trên dữ liệu thật và trên từng mẫu giả lập:
-
-- mean,
-- variance,
-- tỷ lệ tip vượt ngưỡng (ví dụ `tip > 6`).
-
-Nếu giá trị quan sát rơi ở rìa quá xa so với phân phối posterior predictive của statistic, model đang thiếu một phần cấu trúc dữ liệu.
+Tính các thống kê như trung bình, phương sai và tỷ lệ `tip > 6` trên cả dữ liệu thực và các tập dữ liệu mô phỏng. Nếu giá trị thực tế nằm quá xa so với phân phối mô phỏng, mô hình đang thiếu một phần cấu trúc quan trọng.
 
 ![Hình 3 - Kiểm tra mean bằng posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_test_stat_mean.png)
 
 ![Hình 4 - Kiểm tra variance bằng posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_variance_check.png)
 
-Trong case `tips`, mô hình cơ sở thường tái tạo mean khá ổn nhưng dễ lệch ở variance vùng hóa đơn lớn. Điều này là tín hiệu sớm của heteroskedasticity.
+Với tập dữ liệu `tips`, mô hình cơ sở thường tái tạo trung bình tổng thể khá tốt nhưng dễ lệch về phương sai ở vùng hóa đơn lớn — dấu hiệu sớm của hiện tượng phương sai thay đổi.
 
-### 4.3. So sánh quan hệ `x -> y`
+### 4.3. Đối chiếu mối quan hệ giữa `total_bill` và `tip`
 
-Với regression, quan trọng nhất là hình dạng quan hệ:
-
-- vẽ nhiều đường/regression draws từ posterior predictive trên scatter thật,
-- xem model có dự đoán quá lạc quan ở vùng `total_bill` lớn không,
-- xem độ rộng dự báo có tăng theo `x` hay không.
-
-Đây thường là nơi phát hiện nonlinearity hoặc heteroskedasticity sớm nhất.
+Vẽ nhiều tập dự báo hậu nghiệm chồng lên biểu đồ phân tán thực tế giúp quan sát xem mô hình có dự đoán lệch ở vùng `total_bill` lớn hay không và độ rộng phân tán có mở rộng theo hóa đơn hay không. Đây thường là nơi phát hiện sớm nhất dấu hiệu phi tuyến hoặc phương sai thay đổi.
 
 ![Hình 5 - So sánh quan hệ predictor-response giữa dữ liệu thật và mẫu posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_distribution_at_x5.png)
 
-## 5. Bước 4 - Residual analysis để tìm sai lệch có hệ thống
+## 5. Bước 4 – Phân tích phần dư để tìm sai lệch có hệ thống
 
-Residual chuẩn hóa đơn giản:
+Xét phần dư hậu nghiệm:
 
 $$
-r_i = y_i - \mathbb{E}[y_i \mid y].
+r_i = y_i - \mathbb{E}[\tilde y_i \mid y].
 $$
 
-Nên xem ít nhất ba đồ thị:
-
-- residual vs fitted,
-- residual vs `total_bill`,
-- Q-Q plot của residual.
-
-Dấu hiệu cần chú ý:
-
-- pattern cong: gợi ý quan hệ phi tuyến,
-- dạng quạt: gợi ý phương sai thay đổi,
-- tail lệch mạnh trên Q-Q: gợi ý giả định Normal có thể quá đơn giản.
-
-Trong case `tips`, một tín hiệu hay gặp là biên độ residual tăng theo `total_bill`. Đây là lý do mô hình sai số đồng nhất (homoskedastic) có thể chưa đủ tốt.
+Ta kiểm tra ba biểu đồ cơ bản: phần dư theo giá trị ước lượng, phần dư theo `total_bill` và biểu đồ Q–Q. Các tín hiệu cần chú ý gồm: mẫu hình cong gợi ý quan hệ phi tuyến, dạng hình quạt gợi ý phương sai thay đổi, và đuôi lệch mạnh trên biểu đồ Q–Q gợi ý giả định phân phối Chuẩn quá hẹp. Trên tập `tips`, biên độ phần dư thường có xu hướng mở rộng khi `total_bill` tăng, cho thấy giả định đồng phương sai chưa thật sự phù hợp.
 
 ![Hình 6 - Residual distribution: quan sát so với posterior predictive]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_ppc_residual_distribution.png)
 
 ![Hình 7 - Residuals vs fitted để nhận diện pattern hệ thống]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_bad_heteroskedasticity_residuals.png)
 
-## 6. Bước 5 - Prediction cho trường hợp cụ thể
+## 6. Bước 5 – Dự đoán cho trường hợp cụ thể
 
-Giả sử dự đoán cho bàn ăn mới có `total_bill = 40`.
+Giả sử cần dự đoán tiền boa cho một bàn ăn mới có `total_bill = 40`. Cần tách bạch và báo cáo rõ hai loại khoảng bất định:
 
-Bạn nên báo cáo **hai loại bất định**:
+1. **Khoảng hậu nghiệm cho tiền boa trung bình** tại mức hóa đơn 40 (ví dụ: khoảng 5.8 đến 6.5).
+2. **Khoảng dự đoán (prediction interval) cho một bàn ăn cụ thể** (ví dụ: khoảng 3.8 đến 8.7).
 
-1. khoảng hậu nghiệm của mean tip tại mức hóa đơn đó,
-2. prediction interval cho một bàn cụ thể mới.
+Khoảng thứ hai rộng hơn đáng kể vì gộp thêm độ nhiễu cá thể của bàn ăn mới. Khi ứng dụng vào thực tế, nếu mục tiêu là lập kế hoạch doanh thu trung bình thì dùng khoảng của trung bình; nếu mục tiêu là đánh giá biến động hoặc rủi ro của từng giao dịch cụ thể thì phải dùng khoảng dự đoán.
 
-Ví dụ diễn giải:
+## 7. Bước 6 – Điều chỉnh mô hình dựa trên bằng chứng chẩn đoán
 
-- mean tip ở mức hóa đơn 40 có thể quanh 5.8 đến 6.5,
-- nhưng một bàn cụ thể có thể rộng hơn, ví dụ 3.8 đến 8.7.
+Khi PPC và phần dư chỉ ra rằng mô hình tuyến tính cơ sở dự đoán thiếu ở đuôi phải và có phương sai tăng theo `total_bill`, ta có ba hướng điều chỉnh có cơ sở:
 
-Khoảng thứ hai rộng hơn vì nó cộng cả bất định tham số và nhiễu cá thể mới.
+- Biến đổi log cho biến phản hồi, chẳng hạn mô hình hóa $$\log(\text{tip})$$.
+- Mô hình hóa độ nhiễu $$\sigma$$ thay đổi theo biến dự báo `total_bill`.
+- Bổ sung thành phần phi tuyến nhẹ (như spline hoặc đa thức bậc thấp).
 
-Điểm báo cáo quan trọng cho ra quyết định:
+Nguyên tắc cốt lõi là mọi chỉnh sửa đều phải xuất phát trực tiếp từ dấu hiệu sai lệch mà PPC và phân tích phần dư chỉ ra, thay vì thử nghiệm cảm tính.
 
-- nếu mục tiêu là planning doanh thu trung bình, dùng khoảng của mean response,
-- nếu mục tiêu là rủi ro một giao dịch cụ thể, dùng prediction interval.
+### 7.1. So sánh ba phương án mô hình
 
-## 7. Bước 6 - Khi check không ổn: sửa model có nguyên nhân
-
-Giả sử PPC và residual cho thấy:
-
-- model tuyến tính gốc dự đoán thiếu ở đuôi phải,
-- phương sai tăng theo `total_bill`.
-
-Một hướng sửa hợp lý:
-
-- dùng log-transform cho response, ví dụ $$\log(\text{tip})$$,
-- hoặc model hóa $$\sigma$$ theo `x`,
-- hoặc thêm thành phần phi tuyến nhẹ (spline/polynomial bậc thấp).
-
-Thông điệp quan trọng: không sửa model bằng cảm giác. Hãy sửa theo đúng dấu hiệu sai lệch mà PPC và residual chỉ ra.
-
-### 7.1. So sánh nhanh ba ứng viên model
-
-| Ứng viên | Xử lý vấn đề chính | Điểm mạnh | Rủi ro |
+| Phương án | Vấn đề xử lý chính | Ưu điểm | Hạn chế cần lưu ý |
 |---|---|---|---|
-| Tuyến tính Gaussian cơ sở | Mốc tham chiếu ban đầu | Dễ diễn giải | Dễ sai ở tail và phương sai thay đổi |
-| Log-tip Gaussian | Co đuôi phải, ổn định phương sai hơn | Thường cải thiện PPC tail | Diễn giải ngược về đơn vị gốc cần cẩn thận |
-| Heteroskedastic Gaussian | Cho phép $$\sigma$$ đổi theo `total_bill` | Trung thực hơn về prediction interval ở hóa đơn lớn | Tăng độ phức tạp và chi phí kiểm tra |
+| Tuyến tính Gaussian cơ sở | Làm mốc tham chiếu ban đầu | Đơn giản, dễ diễn giải | Dễ lệch ở vùng đuôi và khi phương sai thay đổi |
+| Log-tip Gaussian | Thu gọn đuôi phải, ổn định phương sai | Thường cải thiện PPC vùng đuôi | Cần cẩn thận khi quy đổi ngược về đơn vị gốc |
+| Heteroskedastic Gaussian | Cho phép $$\sigma$$ thay đổi theo `total_bill` | Khoảng dự đoán trung thực hơn ở hóa đơn lớn | Tăng số tham số và chi phí kiểm tra mô hình |
 
-Trong thực hành, bạn nên so sánh các ứng viên này bằng cùng một bộ PPC/residual criteria trước khi kết luận model nào hữu ích nhất.
+Cả ba phương án cần được đối chiếu trên cùng một bộ tiêu chí PPC và phân tích phần dư trước khi chọn mô hình phù hợp nhất.
 
-## 8. Tóm tắt workflow 4.4 trên một case thật
+## 8. Tổng kết quy trình thực hành
 
-Trên dataset `tips`, ta đã đi đúng chu trình:
+Trên tập dữ liệu `tips`, ta đã đi trọn sáu bước của quy trình hồi quy Bayes: (1) xây dựng và khớp mô hình cơ sở, (2) kiểm tra chẩn đoán bộ lấy mẫu, (3) chạy PPC nhiều góc độ, (4) phân tích phần dư, (5) báo cáo dự đoán đúng loại bất định và (6) đề xuất sửa đổi mô hình dựa trên bằng chứng.
 
-1. nêu generative story và fit model,
-2. kiểm tra diagnostics,
-3. làm posterior predictive checks,
-4. đọc residual để tìm pattern,
-5. dự đoán cho tình huống cụ thể với uncertainty rõ ràng,
-6. đề xuất model revision dựa trên evidence.
+### 8.1. Danh mục kiểm tra dùng lại cho các bài toán khác
 
-Đây là phiên bản thực chiến của thông điệp bài 4.4: regression Bayes chỉ hoàn chỉnh khi bạn kiểm tra và sửa mô hình, không dừng ở mỗi posterior của tham số.
+1. Khảo sát cấu trúc dữ liệu và vùng đuôi trước khi mô hình hóa.
+2. Xác nhận các chỉ số hội tụ MCMC đạt ngưỡng tối thiểu.
+3. Thực hiện PPC ở ba tầng: phân phối tổng thể, thống kê mục tiêu và quan hệ `x -> y`.
+4. Kiểm tra mẫu hình có hệ thống trên phần dư thay vì chỉ nhìn trung bình.
+5. Báo cáo rõ ràng khoảng trung bình và khoảng dự đoán cá thể.
+6. Chỉ điều chỉnh mô hình khi có tín hiệu sai lệch cụ thể từ bước kiểm tra.
 
-### 8.1. Checklist phân tích chuyên sâu (dùng lại cho bài toán khác)
+## 9. Những sai lầm thường gặp
 
-1. kiểm tra cấu trúc dữ liệu và vùng đuôi trước khi fit,
-2. xác nhận sampler đạt chuẩn tối thiểu,
-3. chạy PPC ở ba tầng: phân phối tổng thể, statistic mục tiêu, quan hệ `x -> y`,
-4. đọc residual theo pattern chứ không chỉ nhìn trung bình,
-5. báo cáo prediction đúng loại bất định,
-6. chỉ sửa model khi có dấu hiệu sai lệch rõ ràng từ check.
+- **Dừng lại khi thấy hệ số dốc dương:** hệ số dốc có ý nghĩa thống kê không đảm bảo mô hình tái tạo tốt dữ liệu trên toàn miền giá trị.
+- **Nhầm lẫn hai loại khoảng bất định:** dùng khoảng của giá trị trung bình để nói về một bàn ăn cụ thể sẽ tạo ra mức độ chắc chắn giả tạo.
+- **Sửa mô hình theo cảm tính:** áp dụng các phép biến đổi tùy hứng mà không gắn với bằng chứng từ PPC hay phần dư sẽ làm mất tính kỷ luật khoa học.
+- **Không nêu rõ phạm vi tin cậy:** một mô hình có thể hoạt động tốt ở vùng hóa đơn trung bình nhưng kém ổn định ở vùng hóa đơn rất lớn; cần nêu rõ giới hạn này khi báo cáo.
 
-## 9. Những sai lầm phổ biến trong case study này
+## 10. Điểm cốt lõi cần giữ lại
 
-### 9.1. Dừng ở việc "slope dương"
-
-Slope dương không đảm bảo model sinh dữ liệu hợp lý trên toàn miền của predictor.
-
-### 9.2. Báo cáo sai loại khoảng
-
-Dùng khoảng của mean response để nói về một cá nhân/bàn ăn cụ thể sẽ gây chắc chắn giả tạo.
-
-### 9.3. Sửa model mà không dựa trên check
-
-Thử nhiều biến đổi tùy hứng mà không bám vào dấu hiệu residual/PPC làm workflow mất tính khoa học.
-
-### 9.4. Báo cáo kết quả mà không nói rõ phạm vi áp dụng
-
-Một model có thể ổn ở vùng `total_bill` trung tâm nhưng yếu ở vùng rất lớn. Nếu không nêu rõ điều này, người dùng dễ hiểu sai mức độ tin cậy của dự báo.
-
-## 10. Điều nên giữ lại sau bài này
-
-Một Bayesian workflow trưởng thành luôn đi theo vòng lặp:
-
-**mô hình hóa -> kiểm tra -> dự đoán -> sửa mô hình**.
-
-Case `tips` cho thấy ngay cả bài toán nhỏ cũng cần đầy đủ vòng lặp này để kết luận có trách nhiệm.
+Một quy trình làm việc Bayes hoàn chỉnh luôn vận hành theo vòng lặp: **mô hình hóa $$\to$$ kiểm tra $$\to$$ dự đoán $$\to$$ điều chỉnh**. Ngay cả với một tập dữ liệu gọn như `tips`, việc đi đủ vòng lặp này là điều kiện cần để đưa ra kết luận có trách nhiệm.
 
 ## Video tham khảo
 
-- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Xem câu hỏi của một posterior predictive check trước khi làm workflow trên dữ liệu tips.
-- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Xem một hồi quy Bayes được fit và diễn giải hệ số, hỗ trợ nửa xây mô hình của case study.
-- [Simple Linear Regression:  Checking Assumptions with Residual Plots](https://www.youtube.com/watch?v=iMdtTCX2Q70) — jbstatistics, English. Xem cách đọc residual plot khi kiểm tra giả định, dùng cho phần phân tích phần dư trong bài.
+- [What is a posterior predictive check and why is it useful?](https://www.youtube.com/watch?v=yDPJnV9vcHs) — Ben Lambert, English. **xem trước**. Nêu rõ câu hỏi trung tâm của kiểm tra dự báo hậu nghiệm trước khi áp dụng lên dữ liệu `tips`.
+- [L4: Interpretable Linear Regressions (State of Bayes Lecture Series)](https://www.youtube.com/watch?v=fpS0NjqNHn8) — PyMC Labs, English. Minh họa cách xây dựng và diễn giải hồi quy Bayes, hỗ trợ phần thiết lập mô hình của bài.
+- [Simple Linear Regression:  Checking Assumptions with Residual Plots](https://www.youtube.com/watch?v=iMdtTCX2Q70) — jbstatistics, English. Hướng dẫn đọc biểu đồ phần dư để kiểm tra giả định mô hình, bổ trợ cho mục 5.
 
 ## Câu hỏi tự luyện
 
-1. Với dataset `tips`, bạn sẽ chọn statistic nào cho PPC ngoài mean/variance, và vì sao?
-2. Nếu residual vs fitted tạo hình chữ U, bạn sẽ thử sửa mô hình theo hướng nào trước?
-3. Tại sao prediction interval cho một bàn mới luôn rộng hơn khoảng bất định của mean tip?
-4. Nếu mô hình dự đoán tốt vùng trung tâm nhưng fail ở tail phải, điều này ảnh hưởng gì đến quyết định kinh doanh?
+1. Với tập dữ liệu `tips`, ngoài trung bình và phương sai, bạn sẽ chọn thêm thống kê nào cho PPC và vì sao?
+2. Nếu biểu đồ phần dư theo giá trị ước lượng tạo hình chữ U, bạn sẽ ưu tiên điều chỉnh mô hình theo hướng nào trước?
+3. Vì sao khoảng dự đoán cho một bàn ăn mới luôn rộng hơn khoảng hậu nghiệm của mức tiền boa trung bình?
+4. Nếu mô hình dự đoán tốt ở vùng hóa đơn trung bình nhưng lệch ở vùng đuôi phải, điều đó ảnh hưởng ra sao đến quyết định kinh doanh?
 
 ## Tài liệu tham khảo
 

@@ -12,39 +12,37 @@ lesson_type: required
 
 ## Mục tiêu học tập
 
-Sau bài này, bạn sẽ phân biệt rõ dữ liệu gốc với phân phối của ước lượng, hiểu standard error là độ bất định của estimator (không phải độ phân tán của dữ liệu), và dùng trực giác này để đọc kết quả suy luận đúng hơn.
+Sau bài này, bạn sẽ phân biệt rõ phân phối của dữ liệu gốc với phân phối của ước lượng, hiểu sai số chuẩn (standard error) là độ bất định của bộ ước lượng chứ không phải độ phân tán của dữ liệu, và vận dụng trực giác này để đọc kết quả suy luận thống kê chính xác hơn.
 
-## Giới thiệu: từ một mẫu dữ liệu đến độ tin cậy của ước lượng
+## Giới thiệu: Từ một mẫu dữ liệu đến độ ổn định của ước lượng
 
-Trong thực hành, ta thường chỉ có một mẫu dữ liệu duy nhất, nhưng vẫn cần trả lời câu hỏi "ước lượng hiện tại ổn định đến đâu nếu quy trình lấy mẫu được lặp lại?". Sampling distribution và standard error chính là ngôn ngữ để lượng hóa câu hỏi đó một cách khoa học.
+Trong thực tế, ta thường chỉ quan sát được một mẫu dữ liệu duy nhất, nhưng vẫn cần đánh giá: "nếu lặp lại quy trình lấy mẫu nhiều lần, ước lượng hiện tại sẽ dao động mạnh đến mức nào?" Phân phối lấy mẫu (sampling distribution) và sai số chuẩn (standard error) là ngôn ngữ để định lượng câu hỏi đó.
 
-## 1) Sampling distribution là gì?
+## 1) Phân phối lấy mẫu (Sampling distribution) là gì?
 
-Giả sử ta lặp lại cùng một quy trình lấy mẫu nhiều lần và mỗi lần tính một ước lượng $$\hat\theta$$ (ví dụ trung bình mẫu $$\bar X$$). Tập hợp các giá trị $$\hat\theta$$ qua các lần lặp tạo thành **sampling distribution**.
+Giả sử ta lặp lại cùng một quy trình lấy mẫu nhiều lần và ở mỗi lần đều tính một ước lượng $$\hat\theta$$ (chẳng hạn trung bình mẫu $$\bar X$$). Tập hợp các giá trị $$\hat\theta$$ thu được qua các lần lặp tạo thành **phân phối lấy mẫu (sampling distribution)**.
 
-Điểm mấu chốt: sampling distribution là phân phối của **ước lượng**, không phải phân phối của từng điểm dữ liệu.
+Điểm mấu chốt cần nhớ: phân phối lấy mẫu là phân phối của **ước lượng**, không phải phân phối của từng quan sát đơn lẻ.
 
 ![Sampling distribution của trung bình mẫu với n = 20]({{ site.baseurl }}/img/chapter_img/chapter00/sampling_distribution_n20.png)
 
-*Hình 1a: Với cùng một bài toán nhưng cỡ mẫu còn nhỏ, sampling distribution của trung bình mẫu vẫn khá rộng.*
+*Hình 1a: Khi cỡ mẫu còn nhỏ ($$n = 20$$), phân phối lấy mẫu của trung bình mẫu khá rộng.*
 
-## 2) Standard Error (SE)
+## 2) Sai số chuẩn (Standard Error — SE)
 
-SE là độ lệch chuẩn của sampling distribution:
+Sai số chuẩn là độ lệch chuẩn của phân phối lấy mẫu:
 
 $$
 \mathrm{SE}(\hat\theta)=\sqrt{\mathrm{Var}(\hat\theta)}
 $$
 
-Với trung bình mẫu:
+Đối với trung bình mẫu:
 
 $$
 \mathrm{SE}(\bar X)=\frac{\sigma}{\sqrt{n}}\approx\frac{s}{\sqrt{n}}
 $$
 
-Vậy:
-
-SD của dữ liệu đo mức phân tán giữa các cá thể, còn SE đo mức không chắc chắn của chính ước lượng.
+Như vậy, độ lệch chuẩn (SD) của dữ liệu đo mức phân tán giữa các cá thể trong mẫu, còn sai số chuẩn (SE) đo mức độ bất định của chính ước lượng.
 
 ### Thử nghiệm: sampling distribution và sai số chuẩn
 
@@ -55,59 +53,55 @@ Tăng cỡ mẫu n và xem độ lệch chuẩn của trung bình mẫu giảm t
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-## 3) Nhầm lẫn phổ biến: SD vs SE
+## 3) Nhầm lẫn phổ biến: SD và SE
 
-Hai dataset có SD giống nhau nhưng cỡ mẫu khác nhau sẽ có SE khác nhau.
-
-Nếu $$n$$ lớn hơn thì SE nhỏ hơn và ước lượng ổn định hơn, còn nếu $$n$$ nhỏ thì SE lớn hơn và kết luận vì thế cũng kém chắc chắn hơn.
+Hai tập dữ liệu có cùng độ lệch chuẩn (SD) nhưng khác cỡ mẫu sẽ có sai số chuẩn (SE) khác nhau: cỡ mẫu $$n$$ càng lớn thì SE càng nhỏ và ước lượng càng ổn định; ngược lại, $$n$$ càng nhỏ thì SE càng lớn và kết luận càng kém chắc chắn.
 
 ![Sampling distribution của trung bình mẫu với n = 200]({{ site.baseurl }}/img/chapter_img/chapter00/sampling_distribution_n200.png)
 
-*Hình 1b: Khi tăng cỡ mẫu lên $$n = 200$$, sampling distribution hẹp lại rõ rệt, tương ứng với standard error nhỏ hơn.*
+*Hình 1b: Khi tăng cỡ mẫu lên $$n = 200$$, phân phối lấy mẫu thu hẹp rõ rệt, tương ứng với sai số chuẩn nhỏ hơn.*
 
-### 3.1) Một ví dụ SD và SE rất dễ bị lẫn
+### 3.1) Ví dụ phân biệt SD và SE
 
-Giả sử cân nặng của một nhóm người có độ lệch chuẩn khoảng 12 kg.
+Giả sử cân nặng của một nhóm người có độ lệch chuẩn khoảng 12 kg:
 
-- Nếu lấy mẫu $$n=25$$ người, sai số chuẩn của trung bình là $$12/\sqrt{25}=2.4$$ kg.
-- Nếu lấy mẫu $$n=100$$ người, sai số chuẩn của trung bình là $$12/\sqrt{100}=1.2$$ kg.
+- Với mẫu $$n=25$$ người, sai số chuẩn của trung bình là $$12/\sqrt{25}=2.4$$ kg.
+- Với mẫu $$n=100$$ người, sai số chuẩn của trung bình là $$12/\sqrt{100}=1.2$$ kg.
 
-Điều quan trọng là SD của dữ liệu cá nhân vẫn là 12 kg trong cả hai trường hợp. Thứ thay đổi là độ bất định của **ước lượng trung bình**. Đây là lý do SD và SE không thể dùng thay nhau, dù nhiều người mới học rất hay lẫn hai đại lượng này.
+Trong cả hai trường hợp, độ lệch chuẩn (SD) giữa các cá nhân vẫn là 12 kg; đại lượng thay đổi là độ bất định của **ước lượng trung bình**. Do đó không thể dùng SD và SE thay thế cho nhau.
 
-## 4) SE liên quan gì đến khoảng tin cậy/credible?
+## 4) Liên hệ giữa SE và khoảng bất định
 
-Trong tư duy xấp xỉ chuẩn, khoảng bất định thường có dạng:
+Theo xấp xỉ chuẩn, khoảng bất định của ước lượng thường có dạng:
 
 $$
 \hat\theta \pm c\cdot \mathrm{SE}(\hat\theta)
 $$
 
-Hệ số $$c$$ tùy mục tiêu (95%, 90%, ...). Dù framework khác nhau (Frequentist hay Bayesian), trực giác về "độ rộng tăng khi SE lớn" vẫn giữ nguyên.
+trong đó hệ số $$c$$ phụ thuộc vào mức độ tin cậy mong muốn (như 95% hay 90%). Dù khung suy luận là tần suất hay Bayesian, quy luật trực giác "SE càng lớn thì khoảng bất định càng rộng" vẫn giữ nguyên.
 
-## 5) Liên hệ với Bayesian workflow
+## 5) Liên hệ với quy trình Bayesian
 
-Trong Bayes, posterior SD của tham số đóng vai trò gần với SE: nó cho ta độ bất định của tham số sau khi đã kết hợp prior và dữ liệu.
-
-Nếu bạn quen tư duy sampling distribution + SE, việc đọc posterior intervals sẽ dễ hơn nhiều.
+Trong thống kê Bayesian, độ lệch chuẩn hậu nghiệm (posterior SD) của tham số đóng vai trò tương tự SE: nó phản ánh mức độ bất định còn lại về tham số sau khi đã kết hợp thông tin tiên nghiệm với dữ liệu. Nắm vững phân phối lấy mẫu và SE giúp việc đọc các khoảng hậu nghiệm trở nên tự nhiên hơn nhiều.
 
 ## Tóm tắt nhanh
 
-1. Sampling distribution là phân phối của estimator.
-2. SE là độ lệch chuẩn của estimator.
-3. SD dữ liệu và SE là hai thứ khác nhau.
-4. Cỡ mẫu tăng làm SE giảm theo $$1/\sqrt{n}$$.
+1. Phân phối lấy mẫu là phân phối của bộ ước lượng qua các lần lấy mẫu lặp lại.
+2. Sai số chuẩn (SE) là độ lệch chuẩn của bộ ước lượng.
+3. Độ lệch chuẩn dữ liệu (SD) và sai số chuẩn (SE) đo hai đại lượng khác nhau.
+4. Khi cỡ mẫu tăng, SE giảm theo tỷ lệ $$1/\sqrt{n}$$.
 
 ## Video tham khảo
 
-- [Standard Deviation vs Standard Error, Clearly Explained!!!](https://www.youtube.com/watch?v=A82brFpdr9g) — StatQuest with Josh Starmer, English. **xem trước**. Xem để không trộn độ phân tán của dữ liệu với độ bất định của ước lượng, đúng phân biệt độ lệch chuẩn và sai số chuẩn.
-- [Introduction to sampling distributions | Sampling distributions | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=z0Ry_3_qhDw) — Khan Academy, English. Xem phân phối lấy mẫu của một thống kê, hỗ trợ câu hỏi bài đặt ra nếu quy trình lấy mẫu được lặp lại.
-- [Standard error of the mean | Inferential statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=J1twbrHel3o) — Khan Academy, English. Xem sai số chuẩn của trung bình mẫu giảm theo cỡ mẫu, dùng cho phần đọc độ ổn định của estimator.
+- [Standard Deviation vs Standard Error, Clearly Explained!!!](https://www.youtube.com/watch?v=A82brFpdr9g) — StatQuest with Josh Starmer, English. **Xem trước.** Phân biệt rõ độ phân tán của dữ liệu (SD) với độ bất định của ước lượng (SE).
+- [Introduction to sampling distributions | Sampling distributions | AP Statistics | Khan Academy](https://www.youtube.com/watch?v=z0Ry_3_qhDw) — Khan Academy, English. Giới thiệu khái niệm phân phối lấy mẫu của một thống kê khi lặp lại quy trình lấy mẫu.
+- [Standard error of the mean | Inferential statistics | Probability and Statistics | Khan Academy](https://www.youtube.com/watch?v=J1twbrHel3o) — Khan Academy, English. Giải thích cách sai số chuẩn của trung bình mẫu thu nhỏ khi cỡ mẫu tăng.
 
 ## Câu hỏi tự luyện
 
-1. Hãy giải thích vì sao SD lớn không đồng nghĩa SE lớn trong mọi trường hợp.
-2. Nếu tăng cỡ mẫu từ 100 lên 400 thì SE thay đổi thế nào?
-3. Sampling distribution của median có giống của mean không? Vì sao?
+1. Giải thích vì sao SD lớn không nhất thiết kéo theo SE lớn trong mọi trường hợp.
+2. Nếu tăng cỡ mẫu từ 100 lên 400, sai số chuẩn thay đổi ra sao?
+3. Phân phối lấy mẫu của trung vị (median) có giống phân phối lấy mẫu của trung bình (mean) không? Vì sao?
 
 ## Tài liệu tham khảo
 
