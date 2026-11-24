@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+If the Binomial and Poisson distributions describe *data*, what distributions describe our **uncertain beliefs about parameters**—like an unknown conversion rate $$p \in (0,1)$$ or an unknown arrival rate $$\lambda > 0$$? Enter the two superheroes of Bayesian statistics: the **Beta distribution** (living strictly on $$[0,1]$$) and the **Gamma distribution** (living strictly on $$(0,\infty)$$).
+
+This lesson demystifies Beta and Gamma through the unforgettable **pseudo-count intuition**: $$\mathrm{Beta}(lpha, eta)$$ behaves like having already seen $$lpha$$ successes and $$eta$$ failures, turning Bayes’ theorem into elementary addition!
+
+---
+
+## Background Knowledge Map: Parameter-Space Distributions & Conjugacy
+
+Four concepts make Beta and Gamma second nature for every Bayesian practitioner:
+
+1. **Domain Matching:** A valid prior must live strictly on the parameter’s legal domain—$$\mathrm{Beta}(lpha,eta)$$ on $$(0,1)$$ for probabilities, and $$\mathrm{Gamma}(lpha,eta)$$ on $$(0,\infty)$$ for positive rates/precisions.
+2. **Pseudo-Count Interpretation of $$\mathrm{Beta}(lpha, eta)$$:** Mean is $$rac{lpha}{lpha+eta}$$ and effective prior sample size is $$lpha + eta$$. Special cases: $$\mathrm{Beta}(1,1)$$ is flat Uniform; $$\mathrm{Beta}(0.5, 0.5)$$ is U-shaped Jeffreys; $$\mathrm{Beta}(20, 80)$$ concentrates tightly around $$0.20$$.
+3. **Shape–Rate Interpretation of $$\mathrm{Gamma}(lpha, eta)$$:** Mean is $$rac{lpha}{eta}$$ and variance is $$rac{lpha}{eta^2}$$, behaving like $$lpha$$ pseudo-events observed over $$eta$$ pseudo-units of time!
+4. **Algebraic Conjugacy:** Multiplying $$\mathrm{Beta}(lpha,eta)$$ by a Binomial likelihood $$(k	ext{ successes}, n-k	ext{ failures})$$ yields $$\mathrm{Beta}(lpha+k,\; eta+n-k)$$; multiplying $$\mathrm{Gamma}(lpha,eta)$$ by Poisson counts $$\sum k_i$$ over $$T$$ time units yields $$\mathrm{Gamma}(lpha+\sum k_i,\; eta+T)$$.
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand that the Beta arises from the need to describe quantities lying in the interval $$[0,1]$$, be able to read the meaning of the parameters $$\alpha,\beta$$, and grasp the role of the normalizing constant in forming a valid distribution.
@@ -260,6 +277,32 @@ print(betaln(2, 3))  # log(Beta(2,3))
 - [The Beta distribution in 12 minutes!](https://www.youtube.com/watch?v=juF3r12nM5A) — Luis Serrano Academy, English. **watch first**. Watch to read α and β as the numbers of successes and failures known beforehand, exactly the Beta on the interval from 0 to 1 part.
 - [The Gamma Distribution](https://www.youtube.com/watch?v=9IIcHAJlcWc) — Steve Brunton, English. Watch the Gamma shape for positive quantities, supporting the half of the lesson about rate parameters and waiting times.
 - [How to Estimate Rates with a Gamma-Poisson Bayesian Model | Conjugate Priors](https://www.youtube.com/watch?v=m8roQUqmybg) — Drawing Distributions, English. Watch the Gamma–Poisson pair when estimating an event rate, linking the distributions in the lesson to Bayesian updating in the closing connection.
+
+---
+
+### Worked Numerical Example: Hand-Updating Both a Beta–Binomial and a Gamma–Poisson Prior
+
+**Part A — Beta–Binomial Update (Click Rate $$p$$):**
+Start with a mildly informed prior $$\mathrm{Beta}(lpha_0 = 2,\; eta_0 = 8)$$ (prior mean $$2/10 = 0.20$$). Now observe $$k = 6$$ clicks in $$n = 10$$ visits (4 non-clicks):
+- Posterior: $$\mathrm{Beta}(2 + 6,\; 8 + 4) = \mathbf{\mathrm{Beta}(8,\; 12)}$$.
+- Posterior mean: $$rac{8}{8+12} = \mathbf{0.40}$$ (a weighted average of prior mean $$0.20$$ and data rate $$0.60$$!).
+- Posterior variance: $$rac{8	imes 12}{20^2 	imes 21} = rac{96}{8400} pprox 0.01143 \implies \mathrm{SD} pprox 0.107$$.
+
+**Part B — Gamma–Poisson Update (Bug Rate $$\lambda$$ per Day):**
+Start with prior $$\mathrm{Gamma}(lpha_0 = 4,\; eta_0 = 2)$$ (prior mean $$4/2 = 2.0$$ bugs/day). Over $$T = 3$$ days, you observe $$\sum k_i = 11$$ bugs:
+- Posterior: $$\mathrm{Gamma}(4 + 11,\; 2 + 3) = \mathbf{\mathrm{Gamma}(15,\; 5)}$$.
+- Posterior mean: $$rac{15}{5} = \mathbf{3.0}$$ bugs/day; posterior SD: $$rac{\sqrt{15}}{5} pprox 0.775$$ bugs/day!
+
+### Deep-Dive Explanation: Four Rules for Choosing Beta and Gamma Priors (Read Slowly)
+
+1. **Always check shape–rate vs. shape–scale parameterization in software:** `scipy.stats.gamma` uses `scale = 1/rate`, whereas Bayesian textbooks and Stan often use `rate = eta`! Mixing them up inverts your mean!
+2. **Use prior predictive checks to verify your pseudo-counts:** Ask *"does $$\mathrm{Beta}(2,8)$$ put reasonable mass across the conversion rates I consider plausible before seeing data?"*
+3. **Watch how prior weight fades as data grows:** In Part A, the prior had weight 10 and the data had weight 10 (50–50 blend); with $$n = 1{,}000$$ visits, data carries 99% of the weight.
+4. **Mean vs. Mode (MAP):** For $$\mathrm{Beta}(lpha,eta)$$ with $$lpha,eta > 1$$, the mode is $$rac{lpha-1}{lpha+eta-2}$$, which differs slightly from the mean $$rac{lpha}{lpha+eta}$$ when the posterior is skewed.
+
+**Quick check.** In Part A above, if you observe *another* batch of 10 visits with 6 clicks (updating sequentially from $$\mathrm{Beta}(8,12)$$), what is the new posterior Beta distribution—and does it match updating once on all 20 visits (12 clicks, 8 non-clicks)?
+
+---
 
 ## Exercises
 

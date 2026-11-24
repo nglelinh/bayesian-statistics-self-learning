@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+You run `az.compare({"M1": idata1, "M2": idata2})` and see `M2` beat `M1` by `elpd_diff = 1.8`. Should you throw `M1` in the trash and declare `M2` the winner? Look one column to the right: `dse = 2.9`! The difference is *smaller than its own standard error*—picking one "winner" here is pure coin-flipping!
+
+This lesson teaches mature **Bayesian Model Comparison**: reading `elpd_diff` alongside its paired standard error `dse`, understanding **Bayes Factors** (and why they depend strongly on prior width!), and combining competing models cleanly via **Bayesian Stacking / Model Averaging** instead of forcing a brittle winner-take-all choice.
+
+---
+
+## Background Knowledge Map: Three Complementary Lenses for Model Comparison
+
+1. **Predictive Comparison (LOO-CV `elpd_diff` vs. `dse`):** Compares *pointwise* predictive differences $$d_i = \mathrm{elpd}_{i, M_2} - \mathrm{elpd}_{i, M_1}$$. Because both models are evaluated on the exact same observations, pairing cancels out shared noise—giving a clean paired SE (`dse`). Rule of thumb: $$\lvert\Delta\mathrm{elpd}\rvert > 2\text{–}4 \times \mathrm{dse}$$ signals a clear predictive win!
+2. **Marginal Likelihood & Bayes Factors ($$\mathrm{BF}_{12} = \frac{p(y\mid M_1)}{p(y\mid M_2)}$$):** Measures relative evidence under prior predictive distributions. Powerful for nested scientific hypotheses, yet **highly sensitive to prior width** (making a prior 10× wider penalizes that model’s Bayes Factor by 10×!).
+3. **Bayesian Model Averaging & Stacking (Yao et al.):** When two models are neck-and-neck (`elpd_diff < 2 * dse`), don’t discard one! **Stacking** finds optimal non-negative weights $$w_1 + w_2 = 1$$ maximizing combined LOO predictive density—preserving model uncertainty in predictions!
+4. **Causal Goal ≠ Predictive Goal:** Use DAGs to choose causal models; use LOO/Stacking to optimize predictive accuracy.
+
+---
+
 ## Learning objectives
 
 After this lesson, you should clearly distinguish three model comparison strategies in Bayesian statistics: choosing one model (selection), combining several models (averaging), and expanding the model to encompass the others (expansion). The central point is not to treat model comparison as a mechanical ranking procedure, but as a decision problem under model uncertainty, where the choice of strategy depends on how well separated the predictive performance is and on the application goal.
@@ -94,6 +109,32 @@ This example shows that model comparison is a multi-objective decision: predicti
 There is no single correct model comparison strategy for every context. Selection, averaging, and expansion are three complementary tools in the same Bayesian workflow. An analyst's ability lies not in remembering the names of the tools, but in knowing when to reduce uncertainty by choosing a model, when to keep uncertainty by combining models, and when to redesign the model to fix mechanism misfit.
 
 Next lesson: **Bayesian Decision Analysis**, where model results are turned into the optimal choice of action under a concrete loss.
+
+---
+
+### Worked Numerical Example: Reading Two Real `az.compare` Tables Side by Side
+
+**Scenario 1 — Clear Winner:**
+- Model A (`Simple Linear`): `elpd_loo = -142.0`
+- Model B (`Hierarchical Spline`): `elpd_loo = -129.6`
+- Difference: $$\Delta\mathrm{elpd} = \mathbf{+12.4}$$, paired $$\mathrm{dse} = \mathbf{3.1}$$ $$\implies z = 12.4 / 3.1 = \mathbf{4.0}$$ (decisive predictive superiority for Model B!).
+
+**Scenario 2 — Too Close to Call (Use Stacking!):**
+- Model C (`Poisson`): `elpd_loo = -210.4`
+- Model D (`NegBin`): `elpd_loo = -208.6`
+- Difference: $$\Delta\mathrm{elpd} = \mathbf{+1.8}$$, paired $$\mathrm{dse} = \mathbf{2.9}$$ $$\implies z = 1.8 / 2.9 = \mathbf{0.62}$$!
+- Rather than betting 100% on one model, **Stacking** might assign weights $$w_D = 0.65,\; w_C = 0.35$$, combining their posterior predictive draws cleanly!
+
+### Deep-Dive Explanation: Four Rules for Wise Bayesian Model Comparison (Read Slowly)
+
+1. **Always check `dse` (difference SE), never the individual models’ `se`:** Individual `se` includes observation-to-observation difficulty; paired `dse` measures the true uncertainty in *Model B minus Model A*.
+2. **Never use flat/uninformative priors when computing Bayes Factors:** Under improper or arbitrarily wide priors, Bayes Factors automatically favor the simpler model (Lindley’s Paradox) regardless of the data!
+3. **When models tie on LOO, prefer the simpler, better-regularized, or causally grounded model—or stack them.**
+4. **Always run PPCs on the winning model too:** Being the "best" of three bad models still leaves you with a bad model!
+
+**Quick check.** If Model 2 beats Model 1 by `elpd_diff = 3.0` with a paired `dse = 4.5`, do you have strong evidence that Model 2 predicts better out of sample—and what should you do instead of discarding Model 1?
+
+---
 
 ## Reference videos
 

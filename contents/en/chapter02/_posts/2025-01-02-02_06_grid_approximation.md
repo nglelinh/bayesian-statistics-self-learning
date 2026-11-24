@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+Conjugate priors feel like magic—until the first time your real-world problem refuses to cooperate. The moment you impose a truncated prior, a multimodal prior, or a non-standard likelihood, the neat algebraic shortcut vanishes and you are staring at an integral in the denominator of Bayes' rule that has no closed-form antiderivative. Before we ever touch fancy MCMC samplers, there is a disarmingly simple, transparent weapon that lets you compute *any* 1D or 2D posterior with nothing more than arithmetic: **grid approximation**.
+
+**Lesson Roadmap:** Why closed-form conjugacy breaks → Background Knowledge Map (Riemann sums, non-conjugate inference, curse of dimensionality) → Hand-worked 5-point grid check → Finer grids, non-conjugate priors, posterior summaries, and exercises.
+
 ## Learning objectives
 
 After this lesson, you should understand grid approximation as the bridge from hand-calculated Bayes to computational Bayes. You should know how to discretize a parameter space, compute a posterior on a grid, and explain why this method is excellent for learning but limited for high-dimensional models.
@@ -17,6 +21,35 @@ After this lesson, you should understand grid approximation as the bridge from h
 > **Mini example.** You want to infer $$\theta$$ after seeing 6 heads in 9 tosses, but instead of working over the entire interval $$[0,1]$$, you only test candidate values like $$0, 0.25, 0.5, 0.75, 1$$. That is the basic idea of grid approximation.
 >
 > **Quick check.** If you increase the grid from 5 points to 100 or 1000 points, what do you expect to improve?
+
+## Background Knowledge Map: What Grid Approximation Really Is
+
+### 1. Discrete Quadrature for Bayes' Denominator
+- **What it is:** Replacing the continuous marginal-likelihood integral $$P(D) = \int p(D \mid \theta)p(\theta)\,d\theta$$ with a finite Riemann sum over $$M$$ evenly spaced grid points $$\theta_1, \dots, \theta_M$$.
+- **What it studies:** How accurately a finite probability vector $$\mathbf{w}$$ approximates a continuous posterior density $$p(\theta \mid D)$$, and how posterior expectations $$\mathbb{E}[g(\theta) \mid D] \approx \sum_{j=1}^M w_j g(\theta_j)$$ turn into simple weighted averages.
+
+### 2. Breaking Free from Conjugacy
+- **What it is:** A model-agnostic numerical procedure that evaluates $$p(\theta_j) \cdot p(D \mid \theta_j)$$ pointwise—requiring zero algebraic matching between prior and likelihood.
+- **What it studies:** Arbitrary priors (step functions, truncated intervals, mixture priors) and non-standard likelihoods, proving that Bayesian updating is fundamentally *multiply prior by likelihood, then normalize*.
+
+### 3. The Curse of Dimensionality (Why We Eventually Need MCMC)
+- **What it is:** The exponential explosion of grid size $$M^d$$ as the number of parameters $$d$$ grows.
+- **What it studies:** The exact boundary where grid approximation shines ($$d \le 2$$, teaching, sanity-checking MCMC) versus where it collapses ($$d \ge 4$$), motivating Hamiltonian Monte Carlo and NUTS in Chapter 4.
+
+## Deep-Dive Explanation: A 5-Point Grid Posterior Checked by Hand (Read Slowly)
+
+Suppose you flip a coin $$n = 3$$ times and observe $$k = 2$$ heads, with a flat uniform prior over $$\theta \in [0, 1]$$. Analytically, we know the exact posterior is $$\mathrm{Beta}(3, 2)$$ with mean $$\frac{3}{3+2} = 0.600$$. Now pretend you forgot the Beta formula and evaluate only 5 evenly spaced grid points $$\theta \in \{0.1, 0.3, 0.5, 0.7, 0.9\}$$ (each with prior weight $$1/5$$). Ignoring the constant $$\binom{3}{2} = 3$$ (which cancels on normalization), the unnormalized likelihood is $$L(\theta) = \theta^2(1 - \theta)$$:
+
+| Grid point $$\theta_j$$ | Unnormalized $$\theta_j^2(1-\theta_j)$$ | Normalized weight $$w_j$$ | Contribution $$\theta_j w_j$$ |
+| :--- | :--- | :--- | :--- |
+| $$0.1$$ | $$0.01 \times 0.9 = 0.009$$ | $$0.009 / 0.425 = 0.0212$$ | $$0.0021$$ |
+| $$0.3$$ | $$0.09 \times 0.7 = 0.063$$ | $$0.063 / 0.425 = 0.1482$$ | $$0.0445$$ |
+| $$0.5$$ | $$0.25 \times 0.5 = 0.125$$ | $$0.125 / 0.425 = 0.2941$$ | $$0.1471$$ |
+| $$0.7$$ | $$0.49 \times 0.3 = 0.147$$ | $$0.147 / 0.425 = 0.3459$$ | $$0.2421$$ |
+| $$0.9$$ | $$0.81 \times 0.1 = 0.081$$ | $$0.081 / 0.425 = 0.1906$$ | $$0.1715$$ |
+| **Total** | **$$0.425$$** | **$$1.0000$$** | **$$0.6073$$** |
+
+Even with a crude 5-point grid, the posterior mean $$0.6073$$ lands within $$0.007$$ of the exact $$0.6000$$! Yet notice the scaling wall: with $$M = 100$$ points per axis, $$d = 1$$ takes $$100$$ evaluations, $$d = 3$$ takes $$10^6$$, and a modest 10-parameter regression requires $$100^{10} = 10^{20}$$ evaluations—longer than the age of the universe.
 
 ## Opening idea: what if the posterior has no clean closed form?
 

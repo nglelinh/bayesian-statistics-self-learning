@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Trong cuốn *Statistical Rethinking*, Richard McElreath đặt ra một thí nghiệm tưởng tượng rất dí dỏm: giả sử bạn muốn dự đoán chiều cao của một người trưởng thành từ cả **chiều dài chân trái** lẫn **chiều dài chân phải**. Đưa riêng từng chân vào mô hình, hệ số nào cũng cực kỳ rõ ràng. Nhưng khi đưa đồng thời cả hai vào cùng một hồi quy, phần mềm bỗng báo cả hai hệ số đều bất định rộng thênh thang — thậm chí một chân có thể mang dấu âm! Dữ liệu không hề lỗi; chỉ là hiếm ai có chân trái dài hơn chân phải 20 cm để mô hình thử "giữ cố định chân phải mà kéo dài chân trái".
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu đa cộng tuyến (multicollinearity) là gì, vì sao nó gây khó khăn cho việc diễn giải từng hệ số hồi quy và trong bối cảnh nào hiện tượng này thực sự đáng lo ngại. Bạn cũng sẽ phân biệt rạch ròi hai mục tiêu khác nhau của hồi quy là **dự đoán** (prediction) và **diễn giải** (interpretation).
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ hiểu đa cộng tuyến (multicollinearity) là gì,
 >
 > **Câu hỏi tự kiểm tra.** Khi hai biến dự báo gần như đo lường cùng một đặc trưng, mô hình hồi quy sẽ gặp trở ngại gì trong việc tách riêng ảnh hưởng của từng biến?
 
+
+## Bản đồ kiến thức nền: Ma trận thiết kế suy biến, Hệ số phóng đại phương sai (VIF) và Hình học hậu nghiệm
+
+Bản chất của đa cộng tuyến nằm trọn trong giao điểm giữa đại số tuyến tính và phân phối hậu nghiệm nhiều chiều:
+
+- **Ma trận $$X^\top X$$ gần suy biến (Ill-conditioned Design Matrix):** Trong hồi quy tuyến tính, ma trận hiệp phương sai hậu nghiệm (khi prior yếu) tỷ lệ với $$\sigma^2 (X^\top X)^{-1}$$. Khi hai cột của $$X$$ gần phụ thuộc tuyến tính, định thức $$\det(X^\top X) \to 0$$ khiến các phần tử đường chéo của $$(X^\top X)^{-1}$$ phình to cực mạnh — đó là lý do phương sai từng hệ số bùng nổ.
+- **Hệ số phóng đại phương sai (VIF — Variance Inflation Factor):** Nếu hồi quy biến $$x_j$$ theo các biến dự báo còn lại cho hệ số xác định $$R_j^2$$, thì phương sai của $$\beta_j$$ bị nhân lên đúng một thừa số $$\text{VIF}_j = \frac{1}{1 - R_j^2}$$ (độ lệch chuẩn tăng theo $$\sqrt{\text{VIF}_j}$$). Chẳng hạn $$R_j^2 = 0.90$$ làm phương sai tăng gấp 10 lần.
+- **Hình học dải chéo trong hậu nghiệm Bayes:** Thay vì che giấu vấn đề bằng một ước lượng điểm bất ổn, phân phối hậu nghiệm đồng thời kéo dài thành một hình elip dẹt nghiêng $$45^\circ$$ — thể hiện rõ rằng *tổng* $$\beta_1 + \beta_2$$ được dữ liệu khóa rất chặt, còn *hiệu* $$\beta_1 - \beta_2$$ lại trượt tự do dọc theo sống núi.
 ## 1. Đa cộng tuyến (Multicollinearity) là gì?
 
 Đa cộng tuyến xảy ra khi hai hoặc nhiều biến dự báo trong cùng một mô hình có tương quan rất cao với nhau. Vì chúng mang thông tin trùng lặp đáng kể, mô hình gặp khó khăn khi phân chia đóng góp riêng cho từng biến. Các ví dụ quen thuộc gồm chiều cao đo bằng cm và inch, diện tích và số phòng ngủ trong cùng một dự án chung cư có thiết kế đồng nhất, hay số giờ học và số bài tập hoàn thành trong một lớp học có kỷ luật cao.
@@ -93,6 +103,24 @@ Tăng hệ số tương quan $$\rho$$ giữa hai biến dự báo để quan sá
 <div data-demo="collinear-explainer" data-lang="vi"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
+### Khung giải thích (nên đọc chậm): Chứng minh bằng tay vì sao $$\beta_1, \beta_2$$ bất ổn nhưng tổng $$\beta_1 + \beta_2$$ lại siêu ổn định
+
+Hãy xét mô hình hai biến chuẩn hóa $$x_1, x_2$$ có hệ số tương quan $$\rho$$, cỡ mẫu $$n = 100$$ và nhiễu $$\sigma = 1$$. Với tiên nghiệm phẳng, ma trận hiệp phương sai hậu nghiệm của $$(b_1, b_2)$$ có công thức đóng rất gọn:
+
+$$\Sigma_{b \mid D} = \frac{\sigma^2}{n(1 - \rho^2)}\begin{pmatrix} 1 & -\rho \\ -\rho & 1 \end{pmatrix}.$$
+
+Thay hai mức tương quan vào để so sánh trực tiếp bằng tay:
+
+1. **Khi $$\rho = 0$$ (hai biến độc lập):** $$\text{VIF} = 1$$, nên $$\operatorname{Var}(b_1) = \operatorname{Var}(b_2) = 1/100 = 0.01 \implies \mathrm{SD}(b_1) = 0.100$$.
+2. **Khi $$\rho = 0.95$$ (đa cộng tuyến mạnh):** Ta có $$1 - \rho^2 = 1 - 0.9025 = 0.0975$$, suy ra $$\text{VIF} = 1/0.0975 \approx 10.26$$. Độ lệch chuẩn từng hệ số phình lên:
+   $$\mathrm{SD}(b_1) = \mathrm{SD}(b_2) = 0.100 \times \sqrt{10.26} \approx 0.320$$
+   (tăng hơn **3.2 lần**!), đồng thời hiệp phương sai $$\operatorname{Cov}(b_1, b_2) = -0.95 \times 0.1026 = -0.0974$$ (tương quan hậu nghiệm giữa $$b_1$$ và $$b_2$$ bằng đúng $$-0.95$$!).
+3. **Bây giờ tính phương sai của tổng $$b_1 + b_2$$** (đại diện cho dự đoán khi $$x_1 \approx x_2$$):
+   $$\operatorname{Var}(b_1 + b_2) = \operatorname{Var}(b_1) + \operatorname{Var}(b_2) + 2\operatorname{Cov}(b_1, b_2) = \frac{1 + 1 - 2\rho}{100(1-\rho^2)} = \frac{2(1-\rho)}{100(1-\rho)(1+\rho)} = \frac{2}{100(1+\rho)}.$$
+   Thừa số nguy hiểm $$(1 - \rho)$$ ở tử và mẫu **tự triệt tiêu hoàn toàn**! Với $$\rho = 0.95$$, ta có $$\operatorname{Var}(b_1 + b_2) = 2/195 \approx 0.01026 \implies \mathrm{SD}(b_1 + b_2) \approx 0.101$$ — gần như không hề bị ảnh hưởng bởi đa cộng tuyến!
+
+Phép rút gọn nhỏ này giải thích dứt điểm vì sao đa cộng tuyến làm hỏng bài toán **diễn giải từng hệ số riêng**, nhưng hầu như không làm hỏng bài toán **dự đoán tổng thể**.
 
 ## 7. Các hướng xử lý đa cộng tuyến
 

@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Khi đối diện một bảng dữ liệu gần 54.000 viên kim cương với hệ số tương quan giữa trọng lượng `carat` và giá `price` lên tới $$0.922$$, cám dỗ lớn nhất của người phân tích là kết luận bài toán đã xong. Thế nhưng thị trường kim cương không vận hành theo đường thẳng: một viên kim cương 2 carat không đắt gấp đôi viên 1 carat, mà đắt gấp nhiều lần vì độ hiếm tăng theo hàm mũ, và chênh lệch giữa hai hạng chất lượng `cut` có thể lên tới hàng nghìn đô la. Đây là sân tập thực sự cho quy trình Bayes đa tầng.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ biết cách vận hành đầy đủ một quy trình Bayes trên tập dữ liệu có cấu trúc phức tạp, nơi việc khớp được mô hình mới chỉ là điều kiện cần chứ chưa phải điều kiện đủ. Trọng tâm của bài là rèn luyện năng lực lập luận định lượng: chẩn đoán sai lệch, xác định rõ nguyên nhân cấu trúc và đề xuất can thiệp đúng chỗ thay vì chỉnh sửa theo cảm tính.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ biết cách vận hành đầy đủ một quy trình
 >
 > **Câu hỏi tự kiểm tra.** Vì sao một chỉ số tổng hợp rất cao như tương quan trên 0.9 vẫn chưa đủ để kết luận mô hình đáng tin cậy cho bài toán dự đoán thực tế?
 
+
+## Bản đồ kiến thức nền: Phân phối Log-Normal, Độ bao phủ có điều kiện và Gộp một phần (Partial Pooling)
+
+Để làm chủ một bài toán quy mô lớn và phi đồng nhất như `diamonds`, ba công cụ lý thuyết sau đóng vai trò xương sống:
+
+- **Phân phối Log-Normal và hiệu chỉnh bất đẳng thức Jensen:** Nếu $$\log Y \sim \mathcal{N}(\mu, \sigma^2)$$ thì $$Y = e^{\log Y}$$ có trung vị là $$e^\mu$$, nhưng vì hàm mũ lồi chặt (bất đẳng thức Jensen: $$\mathbb{E}[e^Z] > e^{\mathbb{E}[Z]}$$), kỳ vọng thực sự là $$\mathbb{E}[Y] = \exp(\mu + \sigma^2/2)$$. Quên số hạng $$\sigma^2/2$$ sẽ tạo ra sai lệch định giá thấp có hệ thống trên thang tiền tệ gốc.
+- **Đánh giá có điều kiện (Conditional Calibration) và độ bao phủ ngoài mẫu:** Một khoảng dự đoán 90% có thể đạt độ bao phủ tổng thể 92% nhờ thừa bao phủ ở 90% dữ liệu phổ thông (kim cương nhỏ), trong khi chỉ bao phủ 72% ở 10% phân khúc cao cấp (kim cương lớn). Chia miền theo dải `carat` biến kiểm định tổng thể thành kính hiển vi phát hiện sai lệch cục bộ.
+- **Mô hình phân cấp và cơ chế co cụm (Partial Pooling / Shrinkage):** Khi dữ liệu chia thành nhiều nhóm có cỡ mẫu chênh lệch, đặt tiên nghiệm chung $$\alpha_g \sim \mathcal{N}(\alpha_0, \tau_\alpha^2)$$ cho phép các nhóm chia sẻ thông tin thống kê. Nhóm nhiều dữ liệu giữ sát trung bình riêng; nhóm ít dữ liệu tự động co nhẹ về trung tâm chung $$\alpha_0$$ theo tỷ lệ độ chính xác.
 ## 1. Bối cảnh dữ liệu: vì sao `diamonds` là phép thử khó?
 
 Ta làm việc với tập dữ liệu `diamonds` (trong thư viện `seaborn`), gồm biến phản hồi `price` và nhiều biến mô tả cả kích thước hình học lẫn chất lượng như `carat`, `cut`, `color`, `clarity`, `depth`, `table`. Tập dữ liệu này buộc người phân tích đối diện đồng thời với ba lớp phức tạp: mối quan hệ tuy mạnh nhưng không đồng nhất trên toàn miền biến dự báo, cấu trúc phân nhóm mang ý nghĩa thực chất, và hành vi đuôi phải của giá ảnh hưởng trực tiếp tới bài toán định giá.
@@ -204,6 +214,25 @@ Tăng $$\tau$$ để quan sát sự chuyển dịch từ gộp hoàn toàn sang 
 <div data-demo="pooling-explainer" data-lang="vi"></div>
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
+
+### Khung giải thích (nên đọc chậm): Tính tay hiệu chỉnh Log-Normal và công thức co cụm Partial Pooling
+
+Hai công thức cốt lõi ở mục 7.1 và 7.3 sẽ trở nên cực kỳ rõ ràng khi bạn tự thay số kiểm tra bằng tay:
+
+**1. Kiểm chứng hiệu chỉnh Log-Normal (Can thiệp 1):**
+Giả sử mô hình `log(price)` dự đoán cho một viên kim cương cụ thể với phân phối dự báo trên thang log là $$\mathcal{N}(\mu_* = 8.0,\ \sigma_*^2 = 0.4^2)$$:
+
+- Nếu quy đổi ngây thơ bằng $$\exp(\mu_*)$$: ta nhận được $$\exp(8.0) \approx 2\,981$$ USD (đây thực chất là **trung vị** dự đoán, không phải giá kỳ vọng).
+- Quy đổi đúng cho **giá kỳ vọng**:
+  $$\mathbb{E}[\text{price}_* \mid y, x_*] = \exp\!\left(8.0 + \frac{0.4^2}{2}\right) = \exp(8.08) \approx 3\,229\text{ USD}.$$
+- Mức chênh lệch là $$+248$$ USD (tương đương **+8.3%**) chỉ do độ bất đối xứng của hàm mũ. Khi độ nhiễu $$\sigma_*$$ càng lớn, sai lệch do bỏ quên $$\sigma_*^2/2$$ càng nghiêm trọng.
+
+**2. Kiểm chứng cơ chế co cụm Partial Pooling (Can thiệp 3):**
+Giả sử trên thang log, trung tâm chung giữa các nhóm chất lượng là $$\alpha_0 = 8.0$$ với phương sai giữa các nhóm $$\tau_\alpha^2 = 0.25$$ (độ chính xác tiên nghiệm $$1/\tau_\alpha^2 = 4$$), còn nhiễu trong từng nhóm có phương sai $$\sigma^2 = 1.0$$. Xét một nhóm hiếm chỉ có $$n_g = 2$$ viên kim cương với trung bình mẫu $$\bar y_g = 9.0$$ (độ chính xác dữ liệu $$n_g/\sigma^2 = 2$$). Hậu nghiệm của hệ số chặn nhóm $$\alpha_g$$ là trung bình trọng số theo độ chính xác:
+
+$$\hat\alpha_g = \frac{\frac{n_g}{\sigma^2}\bar y_g + \frac{1}{\tau_\alpha^2}\alpha_0}{\frac{n_g}{\sigma^2} + \frac{1}{\tau_\alpha^2}} = \frac{2(9.0) + 4(8.0)}{2 + 4} = \frac{50}{6} \approx 8.33.$$
+
+Thay vì tin tuyệt đối vào trung bình noisy $$9.0$$ từ chỉ 2 viên (no pooling), partial pooling kéo ước lượng 2/3 quãng đường về trung tâm chung $$8.0$$. Ngược lại, với một nhóm lớn có $$n_g = 200$$ viên, trọng số dữ liệu là $$200$$ áp đảo hoàn toàn trọng số tiên nghiệm $$4$$, nên ước lượng bám sát dữ liệu của chính nhóm đó.
 
 ### 7.4. Tiêu chí đánh giá sau mỗi bước điều chỉnh
 

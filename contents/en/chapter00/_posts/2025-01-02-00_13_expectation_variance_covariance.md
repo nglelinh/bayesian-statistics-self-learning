@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+If two financial assets each have a standard deviation of 10%, what is the standard deviation of their sum? Most people guess 20%—yet depending on their **covariance**, the true standard deviation can be anywhere from **0%** (perfect negative correlation, complete hedge!) to **20%** (perfect positive correlation)! Mastering how expectations, variances, and covariances combine is essential for understanding both portfolio risk and **correlated parameter uncertainty in Bayesian posteriors**.
+
+This lesson turns linearity of expectation, the variance sum law, and covariance/correlation into effortless mental reflexes.
+
+---
+
+## Background Knowledge Map: Moments, Linearity, and Correlated Uncertainty
+
+Four identities do 90% of the algebraic heavy lifting in probability and Bayesian inference:
+
+1. **Linearity of Expectation (Always True!):** $$\mathbb{E}[aX + bY + c] = a\mathbb{E}[X] + b\mathbb{E}[Y] + c$$ holds **even when $$X$$ and $$Y$$ are strongly dependent**!
+2. **Variance Scaling & Sum Law:** $$\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)$$ (constants vanish, scales square!), and for two variables: $$\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X, Y)$$.
+3. **Covariance & Dimensionless Correlation:** $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$$ depends on units; dividing by $$\sigma_X\sigma_Y$$ gives correlation $$ho \in [-1, 1]$$.
+4. **Law of Total Expectation & Variance (Hierarchical Bayes Engine):** $$\mathrm{Var}(Y) = \mathbb{E}[\mathrm{Var}(Y\mid	heta)] + \mathrm{Var}(\mathbb{E}[Y\mid	heta])$$ decomposes total predictive uncertainty into *within-model noise* plus *parameter uncertainty*!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand expectation as the "long-run average", variance as the "spread around the mean", covariance as the "same-direction or opposite-direction co-movement" between two variables, and know why these three concepts appear constantly in every Bayesian model.
@@ -112,6 +129,38 @@ In other words, learning Bayes without being sure of expectation/variance/covari
 2. Variance measures the spread around the mean.
 3. Covariance measures the same-direction/opposite-direction co-variation of two variables.
 4. These three quantities are the basic language for interpreting the posterior.
+
+---
+
+### Worked Numerical Example: Computing Expectation, Variance, and Covariance by Hand
+
+Suppose two investments $$(X, Y)$$ have 3 equally likely market scenarios (each probability $$1/3$$):
+
+| Scenario | Probability | Return $$X$$ | Return $$Y$$ | $$X + Y$$ |
+| :--- | :--- | :--- | :--- | :--- |
+| Boom | $$1/3$$ | $$+6$$ | $$-2$$ | $$+4$$ |
+| Flat | $$1/3$$ | $$0$$ | $$0$$ | $$0$$ |
+| Bust | $$1/3$$ | $$-6$$ | $$+2$$ | $$-4$$ |
+
+1. **Means:** $$\mathbb{E}[X] = 0$$, $$\mathbb{E}[Y] = 0$$.
+2. **Variances:**
+   $$\mathrm{Var}(X) = rac{36 + 0 + 36}{3} = 24, \qquad \mathrm{Var}(Y) = rac{4 + 0 + 4}{3} = rac{8}{3} pprox 2.67.$$
+3. **Covariance:**
+   $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - 0 = rac{6(-2) + 0 + (-6)(2)}{3} = rac{-24}{3} = \mathbf{-8}.$$
+4. **Verify the Variance Sum Law:**
+   - Via formula: $$\mathrm{Var}(X+Y) = 24 + rac{8}{3} + 2(-8) = 8 + rac{8}{3} = rac{32}{3} pprox \mathbf{10.67}$$.
+   - Directly from column $$X+Y = (+4, 0, -4)$$: $$rac{16 + 0 + 16}{3} = rac{32}{3} pprox \mathbf{10.67}$$ — exact match! Negative covariance cut the variance of $$X$$ by more than half!
+
+### Deep-Dive Explanation: Four Rules for Working With Expectations and Covariance (Read Slowly)
+
+1. **Zero covariance does NOT prove independence:** If $$X \in \{-1, 0, 1\}$$ symmetrically and $$Y = X^2$$, then $$\mathrm{Cov}(X, Y) = 0$$ even though $$Y$$ is 100% determined by $$X$$!
+2. **Never add standard deviations—add *variances* (plus $$2\mathrm{Cov}$$):** Adding $$\sigma_X + \sigma_Y$$ overestimates uncertainty whenever variables are independent or negatively correlated.
+3. **In Bayesian regression, slope $$eta_1$$ and intercept $$eta_0$$ are almost always negatively correlated:** Shifting the regression line up forces it to tilt flatter unless you **center** predictors ($$x_i - ar{x}$$), which drives $$\mathrm{Cov}(eta_0, eta_1) 	o 0$$!
+4. **Monte Carlo turns any expectation into a simple average:** Once you have $$S$$ posterior draws $$	heta^{(1)},\dots,	heta^{(S)}$$, $$\mathbb{E}[g(	heta)\mid y] pprox rac{1}{S}\sum g(	heta^{(s)})$$ works for *any* nonlinear function $$g$$!
+
+**Quick check.** In the 3-scenario example above, what is the exact correlation $$ho(X, Y) = rac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}$$?
+
+---
 
 ## Reference videos
 

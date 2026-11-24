@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Thực chất một **mô hình thống kê (statistical model)** là gì? Nó không phải là một hàm hộp đen `model.fit()` vô hồn — mà là **một câu chuyện toán học mô tả cách dữ liệu được sinh ra (generative story)!** Trong tư duy Bayes, viết một mô hình thống kê nghĩa là nêu tường minh hai mảnh ghép: quy luật sinh dữ liệu khi biết tham số (**hàm hợp lý** $$p(y\mid\theta)$$) và những giá trị tham số khả dĩ trước khi nhìn dữ liệu (**tiên nghiệm** $$p(\theta)$$).
+
+Bài học này giúp bạn đọc và viết lưu loát ký hiệu mô hình sinh, phân biệt rạch ròi **tham số**, **dữ liệu** và **siêu tham số**, đồng thời biết kiểm tra mô hình bằng mô phỏng tiên nghiệm trước khi chạm vào dữ liệu thật.
+
+---
+
+## Bản đồ kiến thức nền: Bốn thành phần của một Mô hình Thống kê Sinh (Generative Model)
+
+1. **Cấu trúc sinh dữ liệu (Hàm hợp lý $$p(y\mid\theta)$$):** Họ phân phối xác suất mô tả cách tín hiệu và nhiễu kết hợp để tạo ra quan sát $$y$$.
+2. **Phân phối tiên nghiệm $$p(\theta\mid\phi)$$:** Mã hóa miền hợp lệ và thang đo hợp lý của tham số $$\theta$$, được điều khiển bởi các **siêu tham số** $$\phi$$.
+3. **Mô phỏng chiều thuận (Prior Predictive):** Vì mô hình Bayes có tính sinh hoàn chỉnh, ta có thể rút $$\theta \sim p(\theta)$$ rồi sinh dữ liệu giả $$y_{\text{sim}} \sim p(y\mid\theta)$$ *trước khi* khớp dữ liệu — phát hiện ngay những tiên nghiệm vô lý (như dự báo điểm thi âm!).
+4. **"Mọi mô hình đều sai, nhưng có những mô hình hữu ích" (George Box):** Mô hình là sự đơn giản hóa có chủ đích; giá trị của nó nằm ở khả năng giải thích cấu trúc, định lượng bất định và dự báo tốt trên dữ liệu mới.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu định nghĩa thực dụng của mô hình thống kê như một mô tả xác suất về cách dữ liệu được sinh ra, phân biệt rõ dữ liệu quan sát với tham số chưa biết, và thấy vì sao việc nắm rõ giả định của mô hình luôn quan trọng hơn việc thuộc công thức.
@@ -102,6 +117,31 @@ Nếu dữ liệu không phải chiều cao mà là số cuộc gọi đến t�
 2. Nó kết nối tham số chưa biết với dữ liệu quan sát qua cơ chế sinh dữ liệu.
 3. Mọi mô hình đều gắn với giả định; hiểu rõ giả định quan trọng hơn thuộc công thức.
 4. Trong thống kê Bayesian, mô hình cung cấp hàm hợp lý để cập nhật từ tiên nghiệm sang hậu nghiệm.
+
+---
+
+### Ví dụ tính tay cầm tay chỉ việc: Kiểm tra mô hình điểm thi qua Phân phối Dự báo Tiên nghiệm
+
+Giả sử bạn mô hình hóa điểm thi $$Y$$ với nhiễu đo lường đã biết $$\sigma = 10$$ và điểm trung bình lớp chưa biết $$\mu$$:
+
+$$\mu \sim \mathcal{N}(70,\; 5^2), \qquad Y \mid \mu \sim \mathcal{N}(\mu,\; 10^2).$$
+
+Trước khi chấm bất kỳ bài thi nào, một điểm thi tương lai $$Y = \mu + \varepsilon$$ tuân theo phân phối dự báo tiên nghiệm nào? Vì $$\mu$$ và $$\varepsilon$$ độc lập:
+1. **Kỳ vọng dự báo tiên nghiệm:** $$\mathbb{E}[Y] = 70 + 0 = \mathbf{70}$$.
+2. **Phương sai dự báo tiên nghiệm (phương sai hai nguồn độc lập cộng nhau!):**
+   $$\mathrm{Var}(Y) = \mathrm{Var}(\mu) + \mathrm{Var}(\varepsilon) = 5^2 + 10^2 = 25 + 100 = \mathbf{125} \implies \mathrm{SD}(Y) = \sqrt{125} \approx \mathbf{11{,}18}.$$
+3. **Khoảng 95% dự báo tiên nghiệm:** $$70 \pm 1{,}96(11{,}18) = \mathbf{[48{,}1;\; 91{,}9]}$$ — nằm gọn gàng trong thang điểm 0–100! *(Trái lại, một tiên nghiệm "phẳng" cẩu thả $$\mu \sim \mathcal{N}(70, 1000^2)$$ sẽ dự báo điểm thi từ $$-1890$$ đến $$+2030$$!)*
+
+### Khung giải thích: Bốn nguyên tắc xây dựng mô hình thống kê chuẩn mực (nên đọc chậm)
+
+1. **Luôn viết mô hình bằng 2–3 dòng ký hiệu toán trước khi gõ code:** Ký hiệu giúp mọi giả định ẩn hiện ra công khai để đồng nghiệp phản biện.
+2. **Tách bất định tham số (epistemic) khỏi nhiễu dữ liệu (aleatoric):** Thu thêm dữ liệu làm $$\mathrm{Var}(\mu\mid y) \to 0$$, nhưng không bao giờ làm biến mất nhiễu cá thể $$\sigma^2 = 100$$.
+3. **Luôn chạy kiểm tra dự báo tiên nghiệm (Prior Predictive Check):** Một biểu đồ 5 giây cứu bạn khỏi hàng giờ gỡ lỗi MCMC vô ích.
+4. **Bắt đầu đơn giản rồi mở rộng dần:** Dựng mô hình nền tối giản trước, kiểm tra chỗ nào nó không khớp thực tế (PPC), rồi mới thêm phân cấp hoặc đuôi nặng Student-$$t$$.
+
+**Kiểm tra nhanh.** Trong mô hình điểm thi ở trên, nếu bạn đã biết chắc chắn điểm trung bình lớp $$\mu = 70$$ (tức $$\mathrm{SD}(\mu) = 0$$), thì độ lệch chuẩn dự báo của một bài thi mới $$Y$$ sẽ còn lại bằng bao nhiêu?
+
+---
 
 ## Video tham khảo
 

@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Cuối thế kỷ 19, nhà thống kê Ladislaus Bortkiewicz thống kê số binh sĩ Phổ tử vong vì bị ngựa đá mỗi năm trong 10 quân đoàn suốt 20 năm — một dữ liệu kỳ lạ nhưng lại trở thành minh họa bất hủ cho phân phối Poisson. Cùng một quá trình ngẫu nhiên xảy ra đều đặn theo thời gian, nếu ta hỏi *"có bao nhiêu sự kiện trong 1 giờ?"* ta gặp **Poisson**; còn nếu ta bấm đồng hồ hỏi *"phải chờ bao lâu tới sự kiện kế tiếp?"* ta gặp **Exponential**.
+
+Trong thực hành Bayes hiện đại — từ đếm số cuộc gọi tổng đài, số lỗi máy chủ đến số ca bệnh hiếm mỗi tuần — cặp Poisson–Exponential là điểm khởi đầu để hiểu cách mô hình hóa tốc độ $$\lambda > 0$$ và cặp liên hợp Gamma–Poisson.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ biết cách mô hình hóa dữ liệu đếm bằng phân phối Poisson, mô hình hóa thời gian chờ bằng phân phối Exponential, và hiểu vì sao hai phân phối này là hai góc nhìn của cùng một quá trình sự kiện ngẫu nhiên theo thời gian.
+
+## Bản đồ kiến thức nền: Quá trình điểm Poisson, Tính không nhớ và Cặp liên hợp Gamma–Poisson
+
+Ba trụ cột toán học đằng sau bài học này gồm:
+
+- **Quá trình Poisson (Poisson Process):** Mô hình hóa các sự kiện xảy ra ngẫu nhiên, độc lập trên trục thời gian hoặc không gian với tốc độ trung bình không đổi $$\lambda$$. Nó là giới hạn của phân phối Binomial khi số khoảng thời gian nhỏ $$n 	o \infty$$ và xác suất mỗi khoảng $$p 	o 0$$ sao cho $$np = \lambda$$.
+- **Tính không nhớ (Memoryless Property) của Exponential:** $$P(T > t + s \mid T > t) = P(T > s)$$. Thời gian đã chờ không làm thay đổi phân phối thời gian phải chờ thêm — đây là lý do phân phối Exponential mô tả cực tốt sự kiện ngẫu nhiên thuần túy nhưng *không* phù hợp với thiết bị bị hao mòn theo tuổi thọ (khi đó cần phân phối Weibull).
+- **Cầu nối sang Thống kê Bayes (Gamma–Poisson):** Tốc độ $$\lambda$$ là tham số dương liên tục ($$\lambda > 0$$). Khi đặt prior $$	ext{Gamma}(lpha, eta)$$ lên $$\lambda$$ và quan sát $$n$$ khoảng thời gian có tổng số sự kiện $$S = \sum_{i=1}^n y_i$$, hậu nghiệm lại là $$	ext{Gamma}(lpha + S, eta + n)$$ — một cập nhật dạng đóng cực kỳ gọn gàng.
+
+---
 
 ## 1) Khi nào dùng Poisson?
 
@@ -128,6 +144,36 @@ Trong thống kê Bayesian, việc kết hợp phân phối tiên nghiệm Gamma
 ---
 
 *Bài học tiếp theo: [0.4 Normal và trực giác CLT]({{ site.baseurl }}/contents/vi/chapter00/00_02_03_normal_clt_intuition/)*
+
+## Khung giải thích (nên đọc chậm): Hai mặt của cùng một đồng xu và cập nhật Gamma–Poisson bằng tay
+
+Hãy đọc chậm mối liên hệ toán học giữa đếm sự kiện (Poisson) và thời gian chờ (Exponential):
+
+1. **Biến cố tương đương:** "Thời gian chờ đến sự kiện đầu tiên lớn hơn $$t$$" ($$T > t$$) hoàn toàn tương đương với "Có đúng $$0$$ sự kiện xảy ra trong khoảng $$[0, t]$$" ($$N(t) = 0$$).
+2. **Suy ra hàm sống còn (Survival Function):** Với $$N(t) \sim 	ext{Poisson}(\lambda t)$$, ta có $$P(T > t) = P(N(t) = 0) = rac{(\lambda t)^0 e^{-\lambda t}}{0!} = e^{-\lambda t}$$.
+3. **Lấy đạo hàm để ra mật độ Exponential:** $$F(t) = 1 - e^{-\lambda t} \implies f(t) = \lambda e^{-\lambda t}$$ với $$t \ge 0$$.
+4. **Đưa vào cập nhật Bayes:** Nhân prior $$	ext{Gamma}(lpha, eta) \propto \lambda^{lpha-1} e^{-eta \lambda}$$ với likelihood Poisson $$\prod_{i=1}^n rac{\lambda^{y_i} e^{-\lambda}}{y_i!} \propto \lambda^{\sum y_i} e^{-n\lambda}$$, số mũ của $$\lambda$$ và hệ số trên $$e$$ tự động cộng dồn!
+
+### Ví dụ tính toán cầm tay chỉ việc: Ước lượng tốc độ lỗi máy chủ $$\lambda$$ (lỗi/giờ)
+
+Trước khi triển khai bản cập nhật phần mềm, đội vận hành tin tốc độ lỗi quanh mức 2 lỗi/giờ với độ bất định vừa phải, mã hóa bằng prior $$\lambda \sim 	ext{Gamma}(lpha=4, eta=2)$$ (trung bình tiên nghiệm $$lpha/eta = 4/2 = 2.0$$ lỗi/giờ, tương đương kinh nghiệm 2 giờ quan sát thấy 4 lỗi).
+
+Trong $$n = 3$$ giờ đầu sau khi phát hành, hệ thống ghi nhận số lỗi lần lượt là $$y = (5, 3, 4)$$, tổng $$S = 5 + 3 + 4 = 12$$ lỗi.
+
+- **Bước 1 — Xác suất quan sát được đúng 5 lỗi trong giờ đầu nếu $$\lambda = 2$$:**
+  $$P(Y = 5 \mid \lambda = 2) = rac{2^5 e^{-2}}{5!} = rac{32 	imes 0.1353}{120} pprox 0.0361 \quad (3.61\%).$$
+- **Bước 2 — Cập nhật hậu nghiệm Gamma–Poisson:**
+  $$lpha_{	ext{post}} = 4 + 12 = 16, \qquad eta_{	ext{post}} = 2 + 3 = 5 \implies \lambda \mid y \sim 	ext{Gamma}(16, 5).$$
+- **Bước 3 — Tóm tắt hậu nghiệm tính tay:**
+  - Trung bình hậu nghiệm: $$\mathbb{E}[\lambda \mid y] = rac{16}{5} = 3.2$$ lỗi/giờ (nằm giữa prior $$2.0$$ và trung bình mẫu $$12/3 = 4.0$$).
+  - Độ lệch chuẩn hậu nghiệm: $$rac{\sqrt{16}}{5} = rac{4}{5} = 0.8$$ lỗi/giờ.
+  - Thời gian chờ kỳ vọng giữa hai lỗi mới theo ước lượng trung bình hậu nghiệm: $$1 / 3.2 = 0.3125$$ giờ ($$pprox 18.75$$ phút).
+
+**Hiểu lầm cần tránh:** Nhầm giữa tham số *rate* $$eta$$ và tham số *scale* $$	heta = 1/eta$$ của phân phối Gamma khi viết mã Python/SciPy — luôn kiểm tra kỳ vọng $$lpha/eta$$ (rate) hay $$lpha	heta$$ (scale).
+
+**Kiểm tra nhanh:** Nếu quan sát thêm 1 giờ nữa không có lỗi nào ($$y_4 = 0$$), hậu nghiệm mới là $$	ext{Gamma}(16 + 0, 5 + 1) = 	ext{Gamma}(16, 6)$$, trung bình giảm từ $$3.2$$ xuống $$16/6 pprox 2.67$$ lỗi/giờ — ngay cả dữ liệu "không có sự kiện" cũng cung cấp thông tin!
+
+---
 
 ## Video tham khảo
 

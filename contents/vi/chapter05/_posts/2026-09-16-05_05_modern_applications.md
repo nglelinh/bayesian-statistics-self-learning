@@ -10,10 +10,20 @@ categories:
 lesson_type: optional
 ---
 
+Trong kỷ nguyên dữ liệu lớn, nhiều đội ngũ kỹ thuật tin vào một trực giác nghe có vẻ rất an toàn: "cứ đổ tất cả các cột dữ liệu có sẵn vào mô hình hồi quy hoặc mạng nơ-ron, thuật toán sẽ tự lọc cái gì quan trọng". Thế nhưng làn sóng nghiên cứu suy luận nhân quả giai đoạn 2022–2026 đã chứng minh điều ngược lại: khi bạn có 10 triệu dòng dữ liệu, một biến kiểm soát đặt sai chỗ không hề tự biến mất — nó chỉ làm **khoảng tin cậy quanh kết luận sai co lại đến mức trông như chân lý tuyệt đối**.
+
 ## Mục tiêu học tập
 
 Sau bài tùy chọn này, bạn sẽ biết cách đọc hệ số trong mô hình nhiều biến dự báo như một phát biểu nhân quả có điều kiện, thay vì đánh giá tầm quan trọng chỉ dựa vào dấu sao ý nghĩa thống kê trên bảng kết quả. Bạn cũng sẽ thấy hiện tượng gây nhiễu (confounding), đa cộng tuyến và hiệu ứng tương tác không phải là "lỗi" của hồi quy, mà là đặc trưng tự nhiên của dữ liệu ứng dụng hiện đại như thử nghiệm A/B trên nền tảng thị trường (marketplace), hệ gợi ý và hồ sơ y tế dọc theo thời gian.
 
+
+## Bản đồ kiến thức nền: Biến kiểm soát tốt/xấu, Học cấu trúc đồ thị và Gây nhiễu theo thời gian
+
+Ba chủ đề hiện đại của bài học là sự mở rộng trực tiếp các khái niệm Chương 5 lên hệ thống dữ liệu quy mô lớn:
+
+- **Hệ phân loại Good & Bad Controls (Cinelli–Forney–Pearl):** Việc thêm một hiệp biến $$Z$$ vào hồi quy có thể làm giảm thiên lệch (nếu $$Z$$ đóng đường cửa sau), giữ nguyên thiên lệch nhưng tăng phương sai (nếu $$Z$$ chỉ gây nhiễu cho $$X$$ — biến công cụ), hoặc *tạo ra thiên lệch mới* (nếu $$Z$$ là biến trung gian hoặc collider).
+- **Học cấu trúc DAG bằng tối ưu liên tục (DAGMA):** Thay vì duyệt tổ hợp siêu mũ qua mọi đồ thị có hướng, các thuật toán hiện đại biểu diễn ma trận kề có trọng số $$W$$ với ràng buộc đại số trơn $$h(W) = -\log\det(sI - W \circ W) + d\log s = 0$$ để đảm bảo không chu trình, song kết quả vẫn bị giới hạn bởi tính tương đương Markov (*Markov equivalence class*).
+- **Gây nhiễu biến thiên theo thời gian (Time-varying Confounding):** Trong y tế dọc (như MIMIC) hay nền tảng số, điều trị ở ngày $$t$$ ảnh hưởng đến chỉ số sức khỏe ngày $$t+1$$, và chỉ số ấy lại quyết định liều điều trị ngày $$t+2$$ — vừa là biến trung gian cho quá khứ vừa là biến gây nhiễu cho tương lai, đòi hỏi các kiến trúc chuyên biệt như Causal Transformer.
 ## Kiến thức cần có
 
 Các bài 5.1–5.4 đã trình bày hồi quy đa biến, DAG, đa cộng tuyến và hiệu ứng tương tác. Bài này không nhắc lại định nghĩa đường cửa sau (backdoor), mà đặt chính những khái niệm đó vào các nghiên cứu và hệ thống thực tế giai đoạn 2022–2026.
@@ -49,6 +59,18 @@ Melnychuk, Frauen và Feuerriegel (2022) đề xuất kiến trúc *Causal Trans
 ### 4. Tương tác và đa cộng tuyến trong hệ thống cá nhân hóa
 
 Trong hệ gợi ý, phát biểu "hiệu quả của mã giảm giá phụ thuộc vào mức độ gắn bó của người dùng" chính là một hiệu ứng tương tác. Trong khi đó, hai vector nhúng (embedding) gần cộng tuyến sẽ tạo ra phân phối hậu nghiệm rất rộng cho từng hệ số riêng lẻ dù dự báo tổng thể vẫn chính xác — đúng như hiện tượng đã phân tích ở Bài 5.3. Về mặt thực hành sản phẩm, không nên cố diễn giải từng tọa độ embedding như một cơ chế độc lập, mà nên tập trung vào chất lượng dự báo và các tương tác giữa những khái niệm có ý nghĩa nghiệp vụ rõ ràng.
+
+### Khung giải thích (nên đọc chậm): Tính tay thiệt hại khi đưa biến trung gian (bad control) vào phân tích A/B test
+
+Hãy kiểm chứng bằng hai dòng đại số lý do Cinelli et al. (2022) cảnh báo việc "kiểm soát mọi cột có sẵn" trong thử nghiệm sản phẩm:
+
+1. **Cơ chế sinh dữ liệu thật của một thử nghiệm A/B ngẫu nhiên hóa:** Giao diện mới ($$X \in \{0, 1\}$$) tăng số lượt nhấp ($$M$$), và cả giao diện mới lẫn lượt nhấp đều làm tăng doanh thu ($$Y$$):
+   $$M = 2\,X + u_M, \qquad Y = 1\,X + 3\,M + u_Y,$$
+   với $$u_M, u_Y$$ độc lập với $$X$$ (nhờ ngẫu nhiên hóa).
+2. **Tổng hiệu ứng nhân quả thật sự của giao diện mới:** Thay phương trình của $$M$$ vào $$Y$$:
+   $$Y = 1\,X + 3(2\,X + u_M) + u_Y = 7\,X + (3u_M + u_Y).$$
+   Nếu hồi quy đơn $$Y \sim X$$ (không thêm $$M$$), hệ số ước lượng hội tụ về đúng **+7 đơn vị doanh thu** (gồm 1 đơn vị trực tiếp và 6 đơn vị gián tiếp qua lượt nhấp).
+3. **Sai lầm khi thêm cột `lượt nhấp` $$M$$ làm biến kiểm soát:** Chạy hồi quy $$Y \sim X + M$$ sẽ giữ cố định $$M$$, khiến hệ số của $$X$$ tụt từ **+7** xuống chỉ còn **+1**! Nếu thử nghiệm chạy trên 1 triệu người dùng, khoảng tin cậy hậu nghiệm 95% có thể hẹp tới $$[0.99,\ 1.01]$$ — cực kỳ chính xác về mặt số học, nhưng **đánh mất 85.7% giá trị thật của tính năng** chỉ vì đưa nhầm một biến trung gian vào mô hình.
 
 ## Diễn giải và nhận định
 

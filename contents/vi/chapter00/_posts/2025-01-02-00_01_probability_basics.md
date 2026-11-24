@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Năm 1654, một quý tộc Pháp mê cờ bạc tên Chevalier de Méré viết thư cầu cứu Blaise Pascal về một câu đố tưởng chừng vụn vặt: nếu một ván xúc xắc buộc phải dừng giữa chừng, nên chia tiền cược thế nào cho công bằng? Từ bức thư ấy — và chuỗi thư trao đổi giữa Pascal với Pierre de Fermat — lý thuyết xác suất hiện đại ra đời. Ba thế kỷ sau, xác suất không còn là chuyện của sòng bạc: nó trở thành ngôn ngữ định lượng duy nhất giúp bác sĩ diễn giải xét nghiệm dương tính, kỹ sư máy học ước lượng bất định của mô hình, và nhà thống kê Bayes biến dữ liệu rời rạc thành tri thức có cấu trúc.
+
+Trong bài mở đầu này, ta không chỉ nhắc lại các tiên đề Kolmogorov như những định luật khô khan, mà nhìn chúng như **bộ quy tắc kế toán của niềm tin hợp lý** — nền móng trực tiếp dẫn tới công thức Bayes và toàn bộ quy trình cập nhật prior–likelihood–posterior.
+
+---
+
 ## Mục tiêu Học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu xác suất không chỉ là tập hợp các công thức tính toán mà là một ngôn ngữ toán học hoàn chỉnh để mô tả, định lượng và suy luận về sự không chắc chắn. Bạn sẽ nắm vững các khái niệm cơ bản về không gian mẫu, biến cố và các quy tắc xác suất, đồng thời thấy rõ vì sao chúng là nền tảng của suy diễn Bayesian. Quan trọng hơn, bạn sẽ tiếp cận xác suất như một cách mã hóa mức độ tin tưởng và cập nhật niềm tin đó khi có thêm thông tin mới.
+
+## Bản đồ kiến thức nền: Lý thuyết độ đo, Xác suất có điều kiện và Suy diễn Bayes gặp nhau ở đâu?
+
+Với người học đã qua chương trình đại học, câu hỏi quan trọng nhất là: *xác suất cơ bản liên quan gì đến các phương pháp hiện đại như MCMC hay suy diễn biến phân (Variational Inference)?* Bức tranh tổng thể tựa trên ba trụ cột:
+
+- **Lý thuyết xác suất tiên đề (Axiomatic Probability):** Xây dựng trên không gian mẫu $$\Omega$$, hệ biến cố và hàm độ đo xác suất $$P$$ thỏa mãn ba tiên đề Kolmogorov (không âm, chuẩn hóa bằng 1, cộng tính). Đây là "luật giao thông" đảm bảo mọi phép tính niềm tin đều nhất quán và không tự mâu thuẫn.
+- **Xác suất có điều kiện & Độc lập có điều kiện:** Nghiên cứu cách không gian mẫu co lại khi có bằng chứng mới. Trong thống kê Bayes, khái niệm **độc lập có điều kiện** (các quan sát $$y_1, \ldots, y_n$$ độc lập khi biết tham số $$	heta$$) chính là lý do ta có thể nhân các likelihood riêng lẻ thành tích $$\prod_i p(y_i \mid 	heta)$$.
+- **Cầu nối sang Thống kê Bayes:** Định lý Bayes không phải là một tiên đề mới, mà là hệ quả đại số trực tiếp của định nghĩa xác suất có điều kiện $$P(A \cap B) = P(A \mid B)P(B) = P(B \mid A)P(A)$$. Từ đây, mọi mô hình Bayes — dù đơn giản như Beta–Binomial hay phức tạp đến mức phải dùng MCMC — đều chỉ là bài toán chuẩn hóa một tích *prior × likelihood* sao cho tổng (hoặc tích phân) bằng 1.
+
+---
 
 ## Giới thiệu: Tại sao chúng ta cần Xác suất?
 
@@ -142,6 +158,44 @@ Các khái niệm trong bài học này không chỉ là phần mở đầu lý 
 Hơn nữa, việc nhìn nhận xác suất như **mức độ tin tưởng** cho phép ta phát biểu trực tiếp về "xác suất của một giả thuyết" hay "xác suất của một giá trị tham số" — những phát biểu không hợp lệ trong khuôn khổ tần suất nhưng lại tự nhiên và hữu ích trong thống kê Bayesian.
 
 Trong các bài học tiếp theo, mọi công cụ Bayesian — từ định lý Bayes cơ bản đến các mô hình phân cấp phức tạp — đều được xây dựng từ những nguyên tắc này. Nắm chắc nền tảng ngay từ đầu sẽ giúp bạn áp dụng phương pháp đúng chỗ, đồng thời hiểu rõ vì sao một mô hình hoạt động tốt hoặc gặp hạn chế.
+
+## Khung giải thích (nên đọc chậm): Từ bảng tần suất 2×2 đến quy tắc cập nhật Bayes
+
+Người học thường thuộc lòng công thức $$P(A \mid B) = rac{P(B \mid A)P(A)}{P(B)}$$ nhưng vẫn bị "đứng hình" khi mẫu số $$P(B)$$ bị ẩn đi. Hãy đọc chậm chuỗi bốn bước sau để thấy mọi bài toán Bayes thực chất chỉ là **cắt lát không gian mẫu**:
+
+1. **Bắt đầu từ xác suất tiên nghiệm (Prior):** Trước khi thấy bằng chứng $$B$$, toàn bộ không gian mẫu được chia theo các giả thuyết $$A$$ và $$A^c$$ với tỷ lệ $$P(A)$$ và $$P(A^c)$$.
+2. **Đưa bằng chứng qua hàm hợp lý (Likelihood):** Trong từng lát cắt, ta hỏi dữ liệu $$B$$ có khả năng xuất hiện bao nhiêu: $$P(B \mid A)$$ và $$P(B \mid A^c)$$.
+3. **Tính xác suất đồng thời (Joint):** Nhân diện tích lát cắt với độ hợp lý để có khối lượng đồng thời $$P(A \cap B)$$ và $$P(A^c \cap B)$$.
+4. **Chuẩn hóa trên đúng lát cắt $$B$$ (Posterior):** Bỏ toàn bộ phần không xảy ra $$B$$, rồi chia mỗi phần cho tổng $$P(B) = P(A \cap B) + P(A^c \cap B)$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Xét nghiệm sàng lọc trên 10.000 người
+
+Giả sử một căn bệnh hiếm có tỷ lệ lưu hành $$P(D) = 0.01$$ (1%). Một bộ xét nghiệm có độ nhạy $$P(+ \mid D) = 0.95$$ và tỷ lệ dương tính giả $$P(+ \mid D^c) = 0.05$$. Bạn nhận kết quả dương tính ($$+$$). Xác suất thực sự mắc bệnh $$P(D \mid +)$$ là bao nhiêu?
+
+Hãy tính tay bằng **quy đổi trên 10.000 người** (cách trực quan nhất để kiểm tra lại công thức):
+
+| Trạng thái | Tổng số người | Kết quả Dương tính ($$+$$) | Kết quả Âm tính ($$-$$) |
+| --- | --- | --- | --- |
+| Mắc bệnh ($$D$$) | $$10\,000 	imes 0.01 = 100$$ | $$100 	imes 0.95 = 95$$ | $$100 - 95 = 5$$ |
+| Không bệnh ($$D^c$$) | $$10\,000 	imes 0.99 = 9\,900$$ | $$9\,900 	imes 0.05 = 495$$ | $$9\,900 - 495 = 9\,405$$ |
+| **Tổng cộng** | **$$10\,000$$** | **$$95 + 495 = 590$$** | **$$5 + 9\,405 = 9\,410$$** |
+
+Bây giờ chỉ nhìn vào cột Dương tính ($$590$$ người):
+
+$$
+P(D \mid +) = rac{95}{590} pprox 0.1610 \quad (16.1\%)
+$$
+
+Kiểm tra lại bằng công thức Bayes:
+- Tử số (prior × likelihood): $$0.01 	imes 0.95 = 0.0095$$.
+- Mẫu số (bằng chứng toàn phần): $$0.0095 + 0.99 	imes 0.05 = 0.0095 + 0.0495 = 0.0590$$.
+- Hậu nghiệm: $$0.0095 / 0.0590 pprox 0.1610$$.
+
+**Hiểu lầm cần tránh:** Nhầm $$P(+ \mid D) = 95\%$$ với $$P(D \mid +) = 16.1\%$$ (lỗi đảo ngược xác suất có điều kiện — *prosecutor's fallacy*). Khi bệnh hiếm, số ca dương tính giả ($$495$$) áp đảo số ca dương tính thật ($$95$$).
+
+**Kiểm tra nhanh:** Nếu người đó làm **lần xét nghiệm thứ hai độc lập có điều kiện** và tiếp tục dương tính, hãy lấy hậu nghiệm $$0.161$$ làm prior mới: tử số mới là $$0.161 	imes 0.95 = 0.15295$$, phần không bệnh là $$0.839 	imes 0.05 = 0.04195$$, nên hậu nghiệm vọt lên $$0.15295 / (0.15295 + 0.04195) pprox 78.5\%$$. Đó chính là sức mạnh của cập nhật tuần tự Bayes.
+
+---
 
 ## Video tham khảo
 

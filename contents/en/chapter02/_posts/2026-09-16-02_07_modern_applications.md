@@ -10,9 +10,39 @@ categories:
 lesson_type: optional
 ---
 
+If you think conjugate Beta–Binomial and Normal–Normal formulas are merely classroom warm-ups before "real" machine learning, look under the hood of modern ad-tech, clinical adaptive trials, and large-scale recommendation systems. When a platform must update click-through rate estimates for ten million ads every few seconds—or shrink noisy conversion rates of brand-new products toward a category average—exact conjugate updating and Empirical Bayes are not relics; they are the fastest, cleanest production engines available.
+
+**Lesson Roadmap:** Why conjugacy still powers modern scale → Background Knowledge Map (Sequential conjugate updating, Empirical Bayes shrinkage, Thompson sampling) → Hand-worked 3-campaign shrinkage calculation → Generative stories, applications, limitations, and exercises.
+
 ## Learning objectives
 
 After this optional lesson you should see conjugate priors and grid approximation as industrial design choices, not classroom tricks. You will be able to point to a live product—ads, ranking, or rate monitoring—and say which likelihood is being assumed, which prior family keeps the update cheap, and when the algebra must be abandoned for simulation.
+
+## Background Knowledge Map: Where Classical Conjugacy Powers Modern Systems
+
+### 1. Online Sequential Updating via Sufficient Statistics
+- **What it is:** In exponential-family conjugate models, all historical data compresses losslessly into a tiny vector of **sufficient statistics** (e.g., total clicks $$k$$ and impressions $$n$$).
+- **What it studies:** Updating a posterior in $$O(1)$$ time and $$O(1)$$ memory as new events stream in—ideal for real-time bidding, streaming telemetry, and edge devices.
+
+### 2. Empirical Bayes and Partial Pooling (Shrinkage)
+- **What it is:** Estimating a shared prior (e.g., $$\mathrm{Beta}(\alpha_0, \beta_0)$$) from a large population of parallel units, then updating each unit individually.
+- **What it studies:** How small-sample extremes get pulled smoothly toward the population mean while large-sample units keep their empirical estimates—preventing "1 click out of 1 impression = 100% CTR" disasters.
+
+### 3. Thompson Sampling for Exploration–Exploitation
+- **What it is:** A Bayesian multi-armed bandit algorithm that draws one sample $$\tilde{\theta}_a \sim p(\theta_a \mid D)$$ per arm and selects the arm with the largest draw.
+- **What it studies:** Automatically balancing exploration (wide posteriors occasionally draw high values) and exploitation (narrow, high-mean posteriors win consistently) with near-optimal regret bounds.
+
+## Deep-Dive Explanation: Empirical Bayes Shrinkage Across Three Ad Campaigns (Read Slowly)
+
+Suppose an ad platform fits a shared category prior $$\theta \sim \mathrm{Beta}(2, 18)$$ across thousands of historical ads, encoding a prior mean click-through rate of $$\frac{2}{2+18} = 10.0\%$$ with effective prior sample size $$n_0 = 20$$. Now compare three live campaigns using the exact conjugate posterior mean $$\hat{\theta}_{\text{Bayes}} = \frac{2 + k}{20 + n}$$:
+
+| Campaign | Clicks $$k$$ / Impressions $$n$$ | Raw MLE $$k/n$$ | Posterior $$\mathrm{Beta}(2+k,\, 18+n-k)$$ | Posterior Mean | Shrinkage Weight on Prior $$\frac{20}{20+n}$$ |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **A (brand new)** | $$1 / 2$$ | $$50.0\%$$ | $$\mathrm{Beta}(3, 19)$$ | $$3/22 = \mathbf{13.6\%}$$ | $$90.9\%$$ |
+| **B (mature)** | $$100 / 1{,}000$$ | $$10.0\%$$ | $$\mathrm{Beta}(102, 918)$$ | $$102/1020 = \mathbf{10.0\%}$$ | $$2.0\%$$ |
+| **C (growing)** | $$30 / 200$$ | $$15.0\%$$ | $$\mathrm{Beta}(32, 188)$$ | $$32/220 = \mathbf{14.5\%}$$ | $$9.1\%$$ |
+
+Look at Campaign A: a naive MLE ranking would flood it with traffic at "50% CTR" after two lucky impressions, whereas conjugate Empirical Bayes automatically tempers it to $$13.6\%$$ until real volume arrives—while barely touching Campaign B (only $$2\%$$ prior weight).
 
 ## Prerequisites
 

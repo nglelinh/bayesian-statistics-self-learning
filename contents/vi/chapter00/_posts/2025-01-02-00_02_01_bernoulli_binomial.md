@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Mọi dữ liệu lớn nhất trên Internet — từ một cú nhấp chuột vào quảng cáo, một ca phẫu thuật thành công hay thất bại, đến việc một khách hàng rời bỏ dịch vụ — ở cấp độ nguyên tử đều bắt đầu từ một câu hỏi nhị phân: *Có* hay *Không*? Jacob Bernoulli đã dành hơn hai mươi năm cuối đời viết cuốn *Ars Conjectandi* (1713) để chứng minh rằng khi lặp lại phép thử đơn giản ấy đủ nhiều lần, tần suất quan sát sẽ tiến sát về xác suất thật $$p$$.
+
+Trong thống kê Bayes, Bernoulli và Binomial là **phòng thí nghiệm đầu tiên** cho mọi ý tưởng lớn: ta đặt một phân phối prior lên $$p$$, thu thập $$k$$ thành công trong $$n$$ lần thử qua likelihood Binomial, và chứng kiến niềm tin về $$p$$ sắc nét dần theo từng quan sát.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ phân biệt rõ phân phối Bernoulli và Binomial, hiểu cơ chế sinh dữ liệu nối giữa hai phân phối này, và biết cách diễn giải các tham số theo ngôn ngữ thực tế thay vì chỉ đọc công thức.
+
+## Bản đồ kiến thức nền: Mô hình sinh dữ liệu nhị phân, Likelihood và Tính liên hợp
+
+Để đọc sâu bài này dưới góc nhìn tốt nghiệp đại học, hãy nối ba mảnh ghép:
+
+- **Tổ hợp và Phân phối rời rạc (Combinatorics & Discrete PMF):** Bernoulli mô tả một phép thử đơn $$X \in \{0, 1\}$$, còn Binomial tổng hợp $$n$$ phép thử độc lập cùng xác suất $$p$$ bằng hệ số tổ hợp $$inom{n}{k}$$. Đây là bước chuyển từ dữ liệu chi tiết từng lần thử sang **thống kê đủ** (*sufficient statistic*) $$(n, k)$$.
+- **Hàm hợp lý (Likelihood Function):** Khi dữ liệu $$(n, k)$$ đã cố định, ta đọc biểu thức $$inom{n}{k} p^k (1-p)^{n-k}$$ như hàm theo tham số $$p$$. Hệ số $$inom{n}{k}$$ không phụ thuộc $$p$$ nên trở thành hằng số tỷ lệ trong công thức Bayes — chỉ còn lõi $$p^k (1-p)^{n-k}$$ thực sự "kéo" hậu nghiệm.
+- **Cầu nối sang Prior liên hợp (Conjugate Priors):** Dạng lõi $$p^k (1-p)^{n-k}$$ có cùng cấu trúc đại số với phân phối $$	ext{Beta}(lpha, eta) \propto p^{lpha-1}(1-p)^{eta-1}$$. Nhờ đó, cập nhật Bayes cho dữ liệu nhị phân chỉ quy về phép cộng số nguyên: $$lpha_{	ext{post}} = lpha + k$$ và $$eta_{	ext{post}} = eta + (n - k)$$.
+
+---
 
 ## 1) Câu chuyện sinh dữ liệu nhị phân
 
@@ -132,6 +148,36 @@ Trong thống kê Bayesian, ta thường đặt phân phối tiên nghiệm (pri
 ---
 
 *Bài học tiếp theo: [0.3 Poisson và Exponential]({{ site.baseurl }}/contents/vi/chapter00/00_02_02_poisson_exponential/)*
+
+## Khung giải thích (nên đọc chậm): Từ một chuỗi tung xu đến cập nhật Beta–Binomial bằng tay
+
+Nhiều bạn thắc mắc: *vì sao khi tính posterior cho Binomial ta được phép bỏ qua hệ số $$inom{n}{k}$$?* Hãy đi chậm qua 4 bước:
+
+1. **Một chuỗi cụ thể vs. tổng số thành công:** Một chuỗi cố định gồm $$k$$ mặt ngửa và $$n-k$$ mặt sấp có xác suất đúng bằng $$p^k(1-p)^{n-k}$$.
+2. **Đếm số chuỗi có cùng $$k$$:** Có đúng $$inom{n}{k}$$ cách sắp xếp $$k$$ mặt ngửa vào $$n$$ vị trí, nên $$P(X=k \mid p) = inom{n}{k} p^k(1-p)^{n-k}$$.
+3. **Nhân với prior $$	ext{Beta}(lpha, eta)$$:** Mật độ hậu nghiệm tỷ lệ với $$p^{lpha-1}(1-p)^{eta-1} \cdot p^k(1-p)^{n-k} = p^{(lpha+k)-1}(1-p)^{(eta+n-k)-1}$$.
+4. **Nhận diện họ phân phối:** Biểu thức trên chính là lõi của $$	ext{Beta}(lpha+k, eta+n-k)$$, nên mọi hằng số không chứa $$p$$ (kể cả $$inom{n}{k}$$) tự động triệt tiêu khi chuẩn hóa!
+
+### Ví dụ tính toán cầm tay chỉ việc: Đánh giá tỷ lệ chuyển đổi landing page
+
+Một sản phẩm mới chưa có dữ liệu, nên bạn đặt prior không thiên vị $$	ext{Beta}(2, 2)$$ (trung bình tiên nghiệm $$rac{2}{2+2} = 0.50$$, tương đương 4 lượt thử ảo: 2 thành công, 2 thất bại). Sau ngày đầu chạy thử với $$n = 10$$ khách truy cập, có $$k = 3$$ người mua hàng.
+
+- **Bước 1 — Likelihood tại hai mốc thử $$p=0.3$$ và $$p=0.5$$:**
+  - Tại $$p=0.3$$: $$L(0.3) = inom{10}{3} (0.3)^3 (0.7)^7 = 120 	imes 0.027 	imes 0.0823543 pprox 0.2668$$.
+  - Tại $$p=0.5$$: $$L(0.5) = 120 	imes (0.5)^{10} = 120 / 1024 pprox 0.1172$$.
+  - Dữ liệu ủng hộ $$p=0.3$$ mạnh hơn $$p=0.5$$ khoảng $$0.2668 / 0.1172 pprox 2.28$$ lần.
+- **Bước 2 — Cập nhật hậu nghiệm liên hợp:**
+  $$lpha_{	ext{post}} = 2 + 3 = 5, \qquad eta_{	ext{post}} = 2 + (10 - 3) = 9 \implies p \mid 	ext{data} \sim 	ext{Beta}(5, 9).$$
+- **Bước 3 — Tóm tắt hậu nghiệm tính tay:**
+  - Trung bình hậu nghiệm: $$\mathbb{E}[p \mid 	ext{data}] = rac{5}{5 + 9} = rac{5}{14} pprox 0.3571$$ (bị "kéo co" giữa prior $$0.50$$ và tỷ lệ mẫu $$0.30$$).
+  - Mode (MAP): $$rac{5 - 1}{5 + 9 - 2} = rac{4}{12} pprox 0.3333$$.
+  - Độ lệch chuẩn hậu nghiệm: $$\sqrt{rac{5 	imes 9}{14^2 	imes 15}} = \sqrt{rac{45}{2940}} pprox 0.1237$$.
+
+**Hiểu lầm cần tránh:** Dùng Binomial khi các phép thử có xác suất $$p$$ thay đổi giữa các nhóm khách hàng hoặc phụ thuộc lẫn nhau (ví dụ hiệu ứng lan truyền mạng xã hội); khi đó phương sai thực tế lớn hơn $$np(1-p)$$ (*overdispersion*) và ta cần mô hình phân cấp Beta–Binomial.
+
+**Kiểm tra nhanh:** Nếu hôm sau có thêm 10 khách nữa với 2 người mua, hậu nghiệm mới là $$	ext{Beta}(5+2, 9+8) = 	ext{Beta}(7, 17)$$, trùng khớp hoàn toàn với việc gộp chung 20 khách, 5 người mua ngay từ đầu!
+
+---
 
 ## Video tham khảo
 

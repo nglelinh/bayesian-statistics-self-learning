@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Một mô hình quá đơn giản bỏ sót quy luật thật (dưới khớp — *underfitting*); một mô hình quá phức tạp học thuộc luôn cả nhiễu ngẫu nhiên của tập huấn luyện (quá khớp — *overfitting*). Giữa hai thái cực ấy là một định luật toán học chi phối mọi bài toán dự báo từ hồi quy tuyến tính đến mạng nơ-ron: **đánh đổi độ chệch – phương sai (bias–variance tradeoff)**.
+
+Bài học này không chỉ chứng minh phép phân rã sai số dự báo thành ba thành phần bất biến, mà còn giải thích cách thống kê Bayes tiếp cận sự đánh đổi này bằng tích phân trên hậu nghiệm (*Bayesian model averaging*) và đường cong học (*learning curves*).
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ **sự đánh đổi giữa độ lệch và phương sai (bias-variance tradeoff)** — một trong những khái niệm nền tảng của học máy và thống kê. Bài học giải thích vì sao mô hình quá đơn giản thường có **độ lệch cao (high bias)**, vì sao mô hình quá phức tạp thường có **phương sai cao (high variance)**, và vì sao mục tiêu của chọn mô hình không phải là đẩy một thành phần xuống thấp nhất có thể, mà là tìm điểm cân bằng giúp tổng sai số dự báo nhỏ nhất. Đây là cơ sở trực tiếp để hiểu điều chuẩn, quá khớp và logic của việc lựa chọn mô hình.
+
+
+## Bản đồ kiến thức nền: Phân rã Sai số Dự báo, Đường cong Học và Cách giải của Bayes
+
+Bức tranh tổng thể về độ phức tạp mô hình đứng trên ba trụ cột:
+
+- **Phân rã sai số ngoài mẫu (Expected Prediction Error):** Tại một điểm mới $$x_0$$, sai số bình phương kỳ vọng luôn tách thành: $$\mathbb{E}[(y_0 - \hat f(x_0))^2] = \mathrm{Bias}(\hat f(x_0))^2 + \mathrm{Var}(\hat f(x_0)) + \sigma_\varepsilon^2$$. Thành phần cuối $$\sigma_\varepsilon^2$$ là **nhiễu không thể khử (irreducible noise)** — không mô hình nào vượt qua được trần này.
+- **Chẩn đoán bằng Đường cong học (Learning Curves):** Vẽ sai số tập huấn luyện và tập kiểm định theo cỡ mẫu $$n$$ giúp phân biệt tức thì hai bệnh: hai đường hội tụ sát nhau ở mức lỗi cao là **High Bias** (cần mô hình giàu biểu diễn hơn); hai đường cách xa nhau với lỗi huấn luyện rất thấp là **High Variance** (cần thêm dữ liệu hoặc điều chuẩn mạnh hơn).
+- **Cách tiếp cận của Bayes:** Thay vì chọn một điểm tham số cố định (dễ có phương sai cao), dự báo hậu nghiệm lấy trung bình có trọng số trên toàn bộ phân phối hậu nghiệm $$\mathbb{E}_{\theta \mid y}[f(x_0; \theta)]$$ — tự động giảm phương sai nhờ hiệu ứng tổ hợp (*ensembling*) kết hợp điều chuẩn từ prior.
+
+---
 
 ## Giới thiệu: Hai nguồn sai số
 
@@ -216,6 +233,33 @@ Sự đánh đổi giữa độ lệch và phương sai cho thấy sai số dự
 Điểm cốt lõi cần ghi nhớ là một mô hình khớp rất sát tập huấn luyện chưa chắc là mô hình tốt; mô hình tốt phải khái quát hóa hiệu quả trên dữ liệu mới.
 
 Bài tiếp theo: **Chọn biến (Feature Selection)** — hoàn tất nghiên cứu tình huống bằng kiểm tra độ ổn định (stability selection) và diễn giải có xét đến độ bất định.
+
+
+## Khung giải thích (nên đọc chậm): Tính trực tiếp ba thành phần của MSE để chọn độ phức tạp tối ưu
+
+Khi so sánh 3 mô hình có độ phức tạp tăng dần trên cùng một bài toán có nhiễu nền $$\sigma_\varepsilon = 2.0$$ (tức $$\sigma_\varepsilon^2 = 4.0$$), hãy đọc bảng phân rã theo 3 bước:
+
+1. **Tính $$\mathrm{Bias}^2$$:** Đo sai lệch hệ thống trung bình so với hàm thật $$f(x_0)$$.
+2. **Tính $$\mathrm{Variance}$$:** Đo độ dao động của dự báo khi thay đổi tập huấn luyện.
+3. **Cộng với nhiễu không thể khử $$\sigma_\varepsilon^2$$:** Chọn mô hình cực tiểu hóa **tổng** cả ba thành phần, chứ không chọn mô hình có Bias = 0!
+
+### Ví dụ tính toán cầm tay chỉ việc: Chọn giữa Mô hình đơn giản, Vừa phải và Phức tạp
+
+Giả sử hàm thật tại $$x_0$$ là $$f(x_0) = 10.0$$ và nhiễu đo lường có phương sai $$\sigma_\varepsilon^2 = 4.0$$. Kết quả đánh giá ba mô hình:
+
+| Mô hình | $$\mathrm{Bias}$$ | $$\mathrm{Bias}^2$$ | $$\mathrm{Variance}$$ | Nhiễu nền $$\sigma_\varepsilon^2$$ | Tổng MSE dự báo |
+| --- | --- | --- | --- | --- | --- |
+| Mô hình 1 (Quá đơn giản) | $$-3.0$$ | $$9.00$$ | $$0.50$$ | $$4.00$$ | $$13.50$$ |
+| Mô hình 2 (Điều chuẩn vừa phải) | $$-1.0$$ | $$1.00$$ | $$1.50$$ | $$4.00$$ | **$$6.50$$** (tối ưu) |
+| Mô hình 3 (Quá phức tạp) | $$0.0$$ | $$0.00$$ | $$6.00$$ | $$4.00$$ | $$10.00$$ |
+
+Dù Mô hình 3 hoàn toàn không chệch ($$\mathrm{Bias} = 0$$), phương sai quá lớn ($$6.00$$) khiến tổng sai số dự báo của nó ($$10.00$$) thua xa Mô hình 2 ($$6.50$$). Đồng thời, không một mô hình nào có thể kéo tổng MSE xuống dưới $$4.00$$ vì nhiễu nền không thể khử.
+
+**Hiểu lầm cần tránh:** Cố gắng tăng độ phức tạp hoặc chạy thêm vòng lặp để kéo lỗi tập huấn luyện xuống gần 0 — khi lỗi huấn luyện thấp hơn cả $$\sigma_\varepsilon^2 = 4.00$$, đó chính là bằng chứng chắc chắn mô hình đang học thuộc nhiễu!
+
+**Kiểm tra nhanh:** Nếu bạn thu thập thêm dữ liệu gấp 4 lần cho Mô hình 3 khiến phương sai của nó giảm 4 lần (từ $$6.00$$ xuống $$1.50$$) trong khi Bias vẫn bằng $$0$$, tổng MSE mới của Mô hình 3 sẽ là $$0 + 1.50 + 4.00 = 5.50$$ — vượt qua Mô hình 2. Điều này giải thích vì sao cỡ mẫu lớn cho phép dùng mô hình phức tạp hơn.
+
+---
 
 ## Video tham khảo
 

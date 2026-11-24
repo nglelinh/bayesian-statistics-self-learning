@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Before appreciating *why* Bayesian inference became a scientific revolution, you need to understand the exact machinery—and exact blind spots—of classical **Null Hypothesis Significance Testing (NHST)** and **p-values**. Every day, papers and dashboards misread `p = 0.03` as *"there is only a 3% chance the null hypothesis is true."* In reality, a p-value answers a completely different, backward conditional question: *"assuming the null is true, how surprising is this data?"*
+
+This lesson unpacks frequentist hypothesis testing honestly—null/alternative framing, Type I/II errors, statistical power, and exact p-value arithmetic—setting the stage for Chapter 1’s direct Bayesian alternative.
+
+---
+
+## Background Knowledge Map: Frequentist Testing Mechanics vs. What People Wish It Answered
+
+Four distinctions clarify exactly what p-values can and cannot tell you:
+
+1. **The Exact Conditional Direction of a p-value:** $$p	ext{-value} = P(	ext{data as or more extreme} \mid H_0	ext{ true})$$. It conditions on $$H_0$$; it **cannot** compute $$P(H_0 \mid 	ext{data})$$ without a prior!
+2. **Type I ($$lpha$$) vs. Type II ($$eta$$) Error & Power ($$1-eta$$):** Fixing $$lpha = 0.05$$ bounds the long-run false-positive rate under $$H_0$$, while power measures your ability to detect a true effect of size $$\delta$$.
+3. **Statistical Significance vs. Practical Effect Size:** With $$n = 100{,}000$$ users, a microscopic $$0.1\%$$ lift produces $$p < 0.001$$ even if it is commercially worthless.
+4. **The Bayesian Contrast:** Instead of a binary reject/fail-to-reject threshold on a hypothetical sampling tail, Bayesian analysis directly computes $$P(	heta > 0 \mid 	ext{data})$$ and a full credible distribution over effect sizes.
+
+---
+
 ## Learning Objectives
 
 After completing this lesson, you will deeply understand **p-values** and hypothesis testing from the frequentist perspective, not only to apply them correctly, but more importantly to recognize their fundamental limitations. You will understand why **p-values** are often misinterpreted, why they do not answer the questions scientists actually care about, and why **the Bayesian approach offers a more natural and coherent approach to statistical inference**. This lesson is not meant for you to abandon hypothesis testing entirely, but for you to use it critically and know when to look for alternative methods.
@@ -333,6 +350,30 @@ This lesson on p-values and hypothesis testing is not just an academic exercise.
 As you progress through this course, you will see that the Bayesian approach solves many of the problems we have discussed. It lets us speak directly about the probability of hypotheses and parameters, provides more interpretable uncertainty estimates, does not depend on arbitrary decision thresholds, supports incorporating prior knowledge naturally, and shifts the focus from mere testing to estimation and prediction.
 
 However, the Bayesian approach is not a magic solution to all problems. It has its own challenges, especially in computation and the choice of priors. But for many research questions, it provides a more natural and coherent approach than traditional hypothesis testing.
+
+---
+
+### Worked Numerical Example: One-Sample Z-Test by Hand (and Why Sample Size Drives p-values)
+
+Suppose a factory claims lightbulbs last $$\mu_0 = 1000	ext{ hours}$$ (known $$\sigma = 100	ext{ hours}$$). You test $$n = 25$$ bulbs and observe $$ar{x} = 955	ext{ hours}$$ (two-sided test, $$lpha = 0.05$$):
+
+1. **Standard error of the mean:** $$\mathrm{SE} = rac{100}{\sqrt{25}} = 20	ext{ hours}$$.
+2. **Test statistic:** $$z = rac{955 - 1000}{20} = -2.25$$.
+3. **Two-sided p-value:** $$P(\lvert Zvert \ge 2.25) = 2 	imes 0.0122 = \mathbf{0.0244} < 0.05$$ $$\implies$$ reject $$H_0$$.
+4. **Now check the sample-size sensitivity:** Suppose the true difference were a tiny **5 hours** ($$ar{x} = 995$$):
+   - At $$n = 25$$: $$z = -5/20 = -0.25 \implies p = 0.80$$ (not significant).
+   - At $$n = 25{,}000$$: $$\mathrm{SE} = 100/\sqrt{25{,}000} pprox 0.632 \implies z = -7.91 \implies p < 10^{-14}$$ ("highly significant" for a trivial 0.5% change!).
+
+### Deep-Dive Explanation: Four Rules for Reading p-values Without Falling Into Traps (Read Slowly)
+
+1. **Never translate `p = 0.024` as "2.4% chance $$H_0$$ is true":** That flips $$P(D\mid H_0)$$ into $$P(H_0\mid D)$$, ignoring the prior plausibility of $$H_0$$!
+2. **Never interpret `p = 0.20` as "proof of no effect":** High p-values often just mean low sample size / low statistical power.
+3. **Always pair p-values with effect size and confidence/credible intervals:** Knowing the bulb lasts $$955 \pm 39.2	ext{ hours}$$ tells you *how much* shorter it lasts, not just whether it differs from 1000.
+4. **Watch out for multiple comparisons and stopping early:** Testing 20 hypotheses at $$lpha = 0.05$$ gives a $$1 - 0.95^{20} = 64.2\%$$ chance of at least one false positive!
+
+**Quick check.** In the lightbulb test above ($$\mu_0 = 1000, \sigma = 100, ar{x} = 955$$), if you had only tested $$n = 9$$ bulbs instead of $$25$$, what would the new $$z$$-statistic be, and would you still reject $$H_0$$ at $$lpha = 0.05$$ ($$\lvert zvert > 1.96$$)?
+
+---
 
 ## Reference videos
 

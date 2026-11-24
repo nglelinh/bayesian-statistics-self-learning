@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+In 2015, the Open Science Collaboration attempted to replicate 100 landmark psychology experiments published in top peer-reviewed journals—and **more than 60% failed to replicate!** In medicine, economics, and online A/B testing, the exact same shock hit: hundreds of "statistically significant" results with $$p < 0.05$$ vanished upon re-testing. How could so many peer-reviewed findings be false when the significance threshold was supposed to limit errors to 5%?
+
+The culprit wasn’t bad arithmetic—it was **base-rate neglect, low statistical power, and researcher degrees of freedom (p-hacking)** colliding with a binary `p < 0.05` ritual. This opening Chapter 1 lesson diagnoses the replication crisis mathematically and shows why **Bayesian updating** provides the missing vaccine.
+
+---
+
+## Background Knowledge Map: Why `p < 0.05` Fails Without Base Rates and Power
+
+1. **Positive Predictive Value (PPV) vs. p-value:** Even when $$\alpha = 0.05$$ is obeyed honestly, if only 10% of tested hypotheses are actually true (low base rate) and power is 50%, **almost half of all `p < 0.05` discoveries are false positives!**
+2. **The Garden of Forking Paths (p-hacking & Optional Stopping):** Testing multiple subgroups, dropping outliers after seeing results, or peeking early inflates effective $$\alpha$$ from 5% to 30%+.
+3. **Publication Bias (File-Drawer Effect):** Journals publish the 5% of noisy studies that cross `p < 0.05` and bury the 95% null studies—exaggerating reported effect sizes (*Type M error*).
+4. **The Bayesian Remedy:** Explicitly incorporates prior plausibility, updates continuously without optional-stopping penalties on the likelihood, and reports full posterior distributions rather than binary pass/fail cliffs.
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand three things. First, why many published studies cannot be replicated. Second, why the p-value is often misunderstood and easily misused. Third, why those problems push the scientific community to look for other ways of inference, including Bayesian statistics.
@@ -171,6 +186,33 @@ Bayesian statistics is attractive not because it "hates p-values", but because i
 Chapter 1 will gradually lead you to exactly that point. This lesson only plays the role of a warm-up: pointing out why so many people have felt that the old way of inference is not enough.
 
 > **3 key ideas.** The replication crisis is not only the fault of individual researchers but also a problem of the whole system of inference and publication incentives; the p-value is easily misunderstood because it answers a different question from the scientific question we truly care about; and when p-values become a target to hit, p-hacking and publication bias appear almost inevitably.
+
+---
+
+### Worked Numerical Example: Computing the True False-Discovery Rate Behind `p < 0.05`
+
+Suppose a lab tests **1,000 hypotheses**, of which only **10%** (100) are truly non-null and **90%** (900) are truly null, using $$\alpha = 0.05$$ and typical statistical power $$1 - \beta = 0.50$$:
+
+| Hypothesis Reality | Count | Significant (`p < 0.05`) | Not Significant |
+| :--- | :--- | :--- | :--- |
+| **True Effect ($$H_1$$)** | $$100$$ | $$100 \times 0.50 = \mathbf{50}$$ (True Positives) | $$50$$ |
+| **No Effect ($$H_0$$)** | $$900$$ | $$900 \times 0.05 = \mathbf{45}$$ (False Positives) | $$855$$ |
+| **Total Published (`p < 0.05`)** | $$1{,}000$$ | **$$95$$** | $$905$$ |
+
+Compute the probability that a published `p < 0.05` finding is actually a **false alarm**:
+$$\mathrm{FDR} = \frac{45}{50 + 45} = \frac{45}{95} \approx \mathbf{47.4\%}!$$
+Nearly **half** of all "statistically significant" findings are false—even with zero cheating!
+
+### Deep-Dive Explanation: Four Scientific Habits That Prevent False Discoveries (Read Slowly)
+
+1. **Always ask "what was the prior base rate?"** Extraordinary claims (e.g., 1% base rate) require far stronger evidence than `p = 0.04` to become credible.
+2. **Pre-register hypotheses and report effect sizes with uncertainty:** Replacing binary `p < 0.05` headlines with posterior intervals prevents cliff-chasing.
+3. **Shrink small-sample discoveries toward zero:** Hierarchical Bayesian models automatically guard against inflated Type M effect sizes.
+4. **Value replication as sequential Bayesian updating:** Yesterday’s posterior becomes today’s prior—science accumulates evidence continuously instead of resetting to zero on every paper.
+
+**Quick check.** In the 1,000-hypothesis table above, if researchers boost statistical power from $$50\%$$ to $$80\%$$ (keeping base rate 10% and $$\alpha = 0.05$$), how many True Positives do they find, and what does the False Discovery Rate drop to?
+
+---
 
 ## Reference videos
 

@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Suppose a hospital screens 10,000 people for a rare condition that affects 1% of the population using a test with 99% sensitivity and 95% specificity. When a patient tests positive, most people—even experienced physicians—intuitively guess there is a 95% or 99% chance they have the disease. Yet the true probability is just **16.7%**! That jarring gap between gut instinct and mathematical reality is why **probability theory** is the indispensable foundation of Bayesian data analysis.
+
+This opening lesson builds the exact grammar of uncertainty—sample spaces, conditional probability, independence, and the law of total probability—so that when Bayes’ theorem arrives in Chapter 1, every piece feels like transparent arithmetic rather than magic.
+
+---
+
+## Background Knowledge Map: Four Axiomatic Pillars Behind Bayesian Reasoning
+
+Every Bayesian calculation in this entire course is built from just four elementary probability rules:
+
+1. **Kolmogorov Axioms & Normalization:** Probabilities lie in $$[0,1]$$, mutually exclusive events add, and the total probability of the entire sample space equals $$1$$—the exact constraint that defines the normalizing constant (evidence) in Bayes’ rule.
+2. **Conditional Probability & Product Rule:** Knowing event $$B$$ occurred shrinks the universe from $$\Omega$$ to $$B$$, giving $$P(A\mid B) = rac{P(A\cap B)}{P(B)}$$ and the product rule $$P(A\cap B) = P(A\mid B)P(B)$$.
+3. **Law of Total Probability (Marginalization):** Partitioning uncertainty across all mutually exclusive hypotheses $$H_1,\dots,H_k$$ gives $$P(D) = \sum_i P(D\mid H_i)P(H_i)$$—the denominator of Bayes’ theorem!
+4. **Independence vs. Conditional Independence:** Two events are independent when $$P(A\mid B)=P(A)$$. In Bayesian modeling, data points $$y_1,\dots,y_n$$ are rarely marginally independent, yet they *are* **conditionally independent given the parameter $$	heta$$**, letting likelihoods factor cleanly into products.
+
+---
+
 ## Learning Objectives
 
 After completing this lesson, you will understand that probability is not just a collection of computational formulas, but a complete mathematical language for describing, quantifying, and reasoning about uncertainty. You will firmly grasp the basic concepts of sample spaces, events, and the rules of probability, and understand why these concepts are an indispensable foundation for Bayesian inference. More importantly, you will begin to see probability as a way of encoding beliefs and updating those beliefs when new information arrives.
@@ -164,6 +181,37 @@ All the concepts we have discussed in this lesson are not merely abstract theory
 More importantly, we will apply the Bayesian view of probability as **degree of belief**. This lets us talk about "the probability of a hypothesis" or "the probability of a parameter value", concepts that have no meaning in frequentist statistics but are very natural and useful in Bayesian statistics.
 
 As you progress through this course, you will see that every Bayesian tool, from the simple Bayes' theorem to complex hierarchical models, is built from the basic probability principles we have discussed here. Understanding these foundations deeply will help you not only apply Bayesian methods correctly, but also understand why they work and when they may fail.
+
+---
+
+### Worked Numerical Example: Solving the Rare-Disease Screening Paradox by Hand
+
+Consider a population of $$10{,}000$$ people with disease prevalence $$P(D) = 0.01$$ ($$100$$ sick, $$9{,}900$$ healthy), test sensitivity $$P(+\mid D) = 0.99$$, and false-positive rate $$P(+\mid 
+eg D) = 0.05$$:
+
+| Group | Population Count | Positive Test (`+`) | Negative Test (`-`) |
+| :--- | :--- | :--- | :--- |
+| **Has Disease ($$D$$)** | $$100$$ | $$100 	imes 0.99 = \mathbf{99}$$ | $$1$$ |
+| **Healthy ($$
+eg D$$)** | $$9{,}900$$ | $$9{,}900 	imes 0.05 = \mathbf{495}$$ | $$9{,}405$$ |
+| **Total** | $$10{,}000$$ | **$$594$$** | $$9{,}406$$ |
+
+Read the exact conditional probability straight off the `+` column:
+
+$$P(D \mid +) = rac{99}{99 + 495} = rac{99}{594} = rac{1}{6} pprox \mathbf{16.67\%}!$$
+
+Even with a 99%-accurate test, five out of six positive results are false alarms because healthy people outnumber sick people 99-to-1!
+
+### Deep-Dive Explanation: Four Rules to Never Misfire on Conditional Probability (Read Slowly)
+
+1. **Never confuse $$P(A\mid B)$$ with $$P(B\mid A)$$:** Confusing $$P(+\mid D) = 99\%$$ with $$P(D\mid +) = 16.7\%$$ is the *base-rate fallacy*—the #1 statistical error in medicine, law, and machine learning.
+2. **Always check the denominator (marginal evidence):** Conditioning replaces the whole sample space with the slice where the observed evidence holds (`594` positive tests, not `10,000` people).
+3. **Distinguish mutually exclusive from independent:** If $$A$$ and $$B$$ are mutually exclusive (and have positive probability), knowing $$A$$ happened guarantees $$B$$ did *not*—making them maximally *dependent*, not independent!
+4. **Convert probabilities into natural counts of 10,000 when stuck:** A 2×2 frequency table turns abstract conditional formulas into effortless mental arithmetic.
+
+**Quick check.** If the same patient takes a *second*, conditionally independent test (same 99% sensitivity, 5% false-positive rate) and tests positive *again*, does $$P(D \mid +, +)$$ jump above 75%? *(Hint: update the prior from $$1\%$$ to $$16.67\%$$!)*
+
+---
 
 ## Reference videos
 

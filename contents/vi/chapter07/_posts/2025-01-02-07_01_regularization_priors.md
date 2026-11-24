@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Trong học máy truyền thống, điều chuẩn Ridge ($$L_2$$) và Lasso ($$L_1$$) thường được giới thiệu như những "hạng phạt thêm vào hàm mất mát" để chống quá khớp. Nhưng dưới góc nhìn thống kê Bayes, chúng không hề là thủ thuật tối ưu tùy hứng: tìm đỉnh hậu nghiệm (MAP) với prior Gaussian chính là hồi quy Ridge, còn với prior Laplace chính là hồi quy Lasso!
+
+Bài mở đầu Chương 7 này bóc tách mối tương đương toán học tuyệt đẹp ấy, đồng thời cho thấy bước tiến của Bayes đầy đủ: thay vì chỉ lấy một điểm MAP duy nhất, ta giữ toàn bộ phân phối hậu nghiệm để vừa co cụm hệ số nhiễu vừa bảo toàn trọn vẹn độ bất định.
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **điều chuẩn (regularization)** như một cơ chế cốt lõi để ngăn **quá khớp (overfitting)**. Bài học làm rõ vì sao phân phối tiên nghiệm (prior) trong thống kê Bayes tự nhiên thực hiện điều chuẩn, mối liên hệ giữa tiên nghiệm với hồi quy Ridge và Lasso trong thống kê tần suất (frequentist), và khi nào ta thực sự cần điều chuẩn thay vì tiếp tục tăng độ phức tạp của mô hình. Đây là kỹ năng thiết yếu khi xây dựng mô hình có nhiều **biến dự báo (predictors)**, đặc biệt khi số lượng biến vượt quá khả năng kiểm soát bằng trực giác.
+
+
+## Bản đồ kiến thức nền: Tương đương MAP – Penalty, Hình học Prior và Co cụm thích nghi
+
+Để hiểu bản chất điều chuẩn Bayes ở mức độ chuyên sâu, hãy liên kết ba trụ cột:
+
+- **Tương đương đại số giữa Prior và Penalty:** Trong bài toán tối đa hóa log-posterior $$\log p(\beta \mid y) = \log p(y \mid \beta) + \log p(\beta) + C$$, thành phần $$\log p(\beta)$$ đóng vai trò chính xác của số hạng phạt. Prior $$\mathcal{N}(0, \tau^2)$$ sinh ra hạng phạt $$-\frac{\beta^2}{2\tau^2}$$ (Ridge $$L_2$$ với $$\lambda = \sigma^2/\tau^2$$), còn prior $$\text{Laplace}(0, b)$$ sinh ra hạng phạt $$-\frac{\vert\beta\vert}{b}$$ (Lasso $$L_1$$).
+- **Hình học của Prior (Đuôi mỏng vs. Nhọn tại 0 vs. Đuôi dày):** Prior Gaussian co đều mọi hệ số; prior Laplace nhọn tại 0 (khuyến khích thưa tại MAP); còn prior Horseshoe có đỉnh cực nhọn tại 0 kết hợp đuôi dày như Cauchy để co mạnh nhiễu về 0 mà *không* co quá tay các tín hiệu thật lớn.
+- **Chuẩn hóa biến dự báo (Standardization):** Mọi prior điều chuẩn đều phụ thuộc thang đo của biến $$x_j$$. Nếu không chuẩn hóa biến dự báo về trung bình 0, độ lệch chuẩn 1 trước khi đặt cùng một prior $$\tau$$, biến có đơn vị lớn hơn sẽ bị phạt nhẹ hơn một cách bất công.
+
+---
 
 ## Giới thiệu: Vấn đề quá khớp (Overfitting)
 
@@ -302,6 +319,34 @@ y_test_z = (y_test - mu_y) / sd_y
 Điểm cốt lõi của bài là trong thống kê Bayes, thực hiện điều chuẩn về bản chất chính là lựa chọn phân phối tiên nghiệm một cách có cơ sở.
 
 Bài tiếp theo: **Đánh đổi giữa độ lệch và phương sai (Bias-Variance Tradeoff)** — đi sâu vào chiến lược kiểm định và tinh chỉnh độ phức tạp mô hình trên cùng nghiên cứu tình huống.
+
+
+## Khung giải thích (nên đọc chậm): Ánh xạ chính xác giữa độ rộng Prior $$\tau$$ và hệ số phạt Ridge $$\lambda$$
+
+Nhiều người học nhớ "Gaussian là Ridge" nhưng chưa từng tự viết công thức đổi giữa $$\tau$$ và $$\lambda$$. Hãy đọc chậm 3 bước sau cho hồi quy tuyến tính chuẩn hóa ($$\sigma^2$$ là phương sai nhiễu):
+
+1. **Viết âm log-posterior:**
+   $$-\log p(\beta \mid y) = \frac{1}{2\sigma^2}\sum_{i=1}^n (y_i - x_i^\top \beta)^2 + \frac{1}{2\tau^2}\sum_{j=1}^p \beta_j^2 + C.$$
+2. **Nhân cả hai vế với $$2\sigma^2$$:** Ta thu ngay hàm mục tiêu Ridge kinh điển:
+   $$\sum_{i=1}^n (y_i - x_i^\top \beta)^2 + \underbrace{\frac{\sigma^2}{\tau^2}}_{\lambda}\sum_{j=1}^p \beta_j^2.$$
+3. **Đọc công thức co cụm 1 chiều (với $$\sum x_i^2 = S_{xx}$$):**
+   $$\hat\beta_{\text{Ridge/MAP}} = \frac{S_{xx}}{S_{xx} + \sigma^2/\tau^2}\,\hat\beta_{\text{OLS}}.$$
+
+### Ví dụ tính toán cầm tay chỉ việc: Mức độ co cụm theo độ rộng Prior $$\tau$$
+
+Giả sử trên một biến dự báo đã chuẩn hóa có $$S_{xx} = 20$$, phương sai nhiễu $$\sigma^2 = 4$$ và ước lượng OLS thô là $$\hat\beta_{\text{OLS}} = 2.0$$. Hãy so sánh ba lựa chọn độ rộng prior $$\tau$$:
+
+| Độ rộng Prior $$\tau$$ | Hệ số phạt tương đương $$\lambda = \sigma^2 / \tau^2$$ | Hệ số co cụm $$\frac{S_{xx}}{S_{xx}+\lambda}$$ | Ước lượng hậu nghiệm $$\hat\beta_{\text{MAP}}$$ |
+| --- | --- | --- | --- |
+| Rất rộng ($$\tau = 10$$) | $$4 / 100 = 0.04$$ | $$20 / 20.04 \approx 0.998$$ | $$1.996$$ (gần như OLS) |
+| Vừa phải ($$\tau = 1.0$$) | $$4 / 1 = 4.00$$ | $$20 / 24 = 0.833$$ | $$1.667$$ (co nhẹ 16.7%) |
+| Mạnh ($$\tau = 0.5$$) | $$4 / 0.25 = 16.00$$ | $$20 / 36 = 0.556$$ | $$1.111$$ (co mạnh 44.4%) |
+
+**Hiểu lầm cần tránh:** Nghĩ rằng chạy MCMC với prior Laplace sẽ cho ra các mẫu hậu nghiệm có hệ số bằng đúng `0.000` giống thuật toán Lasso tối ưu điểm. Trên thực tế, Lasso chỉ tạo đúng số 0 tại *đỉnh MAP*; còn các mẫu MCMC từ hậu nghiệm liên tục luôn có xác suất rơi vào đúng điểm 0 bằng 0, chỉ tập trung dày quanh 0.
+
+**Kiểm tra nhanh:** Nếu cỡ mẫu tăng gấp 5 lần ($$S_{xx} = 100$$) mà vẫn giữ prior vừa phải $$\tau = 1.0$$ ($$\lambda = 4$$), hệ số co cụm tăng lên $$100 / 104 \approx 0.962$$ — đúng nguyên tắc dữ liệu nhiều dần sẽ tự động giảm tác động của prior.
+
+---
 
 ## Video tham khảo
 

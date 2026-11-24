@@ -10,6 +10,20 @@ categories:
 lesson_type: required
 ---
 
+Mọi mô hình Bayes trong suốt khóa học này thực chất đều quy về đúng một đối tượng trung tâm: **phân phối đồng thời (joint distribution) $$p(\theta, y)$$** trên tham số ẩn $$\theta$$ và dữ liệu quan sát $$y$$! Một khi bạn dựng xong mặt phân phối đồng thời đó bằng cách nhân tiên nghiệm $$p(\theta)$$ với hàm hợp lý $$p(y\mid\theta)$$, mọi phép toán suy diễn Bayes chỉ còn là hai thao tác cực kỳ trực quan: **cắt lát theo dữ liệu đã thấy (conditioning)** để lấy hậu nghiệm, hoặc **cộng/tích phân gộp một trục (marginalization)** để tính bằng chứng $$p(y)$$ và phân phối dự báo.
+
+Bài học này rèn luyện phản xạ làm việc với bảng phân phối đồng thời, phân phối biên và phân phối có điều kiện để bạn nhìn thấy định lý Bayes hiện ra rõ mồn một ngay trên một bảng số $$2\times 2$$.
+
+---
+
+## Bản đồ kiến thức nền: Ba phép toán nền tảng trên mọi Phân phối Đồng thời
+
+1. **Phân phối đồng thời $$p(x, y)$$:** Lưu giữ *trọn vẹn* thông tin về cả hai biến cùng lúc (kể cả mối phụ thuộc giữa chúng); tổng (hoặc tích phân) trên toàn bộ không gian bằng đúng `1`.
+2. **Biên hóa (Marginalization — Cộng/Tích phân gộp):** $$p(x) = \sum_y p(x, y)$$ loại bỏ một biến phụ để nhìn riêng phân phối của $$X$$ — đây chính là cơ chế tính bằng chứng $$p(y) = \int p(y,\theta)\,d\theta$$ và khử tham số nhiễu trong thống kê Bayes!
+3. **Điều kiện hóa (Conditioning — Cắt lát & Chuẩn hóa lại):** Cố định $$X = x$$ cắt ra đúng một hàng/cột của bảng đồng thời rồi chia cho tổng biên của hàng/cột đó: $$p(y\mid x) = \frac{p(x, y)}{p(x)}$$ — chính là **định lý Bayes**!
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu phân phối đồng thời là phần mở rộng tự nhiên của hàm phân phối một biến sang nhiều biến, biết cách rút ra phân phối biên và phân phối có điều kiện từ phân phối đồng thời, và thấy rõ vì sao cấu trúc này là nền tảng trực tiếp của suy luận Bayesian.
@@ -140,6 +154,34 @@ Do đó, nắm vững mối liên hệ đồng thời – biên – có điều 
 4. Quy tắc nhân nối phân phối đồng thời với phân phối có điều kiện: $$p(x,y)=p(x\mid y)p(y)$$.
 5. Hai biến độc lập khi và chỉ khi $$p(x,y)=p(x)p(y)$$.
 6. Suy diễn Bayesian dựa trực tiếp vào bộ ba cấu trúc đồng thời – biên – có điều kiện.
+
+---
+
+### Ví dụ tính tay cầm tay chỉ việc: Cắt lát và Biên hóa bảng đồng thời Thời tiết – Giao thông
+
+Xét bảng phân phối đồng thời giữa **Thời tiết** ($$W \in \{\text{Mưa}, \text{Nắng}\}$$) và **Giao thông** ($$T \in \{\text{Tắc}, \text{Thông}\}$$) có tổng toàn bảng bằng $$1{,}00$$:
+
+| Thời tiết \ Giao thông | Tắc đường ($$T=1$$) | Thông thoáng ($$T=0$$) | **Biên $$P(W)$$** |
+| :--- | :--- | :--- | :--- |
+| **Mưa ($$W=1$$)** | $$0{,}24$$ | $$0{,}06$$ | **$$0{,}30$$** |
+| **Nắng ($$W=0$$)** | $$0{,}16$$ | $$0{,}54$$ | **$$0{,}70$$** |
+| **Biên $$P(T)$$** | **$$0{,}40$$** | **$$0{,}60$$** | **$$1{,}00$$** |
+
+1. **Kiểm tra độc lập:** $$P(W=1)\cdot P(T=1) = 0{,}30 \times 0{,}40 = 0{,}12 \neq 0{,}24$$ $$\implies$$ Mưa và Tắc đường **phụ thuộc mạnh** vào nhau!
+2. **Cắt lát theo sự kiện "Đang tắc đường" ($$T=1$$):** Lấy cột `Tắc đường` `[0.24, 0.16]` chia cho tổng biên $$0{,}40$$:
+   $$P(\text{Mưa} \mid \text{Tắc}) = \frac{0{,}24}{0{,}40} = \mathbf{0{,}60}, \qquad P(\text{Nắng} \mid \text{Tắc}) = \frac{0{,}16}{0{,}40} = \mathbf{0{,}40}.$$
+   Trước khi mở bản đồ giao thông, xác suất tiên nghiệm trời mưa là $$30\%$$; chỉ cần thấy đường tắc, xác suất hậu nghiệm trời mưa lập tức tăng gấp đôi lên **$$60\%$$**!
+
+### Khung giải thích: Bốn quy tắc vàng khi tư duy bằng phân phối đồng thời (nên đọc chậm)
+
+1. **Định lý Bayes chỉ là hai cách tách tích của cùng một phân phối đồng thời:** $$p(\theta, y) = p(y\mid\theta)p(\theta) = p(\theta\mid y)p(y)$$.
+2. **Tích phân biên bảo toàn trung thực độ bất định:** Thay vì chốt cứng một điểm ước lượng cho tham số phụ $$\sigma$$, thống kê Bayes lấy tích phân trên đồng thời $$p(\mu, \sigma\mid y)$$ để bất định của $$\sigma$$ phản ánh đúng vào khoảng tin cậy của $$\mu$$.
+3. **Phân biệt bảng đồng thời với bảng điều kiện:** Bảng đồng thời có tổng *tất cả các ô* bằng 1; bảng điều kiện $$P(T\mid W)$$ có tổng *từng hàng* bằng 1.
+4. **Độc lập là trường hợp rất đặc biệt:** Chỉ khi $$p(x,y) = p(x)p(y)$$ ở *mọi* ô bạn mới được nhân hai biên; trong mô hình Bayes phân cấp, các quan sát cùng nhóm luôn phụ thuộc nhau qua tham số chung!
+
+**Kiểm tra nhanh.** Từ bảng Thời tiết – Giao thông ở trên, nếu bạn thấy đường đang **Thông thoáng** ($$T = 0$$), xác suất hậu nghiệm $$P(\text{Mưa} \mid \text{Thông})$$ bằng bao nhiêu?
+
+---
 
 ## Video tham khảo
 

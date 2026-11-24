@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Trong hồi quy tuyến tính cổ điển, ta quen nhìn $$R^2$$ và biểu đồ phần dư đơn giản. Nhưng khi bước sang mô hình tuyến tính tổng quát (GLM) — nơi đầu ra là 0/1 hay số đếm 0, 1, 2, … — phần dư thô $$y_i - \hat p_i$$ không còn tuân theo phân phối chuẩn hay có phương sai đồng nhất nữa. Thậm chí một mô hình dự đoán luôn luôn "không gian lận" trên tập dữ liệu 99% giao dịch sạch vẫn đạt độ chính xác 99% dù hoàn toàn vô dụng.
+
+Bài học này trang bị bộ công cụ đánh giá chuyên biệt cho GLM Bayes: đường cong ROC/AUC, hiệu chỉnh xác suất (*calibration*), log-loss / Brier score, phần dư Deviance/Pearson và kiểm tra dự báo hậu nghiệm (PPC).
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ nắm cách đánh giá các **mô hình GLM** như hồi quy logistic và hồi quy Poisson trong thực tế. Trọng tâm của bài là chọn đúng tiêu chí đánh giá theo bản chất của biến kết quả: từ các **thước đo phân lớp (classification metrics)** như accuracy, sensitivity, specificity và đường cong ROC, đến **đồ thị hiệu chỉnh xác suất (calibration plot)**, **độ lệch mô hình (deviance)** và **kiểm tra dự báo hậu nghiệm (posterior predictive checks)**. Một mô hình chỉ thực sự hữu ích khi ta biết rõ nó làm tốt ở điểm nào, hạn chế ở đâu và còn tồn tại những sai lệch nào.
+
+
+## Bản đồ kiến thức nền: Phân biệt, Hiệu chỉnh và Phản biện mô hình GLM Bayes
+
+Đánh giá đúng một mô hình GLM đòi hỏi kết hợp ba trụ cột độc lập:
+
+- **Khả năng phân biệt vs. Độ hiệu chỉnh (Discrimination vs. Calibration):** AUC-ROC chỉ đo xem mô hình có xếp hạng ca dương tính cao hơn ca âm tính hay không (bất biến nếu nhân đôi mọi xác suất miễn giữ thứ tự). Trong khi đó, **Calibration** kiểm tra xem nhóm có dự báo $$p = 0.70$$ có thực sự xảy ra khoảng $$70\%$$ hay không — yếu tố sống còn cho ra quyết định dựa trên chi phí.
+- **Thước đo xác suất nghiêm ngặt (Proper Scoring Rules):** Brier score $$\frac{1}{n}\sum (y_i - \hat p_i)^2$$ và Log-loss (tương ứng Deviance / ELPD) đánh giá đồng thời cả khả năng phân biệt lẫn độ hiệu chỉnh.
+- **Chẩn đoán riêng cho GLM (Deviance Residuals & PPC):** Đối với Poisson/Negative Binomial, phần dư Pearson $$r_i = (y_i - \hat\lambda_i)/\sqrt{\hat\lambda_i}$$ và Posterior Predictive Checks (kiểm tra tỷ lệ số 0, phương sai/trung bình, giá trị cực đại) giúp phát hiện chính xác quá phân tán hoặc thừa số 0 (*zero-inflation*).
+
+---
 
 ## Giới thiệu: Đánh giá GLMs khác gì so với hồi quy tuyến tính
 
@@ -456,6 +473,38 @@ Quan sát độ hiệu chuẩn theo nhóm cho hồi quy logistic và thống kê
 Mỗi loại biến kết quả đòi hỏi bộ tiêu chí đánh giá tương ứng, và không có một chỉ số đơn lẻ nào đủ để kết luận mô hình tốt hay xấu. Cách làm hợp lý là kết hợp các thước đo chuyên biệt với kiểm tra dự báo hậu nghiệm để đánh giá mô hình từ nhiều góc độ.
 
 Kết thúc Chương 06 về các mô hình tuyến tính tổng quát (GLMs): hồi quy logistic, hồi quy Poisson và đánh giá mô hình.
+
+
+## Khung giải thích (nên đọc chậm): Đọc Brier Score, Calibration và Phần dư Pearson bằng tay
+
+Để không bao giờ bị đánh lừa bởi một chỉ số đơn lẻ (như accuracy hay AUC), hãy kiểm tra theo 4 bước sau:
+
+1. **Kiểm tra khả năng phân biệt (ROC-AUC / PR-AUC):** Đặc biệt dùng PR-AUC khi lớp dương tính hiếm.
+2. **Kiểm tra độ hiệu chỉnh (Calibration):** Chia dự báo thành các nhóm xác suất và so sánh trung bình dự báo với tần suất thật.
+3. **Tính thước đo tổng hợp (Brier Score / Log-Loss / LOO):** So sánh khách quan giữa các mô hình GLM cạnh tranh.
+4. **Chạy PPC cho đặc trưng miền dữ liệu:** Với Poisson, luôn kiểm tra tỷ lệ quan sát bằng 0 và tỷ số phương sai/trung bình.
+
+### Ví dụ tính toán cầm tay chỉ việc: Brier Score và Độ hiệu chỉnh trên 4 dự báo nhị phân
+
+Xét 4 ca dự báo xác suất của hai mô hình logistic trên cùng tập nhãn thật $$y = (1, 1, 0, 0)$$:
+- **Mô hình A (Hiệu chỉnh tốt):** $$\hat p_A = (0.8, 0.7, 0.3, 0.2)$$.
+- **Mô hình B (Đoán đúng thứ tự — cùng AUC = 1.0 — nhưng hiệu chỉnh kém):** $$\hat p_B = (0.55, 0.52, 0.48, 0.45)$$.
+
+| Quan sát | Nhãn $$y_i$$ | $$(y_i - \hat p_{A,i})^2$$ | $$(y_i - \hat p_{B,i})^2$$ |
+| --- | --- | --- | --- |
+| 1 | $$1$$ | $$(1 - 0.8)^2 = 0.04$$ | $$(1 - 0.55)^2 = 0.2025$$ |
+| 2 | $$1$$ | $$(1 - 0.7)^2 = 0.09$$ | $$(1 - 0.52)^2 = 0.2304$$ |
+| 3 | $$0$$ | $$(0 - 0.3)^2 = 0.09$$ | $$(0 - 0.48)^2 = 0.2304$$ |
+| 4 | $$0$$ | $$(0 - 0.2)^2 = 0.04$$ | $$(0 - 0.45)^2 = 0.2025$$ |
+| **Brier Score (trung bình)** | — | **$$0.26 / 4 = 0.0650$$** | **$$0.8658 / 4 = 0.2165$$** |
+
+Cả hai mô hình đều đạt $$\text{AUC} = 1.00$$ và $$\text{Accuracy} = 100\%$$ ở ngưỡng $$0.5$$, nhưng Brier Score lập tức vạch rõ Mô hình A vượt trội hơn gấp **3.3 lần** ($$0.0650$$ so với $$0.2165$$) nhờ dự báo xác suất sắc nét và hiệu chỉnh tốt hơn.
+
+**Hiểu lầm cần tránh:** Chỉ nhìn AUC cao (ví dụ $$0.92$$) rồi tin rằng xác suất đầu ra có thể nhân trực tiếp với lợi nhuận kỳ vọng. Nếu mô hình bị lệch calibration, quyết định tài chính dựa trên ngưỡng xác suất vẫn sẽ sai.
+
+**Kiểm tra nhanh:** Trong hồi quy Poisson, nếu quan sát $$y_i = 15$$ khi mô hình dự báo $$\hat\lambda_i = 4$$, phần dư Pearson là $$(15 - 4)/\sqrt{4} = 5.5$$ — vượt rất xa ngưỡng $$\pm 2$$, cảnh báo ngay điểm bất thường hoặc hiện tượng quá phân tán.
+
+---
 
 ## Video tham khảo
 

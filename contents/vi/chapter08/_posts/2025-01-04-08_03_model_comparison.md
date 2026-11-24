@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Sau khi có bảng điểm LOO/WAIC trong tay, phản xạ quen thuộc của hầu hết người làm dữ liệu là chọn lấy mô hình đứng hạng nhất và xóa sạch mọi mô hình còn lại. Nhưng điều gì xảy ra nếu Mô hình A và Mô hình B gần như ngang điểm nhau, mỗi mô hình lại nắm bắt một góc khác nhau của thực tế? Vứt bỏ Mô hình B đồng nghĩa với việc tự xóa đi phần **bất định về cấu trúc mô hình (model uncertainty)** và làm khoảng dự báo bị hẹp giả tạo.
+
+Bài học này mở rộng tư duy từ "chọn một người thắng cuộc" sang ba chiến lược chiến lược chuẩn của thống kê Bayes hiện đại: **Chọn mô hình (Selection)**, **Kết hợp mô hình (Averaging / Stacking)** và **Mở rộng mô hình (Continuous Model Expansion)**.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học này, bạn sẽ phân biệt rõ ba chiến lược so sánh mô hình trong thống kê Bayes: chọn một mô hình (selection), kết hợp nhiều mô hình (averaging) và mở rộng thành mô hình bao trùm (expansion). Trọng tâm là không xem so sánh mô hình như một thủ tục xếp hạng cơ học, mà như một bài toán ra quyết định dưới độ bất định về cấu trúc mô hình, trong đó chiến lược lựa chọn phụ thuộc vào mức độ tách biệt về hiệu năng dự báo và mục tiêu ứng dụng.
+
+
+## Bản đồ kiến thức nền: Chọn lọc, Kết hợp (BMA/Stacking) và Mở rộng Mô hình
+
+Ba chiến lược xử lý đa mô hình tương ứng với ba bối cảnh thực tiễn rõ rệt:
+
+- **Chọn mô hình (Model Selection):** Phù hợp khi một mô hình vượt trội rõ rệt ($$\Delta\text{elpd} \gg 2\,\mathrm{SE}$$) hoặc khi hệ thống vận hành đòi hỏi một mô hình đơn giản, gọn nhẹ duy nhất để triển khai và giải thích.
+- **Kết hợp mô hình (BMA & Bayesian Stacking):** Thay vì chọn 1, ta trộn phân phối dự báo hậu nghiệm: $$p(\tilde y \mid y) = \sum_{k=1}^K w_k\, p(\tilde y \mid y, M_k)$$. Khác với BMA cổ điển (dễ nhạy với prior và giả định một trong các mô hình là mô hình thật — thế giới $$\mathcal{M}$$-closed), **Bayesian Stacking** (Yao et al., 2018) tối ưu hóa trực tiếp trọng số $$w_k$$ trên điểm LOO để tối đa hóa khả năng dự báo trong thế giới thực ($$\mathcal{M}$$-open).
+- **Mở rộng mô hình (Model Expansion):** Thay vì coi hai mô hình rời rạc như hai đối thủ loại trừ nhau, ta nhúng cả hai vào một mô hình liên tục tổng quát hơn (ví dụ dùng phân phối Student-$$t$$ với bậc tự do $$\nu$$ học được thay vì chọn cứng giữa Gaussian và Cauchy).
+
+---
 
 ## 1. So sánh mô hình không phải lúc nào cũng là chọn một mô hình thắng cuộc
 
@@ -94,6 +111,37 @@ Ví dụ này cho thấy so sánh mô hình là bài toán ra quyết định đ
 Không tồn tại một chiến lược so sánh mô hình duy nhất đúng cho mọi tình huống. Selection, averaging và expansion là ba công cụ bổ sung lẫn nhau trong cùng một quy trình Bayes. Năng lực của người phân tích nằm ở việc nhận biết đúng lúc nào nên thu gọn bằng chọn mô hình, lúc nào nên bảo toàn độ bất định bằng kết hợp mô hình, và lúc nào cần tái thiết kế mô hình để khắc phục sai lệch cơ chế.
 
 Bài tiếp theo: **Phân tích quyết định Bayes (Bayesian Decision Analysis)**, chuyển kết quả suy luận thành hành động tối ưu dưới một hàm mất mát cụ thể.
+
+
+## Khung giải thích (nên đọc chậm): Tính dự báo và phương sai khi Kết hợp mô hình (Stacking / BMA)
+
+Khi hai mô hình ngang sức nhau (ví dụ $$\Delta\text{elpd} < 2\,\mathrm{SE}$$), hãy đi chậm qua 3 bước để kết hợp dự báo thay vì chọn cứng:
+
+1. **Xác định trọng số $$w_1, \dots, w_K$$** ($$\sum w_k = 1, w_k \ge 0$$) từ Bayesian Stacking hoặc trọng số Akaike/Pseudo-BMA.
+2. **Tính trung bình dự báo kết hợp:** $$\mu_{\text{comb}} = \sum_{k=1}^K w_k \mu_k$$.
+3. **Tính phương sai dự báo kết hợp (cộng cả độ bất đồng giữa các mô hình!):**
+   $$\sigma_{\text{comb}}^2 = \sum_{k=1}^K w_k \sigma_k^2 + \sum_{k=1}^K w_k (\mu_k - \mu_{\text{comb}})^2.$$
+
+### Ví dụ tính toán cầm tay chỉ việc: Trộn dự báo doanh số từ 2 mô hình theo trọng số Stacking
+
+Giả sử hai mô hình dự báo doanh số quý tới (tỷ VNĐ) có điểm LOO rất sát nhau, với trọng số Stacking là $$w_1 = 0.60$$ và $$w_2 = 0.40$$:
+- Mô hình 1 (tuyến tính): $$\mu_1 = 100$$, $$\sigma_1 = 5$$ ($$\sigma_1^2 = 25$$).
+- Mô hình 2 (phi tuyến): $$\mu_2 = 110$$, $$\sigma_2 = 5$$ ($$\sigma_2^2 = 25$$).
+
+| Thành phần | Công thức | Giá trị tính tay |
+| --- | --- | --- |
+| Trung bình kết hợp $$\mu_{\text{comb}}$$ | $$0.6(100) + 0.4(110)$$ | $$60 + 44 = 104.0\text{ tỷ}$$ |
+| Phương sai nội mô hình | $$0.6(25) + 0.4(25)$$ | $$25.0$$ |
+| Phương sai bất đồng giữa 2 mô hình | $$0.6(100 - 104)^2 + 0.4(110 - 104)^2$$ | $$0.6(16) + 0.4(36) = 9.6 + 14.4 = 24.0$$ |
+| Tổng phương sai & Độ lệch chuẩn | $$\sigma_{\text{comb}}^2 = 25 + 24 = 49$$ | $$\sigma_{\text{comb}} = \sqrt{49} = 7.0\text{ tỷ}$$ |
+
+Nhìn vào con số $$7.0\text{ tỷ}$$ so với $$5.0\text{ tỷ}$$: nếu chỉ chọn Mô hình 1, bạn sẽ báo cáo độ bất định $$\pm 5\text{ tỷ}$$ (quá tự tin). Kết hợp mô hình tự động mở rộng độ lệch chuẩn lên $$\pm 7\text{ tỷ}$$ để phản ánh trung thực sự bất đồng giữa hai giả định cấu trúc!
+
+**Hiểu lầm cần tránh:** Nhầm rằng Stacking hay Model Averaging luôn cho ra dự báo có phương sai *nhỏ hơn* từng mô hình đơn lẻ. Khi các mô hình bất đồng mạnh về tâm dự báo, phương sai tổng có thể *lớn hơn* — và đó chính là dấu hiệu trung thực, giúp tránh bất ngờ ngoài mẫu.
+
+**Kiểm tra nhanh:** Nếu hai mô hình hoàn toàn đồng ý về tâm dự báo ($$\mu_1 = \mu_2 = 104$$), số hạng bất đồng bằng $$0$$ và $$\sigma_{\text{comb}} = 5.0\text{ tỷ}$$.
+
+---
 
 ## Video tham khảo
 

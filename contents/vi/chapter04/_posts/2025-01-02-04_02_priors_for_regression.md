@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Hãy tưởng tượng hai nhà nghiên cứu cùng phân tích một tập dữ liệu chiều cao và cân nặng, và cả hai đều viết vào mô hình một dòng tưởng chừng vô hại: $$\beta \sim \mathcal{N}(0, 1)$$. Người thứ nhất đo chiều cao bằng centimet, người thứ hai đo bằng mét. Khi mô phỏng thử dữ liệu từ mô hình trước khi nhìn vào dữ liệu thật, người thứ nhất tạo ra những con người cao 1m70 nhưng nặng từ âm 30 kg đến dương 180 kg, còn người thứ hai lại ép cân nặng hầu như không đổi theo chiều cao. Cùng một công thức tiên nghiệm, nhưng đổi thang đo đã biến nó thành hai giả định vật lý hoàn toàn khác nhau — đó là lý do chọn phân phối tiên nghiệm cho hồi quy phải có nguyên tắc rõ ràng.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ biết cách lựa chọn phân phối tiên nghiệm (prior) cho mô hình hồi quy một cách có nguyên tắc. Bạn cũng sẽ hiểu vì sao chuẩn hóa dữ liệu (standardization) là bước nền quan trọng, vì sao phân phối tiên nghiệm thông tin yếu (weakly informative prior) thường là điểm khởi đầu phù hợp, và vì sao kiểm tra dự báo tiên nghiệm (prior predictive check) cần được thực hiện trước khi khớp mô hình.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ biết cách lựa chọn phân phối tiên nghiệm 
 >
 > **Câu hỏi tự kiểm tra.** Vì sao cùng một phân phối tiên nghiệm có thể hợp lý ở thang đo này nhưng lại bất hợp lý ở thang đo khác?
 
+
+## Bản đồ kiến thức nền: Bất biến thang đo, Điều chuẩn hình học và Dự báo tiên nghiệm
+
+Để không còn cảm giác "chọn prior là đoán mò", hãy đặt bài toán này trên ba trụ cột toán học quen thuộc từ bậc đại học:
+
+- **Chuẩn hóa tuyến tính ($$z$$-score) và bất biến đơn vị:** Phép biến đổi $$x_{\text{std}} = (x - \bar x)/\mathrm{SD}(x)$$ đưa mọi biến về không thứ nguyên với trung bình 0 và phương sai 1. Trong hồi quy chuẩn hóa, hệ số dốc $$\beta$$ có cùng thang đo với hệ số tương quan: $$\lvert \beta \rvert$$ hiếm khi vượt quá 1 hoặc 2 trong các hệ thực, giúp ta đặt tiên nghiệm nhất quán bất kể đơn vị đo ban đầu là mét, inch hay triệu đồng.
+- **Phân phối tiên nghiệm thông tin yếu (Weakly Informative Prior) và điều chuẩn:** Trong giải tích lồi, thêm thành phần phạt $$\lambda \beta^2$$ (hồi quy Ridge) tương đương trực tiếp với đặt tiên nghiệm Gaussian $$\beta \sim \mathcal{N}(0, \tau^2)$$ với $$\lambda = \sigma^2 / \tau^2$$. Tiên nghiệm thông tin yếu không áp đặt kết luận thay dữ liệu, mà dựng một "hàng rào mềm" loại bỏ các vùng tham số phi vật lý và làm mượt hình học mặt hậu nghiệm cho MCMC.
+- **Phép chiếu sang không gian dữ liệu (Prior Predictive Distribution):** Tham số $$(\alpha, \beta, \sigma)$$ sống trong không gian trừu tượng khó hình dung, còn dữ liệu $$y$$ sống trong thế giới thực có đơn vị và giới hạn rõ ràng. Kiểm tra dự báo tiên nghiệm lấy tích phân $$p(y) = \int p(y \mid \theta) p(\theta)\,d\theta$$ để dịch niềm tin trên tham số thành các đường hồi quy quan sát được.
 ## 1. Khó khăn khi chọn phân phối tiên nghiệm cho hồi quy
 
 Trong hồi quy tuyến tính cơ bản, ta có ít nhất ba tham số cần đặt phân phối tiên nghiệm: hệ số chặn $$\alpha$$, hệ số dốc $$\beta$$ và độ nhiễu $$\sigma$$. Nếu chọn thiếu cân nhắc, phân phối tiên nghiệm có thể quá rộng và cho phép những giá trị vô lý, quá hẹp và làm sai lệch phân phối hậu nghiệm, hoặc khiến bộ lấy mẫu (sampler) hoạt động kém ổn định. Do đó, chọn phân phối tiên nghiệm vừa đòi hỏi hiểu biết thống kê, vừa đòi hỏi nắm vững thang đo và bối cảnh thực tế của dữ liệu.
@@ -136,6 +146,18 @@ Nếu chỉ quan sát biểu đồ mật độ trên không gian tham số, đô
 Nếu phân phối tiên nghiệm sinh ra các đường hồi quy có độ dốc cực đoan hoặc tạo ra những dự đoán vô lý như cân nặng âm, điểm thi 300 điểm hay doanh thu tăng giảm phi thực tế, thì phân phối tiên nghiệm cần được điều chỉnh lại — dù về mặt toán học nó hoàn toàn hợp lệ.
 
 ![Prior predictive với slope quá rộng]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_predictive_too_wide.png)
+
+### Khung giải thích (nên đọc chậm): Tự tính khoảng dự báo tiên nghiệm bằng tay trước khi chạy mô hình
+
+Trước khi cần đến máy tính mô phỏng hàng nghìn đường thẳng, bạn có thể kiểm tra nhanh một lựa chọn phân phối tiên nghiệm chỉ bằng phép cộng phương sai.
+
+1. **Thiết lập mô hình chuẩn hóa:** Xét $$y_z \sim \mathcal{N}(\mu, \sigma^2)$$ với $$\mu = \alpha + \beta x_z$$, trong đó $$\alpha \sim \mathcal{N}(0, 1^2)$$ và $$\beta \sim \mathcal{N}(0, \sigma_\beta^2)$$ độc lập nhau.
+2. **Tính phương sai tiên nghiệm của đường trung bình $$\mu$$ tại $$x_z = 2$$** (tức một quan sát cao hơn trung bình 2 độ lệch chuẩn):
+   $$\operatorname{Var}(\mu) = \operatorname{Var}(\alpha) + 2^2 \operatorname{Var}(\beta) = 1 + 4\sigma_\beta^2.$$
+3. **So sánh hai lựa chọn tiên nghiệm cho $$\beta$$:**
+   - **Lựa chọn A (prior "phẳng" $$\sigma_\beta = 10$$):** $$\operatorname{Var}(\mu) = 1 + 4(100) = 401 \implies \mathrm{SD}(\mu) \approx 20.02$$. Khoảng 95% tiên nghiệm của $$\mu$$ tại $$x_z = 2$$ rộng tới $$[-39.2,\ +39.2]$$ độ lệch chuẩn! Nếu $$y$$ là cân nặng có $$\bar y = 65$$ kg và $$\mathrm{SD}(y) = 10$$ kg, mô hình trước khi thấy dữ liệu đã gán xác suất đáng kể cho những người cao 1m85 nhưng nặng **âm 320 kg** hoặc **dương 450 kg**.
+   - **Lựa chọn B (weakly informative $$\sigma_\beta = 0.5$$):** $$\operatorname{Var}(\mu) = 1 + 4(0.25) = 2 \implies \mathrm{SD}(\mu) = \sqrt{2} \approx 1.414$$. Khoảng 95% tiên nghiệm của $$\mu$$ tại $$x_z = 2$$ là $$[-2.77,\ +2.77]$$ độ lệch chuẩn — tức quanh $$37$$–$$93$$ kg, vừa đủ rộng để dữ liệu quyết định xu hướng, vừa loại trừ các kịch bản vô lý.
+4. **Bài học cốt lõi:** Một phân phối tiên nghiệm "phẳng" trên không gian tham số thường biến thành một phân phối cực kỳ **điên rồ** trên không gian dự đoán. Luôn kiểm tra bằng phép tính nhẩm phương sai hoặc mô phỏng prior predictive trước khi bấm chạy MCMC.
 
 ## 8. Ví dụ trực quan: chi phí quảng cáo và doanh thu
 

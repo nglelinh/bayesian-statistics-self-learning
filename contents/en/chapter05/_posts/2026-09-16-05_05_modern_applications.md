@@ -10,6 +10,20 @@ categories:
 lesson_type: optional
 ---
 
+When a streaming service launches a $20 million Super Bowl ad campaign, they can’t run a clean user-level A/B test—everybody in the broadcast region sees the ad! How do modern tech and economics teams measure the true causal lift without a randomized trial? They combine Chapter 5’s **Bayesian multiple regression + DAG causal thinking** into **Bayesian Structural Time Series (`CausalImpact`)**, **Geo-Lift Difference-in-Differences**, and **Uplift Modeling**—delivering full posterior distributions over incremental revenue!
+
+This optional bridge shows how causal DAGs and Bayesian regression power real-world industry decisions in 2022–2026.
+
+---
+
+## Background Knowledge Map: Three Production Causal-Bayesian Frameworks
+
+1. **Bayesian Difference-in-Differences & Geo-Lift:** Compares a treated city’s pre-to-post jump against a synthetic control of untreated cities, yielding $$P(\text{ROI} > 1 \mid \text{data})$$ directly.
+2. **Bayesian Structural Time Series (CausalImpact):** Predicts the counterfactual trajectory *"what sales would have been without the campaign"* using correlated control markets, then subtracts counterfactual draws from observed sales to get a full posterior over cumulative lift!
+3. **Heterogeneous Treatment Effects (Interactions / Uplift):** Models `outcome ~ treatment * user_segment` with shrinkage priors to identify *which* customers actually respond positively vs. which ones are unaffected or annoyed.
+
+---
+
 ## Learning objectives
 
 After this optional lesson, you can read a coefficient in a multi-predictor model as a conditional causal claim, not as a coefficient that is “more important” just because the software printed it. You will see that confounding, multicollinearity and interactions are not regression bugs, but the shape of product data: A/B tests on marketplaces, recommender systems, and medical records over time.
@@ -61,6 +75,32 @@ Marketplace experiments, controlled ranking, personalized treatment, and embeddi
 ## Limitations and extensions
 
 Learning a DAG from observations does not solve non-identifiability when assumptions are missing. The Causal Transformer needs assumptions about temporal ordering and about the ability to balance the representation. This lesson does not replace a course on causal inference. Chapter 6 will change the likelihood family when $$y$$ is no longer Gaussian, but the confounding problem still follows.
+
+---
+
+### Worked Numerical Example: Bayesian Geo-Lift Difference-in-Differences Calculation
+
+A retailer runs a TV campaign in **City A (Treated)** while holding **City B (Control)** unchanged. Weekly sales ($K):
+
+| Region | Pre-Campaign Avg | Post-Campaign Avg | Pre $$\to$$ Post Change |
+| :--- | :--- | :--- | :--- |
+| **City A (Treated)** | $$100$$ | $$114$$ | $$+14$$ |
+| **City B (Control)** | $$100$$ | $$104$$ | $$+4$$ (seasonal trend!) |
+
+1. **Naive before/after estimate (WRONG — confounded by seasonality!):** $$114 - 100 = +14\text{K}$$.
+2. **Difference-in-Differences causal lift:** $$(114 - 100) - (104 - 100) = \mathbf{+10\text{K}}$$!
+3. **Bayesian decision check:** Suppose the posterior for causal lift is $$\Delta \sim \mathcal{N}(+10\text{K},\; 3\text{K}^2)$$ and the campaign cost $$C = \$7\text{K}$$. Then the posterior probability the campaign was profitable is $$P(\Delta > 7) = P(Z > -1.0) \approx \mathbf{84.1\%}$$!
+
+### Deep-Dive Explanation: Four Rules for Applied Causal Bayes in Industry (Read Slowly)
+
+1. **Always check the parallel-trends assumption before trusting DiD:** Verify that Treatment and Control tracked closely *before* launch; if they were already diverging, your counterfactual is biased.
+2. **Separate marketing spend *correlation* from incremental *causality*:** Ad platforms naturally target users who were already about to buy (confounding!); geo-experiments break that confounding cleanly.
+3. **Report probability of beating the break-even cost, not just `lift > 0`:** A +$2K lift that costs $7K to run is a losing campaign even if $$P(\text{lift} > 0) = 99\%$$!
+4. **Use regularizing priors on segment interactions:** Without shrinkage, slicing a geo-lift test into 20 regions will always make 2 lucky regions look like "miracle markets."
+
+**Quick check.** In the Geo-Lift example above, if the campaign cost were **$$\$10\text{K}$$** (equal to the posterior mean lift), what is $$P(\Delta > 10\text{K})$$?
+
+---
 
 ## Reference videos
 

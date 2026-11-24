@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Thêm tham số vào mô hình hầu như lúc nào cũng làm tăng độ khớp trên tập dữ liệu hiện có, nhưng lại có thể phá hỏng khả năng dự báo trên dữ liệu mới. Làm sao ước lượng được **độ chính xác dự báo ngoài mẫu (out-of-sample predictive accuracy)** mà không phải chạy lại MCMC hàng trăm lần như kiểm định chéo *leave-one-out* thủ công?
+
+Công trình đột phá của Sumio Watanabe (2010, WAIC) và Aki Vehtari, Andrew Gelman, Jonah Gabry (2017, PSIS-LOO) đã giải quyết trọn vẹn bài toán này: chỉ từ **một** lần chạy MCMC duy nhất, ta có thể ước lượng chính xác hiệu năng dự báo ngoài mẫu kèm cả sai số chuẩn và tín hiệu cảnh báo chẩn đoán (chỉ số Pareto $$k$$).
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học này, bạn sẽ hiểu WAIC và LOO như những công cụ xấp xỉ năng lực dự báo ngoài mẫu của mô hình Bayes, đồng thời biết đọc kết quả kèm theo độ bất định ước lượng thay vì xếp hạng một cách cứng nhắc. Trọng tâm của bài là lập luận phương pháp: vì sao cần ưu tiên tiêu chí dự báo ngoài mẫu, khi nào chênh lệch giữa các mô hình đủ lớn để đưa ra kết luận, và khi nào nên chuyển từ chọn một mô hình sang kết hợp nhiều mô hình (model averaging).
+
+
+## Bản đồ kiến thức nền: ELPD, WAIC, PSIS-LOO và Chẩn đoán Pareto $$k$$
+
+So sánh mô hình Bayes hiện đại xoay quanh ba trụ cột toán học cốt lõi:
+
+- **Mật độ dự báo log kỳ vọng (ELPD — Expected Log Pointwise Predictive Density):** Thước đo mục tiêu cho khả năng dự báo ngoài mẫu: $$\text{elpd} = \sum_{i=1}^n \mathbb{E}_{\tilde y_i}[\log p(\tilde y_i \mid y)]$$. Điểm ELPD càng **cao** (càng ít âm) thì mô hình dự báo càng tốt (khác với thang deviance/AIC càng thấp càng tốt).
+- **WAIC (Widely Applicable Information Criterion):** Tách ELPD thành độ khớp trong mẫu (**lppd**) trừ đi số tham số hiệu dụng (**$$p_{\text{WAIC}}$$** — tính bằng tổng phương sai của log-likelihood hậu nghiệm từng điểm). Khác với AIC hay DIC, WAIC tận dụng toàn bộ phân phối hậu nghiệm thay vì chỉ một ước lượng điểm.
+- **PSIS-LOO & Chỉ số Pareto $$k$$:** Xấp xỉ kiểm định chéo bỏ-từng-điểm (*leave-one-out*) bằng lấy mẫu quan trọng làm mượt theo phân phối Pareto tổng quát (*Pareto Smoothed Importance Sampling*). Chỉ số $$\hat k_i$$ là công cụ chẩn đoán cực kỳ quý giá: $$\hat k_i < 0.5$$ là rất tin cậy, $$0.5 \le \hat k_i \le 0.7$$ chấp nhận được, còn $$\hat k_i > 0.7$$ cảnh báo điểm dữ liệu $$i$$ có ảnh hưởng quá lớn — cần tính LOO trực tiếp hoặc xem lại mô hình.
+
+---
 
 ## 1. Từ độ khớp trong mẫu sang dự báo ngoài mẫu
 
@@ -92,6 +109,35 @@ Trong tổng thể quy trình Bayes, WAIC và LOO không thay thế PPC: một m
 WAIC và LOO cung cấp thước đo định lượng để so sánh năng lực dự báo ngoài mẫu giữa các mô hình, nhưng giá trị lớn nhất của chúng nằm ở kỷ luật diễn giải: luôn đọc chênh lệch kèm độ bất định, luôn kiểm tra chẩn đoán của phép xấp xỉ, và luôn gắn lựa chọn mô hình với mục tiêu dự báo thay vì chọn máy móc theo thứ hạng.
 
 Bài tiếp theo: **Các chiến lược so sánh mô hình (Model Comparison Strategies)**, đi sâu vào lựa chọn giữa chọn mô hình (selection), kết hợp mô hình (averaging) và mở rộng mô hình (expansion).
+
+
+## Khung giải thích (nên đọc chậm): Tự tính WAIC bằng tay và đọc bảng chênh lệch ELPD có sai số chuẩn
+
+Để thực sự hiểu WAIC và LOO đang tính gì bên dưới hàm `az.compare()`, hãy đi chậm qua 4 bước:
+
+1. **Lập ma trận log-likelihood** cỡ $$S \times n$$ (hàng là mẫu hậu nghiệm $$s$$, cột là điểm dữ liệu $$i$$).
+2. **Tính $$\text{lppd}_i = \log\!\left(\frac{1}{S}\sum_{s=1}^S p(y_i \mid \theta^{(s)})\right)$$** cho từng điểm rồi cộng lại.
+3. **Tính phạt độ phức tạp $$p_{\text{WAIC}} = \sum_{i=1}^n \mathrm{Var}_{s}(\log p(y_i \mid \theta^{(s)}))$$:** Điểm nào có log-likelihood dao động mạnh qua các mẫu hậu nghiệm thì đóng góp phạt lớn.
+4. **Tính $$\widehat{\text{elpd}}_{\text{WAIC}} = \text{lppd} - p_{\text{WAIC}}$$** và khi so hai mô hình, luôn đối chiếu $$\Delta\text{elpd}$$ với sai số chuẩn $$\mathrm{SE}(\Delta\text{elpd})$$!
+
+### Ví dụ tính toán cầm tay chỉ việc: Tính $$\text{lppd}_i$$ và $$p_{\text{WAIC},i}$$ cho 1 điểm dữ liệu với $$S = 2$$ mẫu hậu nghiệm
+
+Giả sử tại điểm dữ liệu $$i$$, hai mẫu hậu nghiệm $$\theta^{(1)}, \theta^{(2)}$$ cho xác suất hợp lý là $$p_1 = 0.20$$ và $$p_2 = 0.40$$ (tương ứng $$\log p_1 \approx -1.6094$$ và $$\log p_2 \approx -0.9163$$):
+
+| Bước tính | Công thức | Giá trị tính tay |
+| --- | --- | --- |
+| Độ khớp điểm $$\text{lppd}_i$$ | $$\ln\!\left(\frac{0.20 + 0.40}{2}\right) = \ln(0.30)$$ | $$-1.2040$$ |
+| Trung bình log-likelihood | $$\frac{-1.6094 + (-0.9163)}{2}$$ | $$-1.2629$$ |
+| Phạt độ phức tạp $$p_{\text{WAIC}, i}$$ (phương sai mẫu $$S-1=1$$) | $$\frac{(-1.6094+1.2629)^2 + (-0.9163+1.2629)^2}{2-1}$$ | $$0.2402$$ |
+| Đóng góp ELPD của điểm $$i$$ | $$\text{lppd}_i - p_{\text{WAIC}, i}$$ | $$-1.2040 - 0.2402 = -1.4442$$ |
+
+Khi so sánh hai mô hình trên cả tập dữ liệu: giả sử Mô hình A có $$\text{elpd}_{\text{LOO}} = -120.5$$ và Mô hình B có $$\text{elpd}_{\text{LOO}} = -124.0$$ (chênh lệch $$\Delta\text{elpd} = 3.5$$) với $$\mathrm{SE}(\Delta\text{elpd}) = 4.2$$. Vì $$\Delta\text{elpd} < 2\,\mathrm{SE}$$, sự chênh lệch này **chưa đủ bằng chứng mạnh** để loại bỏ Mô hình B!
+
+**Hiểu lầm cần tránh:** Nhìn thấy Mô hình A có ELPD cao hơn Mô hình B dù chỉ $$0.8$$ điểm (trong khi $$\mathrm{SE} = 3.0$$) rồi vội tuyên bố "Mô hình A thắng tuyệt đối". Chênh lệch nhỏ hơn $$2\,\mathrm{SE}$$ thường nằm trong vùng nhiễu lấy mẫu.
+
+**Kiểm tra nhanh:** Nếu $$\Delta\text{elpd} = 18.0$$ và $$\mathrm{SE}(\Delta\text{elpd}) = 4.5$$, tỷ số $$z = 18.0 / 4.5 = 4.0$$ — đây là bằng chứng rất rõ ràng cho thấy mô hình đứng đầu vượt trội về dự báo ngoài mẫu.
+
+---
 
 ## Video tham khảo
 

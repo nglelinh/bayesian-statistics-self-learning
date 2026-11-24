@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Every statistical model—frequentist or Bayesian—makes quiet promises about the world: observations are independent, noise variance is roughly constant, residuals have no leftover curved pattern, and there are no extreme heavy-tailed outliers. Violate those promises without checking, and your beautifully converged 95% credible interval can actually have only 60% real coverage!
+
+This lesson builds a fast, practical **model-assumption diagnostic toolkit**—residual plots, Q-Q normality checks, heteroscedasticity checks, and lag-1 autocorrelation checks—creating the direct bridge to **Posterior Predictive Checks (PPC)** later in the course.
+
+---
+
+## Background Knowledge Map: Four Diagnostics That Catch Broken Models Early
+
+Before trusting any posterior or confidence interval, check four core assumptions:
+
+1. **Linearity & Structural Fit (Residuals vs. Fitted):** If residuals form a U-shape or wave against $$\hat{y}$$, your model is missing a nonlinear term or interaction—parameter estimates are biased!
+2. **Constant Variance (Homoscedasticity):** If residuals fan out like a megaphone as $$\hat{y}$$ grows, uncertainty is understated for large values and overstated for small ones—consider log-transforming $$y$$ or modeling $$\sigma_i$$ as a function of $$x_i$$.
+3. **Distributional Shape & Outliers (Q-Q Plot):** Heavy tails or single wild points pull Gaussian means off target; swapping a Normal likelihood for a **Student-$$t$$** likelihood fixes this cleanly in Bayesian models.
+4. **Independence (Lag-1 Autocorrelation $$r_1$$):** Time-series or grouped measurements often correlate from one observation to the next ($$r_1 > 0.3$$), artificially inflating effective sample size unless modeled with AR terms or hierarchical group effects.
+
+---
+
 ## Learning objectives
 
 After this lesson, you will know how to quickly but systematically check the core assumptions of a model (distribution shape, independence, error structure), recognize signs of model misspecification, and turn the check results into actions that improve the model.
@@ -318,6 +335,33 @@ The goal is not to "prove the model right", but to make the model fit the data a
 3. The minimum set of checks includes: distribution, residuals, outliers/influence, dependence.
 4. Signs of misspecification must lead to action adjusting the likelihood/model structure.
 5. Misspecification is information for improving the model, not a "failure".
+
+---
+
+### Worked Numerical Example: Detecting Hidden Autocorrelation in a 6-Point Residual Sequence
+
+Suppose a regression model fits a 6-day time series and leaves residuals:
+
+$$e = [+2,\; +1,\; +1,\; -1,\; -1,\; -2].$$
+
+1. **Check mean and symmetry:** $$ar{e} = 0$$ and values look nicely balanced—a histogram alone looks totally fine!
+2. **Compute the lag-1 autocorrelation $$r_1$$ by hand** across the 5 consecutive pairs $$(e_t, e_{t+1})$$:
+   - Pairs: $$(2,1),\; (1,1),\; (1,-1),\; (-1,-1),\; (-1,-2)$$.
+   - Numerator $$\sum_{t=1}^5 e_t e_{t+1} = 2 + 1 - 1 + 1 + 2 = \mathbf{+5}$$.
+   - Denominator $$\sum_{t=1}^6 e_t^2 = 4 + 1 + 1 + 1 + 1 + 4 = \mathbf{12}$$.
+   - $$r_1 pprox rac{5}{12} pprox \mathbf{+0.417}$$!
+   Because positive residuals stick together on days 1–3 and negative residuals stick together on days 4–6, the errors are **not independent**—an i.i.d. model will underestimate parameter uncertainty!
+
+### Deep-Dive Explanation: Four Rules for Model Diagnostics Without Overreacting (Read Slowly)
+
+1. **Prioritize *independence* and *functional form* above exact Gaussianity:** Mild non-normality rarely ruins inferences on means at moderate $$n$$, whereas unmodeled dependence or missing nonlinearity wrecks everything!
+2. **Always plot residuals against *time order* and *group ID*, not just $$\hat{y}$$:** Drift over time or clustering by user/store shows up instantly on an index plot.
+3. **Don’t rely blindly on formal normality tests (`Shapiro–Wilk`):** At $$n = 5{,}000$$, Shapiro–Wilk rejects harmless microscopic deviations from Normality; at $$n = 10$$, it misses huge skewness! Visual Q-Q plots + PPC beat p-value tests.
+4. **When an assumption fails, upgrade the generative model rather than deleting data:** Heteroscedastic? Model $$\log\sigma_i$$. Outliers? Use Student-$$t$$. Grouped? Add a hierarchical random intercept!
+
+**Quick check.** If a residual plot against fitted values $$\hat{y}$$ looks like a widening funnel (small scatter on the left, huge scatter on the right), which assumption is violated—and what simple transformation of positive $$y$$ often stabilizes it?
+
+---
 
 ## Reference videos
 

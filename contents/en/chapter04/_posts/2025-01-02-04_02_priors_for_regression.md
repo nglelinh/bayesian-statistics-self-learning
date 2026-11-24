@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+Nothing makes a newcomer to Bayesian regression freeze up faster than the blank line next to `beta ~ Normal(?, ?)`. Choose a prior that is too tight and you risk steamrolling your own data; choose a "safe, uninformative" flat prior like `Normal(0, 100)` and—as we are about to verify by hand—you have accidentally told the model that a 7 cm taller human might weigh as much as a sedan! Choosing priors is not guesswork; it is a disciplined engineering loop anchored by standardization and **prior predictive checks**.
+
+**Lesson Roadmap:** Why "flat" priors are secretly absurd → Background Knowledge Map (Standardization, Weakly informative priors, Prior predictive simulation) → Hand-check of `Normal(0, 100)` vs. `Normal(0, 1)` on standardized variables → Choosing priors for $$\alpha$$, $$\beta$$, $$\sigma$$, and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to know how to choose priors for regression in a principled way. You also need to understand why standardization is so important, why weakly informative priors are usually a good starting point, and why the prior predictive check is an almost mandatory step before fitting a model.
@@ -17,6 +21,31 @@ After this lesson, you need to know how to choose priors for regression in a pri
 > **Mini example.** If you set the prior for the slope too wide, the model may implicitly allow crazy regression lines that domain knowledge immediately calls absurd. A prior for regression is not "fill in anything to complete the model", but a way to keep the model grounded.
 >
 > **Quick check.** Why can the same prior look reasonable on one scale but absurd on another?
+
+## Background Knowledge Map: Principled Prior Specification for Regression
+
+### 1. Standardization (Z-Scoring) as a Universal Scale
+- **What it is:** Transforming predictors and outcomes via $$x_z = (x - \bar{x})/s_x$$ and $$y_z = (y - \bar{y})/s_y$$ before specifying priors.
+- **What it studies:** Making parameters dimensionless ($$\beta_z$$ is now "SDs of $$y$$ per 1 SD of $$x$$"), decoupling the intercept from the slope, and dramatically improving MCMC geometry.
+
+### 2. Weakly Informative Priors (Regularizing Without Dogma)
+- **What it is:** Priors broad enough to accommodate every scientifically plausible effect (e.g., $$\beta_z \sim \mathrm{Normal}(0, 1)$$) yet tight enough to rule out physically impossible nonsense.
+- **What it studies:** Stabilizing inference on small or noisy datasets while letting moderate-to-large datasets speak freely.
+
+### 3. Prior Predictive Checks (Simulating Before Seeing Data)
+- **What it is:** Drawing parameters $$(\alpha^{(s)}, \beta^{(s)}, \sigma^{(s)})$$ from the prior *alone* and plotting the implied regression lines $$\mu^{(s)}(x)$$ in observable data units.
+- **What it studies:** Translating abstract parameter numbers into concrete observable consequences so domain knowledge can immediately catch absurd priors.
+
+## Deep-Dive Explanation: Why `Normal(0, 100)` Is Not "Uninformative" (Read Slowly)
+
+Suppose you model adult weight ($$\bar{y} = 65\text{ kg},\, s_y = 10\text{ kg}$$) from height ($$\bar{x} = 170\text{ cm},\, s_x = 7\text{ cm}$$) on standardized scales $$x_z, y_z$$. Compare two candidate priors on the standardized slope $$\beta_z$$:
+
+| Prior on $$\beta_z$$ | 95% Prior Interval for $$\beta_z$$ | Implied weight shift per $$+1\text{ SD}$$ ($$+7\text{ cm}$$) height | Scientific verdict |
+| :--- | :--- | :--- | :--- |
+| **"Flat" $$\mathrm{Normal}(0, 100^2)$$** | $$[-196,\; +196]$$ | $$\pm 196 \times 10 = \mathbf{\pm 1{,}960\text{ kg}}$$ | Predicts humans weighing as much as a car—wildly implausible! |
+| **Weakly informative $$\mathrm{Normal}(0, 1^2)$$** | $$[-1.96,\; +1.96]$$ | $$\pm 1.96 \times 10 = \mathbf{\pm 19.6\text{ kg}}$$ | Covers flat, strong positive, and even negative slopes within physical reality |
+
+Even more striking: under $$\mathrm{Normal}(0, 100^2)$$, the probability that $$\vert \beta_z \vert > 5$$ (meaning a $$7\text{ cm}$$ height difference shifts weight by more than $$50\text{ kg}$$) is $$2\Phi(-5/100) \approx \mathbf{96\%}$$! Far from being "neutral," a flat prior puts 96% of its mass on impossible relationships.
 
 ## 1. What makes choosing priors for regression hard?
 

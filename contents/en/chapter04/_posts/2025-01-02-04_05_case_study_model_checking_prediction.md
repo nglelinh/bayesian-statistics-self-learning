@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+Theory only clicks when you get your hands dirty on a real dataset that misbehaves. Restaurant tipping (`tips`) looks deceptively simple at first glance: larger bills lead to larger tips, so a straight line ought to do the job. Yet the moment we run posterior predictive checks and residual plots on `tips`, a glaring crack opens up: tips on a \$10 lunch barely vary by a dollar, whereas tips on a \$50 dinner swing wildly—and a constant-variance Normal model even predicts **negative tips**! Walking through this full workflow shows how Bayesian diagnostics turn a failed check into a principled model upgrade.
+
+**Lesson Roadmap:** Putting the full workflow on `tips` → Background Knowledge Map (End-to-end Bayesian workflow, Homoscedasticity vs. Heteroscedasticity, Targeted model revision) → Hand-worked comparison of constant-$$\sigma$$ vs. bill-scaled $$\sigma(x)$$ intervals → Full 6-step case study and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to be able to carry out a full, in-depth workflow on a concrete dataset: build a Bayesian model, assess the quality of sampling, check the model with posterior predictive checks (PPC), analyze residuals, report predictions with the right kind of uncertainty, and propose model revisions based on evidence.
@@ -17,6 +21,31 @@ After this lesson, you need to be able to carry out a full, in-depth workflow on
 > **Mini example.** You predict the tip amount from the total bill in restaurant data. A linear model may give a very nice slope, but the practical question is: does that model really generate data that looks like reality and make trustworthy predictions for new customers?
 >
 > **Quick check.** If the posterior slope is clearly positive but the PPC fails in the large-bill region, what should you trust?
+
+## Background Knowledge Map: Executing the Full Bayesian Workflow on Real Data
+
+### 1. Iterative Model Building (Box's Loop)
+- **What it is:** The disciplined cycle: *Specify generative baseline → Check sampler diagnostics → Run PPC & residual plots → Diagnose failure mode → Revise model → Re-check*.
+- **What it studies:** Treating every model as a provisional hypothesis to be stress-tested against real data rather than a one-shot fit.
+
+### 2. Homoscedasticity vs. Heteroscedasticity
+- **What it is:** Whether observation noise $$\sigma$$ stays constant across all predictor values ($$\sigma_i = \sigma$$) or grows systematically with the predictor ($$\sigma_i = \gamma_0 + \gamma_1 x_i$$ or log-scale modeling).
+- **What it studies:** Why fan-shaped residual plots invalidate prediction intervals even when the mean regression line $$\alpha + \beta x$$ looks accurate.
+
+### 3. Domain Constraints on Predictive Distributions
+- **What it is:** Checking whether $$p(y^{\text{rep}} \mid y)$$ respects physical boundaries of the outcome (such as tips being strictly non-negative, $$y \ge 0$$).
+- **What it studies:** Selecting likelihoods or link/log transforms so predictions remain coherent at both low and high extremes of the covariate.
+
+## Deep-Dive Explanation: Catching Heteroscedasticity by Hand on `tips` (Read Slowly)
+
+Suppose a baseline homoscedastic model on `tips` gives $$\mu(x) = 0.80 + 0.14 x$$ with constant noise $$\sigma = 1.00$$ (in USD). Compare its 95% prediction intervals ($$\mu \pm 1.96\sigma$$) against a heteroscedastic revision where $$\sigma(x) = 0.10 + 0.05 x$$:
+
+| Bill $$x$$ | Mean tip $$\mu(x)$$ | Baseline 95% PI ($$\sigma = 1.00$$) | Revised 95% PI ($$\sigma(x) = 0.10 + 0.05x$$) | What the check reveals |
+| :--- | :--- | :--- | :--- | :--- |
+| **\$10** | $$\$2.20$$ | $$[0.24,\; 4.16]$$ (at \$5: $$[-0.46,\; 3.46]$$!) | $$\sigma = 0.60 \implies [1.02,\; 3.38]$$ | Baseline leaks negative tips on small bills! |
+| **\$50** | $$\$7.80$$ | $$[5.84,\; 9.76]$$ (width $$\$3.92$$) | $$\sigma = 2.60 \implies [2.70,\; 12.90]$$ | Baseline is far too narrow for big-table variance! |
+
+Notice the crisp diagnostic signature: a single constant $$\sigma$$ simultaneously **over-estimates** uncertainty for small bills and **under-estimates** uncertainty for large bills. Letting $$\sigma$$ scale with $$x$$ (or modeling $$\log(\text{tip})$$) fixes both ends in one targeted move.
 
 ## 1. The concrete dataset: `tips` (seaborn)
 

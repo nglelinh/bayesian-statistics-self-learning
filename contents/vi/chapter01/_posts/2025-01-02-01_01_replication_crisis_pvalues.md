@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Năm 2015, dự án *Open Science Collaboration* công bố kết quả gây chấn động cộng đồng khoa học trên tạp chí *Science*: khi 270 nhà nghiên cứu lặp lại cẩn thận 100 thí nghiệm tâm lý học từng đăng trên các tạp chí hàng đầu, chưa đầy 40% tái lập được kết quả có ý nghĩa thống kê. Trước đó một thập kỷ, John Ioannidis đã cảnh báo trong bài báo nổi tiếng *"Why Most Published Research Findings Are False"* (2005) rằng sự kết hợp giữa ngưỡng cứng $$p < 0.05$$, mẫu nhỏ và thiên lệch công bố đang sản sinh hàng loạt phát hiện giả.
+
+Bài học này mở đầu Chương 1 bằng cách mổ xẻ đúng căn nguyên toán học của cuộc khủng hoảng đó — không phải để bài bác công cụ tần suất một cách cảm tính, mà để thấy rõ câu hỏi cốt lõi nào mà $$p$$-value vốn không được thiết kế để trả lời.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, vì sao nhiều nghiên cứu đã công bố lại không thể tái lập kết quả. Thứ hai, vì sao p-value thường bị hiểu sai và dễ bị lạm dụng. Thứ ba, vì sao những vấn đề đó thúc đẩy cộng đồng khoa học tìm đến các phương pháp suy luận khác, trong đó có thống kê Bayes.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, v�
 > **Ví dụ mini.** Một nghiên cứu báo cáo p-value < 0.05 cho thấy thuốc mới có hiệu quả, nhưng khi nhóm nghiên cứu khác lặp lại đúng thiết kế thí nghiệm thì không còn quan sát thấy hiệu quả đó nữa. Đây là dạng tình huống điển hình dẫn đến khủng hoảng tái lập.
 >
 > **Câu hỏi tự kiểm tra.** Một p-value nhỏ có thực sự đồng nghĩa với việc giả thuyết nghiên cứu là đúng không?
+
+
+## Bản đồ kiến thức nền: Kiểm định giả thuyết, Dương tính giả và Khủng hoảng tái lập
+
+Để hiểu sâu cơ chế toán học đứng sau khủng hoảng tái lập, cần liên kết ba trụ cột:
+
+- **Kiểm định giả thuyết không (NHST & p-value):** $$p$$-value là xác suất có điều kiện $$P(\text{dữ liệu cực đoan như thế này hoặc hơn} \mid H_0)$$. Nó giả định trước rằng giả thuyết không $$H_0$$ đúng, hoàn toàn không phải xác suất $$P(H_0 \mid \text{dữ liệu})$$.
+- **Lực kiểm định và Tỷ lệ nền (Power & Base Rate):** Xác suất một kết quả có $$p < 0.05$$ thực sự là phát hiện thật phụ thuộc mạnh vào hai yếu tố thường bị bỏ quên: tỷ lệ giả thuyết thật trong lĩnh vực đó (prior $$P(H_1)$$) và lực kiểm định ($$1 - \beta$$).
+- **Cầu nối sang Thống kê Bayes:** Thống kê Bayes đặt trực tiếp câu hỏi mà nhà khoa học thực sự muốn biết — $$P(H_1 \mid \text{dữ liệu})$$ và phân phối hậu nghiệm của độ lớn hiệu ứng — đồng thời miễn nhiễm với lỗi dừng thu thập tùy ý (*optional stopping*) nhờ nguyên lý hợp lý (*likelihood principle*).
+
+---
 
 ## 1. Khủng hoảng tái lập là gì?
 
@@ -133,6 +150,40 @@ P-value không phân biệt được một giả thuyết quen thuộc như “a
 Thống kê Bayes hấp dẫn không phải vì phủ nhận p-value, mà vì hướng đến việc trả lời trực tiếp hơn những câu hỏi ta thực sự quan tâm: xác suất của giả thuyết sau khi quan sát dữ liệu, phân phối của tham số chưa biết, mức độ bất định hiện tại và cách cập nhật niềm tin khi có thông tin mới. Bài học này đóng vai trò khởi động cho Chương 1 bằng cách chỉ ra vì sao nhiều nhà nghiên cứu cảm thấy cách suy luận truyền thống là chưa đủ.
 
 > **3 ý cần nhớ.** Khủng hoảng tái lập không chỉ là lỗi cá nhân của từng nhà nghiên cứu mà còn là vấn đề của cả hệ thống suy luận và cơ chế khuyến khích công bố; p-value dễ bị hiểu sai vì nó trả lời một câu hỏi khác với câu hỏi khoa học cốt lõi; và khi p-value trở thành mục tiêu phải đạt, p-hacking cùng thiên lệch công bố gần như chắc chắn sẽ xuất hiện.
+
+
+## Khung giải thích (nên đọc chậm): Tại sao $$p < 0.05$$ không có nghĩa là xác suất sai chỉ 5%?
+
+Hãy đọc chậm bốn bước sau để giải mã nghịch lý lớn nhất của kiểm định thống kê truyền thống:
+
+1. **Phân biệt hai xác suất đảo ngược:** $$p < 0.05$$ kiểm soát $$P(\text{bác bỏ } H_0 \mid H_0 \text{ đúng}) = \alpha = 0.05$$, chứ không kiểm soát tỷ lệ phát hiện giả $$P(H_0 \text{ đúng} \mid \text{bác bỏ } H_0)$$.
+2. **Đưa tỷ lệ giả thuyết thật (Base rate) vào phương trình:** Trong nghiên cứu khám phá, phần lớn các giả thuyết ban đầu là không có hiệu ứng (ví dụ chỉ 10% giả thuyết là thật).
+3. **Tính cả lực kiểm định (Power = $$1 - \beta$$):** Với cỡ mẫu nhỏ, ngay cả khi hiệu ứng có thật, xác suất phát hiện ra nó có thể chỉ đạt 50%–80%.
+4. **Áp dụng định lý Bayes cho 1.000 nghiên cứu:** So sánh số ca dương tính thật và dương tính giả để thấy tỷ lệ phát hiện giả thực sự cao đến mức nào.
+
+### Ví dụ tính toán cầm tay chỉ việc: 1.000 thí nghiệm với ngưỡng $$\alpha = 0.05$$
+
+Giả sử trong một lĩnh vực khám phá mới, có 1.000 giả thuyết được kiểm định độc lập với tỷ lệ giả thuyết thật là $$10\%$$ ($$100$$ giả thuyết thật, $$900$$ giả thuyết sai), ngưỡng ý nghĩa $$\alpha = 0.05$$ và lực kiểm định $$1 - \beta = 0.80$$:
+
+| Trạng thái thật | Số thí nghiệm | Kết quả $$p < 0.05$$ (có ý nghĩa) | Kết quả $$p \ge 0.05$$ |
+| --- | --- | --- | --- |
+| Có hiệu ứng thật ($$H_1$$) | $$100$$ | $$100 \times 0.80 = 80$$ (dương tính thật) | $$20$$ (âm tính giả) |
+| Không có hiệu ứng ($$H_0$$) | $$900$$ | $$900 \times 0.05 = 45$$ (dương tính giả) | $$855$$ (âm tính thật) |
+| **Tổng cộng** | **$$1\,000$$** | **$$80 + 45 = 125$$** | **$$875$$** |
+
+Trong $$125$$ bài báo đạt ngưỡng $$p < 0.05$$ và được xuất bản, tỷ lệ phát hiện giả (False Discovery Rate) là:
+
+$$
+P(H_0 \mid p < 0.05) = \frac{45}{125} = 0.36 \quad (36\%!).
+$$
+
+Dù mỗi thí nghiệm đều tuân thủ nghiêm ngặt $$\alpha = 0.05$$ và không hề gian lận, hơn **một phần ba** các kết quả "có ý nghĩa thống kê" vẫn là sai lệch ngẫu nhiên!
+
+**Hiểu lầm cần tránh:** Nghĩ rằng $$p = 0.04$$ đồng nghĩa với "chỉ có 4% khả năng giả thuyết không đúng". Khi tỷ lệ nền thấp hoặc cỡ mẫu nhỏ, xác suất giả thuyết không đúng có thể lên tới 30%–50%.
+
+**Kiểm tra nhanh:** Nếu cỡ mẫu nhỏ hơn khiến lực kiểm định giảm xuống còn $$0.20$$ (các thông số khác giữ nguyên), số dương tính thật chỉ còn $$100 \times 0.20 = 20$$, còn dương tính giả vẫn là $$45$$ — khi đó tỷ lệ phát hiện giả vọt lên $$45 / (20 + 45) \approx 69.2\%$$!
+
+---
 
 ## Video tham khảo
 

@@ -10,10 +10,20 @@ categories:
 lesson_type: optional
 ---
 
+Trong gần nửa thế kỷ sau khi Metropolis–Hastings ra đời, thống kê Bayes vẫn bị giới hạn trong những mô hình nhỏ vì chi phí lấy mẫu quá đắt đỏ. Bước ngoặt chỉ thực sự xảy ra trong thập kỷ gần đây khi ba mảnh ghép hội tụ: thuật toán NUTS tự động điều chỉnh quỹ đạo Hamilton, vi phân tự động trên đồ thị tính toán, và các thư viện chạy song song hàng nghìn chuỗi trên GPU/TPU như BlackJAX hay NumPyro. Định lý Bayes không hề thay đổi, nhưng động cơ tính toán phía sau nó đã bước sang một kỷ nguyên hoàn toàn mới.
+
 ## Mục tiêu học tập
 
 Sau bài tùy chọn này, bạn sẽ hiểu Hamiltonian Monte Carlo (HMC) và NUTS không phải phần phụ kỹ thuật đứng sau hồi quy tuyến tính Bayes, mà là giải pháp tất yếu khi phân phối hậu nghiệm không còn công thức dạng đóng. Bạn cũng sẽ biết cách đọc kết quả lấy mẫu từ Stan, PyMC hay NumPyro như một xấp xỉ số có kiểm soát cho đúng mô hình sinh dữ liệu đã thiết lập ở Chương 4.
 
+
+## Bản đồ kiến thức nền: Tập điển hình nhiều chiều, Tích phân Leapfrog và Suy luận lai
+
+Để hiểu vì sao các bộ lấy mẫu giai đoạn 2022–2026 lại có hình hài như ngày nay, cần nhìn rõ ba trụ cột toán học:
+
+- **Tập điển hình (Typical Set) trong không gian nhiều chiều:** Ở 1 chiều, phần lớn khối lượng xác suất nằm quanh đỉnh mật độ (mode). Nhưng ở $$d = 100$$ chiều, thể tích hình cầu tăng theo $$r^{d-1}$$ nên xác suất tập trung trong một lớp vỏ mỏng nằm *cách xa* đỉnh gọi là tập điển hình. Thuật toán tìm cực đại (MAP) bị hút vào đỉnh (nơi ít khối lượng xác suất), còn bước đi ngẫu nhiên dễ nhảy văng khỏi lớp vỏ mỏng đó; HMC dùng động lượng để lướt êm dọc theo đúng lớp vỏ này.
+- **Tích phân bảo toàn thể tích (Symplectic Leapfrog Integrator):** Khi mô phỏng phương trình Hamilton rời rạc theo thời gian, phương pháp Euler thông thường làm năng lượng trôi dạt và phá vỡ tính thuận nghịch. Tích phân leapfrog (nửa bước động lượng – trọn bước vị trí – nửa bước động lượng) bảo toàn thể tích pha và gần như bảo toàn năng lượng $$H(\theta, r)$$, giúp tỷ lệ chấp nhận Metropolis tiến sát 100% ngay cả khi bước nhảy rất xa.
+- **Phối hợp Suy luận biến phân và MCMC (Pathfinder + NUTS):** Suy luận biến phân (VI) tối ưu nhanh phân kỳ Kullback–Leibler $$\mathrm{KL}(q \Vert p)$$ để tìm một xấp xỉ Gaussian thô gần vùng tập điển hình; dùng nó làm điểm khởi động (warm-start) giúp NUTS bỏ qua giai đoạn dò đường tốn kém mà vẫn giữ nguyên tính chính xác tiệm cận của MCMC.
 ## Kiến thức cần có
 
 Các bài 4.1–4.6 đã xây dựng hồi quy tuyến tính như một mô hình sinh dữ liệu, trình bày cách chọn phân phối tiên nghiệm và suy luận hậu nghiệm với PyMC, còn Bài 4.2b đã giới thiệu nền tảng toán học của MCMC. Bài này không lặp lại thuật toán Metropolis mà tập trung vào cách các bộ lấy mẫu hiện đại vận hành trong giai đoạn 2022–2026 và lý do hồi quy tuyến tính vẫn là lớp mô hình được lấy mẫu phổ biến nhất.
@@ -49,6 +59,23 @@ Cabezas et al. (2024) xây dựng BlackJAX như một tập hợp các khối th
 ### 4. MCMC cho mạng nơ-ron Bayes
 
 Izmailov, Vikram, Hoffman và Wilson (2021) khảo sát hình dạng thực sự của phân phối hậu nghiệm trong mạng nơ-ron Bayes khi chạy HMC quy mô lớn, thay vì mặc định tin vào dropout hay xấp xỉ Gaussian đường chéo. Kết quả cho thấy các phương pháp xấp xỉ phổ biến thường không tái tạo được đầy đủ phân phối hậu nghiệm thực, dù dự báo thu được vẫn có thể hữu ích. Bài học rút ra cho người học hồi quy tuyến tính rất rõ ràng: nếu HMC đã gặp thách thức hình học ngay trên vài chục hệ số có tương quan, thì MCMC cho học sâu chính là cùng một bài toán hình học đó ở quy mô lớn hơn. Chương 7 sẽ trình bày các phương pháp xấp xỉ nhẹ hơn cho bối cảnh này.
+
+### Khung giải thích (nên đọc chậm): Chạy tay 1 bước tích phân Leapfrog trong HMC
+
+Vì sao HMC có thể đi một quãng đường dài mà xác suất chấp nhận vẫn gần bằng 1? Hãy tự tay tính đúng một bước leapfrog trên phân phối chuẩn hóa 1 chiều $$p(\theta \mid y) \propto \exp(-\theta^2/2)$$:
+
+1. **Thiết lập Hamiltonian:** Thế năng $$U(\theta) = -\log \tilde p(\theta) = \frac{1}{2}\theta^2$$ nên gradient là $$\nabla U(\theta) = \theta$$; động năng $$K(r) = \frac{1}{2}r^2$$ (khối lượng đơn vị $$M = 1$$).
+2. **Trạng thái xuất phát:** Giả sử chuỗi đang ở $$\theta_0 = 1.0$$ và rút động lượng $$r_0 = 0.0$$. Tổng năng lượng ban đầu:
+   $$H(\theta_0, r_0) = \frac{1}{2}(1.0)^2 + \frac{1}{2}(0.0)^2 = 0.5000.$$
+3. **Thực hiện 1 bước leapfrog với kích thước bước khá lớn $$\epsilon = 0.5$$:**
+   - *Nửa bước động lượng:* $$r_{1/2} = r_0 - \frac{\epsilon}{2}\nabla U(\theta_0) = 0 - 0.25(1.0) = -0.25$$.
+   - *Trọn bước vị trí:* $$\theta_1 = \theta_0 + \epsilon r_{1/2} = 1.0 + 0.5(-0.25) = 0.875$$.
+   - *Nửa bước động lượng cuối:* $$r_1 = r_{1/2} - \frac{\epsilon}{2}\nabla U(\theta_1) = -0.25 - 0.25(0.875) = -0.46875$$.
+4. **Kiểm tra bảo toàn năng lượng và bước chấp nhận Metropolis:**
+   $$H(\theta_1, r_1) = \frac{1}{2}(0.875)^2 + \frac{1}{2}(-0.46875)^2 = 0.38281 + 0.10986 = 0.49268.$$
+   Độ lệch năng lượng chỉ là $$\Delta H = 0.49268 - 0.5000 = -0.00732$$, nên xác suất chấp nhận $$\alpha = \min(1, e^{-\Delta H}) = \min(1, e^{+0.00732}) = 1$$!
+
+Ngay cả với bước $$\epsilon = 0.5$$ rất thô, tích phân leapfrog vẫn giữ năng lượng gần như bất biến — đó chính là bí mật toán học đằng sau hiệu năng vượt trội của NUTS trong Stan, PyMC và BlackJAX.
 
 ## Diễn giải và nhận định
 

@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+Writing a Bayesian model on a whiteboard is deeply satisfying—until you actually want to run it on real data. That is where probabilistic programming languages like **PyMC** come in: you write the exact generative story in 6 lines of Python, hit `pm.sample()`, and NUTS automatically differentiates your log-posterior and draws thousands of correlated samples. Yet treating `pm.sample()` as a black box is dangerous: before you interpret a single credible interval, you need to know how to back-transform standardized coefficients, read $$\hat{R}$$ and ESS, and check whether your Monte Carlo standard error is small enough to trust.
+
+**Lesson Roadmap:** Translating math to PyMC code → Background Knowledge Map (Probabilistic programming & autodiff, Sampler diagnostics before interpretation, Posterior predictive propagation) → Hand-worked standardization back-transform & MCSE check → Full PyMC workflow, code, and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to know how to turn Bayesian regression from a generative story into a model that runs in PyMC. You also need to understand a basic practical workflow: standardizing the data, writing priors, declaring the likelihood, sampling the posterior, reading diagnostics, and interpreting the results.
@@ -17,6 +21,36 @@ After this lesson, you need to know how to turn Bayesian regression from a gener
 > **Mini example.** Once you understand the generative story and know how to choose reasonable priors, the next step is to write the real model in PyMC to get the posterior of the intercept, slope and noise. PyMC does not think about the model for you; it helps you implement that model more efficiently.
 >
 > **Quick check.** If PyMC has already produced the posterior, why do we still have to look at diagnostics before interpreting the results?
+
+## Background Knowledge Map: From Mathematical Model to Reliable PyMC Inference
+
+### 1. Probabilistic Programming and Automatic Differentiation
+- **What it is:** Expressing random variables (`pm.Normal`, `pm.HalfNormal`) as nodes in a computational graph whose exact log-density gradient $$\nabla \log p(\theta \mid D)$$ is computed automatically via reverse-mode autodiff (PyTensor).
+- **What it studies:** Decoupling *model specification* (what you believe about the world) from *inference* (how NUTS explores the posterior).
+
+### 2. Diagnostic Gating: Never Interpret an Unchecked Posterior
+- **What it is:** Checking **divergences** (must be 0), **$$\hat{R}$$** ($$\le 1.01$$), **bulk/tail ESS** (ideally $$> 400$$), and **MCSE** (Monte Carlo Standard Error $$\mathrm{SD}/\sqrt{\mathrm{ESS}}$$) before looking at parameter means.
+- **What it studies:** Ensuring numerical approximation error from finite MCMC draws is negligible compared to genuine posterior uncertainty.
+
+### 3. Posterior Summaries vs. Posterior Predictive Draws
+- **What it is:** Distinguishing `idata.posterior` (distributions over parameters $$\alpha, \beta, \sigma$$) from `pm.sample_posterior_predictive` (distributions over *new data* $$y^*$$).
+- **What it studies:** Propagating full joint parameter uncertainty—including correlations between $$\alpha$$ and $$\beta$$—into real-world predictions and intervals.
+
+## Deep-Dive Explanation: Back-Transforming Standardized PyMC Output & Checking MCSE (Read Slowly)
+
+Suppose you standardize height ($$\bar{x} = 170\text{ cm},\, s_x = 10\text{ cm}$$) and weight ($$\bar{y} = 65\text{ kg},\, s_y = 12\text{ kg}$$), fit a PyMC model, and `az.summary()` reports:
+- $$\alpha_z \approx 0.02$$, $$\beta_z \approx 0.80$$ (with posterior $$\mathrm{SD}(\beta_z) = 0.12$$ and $$\mathrm{ESS} = 1{,}600$$).
+
+### 1. Convert standardized parameters back to physical units (kg and cm)
+Since $$\frac{y - \bar{y}}{s_y} = \alpha_z + \beta_z \frac{x - \bar{x}}{s_x}$$, solving for $$y = \alpha + \beta x$$ gives:
+- **Physical slope:** $$\beta = \beta_z \frac{s_y}{s_x} = 0.80 \times \frac{12}{10} = \mathbf{0.96\text{ kg/cm}}.$$
+- **Physical intercept:** $$\alpha = \bar{y} + s_y \alpha_z - \beta \bar{x} = 65 + 12(0.02) - 0.96(170) = 65.24 - 163.20 = \mathbf{-97.96\text{ kg}}.$$
+(This immediately shows why centering matters: $$-97.96\text{ kg}$$ at height $$0\text{ cm}$$ is meaningless, while $$\alpha_z = 0.02$$ says an average-height person weighs $$65.24\text{ kg}$$!)
+
+### 2. Verify Monte Carlo Standard Error (MCSE)
+How noisy is our MCMC estimate of the posterior mean $$0.80$$?
+$$ \mathrm{MCSE}(\beta_z) = \frac{\mathrm{SD}(\beta_z)}{\sqrt{\mathrm{ESS}}} = \frac{0.12}{\sqrt{1{,}600}} = \frac{0.12}{40} = \mathbf{0.003}. $$
+Because $$0.003$$ is only **$$2.5\%$$** of the posterior SD (well below the $$5\%$$ rule of thumb), the reported mean `0.80` is numerically rock-solid to two decimal places.
 
 ## 1. From a model on paper to a model in code
 

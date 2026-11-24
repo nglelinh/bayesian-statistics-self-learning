@@ -10,9 +10,26 @@ categories:
 lesson_type: optional
 ---
 
+Từ một định lý viết trên giấy thế kỷ 18, quy tắc Bayes ngày nay chạy âm thầm bên trong hàng tỷ thiết bị mỗi giây: bộ lọc thư rác chấm điểm từng email mới đến, hệ thống dẫn đường xe tự lái hợp nhất tín hiệu radar và camera theo bộ lọc Kalman/Bayes, còn các nền tảng thử nghiệm sản phẩm trực tuyến dùng cập nhật Bayes để ra quyết định nhanh mà không vướng lỗi *optional stopping*.
+
+Bài học này khép lại Chương 1 bằng cách nối nền tảng triết học và công thức Bayes với những kiến trúc thực chiến của khoa học máy tính hiện đại.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học tùy chọn này, bạn sẽ nhìn định lý Bayes không chỉ như một công thức chẩn đoán trong sách giáo khoa, mà như quy tắc cập nhật niềm tin đang vận hành trong bộ lọc thư rác, hệ thống phát hiện gian lận và bài toán định lượng bất định của mô hình ngôn ngữ. Trọng tâm cần thay đổi nằm ở câu hỏi: không dừng ở “công thức viết thế nào?”, mà đặt câu hỏi “prior, likelihood và posterior nằm ở đâu trong một hệ thống thực tế?”.
+
+
+## Bản đồ kiến thức nền: Định lý Bayes trong Hệ thống Thông minh và Khoa học Máy tính
+
+Ba trụ cột sau cho thấy cách định lý Bayes vượt ra khỏi sách giáo khoa để vận hành các hệ thống quy mô lớn:
+
+- **Phân loại xác suất & Lọc thông tin (Naive Bayes & Probabilistic Classifiers):** Chuyển bài toán phân loại văn bản, phát hiện gian lận hay chẩn đoán lỗi thành phép tính log-prior cộng tổng log-likelihood từng đặc trưng, cho tốc độ cập nhật trực tuyến cực nhanh.
+- **Suy luận trực tuyến & Lọc trạng thái (Recursive Bayesian Filtering):** Trong robot học, định vị GPS và theo dõi mục tiêu, trạng thái ẩn của hệ thống được cập nhật liên tục theo thời gian qua chu kỳ *Dự báo (Predict) → Cập nhật Bayes (Update)* — trong đó bộ lọc Kalman là trường hợp tuyến tính – Gaussian kinh điển.
+- **Thử nghiệm thích nghi & Khám phá (Thompson Sampling / Bayesian Optimization):** Thay vì chia lưu lượng cố định kiểu cổ điển, các hệ thống gợi ý và tối ưu siêu tham số rút mẫu trực tiếp từ hậu nghiệm để tự động cân bằng giữa *khai thác* phương án tốt nhất và *khám phá* phương án còn nhiều bất định.
+
+---
 
 ## Kiến thức cần có
 
@@ -63,6 +80,37 @@ Cả ba lĩnh vực — lọc thư rác/lừa đảo, phát hiện gian lận th
 ## Giới hạn và hướng mở rộng
 
 Giả định độc lập giữa các từ trong Naive Bayes là một mô hình sinh khá thô. Semantic entropy phụ thuộc vào một mô hình đánh giá tương đương nghĩa mà bản thân nó cũng chứa độ bất định. Ngoài ra, một mô hình được hiệu chỉnh tốt trên một bộ tiêu chuẩn đánh giá không bảo đảm vẫn giữ nguyên độ hiệu chỉnh khi phân phối dữ liệu dịch chuyển. Bài học này không đi lại vào lý thuyết cập nhật; Chương 2 sẽ trình bày tường minh các thành phần likelihood, prior và posterior.
+
+
+## Khung giải thích (nên đọc chậm): Giải phẫu bộ lọc spam Naive Bayes trên thang tỷ số Odds
+
+Để thấy định lý Bayes hoạt động nhanh và gọn thế nào trong khoa học máy tính, hãy theo dõi 4 bước phân loại một email mới:
+
+1. **Thiết lập tỷ số Odds tiên nghiệm:** Dựa trên tỷ lệ spam lịch sử $$P(\text{Spam}) / P(\text{Ham})$$.
+2. **Tính hệ số Bayes cho từng từ khóa xuất hiện:** Với mỗi từ $$w_j$$, tính tỷ số $$P(w_j \mid \text{Spam}) / P(w_j \mid \text{Ham})$$.
+3. **Nhân dồn các hệ số Bayes (hoặc cộng trên thang log):** Dưới giả định độc lập có điều kiện (Naive Bayes), tỷ số Odds hậu nghiệm bằng Odds tiên nghiệm nhân với tích các hệ số Bayes.
+4. **Quy đổi sang xác suất hậu nghiệm và áp ngưỡng chi phí:** $$P(\text{Spam} \mid \mathbf{w}) = \frac{\text{Odds}}{1 + \text{Odds}}$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Chấm điểm một email chứa hai từ khóa
+
+Giả sử $$20\%$$ email đến là Spam ($$\text{Prior Odds} = 0.20 / 0.80 = 0.25$$). Một email chứa đồng thời hai từ khóa `"khuyến mãi"` và `"chuyển khoản"` có thống kê như sau:
+
+| Từ khóa $$w_j$$ | $$P(w_j \vert \text{Spam})$$ | $$P(w_j \vert \text{Ham})$$ | Hệ số Bayes $$\text{BF}_j = \frac{P(w_j \vert \text{Spam})}{P(w_j \vert \text{Ham})}$$ |
+| --- | --- | --- | --- |
+| `"khuyến mãi"` | $$0.60$$ | $$0.10$$ | $$0.60 / 0.10 = 6.0$$ |
+| `"chuyển khoản"` | $$0.40$$ | $$0.05$$ | $$0.40 / 0.05 = 8.0$$ |
+
+Áp dụng quy tắc nhân tỷ số Odds:
+
+$$
+\text{Posterior Odds} = 0.25 \times 6.0 \times 8.0 = 12.0 \implies P(\text{Spam} \mid \mathbf{w}) = \frac{12.0}{1 + 12.0} = \frac{12}{13} \approx 0.9231 \quad (92.31\%).
+$$
+
+**Hiểu lầm cần tránh:** Quên làm trơn Laplace (*Laplace smoothing*) khi gặp một từ chưa từng xuất hiện trong tập Spam lịch sử — lúc đó $$P(w_j \mid \text{Spam}) = 0$$ sẽ kéo toàn bộ tích xác suất về 0 bất kể các từ còn lại đáng ngờ đến đâu.
+
+**Kiểm tra nhanh:** Nếu email đó xuất hiện thêm một từ khóa rất đặc trưng cho email công việc ($$\text{BF}_3 = 0.1$$), Odds hậu nghiệm lập tức điều chỉnh về $$12.0 \times 0.1 = 1.2$$, tương ứng xác suất spam giảm xuống $$1.2 / 2.2 \approx 54.5\%$$.
+
+---
 
 ## Video tham khảo
 

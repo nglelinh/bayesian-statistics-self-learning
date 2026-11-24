@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Here is one of the most exhilarating unifications in modern statistics and machine learning: **Ridge regression (L2 penalty) and Lasso regression (L1 penalty) are not ad-hoc engineering hacks—they are literally Bayesian MAP estimates under Gaussian and Laplace priors!** Every time a machine-learning engineer adds `alpha * sum(w**2)` to prevent overfitting, they are quietly placing a zero-centered Normal prior $$\beta_j \sim \mathcal{N}(0, \tau^2)$$ on their slopes!
+
+This lesson unpacks **regularization as skeptical priors**: proving the exact equivalence between prior width $$\tau$$ and penalty strength $$\lambda$$, and showing how Bayesian posteriors go *further* than Ridge/Lasso by giving you full uncertainty intervals and adaptive **Horseshoe priors**.
+
+---
+
+## Background Knowledge Map: The Exact Dictionary Between Priors and Regularization
+
+1. **Gaussian Prior $$\iff$$ Ridge (L2) Regularization:** Taking $$-\log\bigl(p(y\mid\beta)\,p(\beta)\bigr)$$ with $$y\mid\beta \sim \mathcal{N}(X\beta, \sigma^2 I)$$ and $$\beta_j \sim \mathcal{N}(0, \tau^2)$$ produces the exact objective $$\frac{1}{2\sigma^2}\|y - X\beta\|_2^2 + \frac{1}{2\tau^2}\|\beta\|_2^2$$—Ridge with $$\lambda = \sigma^2 / \tau^2$$!
+2. **Laplace (Double-Exponential) Prior $$\iff$$ Lasso (L1) Regularization:** Replacing $$\beta_j^2$$ with $$\lvert\beta_j\rvert$$ via $$\beta_j \sim \mathrm{Laplace}(0, b)$$ yields the exact Lasso MAP objective with $$\lambda = \sigma^2 / b$$!
+3. **Horseshoe & Student-$$t$$ Priors (Adaptive Bayesian Shrinkage):** A pure Gaussian prior shrinks large true signals and small noise equally; a **Horseshoe prior** has an infinite spike at 0 (crushing noise) *and* Cauchy-like heavy tails (leaving big real signals almost untouched!).
+4. **Full Posterior > Point MAP:** Unlike frequentist Ridge/Lasso (which output one point vector and struggle with post-selection CIs), Bayesian regularization gives valid credible intervals for every coefficient!
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will understand **regularization** as a core mechanism for preventing **overfitting**. The lesson clarifies why priors in Bayesian statistics perform regularization naturally, how they relate to Ridge regression and Lasso regression in frequentist language, and in which situations we truly need regularization rather than simply adding complexity to the model. This is an essential skill when modeling with many **predictors**, especially in problems where the number of variables exceeds what our intuition can control by eye.
@@ -302,6 +317,31 @@ Regularization prevents overfitting by controlling the scale of the coefficients
 The most important point of the lesson is to recognize that in Bayesian statistics, saying “regularize” is essentially saying “choose the prior responsibly”.
 
 Next lesson: **Bias-Variance Tradeoff** (going deeper into validation strategy and model-complexity tuning within the same case study).
+
+---
+
+### Worked Numerical Example: Converting Prior SD $$\tau$$ Directly Into Ridge Penalty $$\lambda$$
+
+Suppose noise SD is $$\sigma = 2.0$$ ($$\sigma^2 = 4.0$$), and you compare three zero-centered Normal priors on standardized slopes $$\beta_j \sim \mathcal{N}(0, \tau^2)$$:
+
+| Prior Belief on $$\beta_j$$ | Prior SD $$\tau$$ | Prior Variance $$\tau^2$$ | Equivalent Ridge Penalty $$\lambda = \sigma^2 / \tau^2$$ | Regularization Strength |
+| :--- | :--- | :--- | :--- | :--- |
+| **Very Flat** | $$\tau = 10.0$$ | $$100.0$$ | $$4 / 100 = \mathbf{0.04}$$ | Almost none (near OLS) |
+| **Weakly Informative** | $$\tau = 1.0$$ | $$1.0$$ | $$4 / 1 = \mathbf{4.00}$$ | Moderate healthy shrinkage |
+| **Strongly Skeptical** | $$\tau = 0.5$$ | $$0.25$$ | $$4 / 0.25 = \mathbf{16.00}$$ | Strong shrinkage toward 0 |
+
+Notice the crystal-clear intuition: **cutting your prior SD $$\tau$$ in half quadruples the L2 regularization penalty $$\lambda$$!**
+
+### Deep-Dive Explanation: Four Rules for Using Regularizing Priors Effectively (Read Slowly)
+
+1. **Always standardize predictors before applying shared regularizing priors:** Putting a single $$\mathcal{N}(0, 1)$$ prior on an unstandardized variable in millimeters vs. kilometers penalizes them unfairly by a factor of $$10^{12}$$!
+2. **Do not shrink the intercept $$\alpha$$ toward zero unless $$y$$ is centered:** Shrinkage belongs on *slopes* $$\beta_j$$ (and group offsets), while the intercept sits near $$\bar{y}$$.
+3. **Prefer Student-$$t$$ or Horseshoe when you expect a few huge signals among many noise variables:** Gaussian priors over-shrink giant real effects when $$\tau$$ is tuned tight enough to kill noise.
+4. **Let data choose the shrinkage scale hierarchically:** Instead of guessing $$\tau$$ by hand, put a hyperprior $$\tau \sim \mathrm{HalfNormal}(1)$$ so the model learns how sparse the world is directly from the data!
+
+**Quick check.** If noise variance is $$\sigma^2 = 9$$ and you want an equivalent Ridge penalty of $$\lambda = 1$$ on standardized slopes, what prior standard deviation $$\tau$$ should you use in $$\beta_j \sim \mathcal{N}(0, \tau^2)$$?
+
+---
 
 ## Reference videos
 

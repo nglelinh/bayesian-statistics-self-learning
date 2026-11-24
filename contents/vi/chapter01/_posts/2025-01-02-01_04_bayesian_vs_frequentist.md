@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Trong suốt gần một thế kỷ, cuộc tranh luận giữa trường phái Tần suất (*Frequentist*) và trường phái Bayes (*Bayesian*) đôi khi nóng bỏng chẳng kém một cuộc tranh luận ý thức hệ. Nhưng với nhà khoa học dữ liệu hiện đại, đây không phải chuyện "chọn phe", mà là hiểu rõ **bản chất câu hỏi mà mỗi hệ thống công cụ đang trả lời**.
+
+Khi một bác sĩ hỏi *"xác suất thuốc mới tốt hơn thuốc cũ là bao nhiêu?"* hay một kỹ sư sản phẩm muốn biết *"rủi ro doanh thu sụt giảm nếu tung tính năng này?"*, sự khác biệt giữa khoảng tin cậy tần suất (Confidence Interval) và khoảng tin cậy Bayes (Credible Interval) không còn là câu chữ học thuật — nó quyết định trực tiếp cách ta ra quyết định dưới bất định.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần hiểu rằng sự khác nhau giữa hai trường phái không chỉ nằm ở kỹ thuật tính toán mà nằm ở chính câu hỏi mỗi bên lựa chọn để trả lời. Bạn cũng cần nhận ra vì sao cách tiếp cận Bayes thường cho diễn giải trực tiếp hơn, đồng thời hiểu rõ những bối cảnh mà phương pháp tần suất vẫn giữ vai trò quan trọng.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần hiểu rằng sự khác nhau giữa hai trường ph
 > **Ví dụ mini.** Với cùng dữ liệu 7 mặt ngửa trong 10 lần tung, nhà thống kê tần suất hỏi: “Nếu đồng xu cân bằng thì dữ liệu này bất thường đến mức nào?”, còn nhà thống kê Bayes hỏi: “Sau khi quan sát dữ liệu này, xác suất ra ngửa thực sự có khả năng nằm ở đâu?”.
 >
 > **Câu hỏi tự kiểm tra.** Hai trường phái này khác nhau chủ yếu ở công thức tính toán, hay ở chính câu hỏi mà họ đặt ra?
+
+
+## Bản đồ kiến thức nền: Hai hệ quy chiếu của Suy luận Thống kê
+
+Để so sánh hai trường phái một cách công bằng và sắc bén ở trình độ đại học, hãy đối chiếu trên ba trục:
+
+- **Đối tượng ngẫu nhiên (What is Random?):** Frequentist coi tham số $$\theta$$ là hằng số cố định và dữ liệu $$y$$ là ngẫu nhiên (xét lặp mẫu vô hạn). Bayesian coi dữ liệu quan sát $$y$$ đã cố định và mô tả bất định về tham số $$\theta$$ bằng phân phối xác suất $$p(\theta \mid y)$$.
+- **Diễn giải khoảng ước lượng (Confidence vs. Credible Interval):** Khoảng tin cậy 95% tần suất nói về tỷ lệ bao phủ dài hạn của *quy trình* tạo khoảng; khoảng tin cậy 95% Bayes nói trực tiếp rằng $$P(L \le \theta \le U \mid y) = 0.95$$.
+- **Sự hội tụ khi dữ liệu lớn & Khác biệt khi dữ liệu nhỏ:** Khi cỡ mẫu lớn và mô hình đơn giản, hai phương pháp thường cho kết quả số rất gần nhau. Nhưng khi cỡ mẫu nhỏ, mô hình phân cấp nhiều tầng, hoặc cần gộp tri thức chuyên gia và hàm chi phí quyết định, khung Bayes tỏ ra tự nhiên và linh hoạt hơn hẳn.
+
+---
 
 ## 1. Vì sao cần so sánh hai trường phái này?
 
@@ -157,6 +174,33 @@ Nếu cần một cách phân biệt ngắn gọn: trường phái tần suất 
 > 1. Frequentist và Bayesian khác nhau từ nền tảng triết học: đại lượng nào ngẫu nhiên, đại lượng nào cố định và xác suất biểu thị điều gì.
 > 2. Frequentist thường trả lời câu hỏi về dữ liệu giả định dưới một giả thuyết, còn Bayesian trả lời trực tiếp về tham số hoặc giả thuyết sau khi thấy dữ liệu.
 > 3. Trong nhiều bài toán thực tế, câu trả lời theo hướng Bayes gần hơn với câu hỏi mà người dùng thực sự muốn đặt ra.
+
+
+## Khung giải thích (nên đọc chậm): Cùng một bảng số liệu, hai cách phát biểu khác nhau ra sao?
+
+Hãy đọc chậm ba câu hỏi sau mỗi khi phải chọn giữa cách tiếp cận Frequentist và Bayesian:
+
+1. **Ta muốn trả lời câu hỏi nào?** Nếu cần tính xác suất trực tiếp cho giả thuyết (ví dụ $$P(\text{hiệu ứng} > 0 \mid y)$$), chỉ có khung Bayes trả lời trực tiếp.
+2. **Dữ liệu hiện có ít hay nhiều, có cấu trúc phân cấp không?** Với mẫu nhỏ hoặc nhiều nhóm lồng nhau, prior có thông tin yếu và *partial pooling* của Bayes giúp ổn định ước lượng rõ rệt.
+3. **Chi phí tính toán cho phép đến đâu?** Ước lượng tần suất thường có công thức đóng cực nhanh; suy diễn Bayes tổng quát cần MCMC hoặc xấp xỉ biến phân nhưng đổi lại cho toàn bộ phân phối bất định.
+
+### Ví dụ tính toán cầm tay chỉ việc: Thử nghiệm A/B nhỏ với 8/10 ca thành công
+
+Giả sử bạn thử một quy trình điều trị mới trên $$n = 10$$ bệnh nhân và có $$k = 8$$ ca đáp ứng tốt. Hãy so sánh hai báo cáo:
+
+| Khía cạnh | Cách tiếp cận Frequentist (Wald / MLE) | Cách tiếp cận Bayesian (Prior $$\text{Beta}(2, 2)$$) |
+| --- | --- | --- |
+| Ước lượng điểm | $$\hat p = 8/10 = 0.800$$ | $$\mathbb{E}[p \mid y] = \frac{2+8}{2+2+10} = \frac{10}{14} \approx 0.714$$ |
+| Khoảng 95% | $$0.80 \pm 1.96\sqrt{\frac{0.8 \times 0.2}{10}} = [0.552,\; 1.048]$$ (vượt quá 1!) | Hậu nghiệm $$\text{Beta}(10, 4)$$, khoảng 95% xấp xỉ $$[0.46,\; 0.91]$$ (luôn nằm trong $$[0,1]$$) |
+| Câu hỏi *"$$P(p > 0.5)$$"* | Không phát biểu được xác suất cho $$p$$; chỉ tính $$p$$-value kiểm định $$H_0: p = 0.5$$ | Tính trực tiếp $$P(p > 0.5 \mid y) \approx 0.954$$ ($$95.4\%$$) |
+
+Chú ý hai điểm rất thực tế: với cỡ mẫu nhỏ $$n = 10$$, khoảng Wald tần suất thậm chí tràn qua $$1.048$$ (vô nghĩa với xác suất), trong khi hậu nghiệm $$\text{Beta}(10, 4)$$ tự động giữ xác suất trong $$[0, 1]$$ và co nhẹ ước lượng từ $$0.800$$ về $$0.714$$ để chống quá tự tin trên mẫu nhỏ.
+
+**Hiểu lầm cần tránh:** Nghĩ rằng Bayesian luôn "đúng hơn" Frequentist trong mọi bài toán. Thực tế một mô hình Bayes có prior sai lệch nghiêm trọng hoặc likelihood sai vẫn cho kết quả sai — sức mạnh của Bayes chỉ phát huy khi đi kèm kiểm tra mô hình (PPC, phân tích độ nhạy).
+
+**Kiểm tra nhanh:** Nếu cỡ mẫu tăng lên $$n = 1000$$ với $$k = 800$$, ước lượng Bayes với $$\text{Beta}(2, 2)$$ là $$802 / 1004 \approx 0.7988$$ — gần như trùng khít với MLE $$0.8000$$.
+
+---
 
 ## Video tham khảo
 

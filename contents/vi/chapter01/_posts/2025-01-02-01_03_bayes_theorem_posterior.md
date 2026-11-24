@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Năm 1763 — hai năm sau khi mục sư Thomas Bayes qua đời — người bạn thân Richard Price tìm thấy trong di cảo của ông một bản thảo ngắn về bài toán "xác suất ngược": biết kết quả quan sát được trên bàn bi-a, làm sao suy ngược lại vị trí ban đầu của quả bóng ẩn? Bản thảo ấy, cùng công trình độc lập và tổng quát hơn của Pierre-Simon Laplace năm 1774, đã đặt nền móng cho phương trình nổi tiếng nhất của thống kê hiện đại: **Định lý Bayes**.
+
+Điều kỳ diệu của công thức Bayes nằm ở sự cân bằng hoàn hảo: nó biến trực giác học hỏi từ kinh nghiệm thành một phép nhân tường minh giữa *kiến thức ban đầu* (prior) và *bằng chứng dữ liệu* (likelihood), rồi chuẩn hóa bằng *bằng chứng toàn phần* (evidence).
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần hiểu định lý Bayes như một quy tắc cập nhật niềm tin chứ không chỉ là một công thức học thuộc. Bạn cần phân biệt rõ vai trò của prior, likelihood và posterior trong các ví dụ thực tế, đồng thời thấy vì sao định lý Bayes phù hợp với các bài toán chẩn đoán, dự báo và học từ dữ liệu.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần hiểu định lý Bayes như một quy tắc cập n
 > **Ví dụ mini.** Một bác sĩ biết bệnh cúm đang phổ biến trong mùa này, nhưng khi bệnh nhân xuất hiện với bộ triệu chứng đặc trưng cho COVID-19, niềm tin ban đầu cần được điều chỉnh. Định lý Bayes là công cụ thực hiện bước cập nhật đó một cách có nguyên tắc.
 >
 > **Câu hỏi tự kiểm tra.** Nếu prior là điều bạn tin trước khi thấy dữ liệu, còn likelihood là mức độ dữ liệu phù hợp với từng giả thuyết, thì posterior nên được hiểu là gì?
+
+
+## Bản đồ kiến thức nền: Bốn thành phần của Định lý Bayes và Cơ chế cập nhật tuần tự
+
+Để làm chủ hoàn toàn công thức $$P(\theta \mid y) = \frac{P(y \mid \theta)P(\theta)}{P(y)}$$, hãy nhìn rõ ba trụ cột cấu thành nó:
+
+- **Bốn thành phần giải phẫu (Prior, Likelihood, Evidence, Posterior):** Prior $$P(\theta)$$ mã hóa niềm tin trước dữ liệu; Likelihood $$P(y \mid \theta)$$ đo mức độ tương thích của dữ liệu dưới từng giả thuyết $$\theta$$; Evidence $$P(y) = \sum_\theta P(y \mid \theta)P(\theta)$$ là hằng số chuẩn hóa; và Posterior $$P(\theta \mid y)$$ là niềm tin sau khi tổng hợp cả hai.
+- **Dạng tỷ số khả dĩ (Odds Form & Bayes Factor):** Viết dưới dạng tỷ lệ giữa hai giả thuyết: $$\frac{P(H_1 \mid y)}{P(H_0 \mid y)} = \frac{P(y \mid H_1)}{P(y \mid H_0)} \times \frac{P(H_1)}{P(H_0)}$$. Tỷ số ở giữa chính là **hệ số Bayes (Bayes Factor)** — đo trực tiếp sức mạnh bằng chứng của dữ liệu mà không cần tính mẫu số $$P(y)$$.
+- **Tính nhất quán của cập nhật tuần tự (Sequential Updating):** Posterior sau quan sát thứ nhất trở thành Prior cho quan sát thứ hai, và kết quả cuối cùng hoàn toàn giống hệt như khi gộp tất cả dữ liệu cập nhật một lần.
+
+---
 
 ## 1. Bayes bắt đầu từ một câu hỏi rất quen thuộc
 
@@ -280,6 +297,34 @@ Cùng một bộ dữ liệu nhưng posterior khác nhau vì prior đưa thông 
 Định lý Bayes không chỉ cung cấp một công thức tính xác suất có điều kiện, mà đề xuất một cách suy luận minh bạch: dữ liệu không tự mang ý nghĩa nếu tách khỏi mô hình, kiến thức ban đầu không phải điều cấm kỵ, dữ liệu mới có quyền điều chỉnh niềm tin cũ, và toàn bộ quá trình cập nhật đều được trình bày rõ ràng. Khi nắm được tinh thần đó, các khái niệm prior và posterior sẽ trở nên tự nhiên.
 
 > **3 ý cần nhớ.** Định lý Bayes là quy tắc cập nhật niềm tin khi có thêm bằng chứng mới; prior, likelihood và posterior không phải ba khái niệm tách rời mà là ba mắt xích của cùng một quy trình suy luận; và giá trị của Bayes nằm ở việc kết hợp kiến thức sẵn có với dữ liệu mới một cách minh bạch.
+
+
+## Khung giải thích (nên đọc chậm): Tính hậu nghiệm bằng bảng Bayes 4 cột và kiểm chứng cập nhật tuần tự
+
+Thay vì cố nhẩm mẫu số $$P(y)$$ ngay từ đầu, cách làm ít sai nhất khi tính tay là lập **bảng Bayes 4 cột**:
+
+1. **Cột 1 (Giả thuyết $$\theta$$):** Liệt kê đầy đủ các giả thuyết xung khắc.
+2. **Cột 2 (Prior $$P(\theta)$$):** Ghi xác suất ban đầu (tổng bằng 1).
+3. **Cột 3 (Likelihood $$P(y \mid \theta)$$):** Tính xác suất quan sát đúng dữ liệu $$y$$ dưới từng giả thuyết.
+4. **Cột 4 (Tích chưa chuẩn hóa & Chuẩn hóa):** Nhân Cột 2 với Cột 3, cộng tổng để thu $$P(y)$$, rồi chia từng dòng cho tổng đó để ra Posterior.
+
+### Ví dụ tính toán cầm tay chỉ việc: Phân biệt đồng xu công bằng và đồng xu thiên lệch
+
+Trong túi có 2 đồng xu: $$H_0$$ công bằng ($$p = 0.5$$) với prior $$0.7$$, và $$H_1$$ thiên lệch ($$p = 0.8$$) với prior $$0.3$$. Ta chọn ngẫu nhiên một đồng xu, tung 2 lần độc lập và cả 2 lần đều ra Ngửa ($$y = \text{NN}$$).
+
+| Giả thuyết | Prior $$P(H)$$ | Likelihood $$P(\text{NN} \vert H)$$ | Tích $$P(H)P(\text{NN} \vert H)$$ | Posterior $$P(H \vert \text{NN})$$ |
+| --- | --- | --- | --- | --- |
+| $$H_0\; (p=0.5)$$ | $$0.70$$ | $$0.5^2 = 0.25$$ | $$0.1750$$ | $$0.1750 / 0.3670 \approx 0.4768$$ |
+| $$H_1\; (p=0.8)$$ | $$0.30$$ | $$0.8^2 = 0.64$$ | $$0.1920$$ | $$0.1920 / 0.3670 \approx 0.5232$$ |
+| **Tổng** | **$$1.00$$** | — | **$$P(\text{NN}) = 0.3670$$** | **$$1.0000$$** |
+
+Chỉ sau 2 lần ra Ngửa liên tiếp, niềm tin vào đồng xu thiên lệch đã tăng từ $$30\%$$ lên $$52.32\%$$.
+
+**Hiểu lầm cần tránh:** Cộng tổng cột Likelihood rồi thắc mắc vì sao $$0.25 + 0.64 = 0.89 \neq 1$$. Likelihood là hàm theo tham số với dữ liệu cố định, nên **không** nhất thiết có tổng bằng 1.
+
+**Kiểm tra nhanh (Cập nhật tuần tự):** Nếu tách thành từng lần tung: sau lần 1 ra Ngửa, $$P(H_1 \mid \text{N}) = \frac{0.3 \times 0.8}{0.7 \times 0.5 + 0.3 \times 0.8} = \frac{0.24}{0.59} \approx 0.4068$$. Dùng $$0.4068$$ làm prior cho lần 2 ra Ngửa: $$P(H_1 \mid \text{NN}) = \frac{0.4068 \times 0.8}{0.5932 \times 0.5 + 0.4068 \times 0.8} = \frac{0.3254}{0.6220} \approx 0.5232$$ — khớp chính xác tuyệt đối!
+
+---
 
 ## Video tham khảo
 

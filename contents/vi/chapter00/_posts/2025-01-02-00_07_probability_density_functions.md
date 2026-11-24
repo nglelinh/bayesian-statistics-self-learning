@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Một trong những cú sốc trực giác đầu tiên khi chuyển từ xác suất rời rạc sang liên tục là nghịch lý sau: nếu bạn chọn ngẫu nhiên một số thực trên đoạn $$[0, 1]$$, xác suất trúng đúng số $$0.500000\ldots$$ là **bằng 0**, thế nhưng khi bạn nhấn nút, máy tính vẫn trả về *một* con số cụ thể nào đó! Làm sao hàng vô hạn biến cố có xác suất 0 lại cộng lại thành xác suất 1?
+
+Câu trả lời là **Hàm Mật độ Xác suất (PDF)** — khái niệm tương tự mật độ khối lượng trong vật lý. Hiểu rõ sự khác biệt giữa *mật độ tại một điểm* và *xác suất trên một khoảng* là điều kiện bắt buộc để đọc đúng đồ thị prior/posterior, tránh bối rối khi thấy trục tung PDF cao vượt quá 1, và hiểu bản chất hàm hợp lý liên tục.
+
+---
+
 ## Mục tiêu học tập
 
 Bài học này trình bày có hệ thống về **hàm mật độ xác suất (PDF)**, làm rõ **sự khác biệt bản chất giữa PDF và hàm khối lượng xác suất (PMF)**, cũng như cách diễn giải chính xác PDF trong các mô hình xác suất liên tục.
+
+## Bản đồ kiến thức nền: Độ đo Lebesgue, Tích phân mật độ và Biểu diễn Hậu nghiệm liên tục
+
+Ba trụ cột toán học làm nên bản chất của PDF trong thống kê Bayes:
+
+- **Từ PMF sang PDF (Hàm khối lượng vs. Hàm mật độ):** Với biến rời rạc, $$P(X = x)$$ là xác suất trực tiếp nằm trong $$[0, 1]$$. Với biến liên tục, $$f(x)$$ là **mật độ xác suất trên mỗi đơn vị chiều dài** (đơn vị $$[	ext{đơn vị của } x]^{-1}$$), nên $$f(x)$$ có thể lớn hơn 1 miễn là $$f(x) \ge 0$$ và $$\int_{-\infty}^{\infty} f(x)\,dx = 1$$.
+- **Hàm phân phối tích lũy (CDF) & Hàm phân vị (Quantile):** $$F(x) = \int_{-\infty}^x f(t)\,dt$$ là cây cầu biến mật độ thành xác suất thật trên khoảng: $$P(a \le X \le b) = F(b) - F(a)$$. Ngược lại, hàm phân vị $$F^{-1}(q)$$ chính là công cụ xây dựng **khoảng tin cậy Bayes** (*credible intervals*).
+- **Cầu nối sang Suy diễn Bayes:** Trong mô hình liên tục, cả prior $$p(	heta)$$, likelihood $$p(y \mid 	heta)$$ (với $$y$$ liên tục) và posterior $$p(	heta \mid y)$$ đều là mật độ. Khi lấy mẫu MCMC, máy tính không tính trực tiếp tích phân $$F(x)$$ mà sinh ra hàng nghìn điểm mẫu có mật độ dày đặc đúng theo chiều cao của $$p(	heta \mid y)$$.
+
+---
 
 ## 1. Từ Rời rạc đến Liên tục
 
@@ -243,6 +259,36 @@ Hàm hợp lý $$L(\theta) = p(x \mid \theta)$$ cũng được xây dựng từ 
 $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x_i-\mu)^2}{2\sigma^2}\right)$$
 
 Mỗi thừa số $$f(x_i \mid \mu)$$ là giá trị PDF tại quan sát $$x_i$$ ứng với tham số $$\mu$$, và ước lượng hợp lý cực đại (MLE) là giá trị $$\hat{\mu}$$ làm cực đại $$L(\mu)$$.
+
+## Khung giải thích (nên đọc chậm): Tại sao PDF có thể lớn hơn 1 — và cách đọc diện tích bằng tay
+
+Hãy đọc chậm bốn quy tắc vàng để không bao giờ hiểu sai đồ thị PDF của prior hay posterior:
+
+1. **Mật độ không phải xác suất:** $$f(x_0)$$ không phải là $$P(X = x_0)$$. Thay vào đó, với khoảng rất hẹp bề rộng $$\Delta x$$, xác suất xấp xỉ bằng diện tích hình chữ nhật nhỏ: $$P(x_0 \le X \le x_0 + \Delta x) pprox f(x_0)\,\Delta x$$.
+2. **Đổi đơn vị làm đổi chiều cao PDF:** Nếu đo chiều dài bằng mét thay vì centimet, miền giá trị bị nén lại 100 lần, nên chiều cao PDF bắt buộc phải **tăng gấp 100 lần** để tổng diện tích vẫn giữ nguyên bằng 1.
+3. **Tỷ số mật độ mới mang ý nghĩa bất biến theo đơn vị:** Khi so sánh hai điểm $$x_1$$ và $$x_2$$, tỷ số $$f(x_1)/f(x_2)$$ cho biết một khoảng hẹp quanh $$x_1$$ có xác suất lớn gấp bao nhiêu lần khoảng cùng bề rộng quanh $$x_2$$ — đây chính là thứ thuật toán **Metropolis–Hastings** sử dụng trong tỷ số chấp nhận!
+4. **Khoảng tin cậy Bayes là bài toán diện tích:** Tìm khoảng 95% hậu nghiệm nghĩa là tìm $$[a, b]$$ sao cho $$\int_a^b p(	heta \mid y)\,d	heta = 0.95$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Kiểm tra PDF tam giác và tính xác suất khoảng
+
+Xét một hàm mật độ đơn giản trên đoạn $$[0, 0.5]$$ (ví dụ một prior tam giác tập trung gần $$0.5$$):
+$$f(	heta) = c\,	heta \quad 	ext{với } 0 \le 	heta \le 0.5, \quad 	ext{và } f(	heta) = 0 	ext{ ở ngoài.}$$
+
+- **Bước 1 — Tìm hằng số chuẩn hóa $$c$$ sao cho tổng diện tích bằng 1:**
+  $$\int_0^{0.5} c\,	heta\,d	heta = c \left[rac{	heta^2}{2}ight]_0^{0.5} = c \cdot rac{0.25}{2} = rac{c}{8} = 1 \implies c = 8.$$
+- **Bước 2 — Kiểm tra giá trị PDF tại đỉnh $$	heta = 0.5$$:**
+  $$f(0.5) = 8 	imes 0.5 = 4 > 1!$$
+  Điều này hoàn toàn hợp lệ: hình tam giác có đáy $$0.5$$ và chiều cao $$4$$ nên diện tích đúng bằng $$rac{1}{2} 	imes 0.5 	imes 4 = 1$$.
+- **Bước 3 — Tính xác suất $$	heta$$ rơi vào khoảng $$[0.25, 0.50]$$:**
+  $$P(0.25 \le 	heta \le 0.50) = \int_{0.25}^{0.50} 8	heta\,d	heta = \left[4	heta^2ight]_{0.25}^{0.50} = 4(0.25) - 4(0.0625) = 1 - 0.25 = 0.75.$$
+- **Bước 4 — Xấp xỉ xác suất trên khoảng hẹp $$[0.40, 0.41]$$ bằng công thức $$f(x)\Delta x$$:**
+  $$f(0.405) 	imes 0.01 = (8 	imes 0.405) 	imes 0.01 = 3.24 	imes 0.01 = 0.0324$$ (đúng tuyệt đối vì $$f$$ tuyến tính!).
+
+**Hiểu lầm cần tránh:** Thấy $$f(	heta) = 4$$ rồi kết luận "mô hình bị lỗi vì xác suất vượt quá 1" hoặc dùng trực tiếp $$f(	heta)$$ để cộng dồn mà quên nhân với bề rộng $$\Delta 	heta$$.
+
+**Kiểm tra nhanh:** Kỳ vọng của phân phối tam giác trên là $$\mathbb{E}[	heta] = \int_0^{0.5} 	heta \cdot 8	heta\,d	heta = \left[rac{8	heta^3}{3}ight]_0^{0.5} = rac{8 	imes 0.125}{3} = rac{1}{3} pprox 0.333$$.
+
+---
 
 ## Video tham khảo
 

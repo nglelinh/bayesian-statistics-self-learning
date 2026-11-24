@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Trước khi máy tính và MCMC ra đời, các nhà thống kê Bayes đối mặt với một bức tường toán học khổng lồ: mẫu số $$p(y) = \int p(y \mid \theta) p(\theta)\,d\theta$$ của định lý Bayes thường không thể tính được bằng giải tích sơ cấp. Để vượt qua bức tường ấy, Howard Raiffa và Robert Schlaifer (1961) đã hệ thống hóa một ý tưởng tuyệt đẹp: chọn phân phối prior sao cho khi nhân với likelihood, phân phối hậu nghiệm quay về **đúng cùng một họ phân phối** với prior — gọi là **prior liên hợp (conjugate prior)**.
+
+Dù ngày nay ta có PyMC và MCMC cho các mô hình tổng quát, việc làm chủ các cặp liên hợp kinh điển (Beta–Binomial, Gamma–Poisson, Normal–Normal) vẫn vô giá: chúng là những ví dụ giải tích trong suốt nhất giúp ta hiểu bản chất phép cập nhật Bayes bằng những phép cộng trừ sơ cấp.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần hiểu prior liên hợp (conjugate prior) không phải là “mẹo học thuộc”, mà là những cặp prior–likelihood giúp phép cập nhật Bayes có dạng giải tích rất gọn. Bạn cũng cần nắm được ý nghĩa thực tế của các cặp liên hợp phổ biến, biết khi nào chúng hữu ích và khi nào cần chuyển sang các phương pháp tính toán tổng quát hơn.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần hiểu prior liên hợp (conjugate prior) không ph�
 > **Ví dụ mini.** Nếu prior cho tỷ lệ qua môn là Beta$$(2,2)$$ và dữ liệu mới là 7 sinh viên đậu trên 10 người, posterior trở thành Beta$$(9,5)$$. Ta không phải tìm một họ phân phối mới mà chỉ cần cập nhật hai tham số.
 >
 > **Câu hỏi tự kiểm tra.** Điều gì làm cho một prior được gọi là “liên hợp” với một likelihood?
+
+
+## Bản đồ kiến thức nền: Họ mũ, Thống kê đủ và Bốn cặp liên hợp kinh điển
+
+Tính liên hợp không phải sự trùng hợp ngẫu nhiên mà xuất phát trực tiếp từ cấu trúc toán học của **họ phân phối mũ (Exponential Family)**:
+
+- **Cấu trúc lõi (Kernel Matching):** Một cặp prior–likelihood là liên hợp khi phần phụ thuộc vào $$\theta$$ của prior có cùng dạng đại số với phần phụ thuộc vào $$\theta$$ của likelihood (nhờ vậy khi nhân lại, ta chỉ cần cộng các số mũ).
+- **Cập nhật qua Thống kê đủ (Sufficient Statistics):** Mọi cặp liên hợp đều cập nhật siêu tham số chỉ bằng các thống kê đủ của dữ liệu (như $$(n, \sum y_i)$$ cho Gamma–Poisson và Normal–Normal, hay $$(n, k)$$ cho Beta–Binomial) — giúp cập nhật trực tuyến với bộ nhớ $$O(1)$$.
+- **Giới hạn và Cầu nối sang MCMC:** Trong mô hình hồi quy logistic, mô hình hỗn hợp hay mô hình phân cấp nhiều tầng, không tồn tại prior liên hợp cho toàn bộ mô hình. Khi đó ta chuyển sang xấp xỉ lưới (Bài 2.6) và MCMC (Chương 3–4).
+
+---
 
 ## Mở đầu: vì sao một số bài toán Bayes có thể giải tay gọn gàng?
 
@@ -566,6 +583,35 @@ Không đúng. Prior liên hợp vẫn là nền tảng xây dựng trực giác
 ## Tóm tắt
 
 **Prior liên hợp là prior đảm bảo posterior thuộc cùng một họ phân phối sau khi cập nhật.** Nhờ tính chất này, các bài toán cơ bản có thể giải tay gọn gàng, dễ diễn giải và cập nhật tuần tự nhanh chóng. Bốn cặp nền tảng cần nắm gồm Beta–Binomial, Beta–Geometric, Gamma–Poisson và Normal–Normal. Tuy nhiên, cần luôn ghi nhớ rằng sự tiện lợi về đại số không đồng nghĩa với mô hình tốt nhất: khi prior liên hợp không còn phản ánh đúng thực tế, ta nên chuyển sang các phương pháp tính toán linh hoạt hơn.
+
+
+## Khung giải thích (nên đọc chậm): Công thức cập nhật 3 cặp liên hợp cốt lõi và ví dụ Gamma–Poisson
+
+Bất cứ khi nào nhận ra bài toán thuộc họ liên hợp, bạn chỉ cần làm đúng 3 bước: (1) xác định cặp likelihood–prior khớp miền, (2) tính thống kê đủ từ dữ liệu, và (3) cộng trực tiếp vào siêu tham số của prior:
+
+| Dữ liệu / Likelihood | Prior liên hợp | Thống kê đủ | Công thức cập nhật Hậu nghiệm |
+| --- | --- | --- | --- |
+| Nhị phân: $$\text{Binomial}(n, p)$$ | $$\text{Beta}(\alpha, \beta)$$ | $$(n, k)$$ | $$\text{Beta}(\alpha + k,\; \beta + n - k)$$ |
+| Đếm sự kiện: $$\text{Poisson}(\lambda)$$ | $$\text{Gamma}(\alpha, \beta)$$ (rate) | $$(n, \sum y_i)$$ | $$\text{Gamma}\!\left(\alpha + \sum y_i,\; \beta + n\right)$$ |
+| Liên tục (biết $$\sigma^2$$): $$\mathcal{N}(\mu, \sigma^2)$$ | $$\mathcal{N}(\mu_0, \tau_0^2)$$ | $$(n, \bar y)$$ | Độ chính xác $$\tau_n^{-2} = \tau_0^{-2} + \frac{n}{\sigma^2}$$, trung bình $$\mu_n = \tau_n^2\!\left(\frac{\mu_0}{\tau_0^2} + \frac{n\bar y}{\sigma^2}\right)$$ |
+
+### Ví dụ tính toán cầm tay chỉ việc: Ước lượng tốc độ lỗi máy chủ bằng Gamma–Poisson
+
+Giả sử số lỗi máy chủ mỗi giờ tuân theo $$\text{Poisson}(\lambda)$$. Trước khi nâng cấp hệ thống, đội ngũ đặt prior $$\lambda \sim \text{Gamma}(\alpha = 6, \beta = 2)$$ (tương ứng kỳ vọng ban đầu $$\alpha/\beta = 6/2 = 3.0$$ lỗi/giờ, dựa trên 2 giờ quan sát giả định). Sau nâng cấp, ta theo dõi $$n = 5$$ giờ và ghi nhận số lỗi lần lượt là $$1, 2, 0, 2, 1$$ (tổng $$\sum y_i = 6$$ lỗi).
+
+1. **Cập nhật siêu tham số:**
+   $$\alpha_{\text{post}} = 6 + 6 = 12, \qquad \beta_{\text{post}} = 2 + 5 = 7.$$
+2. **Phân phối hậu nghiệm:** $$\lambda \mid y \sim \text{Gamma}(12, 7)$$.
+3. **Kỳ vọng và độ lệch chuẩn hậu nghiệm:**
+   $$\mathbb{E}[\lambda \mid y] = \frac{12}{7} \approx 1.714\text{ lỗi/giờ}, \qquad \mathrm{SD}(\lambda \mid y) = \frac{\sqrt{12}}{7} \approx 0.495\text{ lỗi/giờ}.$$
+
+Ta thấy kỳ vọng hậu nghiệm $$1.714$$ nằm đúng giữa kỳ vọng prior ($$3.0$$) và trung bình mẫu ($$6/5 = 1.2$$), với trọng số $$2/7$$ cho prior và $$5/7$$ cho dữ liệu: $$\frac{2}{7}(3.0) + \frac{5}{7}(1.2) = \frac{12}{7} \approx 1.714$$.
+
+**Hiểu lầm cần tránh:** Nhầm lẫn giữa hai cách tham số hóa của phân phối Gamma: **shape–rate** ($$\alpha, \beta$$ với trung bình $$\alpha/\beta$$) và **shape–scale** ($$\alpha, \theta = 1/\beta$$ với trung bình $$\alpha\theta$$). Khi lập trình bằng `scipy.stats.gamma`, luôn kiểm tra xem thư viện dùng `scale = 1/beta` hay `rate = beta`.
+
+**Kiểm tra nhanh:** Nếu theo dõi thêm 3 giờ nữa và không có lỗi nào ($$0, 0, 0$$), ta chỉ cần cập nhật tiếp từ $$\text{Gamma}(12, 7)$$ thành $$\text{Gamma}(12 + 0, 7 + 3) = \text{Gamma}(12, 10)$$ với kỳ vọng mới giảm xuống $$1.20$$ lỗi/giờ.
+
+---
 
 ## Video tham khảo
 

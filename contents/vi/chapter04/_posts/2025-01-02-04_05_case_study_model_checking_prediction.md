@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Lý thuyết kiểm tra mô hình chỉ thực sự sống dậy khi ta đặt nó lên một tập dữ liệu có thật. Tập dữ liệu `tips` ghi lại 244 bàn ăn trong một nhà hàng thoạt nhìn cực kỳ hiền lành: hóa đơn càng cao, tiền boa càng cao. Thế nhưng chỉ cần đi trọn vẹn sáu bước của quy trình Bayes, ta sẽ chứng kiến một bài học kinh điển: một đường thẳng Gaussian có thể ước lượng rất chuẩn mức tiền boa trung bình 3 đô la, nhưng lại gán xác suất cho tiền boa âm ở bàn nhỏ và đánh giá quá thấp rủi ro biến động ở bàn lớn.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ thực hành trọn vẹn một quy trình hồi quy Bayes trên tập dữ liệu cụ thể: xây dựng mô hình, đánh giá chất lượng lấy mẫu, kiểm tra mô hình bằng dự báo hậu nghiệm (PPC), phân tích phần dư, báo cáo dự đoán kèm đúng loại bất định và đề xuất điều chỉnh mô hình dựa trên bằng chứng định lượng.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ thực hành trọn vẹn một quy trình hồi quy B
 >
 > **Câu hỏi tự kiểm tra.** Nếu phân phối hậu nghiệm cho hệ số dốc dương rõ rệt nhưng PPC thất bại ở vùng hóa đơn lớn, bạn nên rút ra kết luận gì?
 
+
+## Bản đồ kiến thức nền: Phương sai giải thích được, Thống kê đuôi và Nhiễu cộng vs. Nhiễu nhân
+
+Để đọc hiểu trọn vẹn nghiên cứu tình huống `tips`, cần nắm chắc ba khái niệm cầu nối giữa thống kê mô tả và mô hình hóa Bayes:
+
+- **Tương quan tuyến tính và phần phương sai chưa giải thích ($$1 - R^2$$):** Hệ số tương quan $$r_{xy} \approx 0.676$$ kéo theo $$R^2 \approx 0.46$$, nghĩa là hơn một nửa (54%) biến thiên của tiền boa nằm ngoài đường thẳng theo `total_bill`. Điều này báo trước rằng việc mô hình hóa phần nhiễu $$\sigma$$ và kiểm tra cấu trúc phần dư quan trọng không kém việc ước lượng hệ số dốc.
+- **Hành vi vùng đuôi (Tail Behavior) và thống kê chỉ thị:** Trung bình mẫu rất "dễ chiều" — ngay cả mô hình sai phân phối vẫn thường tái tạo đúng trung bình. Các thống kê đuôi như phân vị 95% $$Q_{0.95}(y)$$ hay tỷ lệ vượt ngưỡng $$\frac{1}{n}\sum \mathbf{1}(y_i > 6)$$ mới là phép thử sắc bén để phát hiện sự bất đối xứng và đuôi dày.
+- **Nhiễu cộng (Additive Noise) so với nhiễu nhân (Multiplicative Noise):** Trong dữ liệu tài chính và dịch vụ, sai số thường tỷ lệ với quy mô giao dịch (ví dụ tiền boa dao động quanh 15% hóa đơn, lệch $$\pm 5\%$$). Nhiễu cộng $$y = \mu + \varepsilon$$ giữ biên độ cố định theo đô la nên dễ sinh giá trị âm ở hóa đơn nhỏ và quá hẹp ở hóa đơn lớn; chuyển sang thang log $$\log y \sim \mathcal{N}(\mu_{\log}, \sigma_{\log}^2)$$ chuyển nhiễu nhân thành nhiễu cộng đồng phương sai.
 ## 1. Giới thiệu tập dữ liệu `tips`
 
 Ta sử dụng tập dữ liệu `tips` (từ thư viện `seaborn`), trong đó mỗi dòng tương ứng với một bàn ăn, `total_bill` là tổng hóa đơn và `tip` là tiền boa. Mục tiêu chính là mô hình hóa và dự đoán `tip` theo `total_bill`; mục tiêu quan trọng không kém là kiểm tra xem mô hình tuyến tính Gaussian cơ sở có đủ phù hợp hay không thay vì mặc nhiên tin vào hệ số dốc.
@@ -153,6 +163,19 @@ Giả sử cần dự đoán tiền boa cho một bàn ăn mới có `total_bill
 2. **Khoảng dự đoán (prediction interval) cho một bàn ăn cụ thể** (ví dụ: khoảng 3.8 đến 8.7).
 
 Khoảng thứ hai rộng hơn đáng kể vì gộp thêm độ nhiễu cá thể của bàn ăn mới. Khi ứng dụng vào thực tế, nếu mục tiêu là lập kế hoạch doanh thu trung bình thì dùng khoảng của trung bình; nếu mục tiêu là đánh giá biến động hoặc rủi ro của từng giao dịch cụ thể thì phải dùng khoảng dự đoán.
+
+### Khung giải thích (nên đọc chậm): Tính tay sự sụp đổ của mô hình nhiễu cộng ở hai đầu hóa đơn
+
+Hãy đặt hai mô hình — tuyến tính Gaussian nhiễu cộng và mô hình tỷ lệ log-normal — lên cùng hai bàn ăn thực tế để thấy sự khác biệt bằng con số cụ thể:
+
+1. **Mô hình cơ sở nhiễu cộng:** Giả sử hậu nghiệm tập trung quanh $$\hat\mu = 0.92 + 0.105\,x$$ với độ lệch chuẩn nhiễu cố định $$\sigma = 1.02$$ USD.
+   - **Tại bàn nhỏ ($$x = 10$$ USD):** Trung bình dự đoán $$\hat\mu = 0.92 + 1.05 = 1.97$$ USD. Khoảng dự đoán 95% xấp xỉ $$1.97 \pm 1.96(1.02) = [-0.03,\ 3.97]$$ USD. Mô hình cho phép **tiền boa âm** — điều bất khả thi về mặt vật lý!
+   - **Tại bàn lớn ($$x = 40$$ USD):** Trung bình dự đoán $$\hat\mu = 0.92 + 4.20 = 5.12$$ USD. Khoảng dự đoán 95% là $$5.12 \pm 2.00 = [3.12,\ 7.12]$$ USD (biên độ chỉ $$\pm 2.00$$ USD). Trong khi đó, khách ăn 40 USD boa trong khoảng 10%–25% sẽ trải rộng từ $$4.00$$ đến $$10.00$$ USD — mô hình cơ sở đã cắt mất phần đuôi trên.
+2. **Mô hình nhiễu nhân trên thang log:** Xét $$\log(\text{tip}) \sim \mathcal{N}(\log(0.15\,x),\ 0.25^2)$$ (tương ứng tiền boa trung vị 15% hóa đơn, độ phân tán tương đối khoảng 25%).
+   - **Tại bàn nhỏ ($$x = 10$$ USD):** Trung vị $$1.50$$ USD; khoảng 95% là $$1.50 \times e^{\pm 1.96(0.25)} = 1.50 \times [0.613,\ 1.632] = [0.92,\ 2.45]$$ USD — hoàn toàn dương và chặt chẽ.
+   - **Tại bàn lớn ($$x = 40$$ USD):** Trung vị $$6.00$$ USD; khoảng 95% là $$6.00 \times [0.613,\ 1.632] = [3.68,\ 9.79]$$ USD — tự động giãn rộng tương xứng với quy mô hóa đơn.
+
+Chỉ cần so sánh hai phép nhân trên, bạn thấy ngay vì sao PPC ở vùng đuôi lại thúc đẩy ta chuyển sang mô hình log hoặc heteroskedastic.
 
 ## 7. Bước 6 – Điều chỉnh mô hình dựa trên bằng chứng chẩn đoán
 

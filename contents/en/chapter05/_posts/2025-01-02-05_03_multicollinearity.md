@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Try predicting a person’s height from **both** their left leg length and their right leg length in the same regression. Individually, each leg is an extraordinary predictor of height (slope $$\approx 2.0$$). Put *both* legs into the same model, and suddenly the posterior intervals for both slopes explode to `[-3.0, +7.0]`—making it look as if *neither* leg predicts height! Nothing is broken in Bayes’ theorem; the model is honestly telling you: **because left and right legs are 99% correlated, infinitely many pairs $$(\beta_L, \beta_R)$$ with $$\beta_L + \beta_R \approx 2.0$$ explain the data equally well!**
+
+This lesson demystifies **multicollinearity** from a Bayesian perspective: why predictions stay accurate while individual slopes become non-identifiable, how posterior pair plots reveal the exact diagonal ridge, and how weakly informative priors stabilize inference.
+
+---
+
+## Background Knowledge Map: Non-Identifiability Ridges Under Multicollinearity
+
+1. **The Posterior Ridge Geometry:** When $$X_1 \approx X_2$$, the linear predictor $$\beta_1 X_1 + \beta_2 X_2 \approx (\beta_1 + \beta_2)X_1$$ depends only on the **sum** $$\beta_1 + \beta_2$$. The joint posterior stretches into a long, narrow diagonal ridge with strong negative correlation $$\rho(\beta_1, \beta_2) \approx -0.99$$!
+2. **Individual Slopes Fail, Predictions Succeed:** Even when marginal CIs for $$\beta_1$$ and $$\beta_2$$ look wildly uncertain, their sum $$\beta_1 + \beta_2$$—and therefore out-of-sample predictions $$\hat{y}$$—remain razor-sharp!
+3. **Weakly Informative Priors Break Exact Flatness:** While OLS explodes to $$\pm\infty$$ under perfect collinearity, a Bayesian prior $$\beta_j \sim \mathcal{N}(0, 1)$$ smoothly anchors the ridge around balanced weights $$(\beta_1 \approx \beta_2 \approx 1.0)$$.
+4. **Detection (VIF & Posterior Pair Plots):** Variance Inflation Factor $$\mathrm{VIF}_j = \frac{1}{1 - R_j^2}$$ and inspecting `az.plot_pair` immediately expose collinear parameter pairs.
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand what multicollinearity is, why it makes interpreting coefficients difficult, and when it is truly worrying. You also need to clearly distinguish two different goals of regression: **prediction** and **interpretation**.
@@ -207,6 +222,29 @@ Interaction effects in the next lesson ask:
 One is a problem of **overlapping information**, the other a problem of **mutual dependence of effects**. Being able to tell these two apart will help you read multiple regression much more accurately.
 
 > **3 key ideas.** Multicollinearity occurs when predictors carry information that is too similar, making it hard for the model to separate the effect of each variable; this is an especially serious problem when the goal is interpreting coefficients, but may be less serious if the goal is only prediction; and the way to handle it always depends on the goal, from dropping variables, combining variables, using a more stabilizing prior, collecting more diverse data, to accepting the limits of interpretation.
+
+---
+
+### Worked Numerical Example: Left Leg + Right Leg Posterior Ridge
+
+Suppose true height is $$H_i = 2.0 \cdot \text{Leg}_i + \varepsilon_i$$ and left/right leg lengths correlate at $$r = 0.99$$ ($$\mathrm{VIF} = \frac{1}{1 - 0.99^2} \approx \mathbf{50.3}$$!). Compare the posterior summaries of a two-leg Bayesian regression:
+
+| Quantity | Posterior Mean | Posterior SD | 95% Credible Interval | Interpretation |
+| :--- | :--- | :--- | :--- | :--- |
+| **$$\beta_{\text{left}}$$ alone** | $$+1.10$$ | $$2.45$$ | $$[-3.70,\; +5.90]$$ | Looks "uncertain" marginally! |
+| **$$\beta_{\text{right}}$$ alone** | $$+0.90$$ | $$2.45$$ | $$[-3.90,\; +5.70]$$ | Looks "uncertain" marginally! |
+| **Sum $$\beta_{\text{left}} + \beta_{\text{right}}$$** | **$$+2.00$$** | **$$0.08$$** | **$$[+1.84,\; +2.16]$$** | **Pinned down with 30× higher precision!** |
+
+### Deep-Dive Explanation: Four Rules for Handling Multicollinearity in Bayes (Read Slowly)
+
+1. **Always check posterior correlation before declaring a predictor "unimportant":** A wide marginal CI straddling zero may simply mean another predictor in the model is measuring the exact same underlying construct!
+2. **Distinguish prediction goals from causal goals:** For pure prediction, collinearity rarely hurts (especially with regularizing priors); for causal estimation, consult your DAG before dropping or combining predictors.
+3. **Combine redundant measurements cleanly:** Averaging `(left_leg + right_leg)/2` or using a latent factor model eliminates redundancy and cuts measurement noise in half.
+4. **Watch HMC sampling speed:** Extreme posterior ridges force tiny HMC step sizes; standardizing or dropping exact duplicates speeds up NUTS by 5–10×.
+
+**Quick check.** If predictor $$X_1$$ has $$R_1^2 = 0.95$$ when regressed on the other predictors in your model, what is its Variance Inflation Factor $$\mathrm{VIF}_1 = \frac{1}{1 - R_1^2}$$?
+
+---
 
 ## Reference videos
 

@@ -10,9 +10,26 @@ categories:
 lesson_type: optional
 ---
 
+Từ những bài toán tung đồng xu cổ điển ở đầu Chương 0, toàn bộ hệ sinh thái khoa học dữ liệu hiện đại — từ thử nghiệm A/B trực tuyến, dự báo nhu cầu chuỗi cung ứng, đến đánh giá độ tin cậy của mô hình AI — đều đang vận hành trên đúng cùng một khung xác suất nền tảng. Điểm khác biệt duy nhất là quy mô dữ liệu lớn hơn, độ trễ quyết định ngắn hơn và hậu quả của việc hiểu sai xác suất cũng đắt giá hơn.
+
+Bài tổng kết Chương 0 này nối các khái niệm tưởng chừng rời rạc (phân phối, log-probability, luật số lớn, mô phỏng) thành một bức tranh ứng dụng thực chiến, sẵn sàng đưa bạn bước vào thế giới suy diễn Bayes ở Chương 1.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài đọc mở rộng này, bạn sẽ không còn xem xác suất, phân phối đồng thời (joint distribution), kỳ vọng, log-probability và mô phỏng chỉ là phần "ôn tập trước khi học Bayes", mà nhận ra chúng chính là ngôn ngữ cốt lõi mà khoa học máy tính và khoa học dữ liệu hiện đại sử dụng khi đánh giá một mô hình có được hiệu chỉnh (calibration) hay không, có ổn định số học hay không, và có phản ánh đúng cơ chế sinh dữ liệu hay không. Mục tiêu là thay đổi góc nhìn: đưa các khái niệm nền tảng trở thành câu hỏi thiết kế trực tiếp cho hệ thống thực tế.
+
+
+## Bản đồ kiến thức nền: Xác suất nền tảng trong hệ thống dữ liệu và AI hiện đại
+
+Bốn trụ cột dưới đây cho thấy kiến thức Chương 0 được "cài đặt" trực tiếp vào các hệ thống sản phẩm như thế nào:
+
+- **Mô hình sinh dữ liệu trong kỹ thuật phần mềm & ML:** Các họ phân phối rời rạc/liên tục (Bernoulli, Poisson, Normal, Beta) là viên gạch cơ bản của hàm mất mát: tối thiểu hóa cross-entropy hay MSE thực chất là tối đa hóa log-likelihood của các phân phối này.
+- **Tính toán số quy mô lớn (Log-space & Vectorization):** Mọi thư viện hiện đại (PyTorch, JAX, PyMC) đều dùng `log_softmax`, `logsumexp` và tính toán song song trên GPU/CPU để tránh tràn số khi xử lý hàng triệu điểm dữ liệu.
+- **Định lượng bất định và ra quyết định (Uncertainty Quantification):** Thay vì chỉ xuất ra một điểm dự báo, các hệ thống hiện đại cần phân phối dự báo đầy đủ để đo rủi ro đuôi, phát hiện lệch phân phối (*distribution shift*) và tối ưu hóa quyết định kinh doanh.
+
+---
 
 ## Kiến thức cần có
 
@@ -61,6 +78,35 @@ Bốn tình huống trên bao phủ các bài toán xếp hạng, mô hình ngô
 ## Giới hạn và hướng mở rộng
 
 Bài viết này không thay thế một học phần về học sâu hay lập trình xác suất. Độ hiệu chỉnh có thể suy giảm khi phân phối dữ liệu dịch chuyển; tính toán trên thang log không khắc phục được mô hình sai đặc tả; và kiểm tra bằng mô phỏng chỉ xác nhận được phần tính toán nằm trong kịch bản bạn đã chạy. Các chương tiếp theo sẽ đi trực tiếp vào quy trình cập nhật Bayesian.
+
+
+## Khung giải thích (nên đọc chậm): Từ một bài toán sản phẩm thực tế về đúng mô hình xác suất
+
+Khi đối diện một bài toán khoa học dữ liệu mới, hãy đi chậm qua bốn bước ánh xạ sau:
+
+1. **Xác định bản chất biến đầu ra:** Nhị phân (Bernoulli/Binomial), số đếm (Poisson/Negative Binomial), hay liên tục (Normal/Log-normal/Student-$$t$$)?
+2. **Kiểm tra hàm mất mát tương đương:** Chọn hàm mất mát chính là ngầm chọn một giả định likelihood (ví dụ MSE ứng với sai số Gaussian đồng phương sai).
+3. **Đo bất định ở hai cấp độ:** Tách biệt bất định ngẫu nhiên tự nhiên (*aleatoric* — không giảm khi thêm dữ liệu) và bất định tri thức (*epistemic* — giảm theo $$1/\sqrt{n}$$ khi thêm dữ liệu).
+4. **Kiểm chứng bằng mô phỏng trước khi triển khai:** Sinh dữ liệu giả lập để đo hiệu quả quyết định trước khi chạy trên người dùng thật.
+
+### Ví dụ tính toán cầm tay chỉ việc: So sánh hàm mất mát Log-Loss trên mô hình dự báo xác suất
+
+Giả sử một mô hình phân loại rủi ro gian lận dự đoán xác suất cho 3 giao dịch có nhãn thật lần lượt là $$y = (1, 0, 1)$$. So sánh Mô hình A (hiệu chỉnh tốt) và Mô hình B (quá tự tin và đoán sai giao dịch thứ 3):
+
+| Giao dịch | Nhãn thật $$y_i$$ | Dự báo $$p_i$$ (Mô hình A) | $$-\ln p_i(y_i)$$ (A) | Dự báo $$p_i$$ (Mô hình B) | $$-\ln p_i(y_i)$$ (B) |
+| --- | --- | --- | --- | --- | --- |
+| 1 | $$1$$ | $$0.80$$ | $$-\ln(0.80) \approx 0.223$$ | $$0.99$$ | $$-\ln(0.99) \approx 0.010$$ |
+| 2 | $$0$$ | $$0.20$$ | $$-\ln(0.80) \approx 0.223$$ | $$0.01$$ | $$-\ln(0.99) \approx 0.010$$ |
+| 3 | $$1$$ | $$0.40$$ | $$-\ln(0.40) \approx 0.916$$ | $$0.01$$ | $$-\ln(0.01) \approx 4.605$$ |
+| **Log-loss trung bình** | — | — | **$$0.454$$** | — | **$$1.542$$** |
+
+Dù cả hai mô hình đều đoán đúng 2/3 giao dịch (cùng độ chính xác 66.7%), Mô hình B bị phạt nặng gấp hơn **3 lần** trên thang log-loss ($$1.542$$ so với $$0.454$$) vì quá tự tin khi sai. Đây chính là lý do các hệ thống AI hiện đại ưu tiên điểm chấm xác suất nghiêm ngặt (*proper scoring rules*) như log-loss thay vì chỉ nhìn accuracy.
+
+**Hiểu lầm cần tránh:** Chỉ tối ưu hóa độ chính xác phân loại (accuracy) mà bỏ qua hiệu chỉnh xác suất (*calibration*) và log-loss — khiến mô hình đưa ra các quyết định rủi ro cực đoan khi gặp trường hợp biên.
+
+**Kiểm tra nhanh:** Nếu Mô hình B đoán xác suất $$0.001$$ cho một ca dương tính thật, riêng một lỗi đó đã đóng góp $$-\ln(0.001) \approx 6.908$$ vào tổng mất mát — lớn hơn tổng sai số của 30 dự đoán có xác suất $$0.80$$ cộng lại.
+
+---
 
 ## Video tham khảo
 

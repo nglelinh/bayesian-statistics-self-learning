@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Khi dự đoán một kết quả nhị phân — khách hàng có rời bỏ dịch vụ không, bệnh nhân có đáp ứng thuốc không, hay giao dịch có gian lận không — đường thẳng hồi quy tuyến tính quen thuộc lập tức rơi vào bế tắc: nó có thể dự đoán xác suất bằng $$-0.3$$ hoặc $$1.4$$, những con số vô nghĩa về mặt xác suất. Để giữ mọi dự báo nằm gọn trong đoạn $$(0, 1)$$ mà vẫn tận dụng được sức mạnh của tổ hợp tuyến tính, các nhà thống kê thế kỷ 20 (Berkson, Cox) đã bắc một chiếc cầu cong mượt mà mang tên **hàm logit** — khai sinh mô hình **hồi quy logistic**.
+
+Trong bối cảnh Bayes, hồi quy logistic không chỉ cho bạn một bộ hệ số tối ưu duy nhất, mà còn trả về phân phối hậu nghiệm đầy đủ của từng tỷ số odds (*odds ratio*) và mọi dự báo xác suất, giúp định lượng rủi ro quyết định một cách minh bạch.
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **hồi quy logistic (logistic regression)** như một mô hình nền tảng cho các **biến kết quả nhị phân (binary outcomes)** như có/không, thành công/thất bại, hay 0/1. Trọng tâm của bài không chỉ là thay một công thức hồi quy khác, mà là hiểu vì sao hồi quy tuyến tính không phù hợp với dữ liệu nhị phân, vì sao ta cần **hàm liên kết (link function)**, và vì sao hệ số của mô hình phải được diễn giải thông qua **tỷ số odds (odds ratio)** thay vì theo trực giác tuyến tính thông thường. Đây cũng là bước mở đầu để tiếp cận họ **mô hình tuyến tính tổng quát (Generalized Linear Models — GLMs)**.
+
+
+## Bản đồ kiến thức nền: Hàm liên kết Logit, Tỷ số Odds và Suy diễn Bayes phi liên hợp
+
+Để làm chủ hồi quy logistic Bayes ở trình độ chuyên sâu, hãy kết nối ba trụ cột:
+
+- **Cấu trúc GLM với liên kết Logit (Generalized Linear Model):** Hồi quy logistic gắn ba thành phần: (1) thành phần ngẫu nhiên $$y_i \sim \text{Bernoulli}(p_i)$$, (2) bộ dự báo tuyến tính $$\eta_i = \alpha + \beta x_i \in (-\infty, +\infty)$$, và (3) hàm liên kết logit $$\eta_i = \log\frac{p_i}{1 - p_i}$$ cùng hàm nghịch đảo sigmoid $$p_i = \frac{1}{1 + e^{-\eta_i}}$$.
+- **Diễn giải hệ số trên thang Log-Odds và Odds Ratio:** Tăng $$x$$ thêm 1 đơn vị làm **log-odds** tăng cộng thêm $$\beta$$, tương đương nhân **odds** với $$e^\beta$$. Tuy nhiên, mức thay đổi trên thang *xác suất* $$\Delta p$$ là phi tuyến và phụ thuộc vào giá trị nền của $$x$$.
+- **Prior thông tin yếu & Chia tách hoàn toàn (Complete Separation):** Khác với hồi quy tuyến tính Gaussian, hồi quy logistic không có prior liên hợp dạng đóng nên cần MCMC (NUTS trong PyMC). Đặt prior thông tin yếu như $$\beta \sim \mathcal{N}(0, 2.5^2)$$ còn giải quyết triệt để hiện tượng chia tách hoàn toàn (*complete separation*) vốn khiến MLE phát tán ra $$\pm\infty$$.
+
+---
 
 ## Giới thiệu: Hạn chế của hồi quy tuyến tính với dữ liệu nhị phân
 
@@ -354,6 +371,35 @@ Hồi quy logistic là lựa chọn tự nhiên khi biến kết quả chỉ có
 Điểm cốt lõi cần nắm là tư duy của GLM: giữ lại phần dự báo tuyến tính, đồng thời chọn hàm liên kết và phân phối phù hợp để xử lý những biến kết quả không tuân theo giả định Gaussian.
 
 Bài tiếp theo: **Hồi quy Poisson (Poisson Regression)** cho dữ liệu đếm.
+
+
+## Khung giải thích (nên đọc chậm): Chuyển đổi chính xác giữa Log-Odds, Odds và Xác suất
+
+Lỗi phổ biến nhất khi đọc kết quả hồi quy logistic là diễn giải nhầm hệ số $$\beta$$ hoặc $$e^\beta$$ trực tiếp như mức tăng xác suất. Hãy đi chậm qua 4 bước quy đổi:
+
+1. **Tính bộ dự báo tuyến tính (log-odds):** $$\eta = \alpha + \beta x$$.
+2. **Lấy mũ để sang tỷ số Odds:** $$\text{Odds} = e^\eta = \frac{p}{1-p}$$.
+3. **Chuyển sang xác suất bằng hàm sigmoid:** $$p = \frac{\text{Odds}}{1 + \text{Odds}} = \frac{1}{1 + e^{-\eta}}$$.
+4. **Tính mức thay đổi xác suất thực tế:** So sánh trực tiếp $$p(x+1) - p(x)$$ tại điểm quan tâm thay vì chỉ báo cáo $$e^\beta$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Tác động của số giờ tự học lên xác suất qua môn
+
+Giả sử hậu nghiệm cho ra trung bình $$\alpha = -2.0$$ và $$\beta = 0.8$$ (mỗi giờ tự học thêm tăng log-odds thêm $$0.8$$, tức Odds Ratio $$= e^{0.8} \approx 2.226$$). Hãy tính xác suất qua môn tại $$x = 1, 2, 3, 4$$ giờ:
+
+| Số giờ học $$x$$ | Log-odds $$\eta = -2.0 + 0.8x$$ | $$\text{Odds} = e^\eta$$ | Xác suất $$p = \frac{1}{1+e^{-\eta}}$$ | Mức tăng $$\Delta p$$ so với bước trước |
+| --- | --- | --- | --- | --- |
+| $$x = 1$$ | $$-1.2$$ | $$0.301$$ | $$0.2315\; (23.2\%)$$ | — |
+| $$x = 2$$ | $$-0.4$$ | $$0.670$$ | $$0.4013\; (40.1\%)$$ | $$+17.0\%$$ |
+| $$x = 3$$ | $$+0.4$$ | $$1.492$$ | $$0.5987\; (59.9\%)$$ | $$+19.7\%$$ |
+| $$x = 4$$ | $$+1.2$$ | $$3.320$$ | $$0.7685\; (76.9\%)$$ | $$+17.0\%$$ |
+
+Chú ý: tỷ số Odds luôn nhân đúng $$2.226$$ lần ở mỗi bước ($$0.670/0.301 \approx 2.226$$; $$1.492/0.670 \approx 2.226$$), nhưng mức tăng xác suất $$\Delta p$$ lớn nhất quanh vùng $$p \approx 0.5$$ và nhỏ dần khi tiến gần 0 hoặc 1 (quy tắc chia 4 của Gelman: độ dốc lớn nhất trên thang xác suất là $$\beta / 4 = 0.8 / 4 = 0.20$$).
+
+**Hiểu lầm cần tránh:** Đọc $$\text{OR} = e^{0.8} \approx 2.23$$ rồi nói "học thêm 1 giờ làm xác suất qua môn tăng gấp 2.23 lần". Nếu xác suất ban đầu đã là $$60\%$$, nhân $$2.23$$ sẽ ra $$134\%$$ (vô lý)! Chỉ có **Odds** nhân $$2.23$$ lần, không phải xác suất.
+
+**Kiểm tra nhanh:** Tại $$x = 2.5$$ giờ, $$\eta = -2.0 + 0.8(2.5) = 0$$, nên $$\text{Odds} = e^0 = 1$$ và xác suất qua môn đúng bằng $$p = 0.50$$ (50%).
+
+---
 
 ## Video tham khảo
 

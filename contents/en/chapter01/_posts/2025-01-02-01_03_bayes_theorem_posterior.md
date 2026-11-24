@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Every learning algorithm in science—whether a doctor narrowing down a diagnosis, a radar tracking a satellite, or a data scientist evaluating an A/B test—follows one universal law of evidence: **start with what was plausible before, multiply by how well each hypothesis explains the new data, and renormalize so total plausibility sums to 1.** That single equation is **Bayes’ Theorem**:
+
+$$P(\theta \mid D) = \frac{P(D \mid \theta)\,P(\theta)}{P(D)}.$$
+
+This lesson turns Bayes’ theorem into concrete muscle memory by walking step by step through **prior $$\times$$ likelihood $$\to$$ unnormalized posterior $$\to$$ normalized posterior**, both in discrete tables and continuous curves.
+
+---
+
+## Background Knowledge Map: The Four Named Parts of Bayes’ Theorem
+
+1. **Prior $$P(\theta)$$:** Your belief distribution over hypotheses *before* observing the current dataset $$D$$.
+2. **Likelihood $$P(D \mid \theta)$$:** How probable the observed data $$D$$ would be *if* hypothesis $$\theta$$ were true (the bridge from model to data!).
+3. **Marginal Likelihood / Evidence $$P(D) = \sum_\theta P(D\mid\theta)P(\theta)$$:** The total probability of seeing data $$D$$ averaged across all hypotheses—ensures the posterior sums/integrates to 1 (and powers Bayesian model comparison!).
+4. **Posterior $$P(\theta \mid D)$$:** Your updated belief distribution *after* seeing data $$D$$—ready to become tomorrow’s prior when the next batch of data arrives!
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand Bayes' theorem as a rule for updating beliefs and not just a memorized formula. You must be able to read the roles of the prior, likelihood and posterior in a real example, and know why Bayes becomes natural in diagnosis, forecasting and learning from data.
@@ -308,6 +325,32 @@ Bayes does not only teach a formula. It teaches a way of thinking, in which data
 Once you accept this, you will see the prior and posterior are no longer "strange", but extremely natural.
 
 > **3 key ideas.** Bayes' theorem is the rule for updating beliefs when new evidence arrives; the prior, likelihood and posterior are not three separate concepts but three parts of the same inference process; and the power of Bayes lies in the fact that it lets us combine old knowledge with new data transparently.
+
+---
+
+### Worked Numerical Example: Identifying a Mystery Coin (3 Hypotheses, 2 Sequential Flips)
+
+You pull a coin from a bag containing 3 equally likely coin types: **Fair** ($$p=0.5$$), **Biased-Heads** ($$p=0.8$$), and **Biased-Tails** ($$p=0.2$$), each with prior $$1/3$$. You flip it twice and observe **2 Heads (`HH`)**:
+
+| Hypothesis $$\theta$$ | Prior $$P(\theta)$$ | Likelihood $$P(\text{HH}\mid\theta) = p^2$$ | Prior $$\times$$ Likelihood | **Normalized Posterior $$P(\theta\mid\text{HH})$$** |
+| :--- | :--- | :--- | :--- | :--- |
+| **Biased-Tails ($$p=0.2$$)** | $$1/3$$ | $$0.04$$ | $$0.0133$$ | $$0.04 / 0.93 \approx \mathbf{4.3\%}$$ |
+| **Fair ($$p=0.5$$)** | $$1/3$$ | $$0.25$$ | $$0.0833$$ | $$0.25 / 0.93 \approx \mathbf{26.9\%}$$ |
+| **Biased-Heads ($$p=0.8$$)** | $$1/3$$ | $$0.64$$ | $$0.2133$$ | $$0.64 / 0.93 \approx \mathbf{68.8\%}$$ |
+| **Sum (Evidence $$P(D)$$)** | $$1.00$$ | — | $$0.3100$$ ($$= 0.93/3$$) | **$$100.0\%$$** |
+
+Just two heads shifted belief in the Biased-Heads coin from $$33.3\%$$ to **$$68.8\%$$** while crashing belief in the Biased-Tails coin to $$4.3\%$$!
+
+### Deep-Dive Explanation: Four Rules of Bayesian Updating (Read Slowly)
+
+1. **Order of independent data does not matter (Sequential Invariance):** Updating on Flip 1 (`H`) and using that posterior as the prior for Flip 2 (`H`) gives the *exact same* `[4.3%, 26.9%, 68.8%]` as updating on `HH` all at once!
+2. **Never assign a prior of exact `0` unless logically impossible (Cromwell’s Rule):** Because $$0 \times \text{anything} = 0$$, no finite amount of data can ever rescue a hypothesis given prior probability `0`!
+3. **Proportionality ($$\propto$$) is your algebraic superpower:** You can drop any constant that doesn’t depend on $$\theta$$ during intermediate steps and normalize *once* at the very end.
+4. **Stronger data overwhelms reasonable priors:** After 100 flips, the likelihood factor $$p^{k}(1-p)^{n-k}$$ dominates any non-zero prior.
+
+**Quick check.** Using the posterior `[4.3%, 26.9%, 68.8%]` from the table above as your new prior, if Flip 3 comes up **Tails (`T`)** (likelihoods $$0.8, 0.5, 0.2$$), which hypothesis now has the highest posterior probability?
+
+---
 
 ## Reference videos
 

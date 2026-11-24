@@ -10,9 +10,26 @@ categories:
 lesson_type: optional
 ---
 
+Từ những khái niệm kiểm tra mô hình (PPC), tiêu chí thông tin (WAIC/PSIS-LOO), kết hợp mô hình (Stacking) cho đến phân tích quyết định theo hàm tổn thất, toàn bộ Chương 8 tạo thành "bộ khung vận hành khép kín" của thống kê Bayes hiện đại — được Andrew Gelman và cộng sự gọi là **Bayesian Workflow**. Trong các tổ chức công nghệ, tài chính và y sinh hàng đầu, chính quy trình kiểm tra – so sánh – quyết định này mới là yếu tố giúp mô hình Bayes trụ vững trước dữ liệu thực tế đầy nhiễu và thay đổi liên tục.
+
+Bài tổng kết Chương 8 này minh họa cách bốn mảnh ghép ấy phối hợp nhịp nhàng trong thử nghiệm sản phẩm trực tuyến, quản trị rủi ro và triển khai mô hình ở quy mô sản xuất.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận PPC, LOO/WAIC và phân tích quyết định như một quy trình vận hành thực tế, thay vì phần phụ lục sau khi khớp mô hình. Bạn sẽ kết nối được kiểm tra hậu nghiệm với hiệu chuẩn dựa trên mô phỏng (simulation-based calibration), so sánh mô hình với độ bất định của chính hiệu chênh LOO, và quy tắc hành động Bayes với tối ưu hóa Bayes (Bayesian optimization) cùng bài toán bandit.
+
+
+## Bản đồ kiến thức nền: Bayesian Workflow trong MLOps, Thử nghiệm A/B và Quản trị Rủi ro
+
+Ba trụ cột ứng dụng khép lại Chương 8:
+
+- **Kiểm tra mô hình tự động trong MLOps (Continuous PPC & Pareto-$$k$$ Monitoring):** Khi dữ liệu thực tế trôi dạt theo thời gian (*data drift*), các kiểm tra PPC định kỳ và theo dõi tỷ lệ điểm có Pareto $$\hat k > 0.7$$ đóng vai trò hệ thống cảnh báo sớm trước khi dự báo bị sai lệch nghiêm trọng.
+- **Thử nghiệm A/B Bayes với Tổn thất Kỳ vọng (Expected Loss Stopping Rule):** Thay vì chờ đủ cỡ mẫu cố định để kiểm định $$p < 0.05$$, các nền tảng A/B hiện đại dừng thí nghiệm ngay khi *tổn thất kỳ vọng của việc chọn phương án đang dẫn đầu* giảm xuống dưới một ngưỡng chấp nhận được (ví dụ $$< 0.1\%$$ tỷ lệ chuyển đổi).
+- **Quyết định đa mục tiêu dưới bất định:** Kết hợp Stacking (giảm rủi ro chọn nhầm mô hình) với hàm tổn thất bất đối xứng giúp các hệ thống tín dụng, tồn kho và y tế tối ưu hóa trực tiếp KPI thực tế thay vì chỉ tối ưu sai số học thuật.
+
+---
 
 ## Kiến thức cần có
 
@@ -61,6 +78,35 @@ Kiểm thử mô hình trước khi đưa vào vận hành, lựa chọn mô hì
 ## Giới hạn và hướng mở rộng
 
 SBC đòi hỏi khớp lại mô hình rất nhiều lần nên tốn chi phí tính toán. LOO giả định đóng góp của các quan sát có thể tách tích gần như độc lập. Tối ưu hóa Bayes phụ thuộc mạnh vào tiên nghiệm trên hàm $$f$$ và dễ đưa ra lựa chọn thiếu thận trọng nếu mô hình nhiễu bị đặc tả sai. Khóa học không có chương riêng về quá trình Gauss, nên bài này chỉ sử dụng GP như một phân phối hậu nghiệm phục vụ ra quyết định; khi mở rộng sang thống kê phi tham số, bạn sẽ thấy hạt nhân của tối ưu hóa Bayes chính là mô hình này.
+
+
+## Khung giải thích (nên đọc chậm): Tính "Tổn thất kỳ vọng khi chọn sai" (Expected Loss) trong A/B Testing Bayes
+
+Một trong những ứng dụng thực chiến phổ biến nhất của Chương 8 là quy tắc dừng A/B testing dựa trên **Expected Loss**. Hãy đọc chậm 3 bước tính trên $$S$$ mẫu hậu nghiệm $$(p_A^{(s)}, p_B^{(s)})$$:
+
+1. **Với mỗi mẫu hậu nghiệm $$s$$, tính thiệt hại nếu ta chọn phương án B mà thực ra A mới tốt hơn:** $$\text{loss}_B^{(s)} = \max(0,\; p_A^{(s)} - p_B^{(s)})$$.
+2. **Lấy trung bình trên toàn bộ $$S$$ mẫu hậu nghiệm:** $$\mathrm{EL}(B) = \frac{1}{S}\sum_{s=1}^S \max(0,\; p_A^{(s)} - p_B^{(s)})$$.
+3. **So sánh $$\mathrm{EL}(B)$$ với ngưỡng rủi ro kinh doanh $$\varepsilon$$:** Nếu $$\mathrm{EL}(B) < \varepsilon$$, ta có thể tự tin tung ra phương án B ngay cả khi $$P(p_B > p_A \mid y)$$ chưa đạt 99%, vì *ngay cả nếu B thua A, mức thiệt hại kỳ vọng cũng không đáng kể*.
+
+### Ví dụ tính toán cầm tay chỉ việc: Tính Expected Loss trên 4 mẫu hậu nghiệm A/B
+
+Giả sử ta có 4 mẫu hậu nghiệm rút từ tỷ lệ chuyển đổi của giao diện cũ (A) và giao diện mới (B), với ngưỡng rủi ro chấp nhận $$\varepsilon = 0.005$$ (0.5 điểm phần trăm):
+
+| Mẫu $$s$$ | $$p_A^{(s)}$$ | $$p_B^{(s)}$$ | $$p_B^{(s)} > p_A^{(s)}$$? | Thiệt hại nếu chọn B: $$\max(0, p_A^{(s)} - p_B^{(s)})$$ |
+| --- | --- | --- | --- | --- |
+| 1 | $$0.100$$ | $$0.112$$ | Có | $$0.000$$ |
+| 2 | $$0.105$$ | $$0.115$$ | Có | $$0.000$$ |
+| 3 | $$0.108$$ | $$0.104$$ | Không | $$0.004$$ |
+| 4 | $$0.098$$ | $$0.110$$ | Có | $$0.000$$ |
+| **Trung bình** | **$$0.1028$$** | **$$0.1103$$** | **$$75\%$$ thắng** | **$$\mathrm{EL}(B) = 0.004 / 4 = 0.0010$$** |
+
+Dù xác suất B thắng A mới là $$75\%$$, tổn thất kỳ vọng nếu chọn B chỉ là $$0.0010$$ ($$0.10\%$$), nhỏ hơn nhiều so với ngưỡng chịu rủi ro $$\varepsilon = 0.50\%$$ — đủ cơ sở định lượng để triển khai B sớm và thu lợi nhuận sớm.
+
+**Hiểu lầm cần tránh:** Chỉ nhìn xác suất $$P(p_B > p_A \mid y)$$ mà bỏ qua *độ lớn* của chênh lệch $$p_A - p_B$$. Xác suất thắng 75% với rủi ro thua nhỏ xíu khác hoàn toàn với xác suất thắng 75% nhưng nếu thua thì mất 20% doanh thu.
+
+**Kiểm tra nhanh:** Ở bảng trên, nếu ta thử chọn giữ lại phương án cũ A, tổn thất kỳ vọng sẽ là $$\mathrm{EL}(A) = \frac{0.012 + 0.010 + 0 + 0.012}{4} = 0.0085$$ — lớn gấp **8.5 lần** so với chọn B!
+
+---
 
 ## Video tham khảo
 

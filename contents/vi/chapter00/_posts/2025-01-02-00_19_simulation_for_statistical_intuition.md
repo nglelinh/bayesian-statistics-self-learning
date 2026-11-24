@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Năm 1946, khi nằm dưỡng bệnh và chơi trò xếp bài Solitaire, nhà toán học Stanislaw Ulam nảy ra một ý tưởng làm thay đổi toàn bộ khoa học tính toán: thay vì cố giải bài toán tổ hợp cực khó bằng công thức đóng, tại sao không chơi thử hàng trăm ván trên máy tính rồi đếm tỷ lệ thắng? Cùng với John von Neumann, ông gọi kỹ thuật đó là **phương pháp Monte Carlo** — đặt theo sòng bạc nổi tiếng ở Monaco.
+
+Đối với người học thống kê Bayes, mô phỏng không chỉ là công cụ kiểm chứng bài tập mà là **phòng thí nghiệm tư duy**: bất cứ khi nào một công thức trông mờ ảo hoặc một mô hình phức tạp khó đoán hành vi, bạn luôn có thể sinh dữ liệu giả lập với tham số đã biết để nhìn tận mắt điều gì xảy ra.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ sử dụng mô phỏng như một công cụ suy luận thực thụ chứ không chỉ để minh họa, biết dùng mô phỏng để kiểm chứng công thức, phát hiện các điểm mù trực giác, và chuẩn bị nền tảng cho quy trình làm việc Bayesian dựa trên cơ chế sinh dữ liệu (generative story).
+
+
+## Bản đồ kiến thức nền: Mô hình sinh dữ liệu, Monte Carlo và Kiểm chứng quy trình Bayes
+
+Mô phỏng kết nối ba trụ cột quan trọng của khoa học dữ liệu định lượng:
+
+- **Mô hình sinh dữ liệu (Generative Modeling):** Muốn mô phỏng, bạn buộc phải viết rõ ràng từng bước dữ liệu được tạo ra như thế nào (từ tham số đến quan sát). Nếu viết được hàm sinh dữ liệu, bạn đã hiểu trọn vẹn cấu trúc xác suất của bài toán.
+- **Tích phân Monte Carlo (Monte Carlo Integration):** Mọi xác suất $$P(A)$$ hay kỳ vọng $$\mathbb{E}[g(X)]$$ đều có thể xấp xỉ bằng tần suất thực nghiệm trên $$M$$ lần mô phỏng độc lập, với sai số giảm theo $$1/\sqrt{M}$$.
+- **Cầu nối sang Thống kê Bayes (Prior & Posterior Predictive Checks):** Toàn bộ quy trình Bayes hiện đại xoay quanh mô phỏng: *Prior predictive simulation* kiểm tra xem prior có sinh ra dữ liệu hợp lý không, *Simulation-Based Calibration (SBC)* kiểm tra thuật toán suy diễn có khôi phục được tham số thật không, và *Posterior predictive simulation* kiểm tra mô hình sau khi khớp có tái tạo được dữ liệu thực tế không.
+
+---
 
 ## Giới thiệu: Mô phỏng như phòng thí nghiệm của suy luận
 
@@ -62,6 +79,32 @@ Mô phỏng là "phòng thí nghiệm" cốt lõi của quy trình làm việc B
 2. Quy trình chuẩn gồm bốn bước: đặt giả định -> chọn tham số -> sinh dữ liệu lặp -> tóm tắt và đối chiếu.
 3. Mô phỏng rất hữu ích để kiểm tra nhanh (sanity check) các mô hình Bayesian.
 4. Khi trực giác mâu thuẫn với mô phỏng, hãy kiểm tra lại mã nguồn rồi xem lại chính giả định và trực giác ban đầu.
+
+
+## Khung giải thích (nên đọc chậm): Bốn bước kiểm chứng trực giác bằng mô phỏng
+
+Khi gặp một câu hỏi xác suất khó hoặc nghi ngờ một bộ ước lượng, hãy dùng quy trình mô phỏng 4 bước:
+
+1. **Cố định "chân lý ẩn" (Ground truth):** Tự chọn giá trị tham số thật biết trước (ví dụ $$\theta_{\text{true}} = 0.30$$) để có mốc đối chiếu tuyệt đối.
+2. **Sinh $$M$$ tập dữ liệu giả lập:** Dùng bộ sinh số ngẫu nhiên (cố định `seed` để tái lập) tạo ra $$M$$ kịch bản độc lập theo đúng giả định mô hình.
+3. **Áp dụng đúng quy trình suy diễn lên từng kịch bản:** Tính thống kê quan tâm (trung bình mẫu, khoảng tin cậy, xác suất sự kiện).
+4. **Đo sai số Monte Carlo:** Kiểm tra $$\mathrm{MCSE} = \sqrt{\hat p(1-\hat p)/M}$$ để chắc chắn số lần mô phỏng $$M$$ đủ lớn nhằm kết luận đáng tin cậy.
+
+### Ví dụ tính toán cầm tay chỉ việc: Đo độ chính xác ước lượng xác suất bằng Monte Carlo
+
+Giả sử bạn mô phỏng bài toán kiểm tra xem tổng của 2 viên xúc xắc công bằng có lớn hơn hoặc bằng 10 hay không (giá trị lý thuyết chính xác là $$p = 6/36 = 1/6 \approx 0.1667$$). Hãy theo dõi sai số chuẩn Monte Carlo $$\mathrm{MCSE} = \sqrt{p(1-p)/M}$$ khi tăng số lần chạy $$M$$:
+
+| Số lần mô phỏng $$M$$ | $$\mathrm{MCSE} = \sqrt{0.1667 \times 0.8333 / M}$$ | Biên sai số 95% ($$\pm 1.96\,\mathrm{MCSE}$$) | Mức độ tin cậy |
+| --- | --- | --- | --- |
+| $$M = 100$$ | $$\sqrt{0.1389 / 100} \approx 0.0373$$ | $$\pm 0.0731$$ | Rất thô (dao động từ 9% đến 24%) |
+| $$M = 1\,000$$ | $$\sqrt{0.1389 / 1000} \approx 0.0118$$ | $$\pm 0.0231$$ | Khá ổn để xem trực giác |
+| $$M = 10\,000$$ | $$\sqrt{0.1389 / 10000} \approx 0.0037$$ | $$\pm 0.0073$$ | Chính xác tới dưới 1 điểm phần trăm |
+
+**Hiểu lầm cần tránh:** Chạy mô phỏng chỉ $$M = 50$$ lần rồi kết luận thuật toán bị sai chỉ vì kết quả lệch vài phần trăm so với lý thuyết. Luôn tính nhanh $$\mathrm{MCSE}$$ trước khi phán xét.
+
+**Kiểm tra nhanh:** Nếu bạn muốn ước lượng một xác suất quanh $$0.5$$ với sai số chuẩn Monte Carlo nhỏ hơn $$0.005$$, ta cần $$\sqrt{0.25/M} \le 0.005 \implies M \ge 0.25 / 0.000025 = 10\,000$$ lần mô phỏng.
+
+---
 
 ## Video tham khảo
 

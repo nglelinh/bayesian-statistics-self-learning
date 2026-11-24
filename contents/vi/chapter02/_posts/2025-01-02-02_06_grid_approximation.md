@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Chuyện gì xảy ra khi bạn muốn dùng một phân phối prior thực tế — chẳng hạn prior cắt cụt bằng 0 ở nửa dưới hoặc prior có hai đỉnh — không còn liên hợp với likelihood nữa? Công thức cộng siêu tham số gọn gàng lập tức biến mất. Thay vì nhảy ngay vào các thuật toán MCMC phức tạp, **xấp xỉ lưới (grid approximation)** cho ta một cách tiếp cận trực quan nhất: chia miền tham số liên tục thành một lưới hữu hạn các điểm, tính *prior × likelihood* tại từng điểm, rồi chuẩn hóa để tổng bằng 1.
+
+Dù chỉ hiệu quả trong không gian 1–2 chiều, xấp xỉ lưới là "kính hiển vi sư phạm" tốt nhất giúp bạn nhìn thấy tận mắt hình dạng thực sự của định lý Bayes trên bất kỳ prior nào.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần hiểu xấp xỉ lưới (grid approximation) như cây cầu nối từ suy luận Bayes giải tay sang suy luận Bayes bằng tính toán số. Bạn cần nắm ý tưởng rời rạc hóa không gian tham số, tự tính được posterior trên một lưới đơn giản, biết cách khai thác kết quả từ lưới, đồng thời hiểu rõ vì sao phương pháp này gặp giới hạn khi số chiều tham số tăng lên.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần hiểu xấp xỉ lưới (grid approximation) như c
 > **Ví dụ mini.** Bạn muốn suy luận $$\theta$$ sau khi quan sát 6 mặt ngửa trong 9 lần tung, nhưng thay vì xét liên tục trên toàn đoạn $$[0,1]$$, bạn chỉ đánh giá trên 5 giá trị ứng viên $$0, 0.25, 0.5, 0.75, 1$$. Đó chính là tinh thần của xấp xỉ lưới.
 >
 > **Câu hỏi tự kiểm tra.** Khi tăng số điểm lưới từ 5 lên 100 hoặc 1000, posterior xấp xỉ sẽ thay đổi như thế nào?
+
+
+## Bản đồ kiến thức nền: Rời rạc hóa tích phân, Tính bất biến của Bayes và Lời nguyền số chiều
+
+Xấp xỉ lưới nối trực tiếp lý thuyết giải tích với tư duy tính toán số qua ba trụ cột:
+
+- **Xấp xỉ tích phân Riemann (Numerical Quadrature):** Tích phân mẫu số $$p(y) = \int p(y \mid \theta) p(\theta)\,d\theta$$ được xấp xỉ bằng tổng Riemann trên lưới đều $$\theta_1, \dots, \theta_M$$ có bước lưới $$\Delta\theta$$. Khi bỏ hằng số $$\Delta\theta$$ chung ở cả tử và mẫu, trọng số hậu nghiệm tại mỗi điểm lưới đơn giản là $$w_j \propto p(y \mid \theta_j) p(\theta_j)$$.
+- **Tự do tuyệt đối trong chọn Prior:** Xấp xỉ lưới phá bỏ hoàn toàn sự phụ thuộc vào tính liên hợp — bạn có thể dùng prior bậc thang, prior hỗn hợp hay prior cắt cụt chỉ bằng một dòng mảng NumPy.
+- **Lời nguyền số chiều (Curse of Dimensionality) & Cầu nối sang MCMC:** Với $$d$$ tham số và $$M = 100$$ điểm mỗi chiều, số điểm lưới là $$100^d$$: $$d = 1$$ chỉ cần $$100$$ điểm, $$d = 2$$ cần $$10^4$$ điểm, nhưng $$d = 10$$ đã vọt lên $$10^{20}$$ điểm (bất khả thi). Chính rào cản này là động lực trực tiếp dẫn sang MCMC ở Chương 3.
+
+---
 
 ## Mở đầu: khi posterior không có công thức dạng đóng
 
@@ -269,6 +286,42 @@ Ngược lại. Xấp xỉ lưới là công cụ rất hiệu quả để xây 
 ## Tóm tắt
 
 **Xấp xỉ lưới (grid approximation) ước lượng posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm hữu hạn.** Phương pháp này trực quan, dễ cài đặt, không yêu cầu prior liên hợp và đặc biệt phù hợp cho các mô hình ít tham số. Hạn chế cốt lõi của nó là không mở rộng được lên không gian nhiều chiều do lời nguyền số chiều. Nếu prior liên hợp giúp ta hiểu suy luận Bayes bằng giải tích, thì xấp xỉ lưới mở ra cánh cửa sang suy luận Bayes bằng tính toán số.
+
+
+## Khung giải thích (nên đọc chậm): Năm bước thực hiện xấp xỉ lưới không bao giờ sai
+
+Bất kỳ bài toán Bayes 1 chiều nào cũng giải được bằng xấp xỉ lưới theo đúng 5 bước sau:
+
+1. **Tạo lưới điểm $$\theta_1, \dots, \theta_M$$** phủ kín miền tham số.
+2. **Đánh giá prior** $$p(\theta_j)$$ (hoặc $$\log p(\theta_j)$$) tại mỗi điểm lưới.
+3. **Đánh giá likelihood** $$p(y \mid \theta_j)$$ (hoặc $$\log p(y \mid \theta_j)$$) tại mỗi điểm lưới.
+4. **Nhân prior với likelihood** (hoặc cộng trên thang log rồi dùng `log-sum-exp`) để thu hậu nghiệm chưa chuẩn hóa $$u_j$$.
+5. **Chuẩn hóa** $$w_j = u_j / \sum_{m=1}^M u_m$$ để thu phân phối hậu nghiệm rời rạc, từ đó tính kỳ vọng $$\sum_j \theta_j w_j$$ hoặc rút mẫu trực tiếp.
+
+### Ví dụ tính toán cầm tay chỉ việc: Xấp xỉ lưới 5 điểm với prior không liên hợp
+
+Giả sử ta có prior bậc thang (không liên hợp): tin chắc đồng xu không thể có $$p < 0.5$$, tức $$p(\theta) = 0$$ nếu $$\theta < 0.5$$ và đều nhau nếu $$\theta \ge 0.5$$. Ta quan sát $$k = 2$$ Ngửa trong $$n = 3$$ lần tung ($$L(\theta) \propto \theta^2(1-\theta)$$) trên lưới 5 điểm $$\{0.1, 0.3, 0.5, 0.7, 0.9\}$$:
+
+| Điểm lưới $$\theta_j$$ | Prior chưa chuẩn hóa | Likelihood lõi $$\theta_j^2(1-\theta_j)$$ | Tích $$u_j$$ | Hậu nghiệm $$w_j = u_j / 0.353$$ |
+| --- | --- | --- | --- | --- |
+| $$0.1$$ | $$0$$ | $$0.009$$ | $$0.000$$ | $$0.0000$$ |
+| $$0.3$$ | $$0$$ | $$0.063$$ | $$0.000$$ | $$0.0000$$ |
+| $$0.5$$ | $$1$$ | $$0.125$$ | $$0.125$$ | $$0.3541$$ |
+| $$0.7$$ | $$1$$ | $$0.147$$ | $$0.147$$ | $$0.4164$$ |
+| $$0.9$$ | $$1$$ | $$0.081$$ | $$0.081$$ | $$0.2295$$ |
+| **Tổng** | — | — | **$$0.353$$** | **$$1.0000$$** |
+
+Kỳ vọng hậu nghiệm trên lưới 5 điểm là:
+
+$$
+\mathbb{E}[\theta \mid y] \approx 0.5(0.3541) + 0.7(0.4164) + 0.9(0.2295) = 0.1771 + 0.2915 + 0.2066 = 0.6752.
+$$
+
+**Hiểu lầm cần tránh:** Dùng lưới quá thưa (như 5 điểm trên) cho mô hình thật mà không kiểm tra độ hội tụ khi tăng số điểm lưới (ví dụ 200 so với 1.000 điểm), hoặc đặt lưới quá hẹp làm cắt cụt phần đuôi có khối lượng xác suất lớn.
+
+**Kiểm tra nhanh:** Nếu mô hình có $$d = 5$$ tham số và ta đặt $$M = 50$$ điểm cho mỗi tham số, tổng số điểm phải tính là $$50^5 = 312\,500\,000$$ (hơn 312 triệu điểm) — lý do rõ ràng nhất giải thích vì sao ta cần MCMC từ Chương 3 trở đi.
+
+---
 
 ## Video tham khảo
 

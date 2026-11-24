@@ -10,9 +10,40 @@ categories:
 lesson_type: optional
 ---
 
+Why did Bayesian statistics explode from a niche academic corner into the backbone of modern scientific modeling, epidemiology, and probabilistic ML over the past decade? The turning point was not a new theorem—it was a physics-inspired sampler called **Hamiltonian Monte Carlo (HMC)** and its self-tuning heir, **NUTS** (the No-U-Turn Sampler). By treating the negative log-posterior as a frictionless landscape and rolling a marble across it using exact gradients, NUTS turns high-dimensional posteriors that once took weeks into seconds—and even sounds an alarm (**divergent transitions**) whenever the geometry gets treacherous.
+
+**Lesson Roadmap:** How physics revolutionized Bayesian computation → Background Knowledge Map (Hamiltonian dynamics & leapfrog integration, NUTS adaptive trajectory length, Divergences as geometric alarms) → Hand-worked 1-step leapfrog integration conserving energy → Modern applications, limitations, and exercises.
+
 ## Learning objectives
 
 After this optional lesson, you understand that Hamiltonian Monte Carlo and NUTS are not decorative algorithms added after Bayesian linear regression, but an inevitable consequence once the posterior no longer has a closed form. You will be able to read a Stan, PyMC or NumPyro chain as a controlled approximation of the same generative model that Chapter 4 wrote in words.
+
+## Background Knowledge Map: Why HMC and NUTS Power Modern Bayesian Practice
+
+### 1. Hamiltonian Dynamics and Symplectic (Leapfrog) Integration
+- **What it is:** Augmenting parameter position $$q$$ with an auxiliary momentum $$p \sim \mathrm{Normal}(0, M)$$ and simulating Hamilton's equations for total energy $$H(q, p) = U(q) + K(p)$$, where potential energy $$U(q) = -\log \tilde{\pi}(q)$$.
+- **What it studies:** Proposing distant, nearly independent points across a high-dimensional posterior with acceptance rates near $$80\%\text{–}99\%$$ because symplectic leapfrog steps nearly conserve total energy $$H$$.
+
+### 2. The No-U-Turn Sampler (NUTS)
+- **What it is:** Hoffman & Gelman's (2014) recursive tree-building extension of HMC that automatically stops integrating the moment the trajectory begins to U-turn back toward its starting point.
+- **What it studies:** Eliminating manual tuning of trajectory length $$L$$ (and adapting step size $$\varepsilon$$ + mass matrix $$M$$ during warmup), powering Stan, PyMC, and NumPyro.
+
+### 3. Divergent Transitions as Built-In Geometry Detectors
+- **What it is:** Steps where the leapfrog integrator's energy error $$\vert \Delta H \vert$$ blows up because curvature changes faster than step size $$\varepsilon$$ (such as Neal's funnel in hierarchical models).
+- **What it studies:** Turning numerical failure into an actionable diagnostic—unlike random-walk MH, which silently misses narrow funnels without warning.
+
+## Deep-Dive Explanation: One Leapfrog Step of HMC by Hand (Read Slowly)
+
+Take the 1D standard normal posterior $$\tilde{\pi}(q) = e^{-q^2/2}$$, so potential energy is $$U(q) = \frac{1}{2}q^2$$ (gradient $$\nabla U(q) = q$$) and kinetic energy is $$K(p) = \frac{1}{2}p^2$$. Start at position $$q_0 = 1.0$$ with momentum $$p_0 = 0.0$$, giving initial energy:
+$$ H_0 = U(1.0) + K(0.0) = \frac{1.0^2}{2} + 0 = \mathbf{0.5000}. $$
+Now take **one leapfrog step** with a huge step size $$\varepsilon = 0.5$$:
+
+1. **Half-step momentum:** $$p_{1/2} = p_0 - \frac{\varepsilon}{2}\nabla U(q_0) = 0 - 0.25(1.0) = \mathbf{-0.25}.$$
+2. **Full-step position:** $$q_1 = q_0 + \varepsilon\,p_{1/2} = 1.0 + 0.5(-0.25) = \mathbf{0.875}.$$
+3. **Half-step momentum:** $$p_1 = p_{1/2} - \frac{\varepsilon}{2}\nabla U(q_1) = -0.25 - 0.25(0.875) = \mathbf{-0.46875}.$$
+4. **Check energy conservation:**
+   $$ H_1 = \frac{0.875^2}{2} + \frac{(-0.46875)^2}{2} = 0.38281 + 0.10986 = \mathbf{0.49268}. $$
+   Energy drift is a tiny $$\Delta H = H_1 - H_0 = -0.00732$$, so the Metropolis acceptance probability is $$\min(1, e^{-\Delta H}) = \mathbf{1.000}$$! Even with a coarse step $$\varepsilon = 0.5$$, the leapfrog integrator glides smoothly toward the high-probability region while conserving energy to within $$1.5\%$$.
 
 ## Prerequisites
 

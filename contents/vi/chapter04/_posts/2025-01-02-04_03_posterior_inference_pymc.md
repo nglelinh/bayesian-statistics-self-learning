@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Trước khi các ngôn ngữ lập trình xác suất (Probabilistic Programming Languages — PPL) như Stan và PyMC ra đời, việc triển khai một mô hình Bayes phi liên hợp đồng nghĩa với việc tự viết hàng trăm dòng mã tính hàm log-hợp lý, tự đạo hàm bằng tay và tự chỉnh bước nhảy Metropolis. Ngày nay, bạn chỉ cần viết đúng bốn dòng mô tả quá trình sinh dữ liệu — và phần mềm sẽ tự động biên dịch đồ thị tính toán, lấy đạo hàm chính xác và chạy NUTS song song nhiều chuỗi. Hiểu những gì diễn ra bên dưới bốn dòng mã đó là ranh giới giữa người *gõ lệnh* và người *làm thống kê Bayes*.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ biết cách chuyển một mô hình hồi quy tuyến tính Bayes từ công thức trên giấy thành mã nguồn chạy được trong PyMC. Bạn cũng sẽ nắm được quy trình thực hành chuẩn: chuẩn hóa dữ liệu, khai báo phân phối tiên nghiệm và hàm hợp lý, lấy mẫu phân phối hậu nghiệm bằng MCMC, kiểm tra các chỉ số chẩn đoán và diễn giải kết quả.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ biết cách chuyển một mô hình hồi quy tuyế
 >
 > **Câu hỏi tự kiểm tra.** Khi PyMC đã chạy xong và trả về mẫu hậu nghiệm, vì sao ta vẫn phải kiểm tra các chỉ số chẩn đoán trước khi diễn giải kết quả?
 
+
+## Bản đồ kiến thức nền: Lập trình xác suất, Vi phân tự động và Sai số Monte Carlo
+
+Bài học này nối liền lý thuyết xác suất trên giấy với thực hành tính toán hiện đại qua ba trụ cột:
+
+- **Đồ thị xác suất và Ngôn ngữ lập trình xác suất (PPL):** Mỗi khối `with pm.Model()` thực chất đang xây dựng một đồ thị có hướng không chu trình (DAG) biểu diễn phân phối đồng thời $$p(y, \theta) = p(y \mid \theta)p(\theta)$$. Tách bạch *đặc tả mô hình* khỏi *thuật toán suy luận* giúp bạn thay đổi giả định phân phối chỉ bằng một dòng lệnh mà không phải viết lại bộ lấy mẫu.
+- **Vi phân tự động (Reverse-mode Automatic Differentiation):** Bộ lấy mẫu NUTS cần gradient $$\nabla_\theta \log p(\theta \mid y)$$ tại mỗi bước leapfrog. PyMC (thông qua PyTensor) tính đạo hàm này chính xác đến sai số dấu phẩy động bằng quy tắc dây chuyền trên đồ thị tính toán, thay vì xấp xỉ sai phân hữu hạn.
+- **Sai số chuẩn Monte Carlo (MCSE) và biến đổi thang đo:** Vì MCMC trả về tập mẫu hữu hạn có tự tương quan, trung bình mẫu luôn mang sai số mô phỏng $$\text{MCSE} = \mathrm{SD}(\theta \mid D)/\sqrt{\text{ESS}}$$. Hiểu MCSE giúp bạn biết chính xác bao nhiêu mẫu là đủ thay vì đoán mò số `draws`.
 ## 1. Từ mô hình trên giấy sang mã nguồn
 
 Ở hai bài 4.1 và 4.2, ta đã nắm được ba nền tảng: quá trình sinh dữ liệu, cách chọn phân phối tiên nghiệm và trực giác về hồi quy Bayes. Bài này tập trung vào bước triển khai thực hành: dịch mô hình thống kê thành mã nguồn PyMC theo một quy trình rõ ràng — chuẩn bị và chuẩn hóa dữ liệu, khai báo tiên nghiệm, khai báo hàm hợp lý, chạy bộ lấy mẫu, kiểm tra chẩn đoán rồi mới diễn giải phân phối hậu nghiệm.
@@ -240,6 +250,20 @@ $$
 $$
 
 Khoảng này nằm hoàn toàn phía trên 0, cho thấy bằng chứng hậu nghiệm ủng hộ rõ rệt mối quan hệ dương.
+
+### Khung giải thích (nên đọc chậm): Kiểm tra độ chính xác MCSE và quy đổi ngược hệ số về thang đo gốc
+
+Sau khi PyMC in ra bảng `az.summary`, hai phép tính tay ngắn gọn sau sẽ giúp bạn kiểm soát hoàn toàn chất lượng và ý nghĩa thực tế của kết quả:
+
+1. **Đo sai số mô phỏng bằng MCSE:** Trong ví dụ ở mục 6.1, giả sử hậu nghiệm của hệ số dốc có trung bình $$\bar\beta = 0.78$$, độ lệch chuẩn $$\mathrm{SD} = 0.09$$ và số mẫu hiệu dụng $$\text{ESS} = 900$$. Sai số chuẩn Monte Carlo của ước lượng trung bình là:
+   $$\text{MCSE} = \frac{\mathrm{SD}}{\sqrt{\text{ESS}}} = \frac{0.09}{\sqrt{900}} = \frac{0.09}{30} = 0.003.$$
+   Con số $$0.003$$ nhỏ hơn 30 lần so với độ bất định thống kê thật ($$0.09$$), nghĩa là chữ số thập phân thứ hai của $$0.78$$ đã rất ổn định. Ngược lại, nếu $$\text{ESS} = 25$$ thì $$\text{MCSE} = 0.09/5 = 0.018$$ (chiếm tới 20% độ lệch chuẩn) — khi đó bạn cần chạy thêm mẫu hoặc kiểm tra lại mô hình.
+2. **Quy đổi ngược hệ số từ thang chuẩn hóa về thang gốc:** Với 8 điểm dữ liệu chiều cao–cân nặng ở mục 3.1, ta có $$\bar x = 167.5\text{ cm},\ s_x \approx 11.46\text{ cm}$$ và $$\bar y = 64.625\text{ kg},\ s_y \approx 10.56\text{ kg}$$. Nếu một mẫu hậu nghiệm trên thang chuẩn hóa là $$(\alpha_z, \beta_z, \sigma_z) = (0.00,\ 0.98,\ 0.15)$$, thì trên thang đo gốc:
+   - Hệ số dốc: $$\beta_{\text{gốc}} = \beta_z \cdot \frac{s_y}{s_x} = 0.98 \times \frac{10.56}{11.46} \approx 0.903\text{ kg/cm}$$.
+   - Độ nhiễu: $$\sigma_{\text{gốc}} = \sigma_z \cdot s_y = 0.15 \times 10.56 \approx 1.58\text{ kg}$$.
+   - Hệ số chặn tại mốc chiều cao trung bình $$167.5\text{ cm}$$ là $$\bar y + \alpha_z s_y = 64.625\text{ kg}$$ (có ý nghĩa thực tế trực tiếp, thay vì tại $$0\text{ cm}$$).
+
+Luôn quy đổi từng mẫu hậu nghiệm trước rồi mới lấy trung bình và khoảng tin cậy HDI trên thang gốc để giữ trọn vẹn cấu trúc bất định.
 
 ## 7. Chuyển từ suy luận tham số sang dự đoán
 

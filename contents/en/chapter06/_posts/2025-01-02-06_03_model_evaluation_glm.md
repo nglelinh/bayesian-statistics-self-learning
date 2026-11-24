@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Once you step outside Normal linear regression into Logistic or Poisson GLMs, familiar metrics like ordinary $$R^2$$ and raw residual plots stop working—binary outcomes only ever equal `0` or `1`, so `y - p` is never bell-shaped! Evaluating a Bayesian GLM honestly requires **proper probabilistic scoring rules** (Log-Loss / Deviance, Brier score), **calibration curves**, **binned/randomized quantile residuals**, and **Posterior Predictive Checks**!
+
+This lesson builds a complete GLM diagnostic workflow so you know when a classifier is well-calibrated versus overconfident, and when a count model is missing overdispersion.
+
+---
+
+## Background Knowledge Map: Four Diagnostic Tools for Bayesian GLMs
+
+1. **Log-Pointwise Predictive Score & Deviance ($$D = -2\sum \log p(y_i\mid\hat{\theta})$$):** Generalizes RSS to *any* likelihood family (Bernoulli, Poisson, Negative Binomial)—strictly proper and directly connects to WAIC/LOO!
+2. **Calibration vs. Discrimination (ROC-AUC vs. Calibration Plot):** ROC-AUC measures *ranking* (does a true 1 score higher than a true 0?); **calibration** measures whether predicted 70% probabilities actually happen 70% of the time!
+3. **Binned & Pearson Residuals:** For binary GLMs, raw residuals $$y_i - p_i$$ lie on two curved stripes; grouping observations into bins of predicted $$p_i$$ reveals hidden nonlinearity immediately.
+4. **GLM Posterior Predictive Checks:** Simulate $$y^{\text{rep}} \sim \mathrm{Bernoulli}(p^{(s)})$$ or $$\mathrm{Poisson}(\lambda^{(s)})$$ and check group calibration, max counts, variance/mean ratio, and zero proportions.
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will understand how to evaluate **GLM models** such as logistic regression and Poisson regression in real-world settings. The focus of the lesson is learning to choose the right evaluation criteria for the right type of outcome, from **classification metrics** such as accuracy, sensitivity, specificity, and ROC curves, to the **calibration plot**, **deviance**, and **posterior predictive checks**. This is a very important step, because a model has real value only when we clearly understand what it does well, what it does not yet do well, and what deviations remain.
@@ -462,6 +477,34 @@ GLM evaluation cannot simply reuse the whole toolkit of linear regression. For l
 The point to keep is that each type of outcome requires its own evaluation standard, and no single metric is enough to conclude that a model is “good” or “bad”. The right habit is to always combine specialized metrics with posterior checks to look at the model from several angles.
 
 **Chapter 06 Complete!** GLMs: Logistic, Poisson, Evaluation.
+
+---
+
+### Worked Numerical Example: Computing Exact Bernoulli Log-Loss & Deviance on 3 Observations
+
+Compare Model A vs. Model B predicting 3 binary outcomes $$y = [1,\; 0,\; 1]$$:
+- **Model A:** $$p_A = [0.80,\; 0.20,\; 0.70]$$
+- **Model B:** $$p_B = [0.95,\; 0.80,\; 0.90]$$ (confidently wrong on observation 2!)
+
+| Obs $$i$$ | Truth $$y_i$$ | Model A $$-\ln p(y_i)$$ | Model B $$-\ln p(y_i)$$ |
+| :--- | :--- | :--- | :--- |
+| 1 | $$1$$ | $$-\ln(0.80) = 0.223$$ | $$-\ln(0.95) = 0.051$$ |
+| 2 | $$0$$ | $$-\ln(0.80) = 0.223$$ | $$-\ln(0.20) = \mathbf{1.609}$$ |
+| 3 | $$1$$ | $$-\ln(0.70) = 0.357$$ | $$-\ln(0.90) = 0.105$$ |
+| **Total NLL** | — | **$$0.803$$** (Deviance $$= 1.606$$) | **$$1.765$$** (Deviance $$= 3.530$$) |
+
+Model A achieves **less than half the deviance** of Model B because proper log scoring heavily punishes confident mistakes!
+
+### Deep-Dive Explanation: Four Rules for Evaluating Bayesian GLMs (Read Slowly)
+
+1. **Never rely on 0.5-threshold accuracy for imbalanced binary data:** Use Log-Loss, Brier score, calibration plots, and PR-AUC.
+2. **Check dispersion (Pearson $$\chi^2 / df$$) on every Poisson GLM:** A ratio near $$1.0$$ supports Poisson; a ratio $$> 1.5\text{–}2.0$$ screams overdispersion $$\to$$ switch to Negative Binomial!
+3. **Evaluate out-of-sample (LOO-CV / held-out test set), not just in-sample deviance:** Adding predictors always lowers in-sample deviance even when hurting real predictions.
+4. **Inspect subgroup calibration:** A model calibrated globally at 50% can still overpredict Group A by +15% and underpredict Group B by -15%—a sure sign of a missing group intercept or interaction!
+
+**Quick check.** In the 3-observation table above, if a model assigns probability `p = 0.00` to an event that actually happens ($$y = 1$$), what happens to its Log-Loss $$-\ln(p)$$?
+
+---
 
 ## Reference videos
 

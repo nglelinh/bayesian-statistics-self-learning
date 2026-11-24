@@ -10,6 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Try multiplying 400 probabilities of `0.1` together in Python (`0.1 ** 400`). Instead of a tiny positive number, IEEE 754 `float64` silently rounds the answer to **exact `0.0`** (*numerical underflow*)! Now try dividing `0.0 / 0.0` in Bayes’ rule, and your entire inference pipeline crashes with `NaN`! That is why **no serious Bayesian library ever multiplies raw probabilities**—everything runs in **log-probability space** using the **Log-Sum-Exp trick**.
+
+This lesson equips you with the exact floating-point survival kit used inside Stan, PyMC, and every deep-learning framework: turning products into log-sums, computing log-normalizers safely with `logsumexp`, and checking gradients without overflow or underflow.
+
+---
+
+## Background Knowledge Map: Floating-Point Arithmetic Inside Bayesian Samplers
+
+Four numerical-computing rules keep Bayesian software from ever returning `0.0 / 0.0 = NaN`:
+
+1. **IEEE 754 `float64` Dynamic Range:** Positive `float64` numbers span roughly $$10^{-308}$$ to $$10^{+308}$$. Multiplying even 500 typical likelihood densities (each $$\sim 0.1$$) immediately underflows below $$10^{-308}$$ to exact zero!
+2. **Log-Space Turns Products Into Sums:** $$\log\prod_{i=1}^n p(y_i\mid	heta) = \sum_{i=1}^n \log p(y_i\mid	heta)$$. Even for $$n = 1{,}000{,}000$$ data points, the sum sits comfortably around $$-2.3	imes 10^6$$—nowhere near underflow!
+3. **The Log-Sum-Exp (LSE) Trick:** To normalize log-weights $$\ell_1,\dots,\ell_M$$ without `exp(-1000) == 0.0`, subtract $$m = \max_j \ell_j$$ first:
+   $$\ln\sum_{j=1}^M e^{\ell_j} = m + \ln\sum_{j=1}^M e^{\ell_j - m}.$$
+   Since every shifted exponent $$\ell_j - m \le 0$$ and at least one equals $$0$$ ($$e^0 = 1$$), overflow is impossible and total underflow is impossible!
+4. **Log-Ratio Acceptance in MCMC:** Metropolis–Hastings computes $$\log lpha = \log p(	heta^*) - \log p(	heta)$$ directly in log space and compares against $$\log u$$ ($$u \sim \mathrm{Uniform}(0,1)$$)—never exponentiating giant log-posteriors!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand why Bayesian practice almost always works on the log scale, recognize underflow, overflow, `-inf`, `nan` in probability computations, know how to write log-likelihoods and log-posteriors correctly, and master the log-sum-exp technique for safely normalizing posterior weights.
@@ -322,6 +341,33 @@ If you have to remember just one sentence from this lesson, remember this one:
 3. In Bayes, we usually work with the log-likelihood and the unnormalized log-posterior.
 4. When you need to add or normalize probabilities in the log domain, you must use log-sum-exp or the subtract-`max` technique.
 5. `-inf`, `inf`, and `nan` are not minor details; they are very important diagnostic signals.
+
+---
+
+### Worked Numerical Example: Rescuing `exp(-1000) + exp(-1001)` With Log-Sum-Exp
+
+Suppose two candidate models have unnormalized log-posteriors $$\ell_1 = -1000.0$$ and $$\ell_2 = -1001.0$$:
+- **Naive `float64` evaluation:** `np.exp(-1000.0)` returns `0.0`, `np.exp(-1001.0)` returns `0.0`, and `0.0 / (0.0 + 0.0)` explodes into **`NaN`**!
+- **Log-Sum-Exp trick by hand:**
+  1. Shift by the maximum: $$m = \max(-1000.0, -1001.0) = -1000.0$$.
+  2. Compute shifted exponentials: $$e^{-1000 - (-1000)} = e^0 = 1.0$$ and $$e^{-1001 - (-1000)} = e^{-1} pprox 0.3679$$.
+  3. Log-normalizer:
+     $$\mathrm{LSE} = -1000.0 + \ln(1 + 0.3679) = -1000.0 + 0.3133 = \mathbf{-999.6867}.$$
+  4. Exact normalized posterior probabilities:
+     $$P(M_1) = e^{-1000.0 - (-999.6867)} = e^{-0.3133} pprox \mathbf{0.7311}, \qquad P(M_2) = e^{-1.3133} pprox \mathbf{0.2689}!$$
+
+Zero underflow, zero overflow, and exact to full machine precision!
+
+### Deep-Dive Explanation: Four Numerical Rules Every Bayesian Coder Must Follow (Read Slowly)
+
+1. **Always call `.logpdf()` / `.logpmf()`, never `np.log(dist.pdf(...))`:** Taking `log` *after* `pdf` underflows to `0.0` still returns `-inf`! Built-in `.logpdf()` evaluates the algebraic log formula directly.
+2. **Use `scipy.special.logsumexp` (or `log1p` / `expm1`) for every normalization step:** Never hand-roll `np.exp(log_p) / np.sum(np.exp(log_p))`.
+3. **Subtract the maximum log-posterior before plotting a grid:** Plotting `np.exp(log_post - log_post.max())` keeps peak height at `1.0` so grid normalization never underflows.
+4. **Remember that continuous log-densities can be positive:** Only discrete log-probabilities are always $$\le 0$$; seeing `log_p = +1.8` for a narrow continuous Normal or Beta is completely healthy!
+
+**Quick check.** Using the Log-Sum-Exp trick by hand, compute the exact normalized probabilities for two models with log-posteriors $$\ell_1 = -500.0$$ and $$\ell_2 = -500.0$$!
+
+---
 
 ## Reference videos
 

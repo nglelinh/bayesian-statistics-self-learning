@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Một buổi chiều mùa hè thập niên 1920 ở Cambridge, một nữ đồng nghiệp tuyên bố bà có thể nếm ra tách trà được rót sữa trước hay rót trà trước. Ronald Fisher lập tức thiết kế thí nghiệm pha 8 tách trà (4 sữa trước, 4 trà trước) và tính xác suất đoán đúng hết nếu chỉ đoán mò: $$1 / inom{8}{4} = 1/70 pprox 0.014$$. Từ tách trà ấy, khái niệm **p-value** ra đời — ban đầu chỉ là một thước đo bằng chứng nhẹ nhàng chống lại giả thuyết ngẫu nhiên, nhưng về sau bị biến thành "cửa ải $$p < 0.05$$" đầy tranh cãi trong khoa học hiện đại.
+
+Muốn hiểu vì sao thống kê Bayes ngày càng được giới nghiên cứu ưa chuộng, trước hết ta phải hiểu **chính xác** kiểm định giả thuyết cổ điển đang tính cái gì — và đâu là ranh giới nó không thể vượt qua.
+
+---
+
 ## Mục tiêu Học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ bản chất của **p-value** và kiểm định giả thuyết theo quan điểm tần suất (**frequentist**), không chỉ để áp dụng đúng mà quan trọng hơn là nhận diện rõ các giới hạn của chúng. Bạn sẽ hiểu vì sao p-value thường bị diễn giải sai, vì sao nó không trả lời trực tiếp nhiều câu hỏi mà nhà khoa học quan tâm, và vì sao **phương pháp Bayesian mang lại cách tiếp cận tự nhiên và mạch lạc hơn cho suy diễn thống kê**. Mục tiêu không phải loại bỏ hoàn toàn kiểm định giả thuyết, mà là sử dụng nó một cách phản biện và biết khi nào cần chuyển sang công cụ khác.
+
+## Bản đồ kiến thức nền: Kiểm định Frequentist, Sai lầm loại I/II và Góc nhìn đối sánh Bayes
+
+Ba trụ cột giúp bạn đọc sâu bài này mà không rơi vào tranh cãi cảm tính giữa hai trường phái:
+
+- **Kiểm định ý nghĩa thống kê (NHST — Fisher & Neyman–Pearson):** Giả định trước giả thuyết không $$H_0$$ là đúng, rồi tính xác suất thu được dữ liệu cực đoan bằng hoặc hơn dữ liệu đã quan sát: $$p	ext{-value} = P(	ext{dữ liệu cực đoan} \ge 	ext{quan sát} \mid H_0)$$. Chú ý chiều điều kiện: $$H_0$$ nằm ở *vế sau* dấu gạch đứng.
+- **Lực thống kê & Tỷ lệ dương tính giả (Power & Base Rate):** Ngưỡng $$lpha = 0.05$$ chỉ kiểm soát tỷ lệ báo động giả *khi $$H_0$$ đúng*. Nó hoàn toàn phớt lờ xác suất tiên nghiệm $$P(H_1)$$ (giả thuyết có hợp lý không trước khi làm thí nghiệm?) và lực kiểm định $$1 - eta$$.
+- **Cầu nối sang Thống kê Bayes (Posterior & Bayes Factor):** Điều nhà khoa học thực sự muốn biết là $$P(H_0 \mid 	ext{data})$$ hoặc phân phối hậu nghiệm của độ lớn hiệu ứng $$\delta \mid 	ext{data}$$. Định lý Bayes cho thấy muốn đảo chiều từ $$P(	ext{data} \mid H_0)$$ sang $$P(H_0 \mid 	ext{data})$$, ta *bắt buộc* phải đưa vào prior $$P(H_0)$$ và so sánh với likelihood dưới $$H_1$$.
+
+---
 
 ## Giới thiệu: Tại sao chúng ta cần nói về P-values?
 
@@ -279,6 +295,35 @@ Khi sử dụng hoặc đọc p-value, không nên báo cáo p-value đơn lẻ 
 ## Ý nghĩa cho Phân tích Dữ liệu Bayesian
 
 Hiểu rõ kiểm định giả thuyết tần suất là nền tảng giúp bạn đánh giá đúng vai trò của thống kê Bayesian. Phương pháp Bayesian chuyển trọng tâm từ kiểm định nhị phân sang ước lượng tham số và dự đoán, cho phép diễn giải trực tiếp xác suất của tham số, không phụ thuộc ngưỡng cắt tùy ý và tích hợp minh bạch thông tin tiên nghiệm. Tất nhiên, thống kê Bayesian không phải lời giải vạn năng — nó có những thách thức riêng về tính toán và lựa chọn prior — nhưng đem lại một khung suy luận nhất quán cho rất nhiều bài toán thực tế.
+
+## Khung giải thích (nên đọc chậm): Tại sao $$p = 0.04$$ KHÔNG có nghĩa "96% giả thuyết là đúng"?
+
+Đây là nguồn gốc lớn nhất của khủng hoảng tái lập khoa học. Hãy đi chậm qua 4 bước để tự chứng minh bằng số học đơn giản:
+
+1. **Tách biệt hai xác suất điều kiện:** $$p	ext{-value}$$ gắn với $$P(	ext{kết quả đáng kể} \mid H_0)$$, còn điều ta muốn biết là $$P(H_0 \mid 	ext{kết quả đáng kể})$$.
+2. **Đưa vào tỷ lệ nền (Base Rate):** Trong một lĩnh vực nghiên cứu thăm dò, giả sử chỉ có 10% giả thuyết thử nghiệm là thực sự có hiệu ứng ($$P(H_1) = 0.10$$, $$P(H_0) = 0.90$$).
+3. **Đưa vào ngưỡng $$lpha$$ và lực kiểm định (Power):** Với chuẩn $$lpha = 0.05$$ và lực kiểm định phổ biến $$1 - eta = 0.80$$, ta tính số phát hiện thật và phát hiện giả trên 1.000 thí nghiệm.
+4. **Tính xác suất hậu nghiệm bị báo động giả (False Discovery Rate):** Lấy số dương tính giả chia cho tổng số kết quả đạt $$p < 0.05$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: 1.000 thí nghiệm đạt chuẩn $$p < 0.05$$
+
+Xét 1.000 giả thuyết được kiểm định với $$lpha = 0.05$$, lực kiểm định $$1 - eta = 0.80$$, và tỷ lệ giả thuyết đúng thực sự là $$10\%$$:
+
+| Thực tế | Số thí nghiệm | Đạt $$p < 0.05$$ (Bác bỏ $$H_0$$) | Không đạt $$p < 0.05$$ |
+| --- | --- | --- | --- |
+| $$H_1$$ đúng (có hiệu ứng thật) | $$100$$ | $$100 	imes 0.80 = 80$$ (dương tính thật) | $$20$$ (âm tính giả) |
+| $$H_0$$ đúng (không có hiệu ứng) | $$900$$ | $$900 	imes 0.05 = 45$$ (dương tính giả) | $$855$$ (âm tính thật) |
+| **Tổng cộng** | **$$1\,000$$** | **$$80 + 45 = 125$$** | **$$875$$** |
+
+Nhìn vào cột "Đạt $$p < 0.05$$": trong 125 kết quả "có ý nghĩa thống kê", có tới **45 kết quả hoàn toàn là nhiễu ngẫu nhiên**:
+$$P(H_0 \mid p < 0.05) = rac{45}{125} = 0.36 \quad (36\%!).$$
+Dù chuẩn $$lpha$$ là $$5\%$$, xác suất một phát hiện có $$p < 0.05$$ là **giả mạo** lại lên tới **36%** — cao gấp 7 lần con số 5%!
+
+**Hiểu lầm cần tránh:** Cho rằng $$p > 0.05$$ chứng minh $$H_0$$ đúng (không có hiệu ứng). Với cỡ mẫu nhỏ, $$p > 0.05$$ thường chỉ nói lên rằng *dữ liệu chưa đủ mạnh để kết luận*.
+
+**Kiểm tra nhanh:** Nếu tỷ lệ nền của giả thuyết đúng tăng từ $$10\%$$ lên $$50\%$$ (nhờ nghiên cứu có cơ sở lý thuyết vững), số dương tính thật là $$500 	imes 0.80 = 400$$, dương tính giả là $$500 	imes 0.05 = 25$$, lúc này tỷ lệ giả mạo giảm mạnh còn $$25 / 425 pprox 5.9\%$$. Prior thực sự quyết định chất lượng suy luận!
+
+---
 
 ## Video tham khảo
 

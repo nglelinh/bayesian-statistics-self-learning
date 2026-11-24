@@ -10,6 +10,22 @@ categories:
 lesson_type: required
 ---
 
+Every Bayesian model is secretly just one thing: **a joint probability distribution $$p(	heta, y)$$ over unknown parameters $$	heta$$ and observable data $$y$$!** Once you specify that single joint surface—by multiplying a prior $$p(	heta)$$ with a likelihood $$p(y\mid	heta)$$—every operation in Bayesian statistics is simply slicing it (**conditioning** to get the posterior) or summing across one axis (**marginalizing** to get the evidence or predictive distribution).
+
+This lesson builds concrete fluency with joint, marginal, and conditional distributions so you can visualize Bayes’ theorem as literally slicing a 2D probability table or surface and re-normalizing the slice to sum to 1.
+
+---
+
+## Background Knowledge Map: The Three Operations on Any Joint Distribution
+
+Three mechanical operations govern every multi-variable probability model:
+
+1. **Joint Distribution $$p(x, y)$$:** Encodes *all* information about both variables simultaneously, including how they co-vary; sums (or integrates) to 1 over the entire 2D grid.
+2. **Marginalization (Summing/Integrating Out a Nuisance Variable):** $$p(x) = \sum_y p(x, y)$$ collapses a 2D table onto one axis—the exact mechanism used in Bayesian inference to integrate out nuisance parameters (like unknown variance $$\sigma^2$$) or compute model evidence $$p(y)$$.
+3. **Conditioning (Slicing & Renormalizing):** Fixing $$X = x$$ slices one row/column out of the joint distribution and divides by its marginal total: $$p(y\mid x) = rac{p(x, y)}{p(x)}$$—which is **literally Bayes’ theorem** when $$x$$ is observed data and $$y$$ is the parameter!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand that a joint distribution is the natural extension of one-variable distributions to multiple variables, how to derive marginals and conditionals from the joint, and why this structure is the direct foundation of Bayesian inference.
@@ -159,6 +175,35 @@ So mastering joint, marginal, and conditional distributions is essential before 
 4. Product rule links joint and conditional: $$p(x,y)=p(x\mid y)p(y)$$.
 5. Independence is exactly $$p(x,y)=p(x)p(y)$$.
 6. Bayes is built directly on joint-marginal-conditional relationships.
+
+---
+
+### Worked Numerical Example: Slicing and Marginalizing a $$2	imes 2$$ Joint Table
+
+Consider a joint distribution over **Weather** ($$W \in \{	ext{Rain}, 	ext{Dry}\}$$) and **Traffic** ($$T \in \{	ext{Jam}, 	ext{Clear}\}$$) summing to $$1.00$$:
+
+| Weather \ Traffic | Jam ($$T=1$$) | Clear ($$T=0$$) | **Marginal $$P(W)$$** |
+| :--- | :--- | :--- | :--- |
+| **Rain ($$W=1$$)** | $$0.24$$ | $$0.06$$ | **$$0.30$$** |
+| **Dry ($$W=0$$)** | $$0.16$$ | $$0.54$$ | **$$0.70$$** |
+| **Marginal $$P(T)$$** | **$$0.40$$** | **$$0.60$$** | **$$1.00$$** |
+
+1. **Check independence:** $$P(W=1)\cdot P(T=1) = 0.30 	imes 0.40 = 0.12 
+eq 0.24$$ $$\implies$$ Rain and Traffic Jam are strongly **dependent**!
+2. **Condition on observing a Traffic Jam ($$T=1$$):** Slice the `Jam` column `[0.24, 0.16]` and divide by its marginal sum $$0.40$$:
+   $$P(	ext{Rain} \mid 	ext{Jam}) = rac{0.24}{0.40} = \mathbf{0.60}, \qquad P(	ext{Dry} \mid 	ext{Jam}) = rac{0.16}{0.40} = \mathbf{0.40}.$$
+   Before looking out the window, your prior probability of Rain was $$30\%$$; seeing a Traffic Jam updated your posterior probability of Rain to **$$60\%$$**!
+
+### Deep-Dive Explanation: Four Rules for Thinking in Joint Distributions (Read Slowly)
+
+1. **Bayes’ rule is not a separate axiom—it is just two ways to factor the same joint:** $$p(	heta, y) = p(y\mid	heta)p(	heta) = p(	heta\mid y)p(y)$$.
+2. **Marginalizing preserves uncertainty honestly:** Instead of plugging in a single point estimate for a nuisance parameter $$\sigma$$, Bayesian inference integrates over the joint $$p(\mu, \sigma \mid y)$$ so uncertainty in $$\sigma$$ widens your credible interval for $$\mu$$.
+3. **Check whether a table sums to 1 before interpreting entries:** A table of *conditional* probabilities $$P(T\mid W)$$ sums to 1 along each row, whereas a *joint* table $$P(W, T)$$ sums to 1 across all cells combined!
+4. **Independence is a fragile special case:** Only when $$p(x,y) = p(x)p(y)$$ for *every* cell can you multiply marginals; in hierarchical Bayesian models, sharing a group parameter intentionally creates dependence across observations.
+
+**Quick check.** Using the Weather–Traffic joint table above, if you observe that traffic is **Clear** ($$T = 0$$), what is the posterior probability $$P(	ext{Rain} \mid 	ext{Clear})$$?
+
+---
 
 ## Reference videos
 

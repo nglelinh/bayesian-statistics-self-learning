@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Here is one of the most famous traps in data science: a hospital records data on mild and severe patients and discovers that **patients who receive Treatment T have *lower* survival rates than untreated patients**—yet when you stratify by disease severity, Treatment T *improves* survival in both mild and severe patients! Worse still, in a different causal structure (a **collider**), throwing *every* available column into your regression can manufacture a completely fake causal effect even when the true effect is zero!
+
+**Directed Acyclic Graphs (DAGs)**—pioneered by Judea Pearl and popularized in Bayesian data analysis by Richard McElreath—give you a crystal-clear graphical grammar for causal inference: **forks** (confounders you *must* control for), **pipes** (mediators), and **colliders** (traps you must *never* condition on!).
+
+---
+
+## Background Knowledge Map: The Four Elemental Causal Structures in DAGs
+
+Every complex causal web reduces to combinations of four 3-node junctions:
+
+1. **The Fork (Confounder: $$X \leftarrow Z \rightarrow Y$$):** Common cause $$Z$$ creates a non-causal "backdoor" path between $$X$$ and $$Y$$. **Rule:** Conditioning on $$Z$$ *closes* the backdoor and removes confounding bias!
+2. **The Pipe (Mediator: $$X \rightarrow Z \rightarrow Y$$):** $$X$$ causes $$Y$$ *through* $$Z$$. **Rule:** Conditioning on $$Z$$ blocks the causal path—do *not* control for a post-treatment mediator if you want the **total** causal effect of $$X$$ on $$Y$$!
+3. **The Collider (Common Effect: $$X \rightarrow Z \leftarrow Y$$):** $$X$$ and $$Y$$ are initially independent, yet both cause $$Z$$. **Rule:** Conditioning on $$Z$$ *opens* a spurious path (**collider / Berkson’s bias**) — **NEVER** control for a collider!
+4. **The Backdoor Criterion:** To identify the causal effect of $$X$$ on $$Y$$ from observational data, choose an adjustment set $$S$$ that blocks every backdoor path into $$X$$ while containing no descendants of $$X$$.
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand what confounding is and why it makes us misread data. You also need to know that a DAG is a tool for thinking about causal relationships, from which you decide when to adjust for a variable and when not to. This is the foundation of causal inference.
@@ -250,6 +267,36 @@ Confounding is not a minor technical error. It is the central problem of every a
 If we do not think causally first, the regression can run beautifully, the interval can look very convincing, but the final conclusion is still wrong.
 
 > **3 key ideas.** A confounder is a variable that affects both the treatment and the outcome, so if we ignore it we easily misestimate the effect we care about; a DAG is a tool for drawing the causal structure before running the model, so that we can decide which variables should and should not be adjusted for; and we should not "control for everything", because confounders usually need adjustment, while mediators and colliders must be handled carefully depending on the question.
+
+---
+
+### Worked Numerical Example: Seeing Collider Bias Appear Out of Thin Air (4 Actors)
+
+Suppose **Acting Talent ($$X \in \{0,1\}$$)** and **Looks ($$Y \in \{0,1\}$$)** are completely **independent** in the general population (each 50%, so 4 equally likely combinations of 25% each), and Hollywood casts anyone with *either* high talent *or* great looks (**Fame $$Z = 1 \iff X=1 \text{ or } Y=1$$**):
+
+| Talent ($$X$$) | Looks ($$Y$$) | Population Share | Famous ($$Z=1$$)? |
+| :--- | :--- | :--- | :--- |
+| $$1$$ (High) | $$1$$ (High) | $$25\%$$ | **Yes** |
+| $$1$$ (High) | $$0$$ (Low) | $$25\%$$ | **Yes** |
+| $$0$$ (Low) | $$1$$ (High) | $$25\%$$ | **Yes** |
+| $$0$$ (Low) | $$0$$ (Low) | $$25\%$$ | No (excluded!) |
+
+- **In the full population (unconditioned):** $$P(X=1 \mid Y=1) = 50\% = P(X=1)$$ (zero correlation!).
+- **Conditioned on being Famous ($$Z = 1$$, the top 3 rows):**
+  - If a famous actor has High Looks ($$Y=1$$, rows 1 & 3): $$P(X=1 \mid Y=1, Z=1) = \mathbf{50\%}$$.
+  - If a famous actor has Low Looks ($$Y=0$$, row 2 only!): $$P(X=1 \mid Y=0, Z=1) = \mathbf{100\%}$$!
+  Conditioning on the collider $$Z$$ created a **strong negative correlation** between Talent and Looks where none existed in reality!
+
+### Deep-Dive Explanation: Four Causal Rules Before Running Any Observational Regression (Read Slowly)
+
+1. **Draw the DAG *before* choosing regression predictors:** Data alone cannot tell a Fork from a Pipe or a Collider—causal structure comes from domain science!
+2. **Stop calling every regression coefficient a "causal effect":** Only variables whose backdoor paths are properly closed have causal interpretations (avoid the *Table 2 Fallacy* of reading all covariates in one model as causal!).
+3. **Never throw "all available columns" into a causal regression ("causal salad"):** Including a collider or post-treatment variable actively *destroys* causal identification.
+4. **Use `dagitty` or the backdoor rule to verify your adjustment set:** Even a 5-node DAG can hide subtle backdoor paths that human intuition misses.
+
+**Quick check.** You want to estimate the **total** causal effect of a new fertilizer ($$X$$) on crop yield ($$Y$$), and you also measured mid-season fungus levels ($$Z$$), which the fertilizer *reduces* ($$X \rightarrow Z \rightarrow Y$$). Should you include mid-season fungus $$Z$$ as a predictor in your regression—and why?
+
+---
 
 ## Reference videos
 

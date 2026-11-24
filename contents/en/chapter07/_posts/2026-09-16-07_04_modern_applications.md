@@ -10,6 +10,21 @@ categories:
 lesson_type: optional
 ---
 
+A standard deep neural network classifying chest X-rays can be **99.8% confident** even when you accidentally feed it a blurry photo of a golden retriever! Why? Because ordinary neural nets fit a single point estimate (MAP via weight decay = Gaussian prior!) and throw away the entire posterior distribution over weights. **Bayesian Deep Learning (BDL)** restores honest epistemic uncertainty to modern neural networks—using scalable approximations like **Deep Ensembles**, **MC Dropout**, **Last-Layer Laplace**, and **SWAG**!
+
+This optional bridge links Chapter 7’s priors and regularization directly to 2022–2026 production deep learning: showing how weight decay *is* a Gaussian prior, and how ensembling turns neural nets into uncertainty-aware systems that know when to say *"I don’t know—escalate to a human!"*
+
+---
+
+## Background Knowledge Map: Four Practical Approximations to Bayesian Deep Learning
+
+1. **Weight Decay = Gaussian Prior MAP:** Standard `AdamW` weight decay is literally placing $$\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \tau^2 I)$$ and keeping only the single peak—fast, yet blind to posterior width!
+2. **Last-Layer Laplace Approximation:** Freezes the deep feature backbone and computes the exact Hessian covariance $$(-\mathbf{H})^{-1}$$ only on the final linear layer—adding calibrated Bayesian uncertainty in seconds with zero retraining!
+3. **MC Dropout (Gal & Ghahramani):** Leaves dropout masks *active* at test time and runs $$M$$ stochastic forward passes—approximating variational Bayesian inference cheaply.
+4. **Deep Ensembles (Lakshminarayanan et al.):** Trains $$M = 5$$ independent networks from different random initializations; their disagreement across predictions is one of the strongest empirical detectors of **Out-of-Distribution (OOD)** inputs!
+
+---
+
 ## Learning objectives
 
 After this optional lesson, you will read weight decay, the horseshoe, the Laplace approximation, and deep ensembles as different ways of placing a prior on an overly flexible model. The goal is not to memorize algorithm names, but to see that the overfitting of Chapter 7 is exactly why Bayesian deep learning had to be invented: a network has so many parameters that we need a distribution over functions, not a single optimum.
@@ -61,6 +76,27 @@ Tabular scoring, out-of-distribution detection, and the uncertainty of classific
 ## Limitations and extensions
 
 Laplace is local. VBLL assumes a linear last layer on fixed features. Ensembles multiply the training cost. No method removes the need for model checking in Chapter 8. This lesson deliberately does not open a separate deep learning chapter; it only shows that the prior of Lesson 7.1 has entered modern networks through narrow doors.
+
+---
+
+### Worked Numerical Example: Detecting an Out-of-Distribution Input With a 4-Model Deep Ensemble
+
+Suppose 4 independently trained ensemble networks predict the probability of pneumonia on two test images:
+- **In-Distribution Chest X-Ray:** `[0.82, 0.85, 0.79, 0.86]`
+  - Mean prediction: $$\bar{p} = \mathbf{0.830}$$; Ensemble SD (epistemic disagreement): $$\mathbf{0.032}$$ (tight consensus $$\implies$$ trust!).
+- **Out-of-Distribution Blurry Non-X-Ray Image:** `[0.91, 0.12, 0.65, 0.30]`
+  - Mean prediction: $$\bar{p} = \mathbf{0.495}$$; Ensemble SD: **$$0.354$$** (**11× wider epistemic disagreement** $$\implies$$ flag for human doctor review!).
+
+### Deep-Dive Explanation: Four Takeaways on Bayesian Deep Learning in Practice (Read Slowly)
+
+1. **You don’t need full HMC over 100 million weights to get Bayesian benefits:** A 5-model Deep Ensemble or a Last-Layer Laplace head captures 90% of practical OOD detection and calibration gains at tiny cost.
+2. **Separate *epistemic* (model disagreement) from *aleatoric* (inherent data noise):** High epistemic variance means *"show this to a human and label it for the next training round"* (Active Learning!).
+3. **Check Expected Calibration Error (ECE) on shifted test sets:** Standard nets look calibrated on i.i.d. validation sets and fall apart under real-world distribution shift—where Bayesian methods shine brightest.
+4. **Pair BDL uncertainty with abstention thresholds:** Allowing a medical or autonomous system to abstain on the top 5% most uncertain inputs often cuts real-world errors by 50%+!
+
+**Quick check.** In the 4-model ensemble example above, why does a single network with `p = 0.91` fail to warn the hospital about the blurry OOD image, whereas the 4-model ensemble catches it immediately?
+
+---
 
 ## Reference videos
 

@@ -14,6 +14,21 @@ This lesson covers derivatives and essential multivariable calculus concepts tha
 
 ---
 
+When Hamiltonian Monte Carlo (HMC / NUTS) explores a 50-dimensional Bayesian posterior in Stan or PyMC, how does it know which direction leads uphill toward higher probability without blindly stumbling in 50 dimensions? It follows the **gradient vector $$\nabla_\theta \log p(\theta\mid y)$$**—and uses the **multivariable chain rule** (reverse-mode automatic differentiation) to compute all 50 partial derivatives in a single backward pass!
+
+This mathematical reference sharpens the exact multivariable calculus tools that power modern Bayesian optimization and sampling: partial derivatives, gradients, Hessians, and the multivariable chain rule.
+
+---
+
+## Background Knowledge Map: Multivariable Calculus Inside Modern Bayesian Engines
+
+1. **Gradient Vector ($$\nabla f$$):** Points in the direction of steepest ascent of the log-posterior; setting $$\nabla_\theta \log p(\theta\mid y) = \mathbf{0}$$ locates the MAP mode.
+2. **Hessian Matrix ($$\mathbf{H}$$):** The matrix of second partial derivatives measures local curvature—its negative inverse $$(-\mathbf{H})^{-1}$$ at the mode gives the **Laplace covariance matrix**!
+3. **Multivariable Chain Rule & Reverse-Mode Autodiff:** Composing priors, link functions (logit/exp), and likelihoods creates a computational graph; the chain rule propagates sensitivities backward in $$O(1)$$ passes regardless of parameter count.
+4. **Jacobian Determinants for Constrained Parameters:** Transforming $$\sigma > 0$$ via $$\sigma = e^\phi$$ changes volume elements by $$\lvert \frac{d\sigma}{d\phi}\rvert = e^\phi$$—required so HMC samples the true target posterior!
+
+---
+
 ## Derivatives and Rate of Change
 
 The derivative of a single variable function represents its instantaneous rate of change, which is fundamental to understanding how functions behave locally.
@@ -122,6 +137,29 @@ $$h'(x) = \frac{\partial f}{\partial x} \cdot 1 + \frac{\partial f}{\partial y} 
 Setting $$h'(x) = 0$$ gives $$x = 1/2$$, so the optimal point is $$(1/2, 1/2)$$.
 
 This demonstrates how multivariable calculus concepts work together to solve optimization problems systematically.
+
+---
+
+### Worked Numerical Example: Computing Gradient and Hessian of a 2D Log-Posterior by Hand
+
+Consider a 2-parameter Gaussian log-posterior $$g(\mu, \beta) = -\frac{1}{2}\!\left(2(\mu - 1)^2 + 4(\beta - 3)^2 + 2(\mu - 1)(\beta - 3)\right)$$:
+1. **Partial derivatives (Gradient):**
+   $$\frac{\partial g}{\partial \mu} = -2(\mu - 1) - (\beta - 3), \qquad \frac{\partial g}{\partial \beta} = -4(\beta - 3) - (\mu - 1).$$
+   At $$(\mu, \beta) = (0, 3)$$, $$\nabla g = (+2, +1)^T$$—pointing straight uphill toward the mode $$(1, 3)$$!
+2. **Negative Hessian (Posterior Precision Matrix):**
+   $$-\mathbf{H} = \begin{pmatrix} 2 & 1 \\ 1 & 4 \end{pmatrix} \implies \Sigma = (-\mathbf{H})^{-1} = \frac{1}{7}\begin{pmatrix} 4 & -1 \\ -1 & 2 \end{pmatrix}.$$
+   The off-diagonal $$+1$$ in $$-\mathbf{H}$$ immediately tells you $$\mu$$ and $$\beta$$ are negatively correlated ($$\mathrm{Cov} = -1/7$$)!
+
+### Deep-Dive Explanation: Four Rules for Multivariable Calculus in Bayes (Read Slowly)
+
+1. **Always check the sign of the Hessian at a mode:** A maximum of $$\log p$$ must have a *negative-definite* Hessian (so $$-\mathbf{H}$$ is positive-definite).
+2. **Verify your analytical gradient with finite differences:** Checking $$\frac{g(\theta+\epsilon)-g(\theta-\epsilon)}{2\epsilon}$$ against your coded gradient catches 99% of chain-rule bugs in 5 seconds.
+3. **Never forget the Jacobian when reparameterizing:** Sampling $$\log \sigma$$ without adding `+\log\sigma` to the log-posterior silently changes your prior!
+4. **Centering predictors makes the Hessian nearly diagonal:** Smaller off-diagonal Hessian entries mean faster optimization and faster HMC mixing.
+
+**Quick check.** For $$g(\mu, \beta)$$ above, verify that $$\nabla g = (0, 0)^T$$ at $$(\mu, \beta) = (1, 3)$$.
+
+---
 
 ## Reference videos
 

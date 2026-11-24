@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Adding a second predictor to a regression can do something that feels like black magic: a variable that looked **positively** correlated with your outcome when analyzed alone can flip to **negative** (or drop to exact zero!) the moment you control for a second variable! Understanding *why* that happens—**partial (conditional) effects**—is the gateway from simple curve fitting to real-world Bayesian multiple regression.
+
+This lesson extends single-predictor Bayesian regression to multiple predictors $$\mu_i = \alpha + \beta_1 x_{1i} + \cdots + \beta_p x_{pi}$$, explains why **standardizing predictors** makes priors and MCMC geometry vastly cleaner, and teaches you to read partial slopes accurately.
+
+---
+
+## Background Knowledge Map: Partial Effects, Standardization, and Posterior Geometry
+
+1. **Conditional ("Holding Other Predictors Constant") Interpretation:** In multiple regression, $$\beta_1$$ answers *"what is the expected change in $$Y$$ for a 1-unit increase in $$X_1$$ among observations with the **exact same** value of $$X_2$$?"*—not the raw marginal correlation!
+2. **Why Standardizing Predictors ($$z = (x - \bar{x})/s_x$$) Is a Bayesian Superpower:** Removes arbitrary unit scales (mm vs. km), centers the intercept $$\alpha$$ at the mean outcome (breaking correlation between $$\alpha$$ and slopes $$\beta_j$$), and lets you apply clean weakly informative priors like $$\beta_j \sim \mathcal{N}(0, 1)$$!
+3. **Spurious vs. Masked Relationships:** Controlling for a second predictor can *reveal* a spurious correlation (when $$X_2$$ causes both $$X_1$$ and $$Y$$) OR *unmask* a real relationship that was previously hidden by two opposing effects!
+4. **Posterior Uncertainty Reflects Shared Information:** When predictors share variance, Bayesian multiple regression automatically widens the marginal posterior intervals of $$\beta_1, \beta_2$$ to honestly reflect what the data cannot separate.
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand why many real problems cannot use just one predictor. You also need to grasp the most important meaning of multiple regression: each coefficient should be read only as the effect of one variable when the other variables are held fixed. This is the foundation for reading regression results correctly in later lessons.
@@ -227,6 +242,27 @@ This kind of interpretation is much clearer than just saying:
 Multiple regression is the doorway to three very practical questions: whether any variable is distorting the relationship we care about, whether the predictors are too similar to each other, and whether the effect of one variable depends on another. Understanding this lesson firmly will help you not feel "overwhelmed" when moving on to confounding, multicollinearity, and interaction in the next three lessons.
 
 > **3 key ideas.** Multiple regression lets us describe an outcome with many predictors at once, so it fits real problems better; each coefficient in multiple regression must always be read together with the condition "holding the other variables fixed"; and when a coefficient changes after adding a new predictor, that is usually a sign that the model is separating the influences better, not a sign that the model is wrong.
+
+---
+
+### Worked Numerical Example: Watching a Partial Slope Flip From Spurious to Zero
+
+Suppose ice-cream sales ($$X_1$$) and shark attacks ($$Y$$) both depend on summer temperature ($$X_2$$, standardized):
+- **Bivariate regression** ($$Y \sim X_1$$ alone): yields posterior $$\beta_1 \approx +0.78 \pm 0.12$$ (strong positive association!).
+- **Multiple regression** ($$Y \sim X_1 + X_2$$): holding temperature $$X_2$$ constant, suppose the fitted posterior gives:
+  $$\mu_i = 5.0 + \underbrace{0.02}_{\beta_1 \text{ (SD } 0.15\text{)}} X_{1i} + \underbrace{0.85}_{\beta_2 \text{ (SD } 0.14\text{)}} X_{2i}.$$
+- **95% Credible Interval for $$\beta_1$$:** $$0.02 \pm 1.96(0.15) = [-0.27,\; +0.31]$$ (straddling zero cleanly!), while $$\beta_2$$ sits cleanly at $$[+0.58,\; +1.12]$$! Once you know temperature, knowing ice-cream sales adds **zero** predictive information about shark attacks!
+
+### Deep-Dive Explanation: Four Rules for Bayesian Multiple Regression (Read Slowly)
+
+1. **Always plot counterfactual / predictor-residual plots:** Don’t just stare at a table of 8 regression coefficients—plot predicted $$Y$$ as $$X_1$$ varies while holding $$X_2$$ fixed at its mean.
+2. **Adding more predictors is NOT always better:** As the very next lesson (DAGs & Confounding) proves, controlling for the *wrong* variable (a collider or post-treatment mediator!) can actually *create* bias out of thin air!
+3. **Check correlation among posterior slopes (`pair_plot`):** A strong negative diagonal band between $$\beta_1$$ and $$\beta_2$$ warns you that the data pins down their *sum* well, even if each individual slope looks wide.
+4. **Use posterior predictive plots to verify fit across all predictors:** Plot residuals against every $$X_j$$ to catch missed curvature or interactions.
+
+**Quick check.** In a standardized multiple regression where $$X_1, X_2$$ have mean 0 and SD 1, what is the concrete meaning of the intercept $$\alpha$$?
+
+---
 
 ## Reference videos
 

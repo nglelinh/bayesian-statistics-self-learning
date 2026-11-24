@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Tại sao chiều cao của hàng nghìn sinh viên, sai số đo đạc thiên văn của Carl Friedrich Gauss năm 1809, và nhiễu nhiệt trong mạch điện tử — ba hiện tượng hoàn toàn không liên quan — lại cùng vẽ nên đúng một đường cong hình chuông? Câu trả lời không phải là sự trùng hợp ngẫu nhiên, mà là **Định lý Giới hạn Trung tâm (CLT)**: bất cứ khi nào một đại lượng là tổng của nhiều tác động nhỏ, độc lập, phân phối của nó sẽ tự động bị "hút" về phân phối Chuẩn (*Normal*).
+
+Trong thống kê Bayes, phân phối Chuẩn giữ hai vai trò tối quan trọng: vừa là mô hình chuẩn mực cho dữ liệu liên tục và prior liên hợp Normal–Normal, vừa là đích đến tiệm cận của hầu hết phân phối hậu nghiệm khi cỡ mẫu lớn (định lý Bernstein–von Mises và xấp xỉ Laplace).
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vai trò của phân phối Normal, diễn giải chính xác hai tham số $$\mu$$ và $$\sigma$$, đồng thời vận dụng trực giác của định lý giới hạn trung tâm (CLT) để giải thích vì sao nhiều đại lượng tổng hợp có dạng gần chuẩn.
+
+## Bản đồ kiến thức nền: Entropy cực đại, Định lý Giới hạn Trung tâm và Cập nhật Normal–Normal
+
+Nhìn ở bậc đại học trở lên, sự thống trị của phân phối Chuẩn đến từ ba trụ cột lý thuyết:
+
+- **Lý thuyết thông tin (Maximum Entropy):** Trong tất cả các phân phối liên tục trên $$(-\infty, +\infty)$$ có cùng trung bình $$\mu$$ và phương sai $$\sigma^2$$, phân phối Chuẩn có **entropy lớn nhất** — tức là phân phối "ít giả định thừa nhất" khi bạn chỉ biết trung tâm và độ phân tán.
+- **Lý thuyết giới hạn (CLT & Laplace Approximation):** Không chỉ tổng các biến ngẫu nhiên hội tụ về Chuẩn, mà ngay cả log-posterior $$\log p(	heta \mid y)$$ quanh đỉnh cực đại (MAP) khi khai triển Taylor bậc 2 cũng cho một parabol úp ngược — đồng nghĩa posterior gần đỉnh xấp xỉ một phân phối Chuẩn. Đây là nền tảng của xấp xỉ Laplace và nhiều biến thể Variational Inference.
+- **Cầu nối sang Prior liên hợp (Normal–Normal):** Khi dữ liệu tuân theo $$y_i \sim \mathcal{N}(\mu, \sigma^2)$$ (biết $$\sigma^2$$) và prior là $$\mu \sim \mathcal{N}(\mu_0, 	au_0^2)$$, hậu nghiệm của $$\mu$$ vẫn là phân phối Chuẩn với **độ chính xác cộng dồn** (precision $$= 1/	ext{variance}$$).
+
+---
 
 ## 1) Phân phối Normal là gì?
 
@@ -92,6 +108,36 @@ Phân phối Normal không phù hợp khi dữ liệu bị giới hạn miền (
 ## 6) Liên hệ Bayesian
 
 Trong mô hình hóa Bayesian, phân phối Normal xuất hiện ở nhiều vai trò khác nhau: làm hàm hợp lý (likelihood) cho dữ liệu liên tục, làm phân phối tiên nghiệm (prior) cho các hệ số hồi quy, hoặc đóng vai trò xấp xỉ tiện lợi cho phân phối hậu nghiệm (posterior) khi cỡ mẫu đủ lớn. Tuy vậy, quy trình phân tích Bayesian luôn yêu cầu kiểm tra lại giả định mô hình thay vì mặc định gán Normal cho mọi dữ liệu liên tục.
+
+## Khung giải thích (nên đọc chậm): Cơ chế "cộng độ chính xác" trong cập nhật Normal–Normal bằng tay
+
+Nếu bạn đã quen viết phân phối Chuẩn theo phương sai $$\sigma^2$$, cập nhật Bayes trông khá rắc rối. Bí quyết để mọi thứ trở nên trong suốt là chuyển sang **độ chính xác (*precision*)** — nghịch đảo của phương sai:
+
+1. **Định nghĩa độ chính xác:** Prior có độ chính xác $$\lambda_0 = rac{1}{	au_0^2}$$; trung bình mẫu $$ar{y}$$ từ $$n$$ quan sát có phương sai $$\sigma^2/n$$, nên độ chính xác của dữ liệu là $$\lambda_{	ext{data}} = rac{n}{\sigma^2}$$.
+2. **Độ chính xác hậu nghiệm là phép cộng đơn thuần:** $$\lambda_{	ext{post}} = \lambda_0 + \lambda_{	ext{data}}$$. Có thêm dữ liệu luôn làm độ chính xác tăng lên (phương sai hậu nghiệm thu nhỏ lại).
+3. **Trung bình hậu nghiệm là trung bình có trọng số theo độ chính xác:**
+   $$\mu_{	ext{post}} = rac{\lambda_0 \mu_0 + \lambda_{	ext{data}} ar{y}}{\lambda_0 + \lambda_{	ext{data}}}.$$
+4. **Trực giác kéo co:** Ai có độ chính xác cao hơn (phương sai nhỏ hơn) sẽ kéo trung bình hậu nghiệm về phía mình mạnh hơn.
+
+### Ví dụ tính toán cầm tay chỉ việc: Đo tốc độ phản ứng của một cảm biến mới
+
+Nhà sản xuất cho biết thời gian trễ trung bình $$\mu$$ của dòng cảm biến này quanh mức $$\mu_0 = 50	ext{ ms}$$ với độ lệch chuẩn tiên nghiệm $$	au_0 = 4	ext{ ms}$$ ($$	au_0^2 = 16$$). Sai số đo mỗi lần thử đã biết là $$\sigma = 6	ext{ ms}$$ ($$\sigma^2 = 36$$). Bạn đo $$n = 9$$ lần và thu được trung bình mẫu $$ar{y} = 44	ext{ ms}$$.
+
+- **Bước 1 — Tính độ chính xác của prior và dữ liệu:**
+  - Prior: $$\lambda_0 = rac{1}{4^2} = rac{1}{16} = 0.0625$$.
+  - Dữ liệu: $$\lambda_{	ext{data}} = rac{n}{\sigma^2} = rac{9}{36} = rac{1}{4} = 0.2500$$.
+- **Bước 2 — Độ chính xác và phương sai hậu nghiệm:**
+  - $$\lambda_{	ext{post}} = 0.0625 + 0.2500 = 0.3125 = rac{5}{16}$$.
+  - Phương sai hậu nghiệm: $$	au_{	ext{post}}^2 = rac{1}{0.3125} = 3.2 \implies 	au_{	ext{post}} = \sqrt{3.2} pprox 1.79	ext{ ms}$$.
+- **Bước 3 — Trung bình hậu nghiệm:**
+  $$\mu_{	ext{post}} = rac{0.0625 	imes 50 + 0.2500 	imes 44}{0.3125} = rac{3.125 + 11.0}{0.3125} = rac{14.125}{0.3125} = 45.2	ext{ ms}.$$
+  Nhận xét: Vì $$\lambda_{	ext{data}}$$ gấp 4 lần $$\lambda_0$$, dữ liệu chiếm trọng số $$4/5 = 80\%$$ và prior chiếm $$1/5 = 20\%$$: $$0.2 	imes 50 + 0.8 	imes 44 = 10 + 35.2 = 45.2	ext{ ms}$$!
+
+**Hiểu lầm cần tránh:** Giả định mọi dữ liệu đều chuẩn khi phân phối thực tế có **đuôi nặng** (*heavy tails*, nhiều ngoại lai). Với dữ liệu có ngoại lai, likelihood Chuẩn sẽ bị kéo lệch mạnh; trong Bayes ta thường thay bằng phân phối Student-$$t$$.
+
+**Kiểm tra nhanh:** Khoảng tin cậy Bayes 95% (95% credible interval) của $$\mu$$ trong ví dụ trên là $$45.2 \pm 1.96 	imes 1.79 pprox [41.7, 48.7]	ext{ ms}$$, hẹp hơn hẳn khoảng tiên nghiệm $$50 \pm 1.96 	imes 4 = [42.2, 57.8]	ext{ ms}$$.
+
+---
 
 ## Video tham khảo
 

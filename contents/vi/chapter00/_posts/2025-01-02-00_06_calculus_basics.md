@@ -10,9 +10,27 @@ categories:
 lesson_type: required
 ---
 
+Thống kê Bayes về bản chất là một cuộc đối thoại giữa **hai phép toán giải tích**: *đạo hàm* và *tích phân*. Khi bạn muốn tìm giá trị tham số hợp lý nhất (ước lượng cực đại hợp lý MLE hoặc cực đại hậu nghiệm MAP), bạn lấy đạo hàm và giải phương trình bằng 0. Nhưng khi bạn muốn biết *toàn bộ phân phối hậu nghiệm*, tính xác suất biên $$p(y) = \int p(y \mid 	heta)p(	heta)\,d	heta$$ hay dự báo cho dữ liệu mới, bạn buộc phải đối mặt với **tích phân**.
+
+Chính sự chênh lệch độ khó giữa hai phép toán này — lấy đạo hàm luôn có quy tắc máy móc (lan truyền ngược / autodiff), còn lấy tích phân nhiều chiều hầu như vô phương giải tay — đã sinh ra cả hai nhánh công nghệ lớn nhất của Bayes hiện đại: **MCMC** (dùng lấy mẫu ngẫu nhiên để tính tích phân) và **Variational Inference** (biến bài toán tích phân thành bài toán tối ưu bằng đạo hàm).
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vai trò của đạo hàm, tích phân và tối ưu hóa trong suy luận thống kê Bayesian. Cụ thể, bạn sẽ nắm cách dùng đạo hàm để phân tích độ nhạy và tìm cực trị, dùng tích phân để chuẩn hóa mật độ và tính xác suất trên miền liên tục, và dùng tối ưu hóa để tìm ước lượng xấp xỉ (như MAP) trước hoặc song song với lấy mẫu hậu nghiệm.
+
+## Bản đồ kiến thức nền: Đạo hàm–Gradient, Tích phân chuẩn hóa và Cầu nối sang HMC / Variational Inference
+
+Ba trụ cột giải tích mà mọi nhà thực hành Bayes cần nắm chắc:
+
+- **Vi phân, Gradient & Ma trận Hessian:** Gradient $$
+abla_	heta \log p(	heta \mid y)$$ chỉ hướng tăng nhanh nhất của log-posterior, giúp tìm điểm MAP. Ma trận Hessian $$\mathbf{H} = 
+abla^2_	heta \log p(	heta \mid y)$$ đo độ cong tại đỉnh: đỉnh càng nhọn (độ cong âm lớn), phương sai hậu nghiệm càng nhỏ. Trong **Hamiltonian Monte Carlo (HMC / NUTS)** — động cơ mặc định của Stan và PyMC — gradient của log-posterior đóng vai trò "lực hấp dẫn" dẫn đường cho hạt chuyển động mượt mà qua không gian hàng nghìn chiều.
+- **Tích phân & Chuẩn hóa (Marginal Likelihood / Evidence):** Mẫu số $$Z = p(y) = \int p(y \mid 	heta)p(	heta)\,d	heta$$ là diện tích dưới đường cong chưa chuẩn hóa. Nếu không chuẩn hóa được bằng giải tích (như prior liên hợp), ta cần tích phân số (Grid), lấy mẫu (MCMC) hoặc cận dưới biến phân (ELBO trong Variational Inference).
+- **Biến đổi biến số & Định thức Jacobian:** Khi đổi tham số (ví dụ từ độ lệch chuẩn $$\sigma > 0$$ sang $$\phi = \log \sigma \in \mathbb{R}$$ để tối ưu không ràng buộc), mật độ xác suất phải nhân thêm $$\left\lvert rac{d\sigma}{d\phi} ightvert = e^\phi$$ để bảo toàn tổng xác suất bằng 1.
+
+---
 
 ## Giới thiệu: Vì sao giải tích là lõi của thống kê Bayesian liên tục?
 
@@ -581,6 +599,38 @@ print(f"\nMAP: {theta_map:.4f}")
 print(f"Laplace std: {std_laplace:.4f}")
 print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2 * (alpha_post + beta_post + 1))):.4f}")
 ```
+
+## Khung giải thích (nên đọc chậm): Từ đạo hàm tìm đỉnh MAP đến xấp xỉ Laplace bằng tay
+
+Hãy đọc chậm chuỗi 4 bước nối liền giải tích 1 với một công cụ cực mạnh của thống kê Bayes là **xấp xỉ Laplace** (Laplace Approximation):
+
+1. **Viết log-posterior chưa chuẩn hóa:** $$g(	heta) = \log p(y \mid 	heta) + \log p(	heta)$$ (bỏ hằng số $$\log p(y)$$ vì đạo hàm của hằng số bằng 0).
+2. **Giải $$g'(	heta) = 0$$ để tìm đỉnh $$\hat{	heta}_{	ext{MAP}}$$:** Đây là điểm có mật độ hậu nghiệm cao nhất.
+3. **Tính đạo hàm bậc hai $$g''(\hat{	heta}_{	ext{MAP}})$$ để đo độ cong:** Vì là cực đại nên $$g''(\hat{	heta}_{	ext{MAP}}) < 0$$.
+4. **Khai triển Taylor bậc 2 quanh đỉnh:** $$g(	heta) pprox g(\hat{	heta}) + rac{1}{2} g''(\hat{	heta})(	heta - \hat{	heta})^2$$. So sánh với log mật độ Chuẩn $$-rac{(	heta - \mu)^2}{2\sigma^2}$$, ta lập tức thu được xấp xỉ hậu nghiệm:
+   $$	heta \mid y pprox \mathcal{N}\!\left(\hat{	heta}_{	ext{MAP}},\; rac{-1}{g''(\hat{	heta}_{	ext{MAP}})}ight).$$
+
+### Ví dụ tính toán cầm tay chỉ việc: Tìm MAP và phương sai xấp xỉ Laplace cho mô hình Beta–Binomial
+
+Giả sử bạn dùng prior $$	ext{Beta}(2, 2)$$ và quan sát $$k = 7$$ thành công trong $$n = 10$$ lần thử. Ta đã biết hậu nghiệm chính xác là $$	ext{Beta}(9, 5)$$, nên đây là cơ hội tuyệt vời để kiểm chứng phép tính đạo hàm bằng tay!
+
+- **Bước 1 — Log-posterior chưa chuẩn hóa:**
+  $$g(	heta) = 8 \ln 	heta + 4 \ln(1 - 	heta).$$
+- **Bước 2 — Lấy đạo hàm bậc 1 và cho bằng 0:**
+  $$g'(	heta) = rac{8}{	heta} - rac{4}{1 - 	heta} = 0 \implies 8(1 - 	heta) = 4	heta \implies 12	heta = 8 \implies \hat{	heta}_{	ext{MAP}} = rac{2}{3} pprox 0.6667.$$
+- **Bước 3 — Lấy đạo hàm bậc 2 tại $$\hat{	heta} = 2/3$$:**
+  $$g''(	heta) = -rac{8}{	heta^2} - rac{4}{(1-	heta)^2}.$$
+  Thay $$	heta = 2/3$$ và $$1 - 	heta = 1/3$$:
+  $$g''(2/3) = -rac{8}{4/9} - rac{4}{1/9} = -18 - 36 = -54.$$
+- **Bước 4 — Suy ra phương sai và độ lệch chuẩn xấp xỉ Laplace:**
+  $$\hat{\sigma}^2 = rac{-1}{-54} = rac{1}{54} pprox 0.01852 \implies \hat{\sigma} pprox 0.1361.$$
+  Đối chiếu với độ lệch chuẩn chính xác của $$	ext{Beta}(9, 5)$$: $$\sqrt{rac{9 	imes 5}{14^2 	imes 15}} = \sqrt{rac{45}{2940}} pprox 0.1237$$ — chỉ bằng vài dòng đạo hàm tay, ta đã xấp xỉ sát gần đúng!
+
+**Hiểu lầm cần tránh:** Nghĩ rằng tìm được MAP là đã làm xong suy diễn Bayes. MAP chỉ là *một điểm duy nhất*; khi hậu nghiệm đa đỉnh hoặc lệch mạnh, MAP có thể nằm rất xa vùng chứa phần lớn khối lượng xác suất.
+
+**Kiểm tra nhanh:** Nếu cỡ mẫu tăng gấp 10 lần ($$k=70, n=100$$), $$g''(\hat{	heta})$$ lớn gấp khoảng 10 lần, nên độ lệch chuẩn hậu nghiệm thu nhỏ lại khoảng $$\sqrt{10} pprox 3.16$$ lần — đúng quy luật hội tụ $$1/\sqrt{n}$$.
+
+---
 
 ## Video tham khảo
 

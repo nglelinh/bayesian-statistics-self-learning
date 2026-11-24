@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Nếu ai đó nói với bạn *"thời gian giao hàng trung bình là 30 phút"*, bạn vẫn chưa biết liệu đơn hàng sẽ luôn đến trong khoảng 28–32 phút hay lúc thì 10 phút lúc lại trễ hẳn 2 tiếng. Một con số trung bình đơn lẻ xóa sạch toàn bộ câu chuyện về rủi ro. Chính vì vậy, ngôn ngữ thực sự của thống kê Bayes không phải là **con số đơn**, mà là **phân phối xác suất** — đối tượng toán học ghi trọn vẹn cả vị trí trung tâm, độ phân tán lẫn hình dạng đuôi của sự không chắc chắn.
+
+Bài mở đầu Chương 2 này giúp bạn nhìn các họ phân phối quen thuộc không như danh mục công thức phải thuộc, mà như những viên gạch để viết nên câu chuyện prior, likelihood và posterior.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, đọc một phân phối xác suất như cách mô tả mức độ chắc chắn. Thứ hai, phân biệt rõ khi nào nên dùng phân phối rời rạc và khi nào nên dùng phân phối liên tục. Thứ ba, hiểu vì sao thống kê Bayes luôn ưu tiên giữ **toàn bộ phân phối** thay vì chỉ rút gọn về một con số trung bình.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, đ
 > **Ví dụ mini.** Hai lớp học đều có tỷ lệ qua môn là $$75\%$$, nhưng một lớp có 8 sinh viên còn lớp kia có 800 sinh viên. Cùng một tỷ lệ, nhưng mức độ chắc chắn về kết quả không hề giống nhau.
 >
 > **Câu hỏi tự kiểm tra.** Nếu chỉ báo cáo một con số $$75\%$$, bạn đã bỏ sót thông tin quan trọng nào?
+
+
+## Bản đồ kiến thức nền: PMF/PDF, Họ phân phối và Ba vai trò trong Suy diễn Bayes
+
+Để đọc và chọn phân phối thành thạo trong mô hình hóa Bayes, hãy gắn kết ba trụ cột sau:
+
+- **Rời rạc (PMF) và Liên tục (PDF):** Với biến rời rạc, $$P(X = x)$$ là xác suất thực sự tại điểm $$x$$. Với biến liên tục, hàm mật độ $$f(x)$$ có thể lớn hơn 1 (ví dụ $$\text{Uniform}(0, 0.5)$$ có $$f(x) = 2$$); chỉ có **tích phân trên một khoảng** $$\int_a^b f(x)\,dx$$ mới là xác suất.
+- **Khớp miền giá trị (Support Matching):** Chọn phân phối trước hết là khớp miền giá trị của đại lượng cần mô hình hóa: $$[0, 1]$$ cho tỷ lệ (Beta), $$(0, \infty)$$ cho tốc độ/phương sai (Gamma, Exponential, Log-Normal), $$\{0, 1, 2, \dots\}$$ cho số đếm (Poisson, Negative Binomial) và $$(-\infty, \infty)$$ cho giá trị thực không chặn (Normal, Student-$$t$$).
+- **Ba vai trò trong một mô hình Bayes:** Cùng một hệ phân phối có thể xuất hiện ở ba tầng: **Prior** (niềm tin về tham số), **Likelihood** (cơ chế sinh dữ liệu khi biết tham số) và **Posterior / Posterior Predictive** (niềm tin và dự báo sau khi thấy dữ liệu).
+
+---
 
 ## Mở đầu: vì sao một con số thường là chưa đủ?
 
@@ -234,6 +251,33 @@ Ngay cả khi dữ liệu rất lớn, phân phối vẫn cần thiết để di
 **Phân phối xác suất là ngôn ngữ cốt lõi của thống kê Bayes.** Nó cho phép ta biểu diễn đồng thời giá trị hợp lý nhất, mức độ chắc chắn và khả năng xảy ra của các kịch bản cực đoan. Trong Chương 2, bạn cần ghi nhớ ba vai trò: prior là phân phối của niềm tin ban đầu, likelihood mô tả mức độ phù hợp của dữ liệu với từng giả thuyết, còn posterior là phân phối niềm tin sau khi đã cập nhật bằng dữ liệu. Nắm vững vai trò của phân phối sẽ giúp các bài học tiếp theo về likelihood, prior và posterior trở nên dễ tiếp thu hơn nhiều.
 
 > **3 ý cần nhớ.** Phân phối luôn giàu thông tin hơn ước lượng điểm vì nó giữ lại toàn bộ độ bất định; hai phân phối có cùng trung tâm vẫn mang ý nghĩa rất khác nếu độ rộng khác nhau; và trong thống kê Bayes, prior, likelihood và posterior đều là những phân phối đảm nhận các vai trò riêng biệt trong suy luận.
+
+
+## Khung giải thích (nên đọc chậm): Đọc một phân phối qua 4 câu hỏi thay vì chỉ nhìn trung bình
+
+Mỗi khi gặp một phân phối xác suất trong mô hình Bayes, hãy đọc chậm qua 4 câu hỏi sau:
+
+1. **Miền giá trị (Support) là gì?** Tham số hay dữ liệu có bị chặn dương, chặn trong $$[0,1]$$, hay nhận giá trị nguyên không?
+2. **Tâm phân phối ở đâu?** Trung bình, trung vị và mode có trùng nhau không (đối xứng hay lệch)?
+3. **Độ phân tán và độ dày đuôi thế nào?** Hai phân phối cùng trung bình nhưng khác phương sai hoặc độ dày đuôi dẫn đến quyết định rủi ro rất khác nhau.
+4. **Hàm mật độ có mang ý nghĩa vật lý/sinh dữ liệu gì?** Ví dụ: tổng $$n$$ phép thử Bernoulli sinh ra Binomial; thời gian chờ giữa các sự kiện Poisson sinh ra Exponential.
+
+### Ví dụ tính toán cầm tay chỉ việc: So sánh hai phân phối Beta có cùng trung bình $$0.5$$
+
+Xét hai phân phối mô tả niềm tin về tỷ lệ chuyển đổi $$p \in [0, 1]$$: $$\text{Beta}(2, 2)$$ và $$\text{Beta}(20, 20)$$. Sử dụng công thức kỳ vọng $$\mu = \frac{\alpha}{\alpha+\beta}$$ và phương sai $$\sigma^2 = \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$$:
+
+| Phân phối | Kỳ vọng $$\mathbb{E}[p]$$ | Phương sai $$\mathrm{Var}(p)$$ | Độ lệch chuẩn $$\mathrm{SD}(p)$$ | Ý nghĩa mức độ tự tin |
+| --- | --- | --- | --- | --- |
+| $$\text{Beta}(2, 2)$$ | $$2 / 4 = 0.500$$ | $$\frac{4}{16 \times 5} = 0.0500$$ | $$\sqrt{0.0500} \approx 0.2236$$ | Rất mờ nhạt (tương đương chỉ 4 quan sát giả định) |
+| $$\text{Beta}(20, 20)$$ | $$20 / 40 = 0.500$$ | $$\frac{400}{1600 \times 41} \approx 0.0061$$ | $$\sqrt{0.0061} \approx 0.0781$$ | Khá tập trung (tương đương 40 quan sát giả định) |
+
+Cả hai đều có đúng trung bình $$0.500$$, nhưng độ lệch chuẩn của $$\text{Beta}(2, 2)$$ lớn gần gấp **3 lần** $$\text{Beta}(20, 20)$$. Đó là lý do chỉ báo cáo một con số trung bình là hoàn toàn không đủ trong thống kê Bayes.
+
+**Hiểu lầm cần tránh:** Nhầm giá trị mật độ $$f(x)$$ của biến liên tục với xác suất $$P(X = x)$$. Với mọi biến liên tục, xác suất tại đúng một điểm đơn lẻ luôn bằng $$0$$, còn mật độ $$f(x)$$ hoàn toàn có thể lớn hơn $$1$$.
+
+**Kiểm tra nhanh:** Với phân phối đều $$X \sim \text{Uniform}(0, 0.25)$$, mật độ trên đoạn $$[0, 0.25]$$ là $$f(x) = 1/0.25 = 4 > 1$$, nhưng xác suất rơi vào nửa đầu $$[0, 0.125]$$ là $$\int_0^{0.125} 4\,dx = 0.5 \in [0, 1]$$.
+
+---
 
 ## Video tham khảo
 

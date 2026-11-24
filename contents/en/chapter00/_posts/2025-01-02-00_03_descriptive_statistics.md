@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+When a tech billionaire walks into a neighborhood coffee shop with 9 ordinary customers, the *mean* net worth inside the shop instantly shoots above $100 million—yet nine out of ten people in the room still can’t buy a yacht! That single anecdote explains why **descriptive statistics** is never just busywork before modeling: choosing the wrong summary (mean vs. median, SD vs. IQR) can completely misrepresent a skewed dataset—and later, a skewed Bayesian posterior!
+
+This lesson builds sharp numerical intuition for measures of center, spread, and shape, showing how robust quantiles (`median`, `IQR`) protect you from outliers and prepare you to summarize MCMC posterior draws accurately.
+
+---
+
+## Background Knowledge Map: Summarizing Data—and Summarizing Bayesian Posteriors
+
+Every descriptive summary you compute on raw data reappears directly when summarizing posterior samples:
+
+1. **Measures of Location (Mean, Median, Mode):** The mean minimizes squared error ($$L_2$$ loss), the median minimizes absolute error ($$L_1$$ loss) and resists extreme outliers, and the mode marks the highest-density peak (analogous to MAP in Bayesian inference).
+2. **Measures of Spread (Variance, SD, IQR):** Standard deviation measures typical squared distance from the mean; **Interquartile Range** ($$\mathrm{IQR} = Q_3 - Q_1$$) captures the middle 50% of data without being distorted by heavy tails.
+3. **Skewness & Quantile Intervals:** When a distribution is strongly right-skewed (income, waiting times, variance parameters $$\sigma^2$$), reporting `mean ± 2 SD` can even cross below zero—whereas quantile summaries (`median [Q_2.5%, Q_97.5%]`) stay honest.
+4. **Bridge to Posterior Summaries:** In Bayesian analysis via MCMC, you summarize thousands of posterior draws using the exact same toolkit: posterior mean, posterior median, posterior SD, and 95% credible intervals!
+
+---
+
 ## Learning Objectives
 
 After completing this lesson, you will understand that descriptive statistics is not just about computing summary numbers, but the art of telling a story about data. You will learn to use statistics such as the mean, median, and standard deviation not as mechanical formulas, but as tools for understanding the structure, trends, and variability in data. More importantly, you will develop intuition about when to use each statistic, and how to interpret them in the context of Bayesian analysis, where understanding the distribution of the data is an important first step before building a model.
@@ -170,6 +187,34 @@ However, we must be careful when interpreting correlation. First, correlation on
 *Figure 3c: Correlation can appear because of a hidden group variable, so we should always look at the plot before trusting a summary coefficient.*
 
 In Bayesian analysis, we usually model correlation explicitly through parameters in the model. For example, in Bayesian linear regression, the regression coefficient $$\beta$$ encodes the relationship between the predictor and the response variable, and we can quantify the uncertainty about this relationship through the posterior distribution of $$\beta$$.
+
+---
+
+### Worked Numerical Example: Watching One Outlier Hijack the Mean & SD While Median & IQR Hold Steady
+
+Compare two tiny 5-person salary datasets (in thousands of dollars):
+- **Clean sample:** `[40, 45, 50, 55, 60]`
+- **Outlier sample:** `[40, 45, 50, 55, 500]`
+
+| Summary Statistic | Clean Sample `[40,45,50,55,60]` | Outlier Sample `[40,45,50,55,500]` | Change Caused by 1 Outlier |
+| :--- | :--- | :--- | :--- |
+| **Mean ($$ar{x}$$)** | $$50.0$$ | $$138.0$$ | **$$+176\%$$ explosion!** |
+| **Median ($$Q_2$$)** | $$50.0$$ | $$50.0$$ | **$$0\%$$ (unchanged!)** |
+| **Sample SD ($$s$$)** | $$7.91$$ | $$202.4$$ | **$$25.6	imes$$ larger!** |
+| **IQR ($$Q_3 - Q_1$$)** | $$55 - 45 = 10.0$$ | $$55 - 45 = 10.0$$ | **$$0\%$$ (unchanged!)** |
+
+Look at `138 ± 202` on the outlier sample: it gives a lower bound of $$-64$$ thousand dollars—completely nonsensical—while `median = 50, IQR = 10` remains rock-solid!
+
+### Deep-Dive Explanation: Four Rules for Honest Data & Posterior Summaries (Read Slowly)
+
+1. **Always pair a location statistic with a spread statistic:** A mean without SD (or median without IQR/quantiles) hides half the story.
+2. **Compare mean vs. median as an instant skewness detector:** If `mean >> median`, you have a heavy right tail; investigate outliers or consider log-transforming before assuming Gaussianity.
+3. **Plot the histogram or boxplot alongside numbers:** Summary numbers cannot detect bimodality (two distinct clusters with an empty middle!).
+4. **Apply the same discipline to Bayesian posteriors:** For skewed parameters like variance $$\sigma^2$$ or small-sample rates, report posterior median and 95% equal-tailed or HDI credible intervals alongside the mean.
+
+**Quick check.** If a dataset has 5 values `[10, 12, 14, 16, 18]` and you add `+100` to *every* single value, how do the mean, median, SD, and IQR change?
+
+---
 
 ## Reference videos
 

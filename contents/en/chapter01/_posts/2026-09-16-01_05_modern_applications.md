@@ -10,6 +10,20 @@ categories:
 lesson_type: optional
 ---
 
+Thomas Bayes sketched his theorem in the 1760s using billiard balls on a flat table; two and a half centuries later, that exact equation is quietly running inside **self-driving car sensor fusion (Kalman & Particle Filters)**, **email spam filters**, **Thompson Sampling bandits** routing millions of ads and recommendations, and **Bayesian Optimization** tuning billion-dollar neural-network hyperparameters!
+
+This optional bridge shows how Bayes’ theorem powers modern computer science systems in 2022–2026—where uncertainty isn’t an academic nuisance, it is the exact signal algorithms use to **explore vs. exploit**.
+
+---
+
+## Background Knowledge Map: Three Ways Bayes’ Theorem Ships in Computer Science
+
+1. **Sequential Filtering (Robotics & Tracking):** Kalman filters (exact linear-Gaussian Bayes) and Particle filters fuse noisy GPS + LiDAR + IMU streams every 20 milliseconds by turning the previous millisecond’s posterior into the next millisecond’s prior.
+2. **Thompson Sampling (Multi-Armed Bandits):** Instead of wasting 50% of traffic on a losing A/B variant for weeks, Thompson Sampling samples $$\theta_k \sim \mathrm{Beta}(\alpha_k, \beta_k)$$ for each arm and plays the winner—automatically shifting traffic toward better options while keeping exploration alive!
+3. **Bayesian Optimization (Hyperparameter & Drug Discovery):** Fits a Gaussian Process posterior over an expensive black-box objective and queries the next point maximizing Expected Improvement (EI)—cutting expensive GPU/lab trials by 5–10×.
+
+---
+
 ## Learning objectives
 
 After this optional lesson, you no longer see Bayes' theorem as a diagnostic formula in a textbook, but as a rule for updating beliefs that is running inside spam filtering, fraud detection, and the quantification of uncertainty in language models. What needs to change is the question: not "how is the formula written?", but "where do the prior, likelihood and posterior sit in a real system?".
@@ -61,6 +75,30 @@ The three domains—spam/scams, fraud, and language uncertainty—are all decisi
 ## Limitations and extensions
 
 Naive Bayes with independent words is a crude generative story. Semantic entropy needs a model of meaning equivalence, which is itself uncertain. Calibration on one benchmark does not guarantee calibration after a distribution shift. This lesson deliberately does not rewrite updating theory; Chapter 2 will turn that diagram into an explicit likelihood, prior and posterior.
+
+---
+
+### Worked Numerical Example: One Step of a Naive Bayes Spam Filter in Log-Odds
+
+Suppose 20% of incoming emails are Spam ($$\text{prior odds} = \frac{0.20}{0.80} = 0.25$$). An email contains the word `"lottery"`, which appears in 40% of Spam emails ($$P(\text{"lottery"}\mid\text{Spam}) = 0.40$$) but only 1% of Ham emails ($$P(\text{"lottery"}\mid\text{Ham}) = 0.01$$):
+
+1. **Likelihood Ratio (Bayes Factor):**
+   $$\mathrm{LR} = \frac{0.40}{0.01} = \mathbf{40}.$$
+2. **Posterior Odds = Prior Odds $$\times$$ Likelihood Ratio:**
+   $$\text{Posterior Odds} = 0.25 \times 40 = \mathbf{10.0} \quad (\text{10-to-1 in favor of Spam!}).$$
+3. **Convert back to probability:**
+   $$P(\text{Spam} \mid \text{"lottery"}) = \frac{10}{10 + 1} = \frac{10}{11} \approx \mathbf{90.9\%}!$$
+
+### Deep-Dive Explanation: Four Takeaways on Bayesian Algorithms in CS (Read Slowly)
+
+1. **Odds form makes sequential updates pure multiplication (or log-addition):** Every new word or sensor reading simply adds $$\ln(\mathrm{LR})$$ to the running log-odds!
+2. **Uncertainty drives smart exploration:** In Thompson Sampling and Bayesian Optimization, *high posterior variance* is a feature—it tells the agent where learning has the highest payoff.
+3. **Naive independence assumptions still rank accurately:** Even when words in Naive Bayes are correlated, the *decision ranking* often remains strong—though raw probabilities become overconfident and need calibration.
+4. **Always pair online Bayesian bandits with guardrails:** Delayed reward feedback and non-stationary traffic require windowed or discounted updates so stale posteriors don’t lock onto yesterday’s winner.
+
+**Quick check.** In the Naive Bayes spam example above, if the email *also* contains the word `"invoice"` with $$P(\text{"invoice"}\mid\text{Spam}) = 0.05$$ and $$P(\text{"invoice"}\mid\text{Ham}) = 0.25$$ ($$\mathrm{LR} = 0.20$$), what are the new posterior odds and posterior spam probability?
+
+---
 
 ## Reference videos
 

@@ -10,9 +10,26 @@ categories:
 lesson_type: optional
 ---
 
+Từ ý tưởng đặt prior Gaussian lên vài hệ số hồi quy, nguyên lý điều chuẩn Bayes ngày nay mở rộng lên tận những mạng nơ-ron sâu hàng triệu tham số: kỹ thuật *weight decay* (AdamW) mang dáng dấp prior Gaussian, *Monte Carlo Dropout* (Gal & Ghahramani, 2016) được chứng minh là một xấp xỉ biến phân của quá trình Bayes sâu, còn *Deep Ensembles* và *Laplace Approximation* trở thành vũ khí chuẩn để đo độ bất định trong xe tự lái và chẩn đoán y khoa bằng AI.
+
+Bài tổng kết Chương 7 này kết nối điều chuẩn Bayes cổ điển với **Học sâu Bayes (Bayesian Deep Learning)** và các kỹ thuật hiệu chỉnh bất định hiện đại.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận weight decay, horseshoe, xấp xỉ Laplace và deep ensemble như những cách khác nhau để đặt phân phối tiên nghiệm lên các mô hình quá linh hoạt. Mục tiêu không phải là ghi nhớ tên thuật toán, mà là thấy rằng vấn đề quá khớp ở Chương 7 chính là động lực dẫn đến học sâu Bayes (Bayesian deep learning): khi mạng nơ-ron có quá nhiều tham số, ta cần một phân phối trên tập các hàm thay vì chỉ một nghiệm tối ưu điểm duy nhất.
+
+
+## Bản đồ kiến thức nền: Từ Điều chuẩn Cổ điển đến Học sâu Bayes (BDL)
+
+Ba trụ cột sau nối liền Chương 7 với nghiên cứu học máy hiện đại:
+
+- **Mạng nơ-ron Bayes (BNN) & Suy diễn xấp xỉ:** Đặt phân phối prior $$p(\mathbf{w})$$ lên toàn bộ trọng số mạng. Vì MCMC đầy đủ (HMC) quá đắt đỏ ở hàng triệu chiều, thực hành hiện đại dùng các phép xấp xỉ nhanh như **Variational Inference (Bayes by Backprop)**, **Last-Layer Laplace Approximation** và **SWAG**.
+- **Tách biệt hai loại bất định (Aleatoric vs. Epistemic):** Trong thị giác máy tính và y khoa, mô hình cần phân biệt giữa *dữ liệu mờ/nhiễu* (aleatoric — không sửa được bằng cách thu thêm dữ liệu) và *mẫu nằm ngoài vùng đã học* (epistemic — nơi các mạng con trong ensemble bất đồng mạnh, cảnh báo con người can thiệp).
+- **Deep Ensembles như xấp xỉ đa đỉnh (Multi-Modal Posterior):** Huấn luyện độc lập $$M$$ mạng nơ-ron với khởi tạo ngẫu nhiên khác nhau giúp khám phá nhiều cực tiểu khác nhau của bề mặt hàm mất mát, thường cho độ hiệu chỉnh bất định rất cao trên dữ liệu ngoài phân phối (*out-of-distribution*).
+
+---
 
 ## Kiến thức cần có
 
@@ -61,6 +78,33 @@ Chấm điểm dữ liệu bảng, phát hiện dữ liệu ngoài phân phối 
 ## Giới hạn và hướng mở rộng
 
 Xấp xỉ Laplace chỉ có giá trị cục bộ. VBLL giả định lớp cuối tuyến tính trên bộ đặc trưng cố định. Deep ensemble làm tăng chi phí huấn luyện theo số lượng mô hình thành phần. Không có phương pháp nào thay thế được nhu cầu kiểm chứng mô hình sẽ trình bày ở Chương 8. Bài học này không nhằm mở rộng thành một chương riêng về học sâu, mà chỉ cho thấy cách tư duy về tiên nghiệm từ bài 7.1 đã đi vào các kiến trúc mạng hiện đại theo những hướng tiếp cận thực dụng.
+
+
+## Khung giải thích (nên đọc chậm): Tách độ bất định Aleatoric và Epistemic bằng định luật tổng phương sai
+
+Với một tổ hợp gồm $$M$$ mô hình (từ mẫu MCMC, MC Dropout hoặc Deep Ensemble), mỗi mô hình $$m$$ dự đoán một trung bình $$\mu_m$$ và một phương sai nhiễu dữ liệu $$\sigma_m^2$$. Ta tách tổng bất định dự báo theo đúng định luật tổng phương sai (*Law of Total Variance*):
+
+1. **Trung bình dự báo chung:** $$\bar\mu = \frac{1}{M}\sum_{m=1}^M \mu_m$$.
+2. **Bất định Aleatoric (nhiễu dữ liệu trung bình):** $$\sigma_{\text{ale}}^2 = \frac{1}{M}\sum_{m=1}^M \sigma_m^2$$.
+3. **Bất định Epistemic (độ bất đồng giữa các mô hình):** $$\sigma_{\text{epi}}^2 = \frac{1}{M}\sum_{m=1}^M (\mu_m - \bar\mu)^2$$.
+4. **Tổng phương sai dự báo:** $$\sigma_{\text{total}}^2 = \sigma_{\text{ale}}^2 + \sigma_{\text{epi}}^2$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: So sánh ảnh trong phân phối (ID) và ảnh lạ ngoài phân phối (OOD)
+
+Giả sử một Deep Ensemble gồm $$M = 3$$ mạng dự đoán độ tuổi sinh học trên hai ca (A: dữ liệu quen thuộc; B: dữ liệu lạ ngoài phân phối):
+
+| Ca dự đoán | Dự báo $$(\mu_1, \mu_2, \mu_3)$$ | Phương sai nhiễu $$(\sigma_1^2, \sigma_2^2, \sigma_3^2)$$ | $$\sigma_{\text{ale}}^2$$ | $$\sigma_{\text{epi}}^2$$ | Tổng $$\mathrm{SD} = \sqrt{\sigma_{\text{ale}}^2 + \sigma_{\text{epi}}^2}$$ |
+| --- | --- | --- | --- | --- | --- |
+| Ca A (quen thuộc) | $$(40, 41, 39)$$ | $$(4.0, 4.0, 4.0)$$ | $$4.00$$ | $$\frac{0+1+1}{3} \approx 0.67$$ | $$\sqrt{4.67} \approx 2.16$$ |
+| Ca B (ngoài phân phối) | $$(30, 40, 50)$$ | $$(4.0, 4.0, 4.0)$$ | $$4.00$$ | $$\frac{100+0+100}{3} \approx 66.67$$ | $$\sqrt{70.67} \approx 8.41$$ |
+
+Ở Ca B, dù trung bình dự báo vẫn là $$40$$ và nhiễu dữ liệu $$\sigma_{\text{ale}}^2 = 4.0$$ không đổi, bất định epistemic tăng vọt gấp **100 lần** (từ $$0.67$$ lên $$66.67$$) — tín hiệu rõ ràng để hệ thống từ chối tự động ra quyết định và chuyển cho chuyên gia kiểm tra.
+
+**Hiểu lầm cần tránh:** Nhầm rằng giá trị xác suất `softmax` cao (ví dụ `0.98`) của một mạng nơ-ron chuẩn đồng nghĩa với độ chắc chắn cao trên ảnh ngoài phân phối. Mạng nơ-ron điểm thường rất tự tin sai trên dữ liệu lạ nếu không có cơ chế ước lượng bất định epistemic.
+
+**Kiểm tra nhanh:** Nếu ta thu thập thêm rất nhiều dữ liệu huấn luyện quanh vùng của Ca B, thành phần nào sẽ giảm về gần 0? Chính là $$\sigma_{\text{epi}}^2$$ (về gần 0), còn $$\sigma_{\text{ale}}^2 = 4.00$$ vẫn giữ nguyên.
+
+---
 
 ## Video tham khảo
 

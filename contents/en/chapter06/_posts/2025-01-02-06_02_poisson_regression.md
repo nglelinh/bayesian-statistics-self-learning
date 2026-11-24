@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Counts—hospital ER visits, daily bug reports, species sightings, website clicks—are strictly non-negative integers whose variance naturally grows with their mean. **Bayesian Poisson Regression** handles count data cleanly via the **log link** $$\ln \lambda_i = \alpha + \beta x_i \iff \lambda_i = e^{\alpha + \beta x_i}$$, guaranteeing positive rates everywhere and turning additive linear effects into **multiplicative rate ratios**!
+
+This lesson builds complete mastery over log-link Poisson GLMs, **exposure offsets** (`+ log(exposure)`), and diagnosing **overdispersion** (when you must upgrade from Poisson to Negative Binomial).
+
+---
+
+## Background Knowledge Map: Log Links, Exposure Offsets, and Overdispersion
+
+1. **Log Link Guarantees $$\lambda_i > 0$$:** Writing $$\lambda_i = \exp(\alpha + \beta x_i)$$ makes +1 unit of $$x$$ multiply the expected count by $$e^\beta$$ (Incidence Rate Ratio — IRR).
+2. **Why Priors Must Be Tight on the Log Scale:** Because $$e^{10} \approx 22{,}026$$ and $$e^{20} \approx 4.85\times 10^8$$, a careless $$\beta \sim \mathcal{N}(0, 10^2)$$ prior predicts billions of events per second! Weakly informative priors like $$\beta \sim \mathcal{N}(0, 0.5)$$ keep prior predictive counts realistic.
+3. **Exposure Offsets (`ln(T_i)`):** When observations cover different time spans or populations (e.g., 7 days vs. 30 days), model the *rate* $$\lambda_i / T_i = e^{\alpha + \beta x_i} \iff \ln\lambda_i = \ln(T_i) + \alpha + \beta x_i$$—adding $$\ln(T_i)$$ with a fixed coefficient of `1`!
+4. **Overdispersion $$\to$$ Gamma–Poisson (Negative Binomial):** Poisson enforces $$\mathrm{Var}(Y_i) = \lambda_i$$; if real counts show extra variance, switch to Negative Binomial ($$\mathrm{Var} = \lambda + \lambda^2/\phi$$) so credible intervals aren’t falsely narrow!
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will understand **Poisson Regression** as the standard model for **count data**, that is, data recording the number of times an event occurs. You will see why linear regression is not suitable when the outcome takes only non-negative integers, why the **log link function** helps the model produce valid predictions, and why the model's coefficients should be interpreted through the **rate ratio** rather than a simple additive difference. This is the second important GLM after logistic regression.
@@ -318,6 +333,28 @@ Poisson regression is the natural model for count data because it addresses exac
 The core point to remember is that the log link function is not just a mathematical trick, but the mechanism that makes the linear part of the model compatible with the nature of count data and rate data.
 
 Next lesson: **Model Evaluation for GLMs**.
+
+---
+
+### Worked Numerical Example: Computing Multiplicative Rates & Exposure Offsets by Hand
+
+Suppose a website’s daily bug count follows $$\ln\lambda = 1.0 + 0.5 x + \ln(T)$$ where $$x$$ is code-complexity score and $$T$$ is observation window in days:
+1. **For $$T = 1$$ day ($$\ln 1 = 0$$):**
+   - At $$x = 0$$: $$\lambda = e^{1.0} \approx \mathbf{2.72}$$ bugs/day.
+   - At $$x = 1$$: $$\lambda = e^{1.5} \approx \mathbf{4.48}$$ bugs/day (multiplied by $$e^{0.5} \approx \mathbf{1.649\times}$$, i.e., **+64.9%**!).
+   - At $$x = 2$$: $$\lambda = e^{2.0} \approx \mathbf{7.39}$$ bugs/day (multiplied by $$1.649\times$$ again!).
+2. **For $$T = 7$$ days at $$x = 0$$:** Adding offset $$\ln(7)$$ gives $$\lambda = e^{1.0 + \ln 7} = 7 \times 2.72 = \mathbf{19.03}$$ bugs/week—scaling linearly with exposure time!
+
+### Deep-Dive Explanation: Four Rules for Bayesian Count Regression (Read Slowly)
+
+1. **Always check prior predictive counts *before* running MCMC:** An exponential link explodes fast—verify your prior doesn’t simulate $$10^{12}$$ events!
+2. **Never divide counts by exposure and feed the ratio into Poisson:** Poisson requires *integer* counts; keep raw integer $$y_i$$ as the outcome and put `np.log(exposure)` on the right-hand side as an offset!
+3. **Always check for overdispersion and excess zeros via PPC:** Compare observed variance-to-mean ratio and observed zero fraction against replicated Poisson draws—upgrade to Negative Binomial or Zero-Inflated Poisson if Poisson fails!
+4. **Watch extreme leverage points:** Because $$\exp(\beta x)$$ curves steeply upward, a single high-$$x$$ observation carries huge influence in Poisson GLMs.
+
+**Quick check.** In a Poisson regression with log link, if a predictor has slope $$\beta = -0.20$$, by roughly what percentage does the expected count *decrease* for each +1 unit increase in that predictor? *(Hint: compute $$e^{-0.20} \approx 0.819$$.)*
+
+---
 
 ## Reference videos
 

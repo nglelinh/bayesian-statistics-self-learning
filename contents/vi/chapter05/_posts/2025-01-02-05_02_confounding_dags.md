@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Mùa thu năm 1973, Đại học UC Berkeley đối diện một cáo buộc nghiêm trọng về phân biệt giới tính trong tuyển sinh sau đại học: nhìn vào bảng tổng hợp toàn trường, 44% ứng viên nam trúng tuyển trong khi con số ở nữ chỉ là 35%. Thế nhưng khi nhà thống kê Peter Bickel cùng cộng sự tách số liệu theo từng khoa, một kết quả gây chấn động xuất hiện: ở hầu hết các khoa, tỷ lệ trúng tuyển của nữ thậm chí còn nhỉnh hơn nam! Nguyên nhân là ứng viên nữ nộp nhiều hơn vào các khoa có tỷ lệ chọi khắt khe nhất. Câu chuyện kinh điển ấy là lời nhắc sắc bén nhất về lý do dữ liệu thuần túy không bao giờ tự nói lên quan hệ nhân quả nếu thiếu một **đồ thị nhân quả (DAG)**.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu hiện tượng gây nhiễu (confounding) là gì và vì sao nó dễ khiến ta rút ra kết luận sai từ dữ liệu quan sát. Bạn cũng sẽ biết cách sử dụng đồ thị nhân quả có hướng không chu trình (DAG) để quyết định biến nào cần điều chỉnh và biến nào không nên đưa vào mô hình — nền tảng cốt lõi của suy luận nhân quả (causal inference).
@@ -18,6 +20,15 @@ Sau bài này, bạn sẽ hiểu hiện tượng gây nhiễu (confounding) là 
 >
 > **Câu hỏi tự kiểm tra.** Điều gì có thể xảy ra nếu ta bỏ qua một biến ảnh hưởng đồng thời tới cả biến can thiệp (treatment) lẫn biến kết quả (outcome)?
 
+
+## Bản đồ kiến thức nền: Mô hình cấu trúc nhân quả, Toán tử do() và Quy tắc d-separation
+
+Suy luận nhân quả hiện đại (theo trường phái Judea Pearl) nâng cấp hồi quy thống kê bằng ba khái niệm nền tảng:
+
+- **Quan sát $$P(Y \mid X=x)$$ khác can thiệp $$P(Y \mid \mathrm{do}(X=x))$$:** Phân phối có điều kiện thông thường chỉ lọc những người *tự nhiên* có $$X=x$$ (nên bị trộn lẫn với các nguyên nhân chung dẫn họ đến $$X=x$$). Ngược lại, toán tử $$\mathrm{do}(X=x)$$ biểu diễn hành động cắt đứt mọi mũi tên đi vào $$X$$ và ép $$X=x$$ cho toàn bộ quần thể.
+- **Ba nguyên tử đồ thị và quy tắc d-separation:** Mọi dòng thông tin thống kê trong một DAG đều truyền qua ba cấu trúc sơ cấp: **Fork** ($$X \leftarrow Z \rightarrow Y$$, mở sẵn và đóng khi điều chỉnh $$Z$$), **Chain** ($$X \rightarrow M \rightarrow Y$$, mở sẵn và đóng khi điều chỉnh $$M$$), và **Collider** ($$X \rightarrow C \leftarrow Y$$, đóng sẵn nhưng *mở ra* khi điều chỉnh $$C$$).
+- **Công thức điều chỉnh đường cửa sau (Backdoor Adjustment):** Nếu tập biến $$Z$$ chặn mọi đường cửa sau giữa $$X$$ và $$Y$$ mà không chứa hậu duệ của $$X$$, ta tính được phân phối can thiệp thuần túy từ dữ liệu quan sát qua công thức trung bình trọng số:
+  $$P(Y \mid \mathrm{do}(X=x)) = \sum_z P(Y \mid X=x, Z=z)\,P(Z=z).$$
 ## 1. Tương quan khác quan hệ nhân quả ở chỗ nào?
 
 Trong dữ liệu thực tế, hai biến cùng tăng hoặc cùng giảm không đồng nghĩa với việc biến này gây ra biến kia. Ví dụ kinh điển là doanh số kem và số vụ đuối nước đều tăng vào mùa hè: kem không gây đuối nước, mà cả hai cùng chịu tác động từ một nguyên nhân chung là **thời tiết nóng**. Khi chỉ nhìn vào hệ số tương quan mà bỏ qua cấu trúc sinh dữ liệu phía sau, ta rất dễ nhầm lẫn tương quan thành nhân quả — và hiện tượng gây nhiễu (confounding) là nguyên nhân phổ biến nhất dẫn đến nhầm lẫn này.
@@ -119,6 +130,22 @@ Trong **cả hai nhóm**, điều trị tích cực đều có tỷ lệ hồi p
 - Điều trị chuẩn: $$150/210 \approx 71.4\%$$ hồi phục.
 
 Tỷ lệ gộp bị đảo ngược không phải vì phác đồ tích cực kém hiệu quả, mà vì phần lớn ca nặng được phân bổ vào nhóm này.
+
+### Khung giải thích (nên đọc chậm): Tính tay công thức Backdoor Adjustment trên bảng Nghịch lý Simpson
+
+Ở mục 6.1, số liệu gộp cho thấy điều trị tích cực ($$X=1$$) chỉ đạt tỷ lệ hồi phục $$55.7\%$$, kém hơn điều trị chuẩn ($$X=0$$) ở mức $$71.4\%$$. Hãy dùng công thức Backdoor Adjustment với biến gây nhiễu mức độ nặng $$Z \in \{\text{nặng}, \text{nhẹ}\}$$ để tính hiệu quả **can thiệp thật sự**:
+
+1. **Tính phân phối biên $$P(Z)$$ của toàn bộ $$N = 140 + 210 = 350$$ bệnh nhân:**
+   - Tổng số ca nặng: $$80 + 30 = 110 \implies P(Z=\text{nặng}) = \frac{110}{350} = \frac{11}{35} \approx 31.43\%$$.
+   - Tổng số ca nhẹ: $$60 + 180 = 240 \implies P(Z=\text{nhẹ}) = \frac{240}{350} = \frac{24}{35} \approx 68.57\%$$.
+2. **Tính xác suất hồi phục nếu can thiệp cho MỌI bệnh nhân dùng điều trị tích cực ($$\mathrm{do}(X=1)$$):**
+   $$P(Y=1 \mid \mathrm{do}(X=1)) = 0.30 \times \frac{11}{35} + 0.90 \times \frac{24}{35} = \frac{3.3 + 21.6}{35} = \frac{24.9}{35} \approx 71.14\%.$$
+3. **Tính xác suất hồi phục nếu can thiệp cho MỌI bệnh nhân dùng điều trị chuẩn ($$\mathrm{do}(X=0)$$):**
+   $$P(Y=1 \mid \mathrm{do}(X=0)) = 0.20 \times \frac{11}{35} + 0.80 \times \frac{24}{35} = \frac{2.2 + 19.2}{35} = \frac{21.4}{35} \approx 61.14\%.$$
+4. **Kết luận nhân quả (Average Treatment Effect — ATE):**
+   $$\text{ATE} = 71.14\% - 61.14\% = +10.0\%.$$
+
+Chỉ bằng hai dòng cộng nhân, công thức Backdoor đã lật ngược hoàn toàn con số gộp gây hiểu lầm ($$-15.7\%$$) và trả về đúng lợi ích thật sự ($$+10\%$$) của phác đồ tích cực.
 
 ## 7. Đường cửa sau (Backdoor Path) là gì?
 

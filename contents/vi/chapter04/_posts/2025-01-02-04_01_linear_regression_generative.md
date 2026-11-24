@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Năm 1886, nhà khoa học người Anh Francis Galton ngồi đối chiếu chiều cao của hàng trăm cặp cha mẹ và con cái trưởng thành tại London. Ông không chỉ thấy một đường thẳng đi lên: ông thấy con của những cặp cha mẹ rất cao vẫn dao động rộng quanh một xu hướng trung bình và có khuynh hướng "hồi quy về trung bình". Từ quan sát ấy, thuật ngữ *hồi quy* (regression) ra đời — và ngay từ khoảnh khắc đầu tiên, bản chất của nó không phải là bài toán hình học vẽ đường thẳng, mà là bài toán mô tả một **quá trình sinh dữ liệu ngẫu nhiên**.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu hồi quy tuyến tính Bayes như một **mô hình sinh dữ liệu** (generative model), thay vì chỉ là bài toán khớp một đường thẳng vào các điểm dữ liệu. Bạn cũng sẽ nắm rõ vai trò của hệ số chặn (intercept), hệ số dốc (slope) và độ nhiễu (noise) trong mô hình, cũng như lý do hồi quy Bayes luôn giữ lại bất định của cả tham số lẫn dự đoán.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ hiểu hồi quy tuyến tính Bayes như một **mô 
 >
 > **Câu hỏi tự kiểm tra.** Vì sao không nên hiểu hồi quy Bayes chỉ đơn thuần là việc tìm một đường thẳng duy nhất?
 
+
+## Bản đồ kiến thức nền: Mô hình sinh dữ liệu, Phân phối có điều kiện và Bất định hai tầng
+
+Với người đọc đã có nền tảng đại học (giải tích, đại số tuyến tính, xác suất cơ bản), bước chuyển lớn nhất khi học hồi quy Bayes không nằm ở công thức mới mà ở cách thay đổi góc nhìn trên ba trụ cột:
+
+- **Phân phối có điều kiện và mô hình sinh dữ liệu (Generative Model):** Thay vì xem $$y = \alpha + \beta x + \varepsilon$$ như một phương trình đại số có thêm "rác" $$\varepsilon$$, thống kê Bayes đọc nó như một họ phân phối xác suất $$p(y \mid x, \alpha, \beta, \sigma) = \mathcal{N}(\alpha + \beta x, \sigma^2)$$. Tại mỗi mức $$x$$, không có một giá trị $$y$$ duy nhất mà có cả một phân phối các giá trị khả dĩ.
+- **Tham số như biến ngẫu nhiên trên không gian liên tục:** Nếu xác suất đại học quen gán phân phối cho dữ liệu $$y$$, thì suy luận Bayes gán phân phối cho chính các tham số chưa biết $$(\alpha, \beta, \sigma)$$. Khi kết hợp tiên nghiệm và hàm hợp lý qua định lý Bayes, kết quả không phải một điểm tối ưu mà là mật độ xác suất hậu nghiệm $$p(\alpha, \beta, \sigma \mid x, y)$$ trên $$\mathbb{R}^2 \times \mathbb{R}_+$$.
+- **Hai tầng bất định (Epistemic vs. Aleatoric Uncertainty):** Bất định về tham số $$(\alpha, \beta)$$ (*bất định nhận thức*) sẽ thu hẹp dần về 0 khi ta thu thập thêm nhiều dữ liệu; ngược lại, nhiễu cá thể $$\sigma$$ (*bất định ngẫu nhiên nội tại*) vẫn tồn tại ngay cả khi cỡ mẫu tiến ra vô cực. Tách bạch hai tầng này là chìa khóa để phân biệt khoảng tin cậy cho trung bình với khoảng dự đoán cho một cá nhân mới.
 ## 1. Hồi quy không chỉ là vẽ một đường thẳng
 
 Khi mới học hồi quy, nhiều người thường tiếp cận bài toán bằng cách chọn phương trình đường thẳng $$y = \alpha + \beta x$$ rồi tìm các hệ số sao cho tổng bình phương sai số đạt giá trị nhỏ nhất. Cách làm này hữu ích, nhưng dễ tạo ra cảm giác hồi quy chỉ là một kỹ thuật khớp đường mang tính hình học.
@@ -179,6 +189,23 @@ $$
 $$
 
 Ngược lại, khi phương sai nhiễu chưa biết và phải được suy luận đồng thời từ dữ liệu, phân phối hậu nghiệm biên của $$\beta$$ thường có đuôi dày hơn (trong thiết lập liên hợp là phân phối Student-t), khiến khoảng hậu nghiệm rộng hơn để phản ánh thêm bất định về nhiễu. Vì vậy, khi báo cáo khoảng ước lượng cho hệ số dốc, cần nêu rõ phương sai nhiễu đang được cố định hay được ước lượng từ dữ liệu.
+
+### Khung giải thích (nên đọc chậm): Từ 3 điểm dữ liệu đến phân phối hậu nghiệm và hai tầng bất định
+
+Để thấy cơ chế Bayes vận hành cụ thể ra sao thay vì dừng ở ký hiệu tổng quát, hãy tự tay tính một mô hình hồi quy nhỏ từ đầu đến cuối.
+
+1. **Dữ liệu đã dịch tâm:** Giả sử ta quan sát $$n = 3$$ điểm $$(x_i, y_i) \in \{(-1, 1),\ (0, 2),\ (1, 5)\}$$, trong đó $$\bar x = 0$$ và $$\sum x_i^2 = 2$$. Giả sử độ nhiễu đã biết là $$\sigma = 1$$ (độ chính xác dữ liệu $$\tau_y = 1/\sigma^2 = 1$$).
+2. **Đặt phân phối tiên nghiệm:** Chọn $$\alpha \sim \mathcal{N}(0, 2^2)$$ (độ chính xác tiên nghiệm $$\tau_{\alpha,0} = 1/4 = 0.25$$) và $$\beta \sim \mathcal{N}(0, 1^2)$$ (độ chính xác $$\tau_{\beta,0} = 1$$), độc lập nhau.
+3. **Cập nhật hậu nghiệm bằng tay:** Vì $$\sum x_i = 0$$, trong hàm hợp lý không có tích chéo giữa $$\alpha$$ và $$\beta$$, nên hai tham số cập nhật hoàn toàn độc lập:
+   - Với hệ số chặn $$\alpha$$: $$\sum y_i = 1 + 2 + 5 = 8$$. Độ chính xác hậu nghiệm là $$\tau_{\alpha \mid D} = 0.25 + 3 = 3.25$$, suy ra trung bình hậu nghiệm $$\mu_{\alpha \mid D} = 8 / 3.25 \approx 2.462$$ và phương sai $$\operatorname{Var}(\alpha \mid D) = 1/3.25 \approx 0.308$$ ($$\text{SD} \approx 0.555$$).
+   - Với hệ số dốc $$\beta$$: $$\sum x_i y_i = (-1)(1) + 0(2) + (1)(5) = 4$$. Độ chính xác hậu nghiệm là $$\tau_{\beta \mid D} = 1 + 2 = 3$$, suy ra trung bình hậu nghiệm $$\mu_{\beta \mid D} = 4/3 \approx 1.333$$ và phương sai $$\operatorname{Var}(\beta \mid D) = 1/3 \approx 0.333$$ ($$\text{SD} \approx 0.577$$).
+   *(Lưu ý: ước lượng OLS thuần túy là $$\hat\alpha_{\text{OLS}} = 8/3 \approx 2.667$$ và $$\hat\beta_{\text{OLS}} = 4/2 = 2.0$$; phân phối tiên nghiệm tâm tại 0 đã kéo nhẹ cả hai ước lượng về gần 0 — hiện tượng co cụm điều chuẩn tự nhiên của Bayes.)*
+4. **Tách hai tầng bất định khi dự đoán tại $$x_{\text{new}} = 1$$:**
+   - Giá trị trung bình dự đoán là $$\mathbb{E}[\mu_{\text{new}} \mid D] = 2.462 + 1.333(1) = 3.795$$.
+   - **Tầng 1 (bất định đường trung bình):** $$\operatorname{Var}(\mu_{\text{new}} \mid D) = \operatorname{Var}(\alpha \mid D) + 1^2 \operatorname{Var}(\beta \mid D) = 0.308 + 0.333 = 0.641 \implies \text{SD} \approx 0.80$$.
+   - **Tầng 2 (dự đoán một quan sát mới $$y_{\text{new}}$$):** Cộng thêm phương sai nhiễu cá thể $$\sigma^2 = 1$$, ta được $$\operatorname{Var}(y_{\text{new}} \mid D) = 0.641 + 1 = 1.641 \implies \text{SD} \approx 1.28$$.
+
+Chỉ với bốn dòng số học, bạn thấy ngay toàn bộ tinh thần hồi quy Bayes: phân phối hậu nghiệm co cụm nhẹ ước lượng OLS, và dự đoán cho một điểm mới luôn gánh thêm phương sai nhiễu $$\sigma^2$$ bên cạnh bất định tham số.
 
 ## 7. Một số ví dụ thực tế khác
 

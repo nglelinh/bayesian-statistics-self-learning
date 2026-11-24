@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Nếu Bernoulli, Binomial và Poisson là những phân phối mô tả *dữ liệu quan sát*, thì **Beta** và **Gamma** là những phân phối sống ở tầng trên: chúng mô tả **sự không chắc chắn về chính các tham số chưa biết**. Khi bạn nói "tôi nghĩ tỷ lệ click nằm đâu đó quanh 20%, nhưng chưa chắc lắm", bạn đang cần một phân phối trên đoạn $$[0, 1]$$ — đó là Beta. Khi bạn cần đặt niềm tin lên một tốc độ $$\lambda > 0$$ hay độ chính xác $$	au > 0$$, bạn cần một phân phối trên $$(0, \infty)$$ — đó là Gamma.
+
+Hiểu thấu đáo Beta và Gamma không chỉ giúp bạn giải tay các bài toán liên hợp đầu khóa, mà còn mở khóa tư duy **phân cấp (hierarchical modeling)**: tham số cũng là biến ngẫu nhiên có phân phối của riêng nó.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu phân phối Beta dùng để mô tả các đại lượng nằm trong đoạn $$[0,1]$$, nắm được ý nghĩa của các tham số $$\alpha,\beta$$, hiểu vai trò của phân phối Gamma cho tham số dương, và thấy rõ chức năng của hằng số chuẩn hóa trong việc tạo ra một hàm mật độ hợp lệ.
+
+## Bản đồ kiến thức nền: Hàm đặc biệt (Gamma/Beta), Họ mũ và Prior liên hợp
+
+Ba trụ cột toán học nâng đỡ bài học này:
+
+- **Giải tích hàm đặc biệt (Special Functions):** Hàm Gamma $$\Gamma(lpha) = \int_0^\infty t^{lpha-1} e^{-t}\,dt$$ mở rộng giai thừa sang số thực dương ($$\Gamma(n) = (n-1)!$$), còn hàm Beta $$B(lpha, eta) = rac{\Gamma(lpha)\Gamma(eta)}{\Gamma(lpha+eta)}$$ là hằng số chuẩn hóa đảm bảo tích phân mật độ trên $$[0,1]$$ bằng đúng 1.
+- **Không gian tham số và Miền giá trị (Support Matching):** Một nguyên tắc vàng khi xây mô hình Bayes là miền giá trị của prior phải khớp với miền hợp lệ của tham số: $$	heta \in (0,1) \Rightarrow 	ext{Beta}$$; $$\lambda > 0 \Rightarrow 	ext{Gamma}$$ (hoặc Half-Normal, Log-Normal).
+- **Cầu nối sang Tính liên hợp & Mô hình tổng quát:** Beta và Gamma là hai đại diện kinh điển của **họ mũ (exponential family)** có prior liên hợp dạng đóng. Khi bước sang các mô hình không liên hợp (như hồi quy logistic hay mạng Bayes), ta vẫn giữ tư duy tương tự về hình dạng prior nhưng thay giải tích dạng đóng bằng **MCMC** hoặc **Variational Inference**.
+
+---
 
 ## 1) Bắt đầu từ vấn đề thực tế: mô tả một tỷ lệ chưa biết
 
@@ -242,6 +258,37 @@ print(betaln(2, 3))  # log(Beta(2,3))
 3. Hàm Gamma mở rộng khái niệm giai thừa: $$\Gamma(n+1)=n!$$.
 4. Hàm Beta liên hệ trực tiếp với hàm Gamma qua tỷ số $$\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$$.
 5. Hằng số chuẩn hóa biến một biểu thức "đúng hình dạng" thành hàm mật độ xác suất hợp lệ.
+
+## Khung giải thích (nên đọc chậm): Giải mã siêu tham số như "dữ liệu ảo" (Pseudo-counts)
+
+Sinh viên mới học Bayes thường lúng túng: *làm sao chọn $$lpha, eta$$ cho Beta hay Gamma mà không phải đoán mò?* Câu trả lời nằm ở cách diễn giải **dữ liệu ảo**:
+
+1. **Beta($$lpha, eta$$) là tổng của hai số đếm ảo:** Có thể xem $$lpha - 1$$ là số thành công ảo và $$eta - 1$$ là số thất bại ảo (hoặc trực quan hơn: $$lpha + eta$$ là "cỡ mẫu ảo" quyết định độ mạnh của prior).
+2. **Kiểm tra độ tập trung:** Cùng trung bình $$0.5$$, nhưng $$	ext{Beta}(1, 1)$$ là phân phối đều (cỡ mẫu ảo 2, gần như không biết gì), còn $$	ext{Beta}(50, 50)$$ tương đương đã tung đồng xu 100 lần (rất khó bị lay chuyển bởi 5–10 quan sát mới).
+3. **Gamma($$lpha, eta$$) (tham số hóa shape–rate):** $$lpha$$ đóng vai trò tổng số sự kiện ảo đã thấy trong $$eta$$ đơn vị thời gian ảo, nên trung bình là $$lpha/eta$$ và phương sai là $$lpha/eta^2$$.
+4. **Cập nhật trở thành phép cộng kế toán:** Dữ liệu thực chỉ đơn giản cộng thêm vào các số đếm ảo đó.
+
+### Ví dụ tính toán cầm tay chỉ việc: Chuyển đổi niềm tin thành Beta và kiểm chứng hằng số chuẩn hóa
+
+Giả sử bạn tin một loại thuốc mới có tỷ lệ hiệu quả quanh $$0.6$$ với độ tin cậy tương đương đã thử trên 10 bệnh nhân. Ta chọn $$lpha = 6, eta = 4$$ (tổng $$lpha + eta = 10$$, trung bình $$6/10 = 0.6$$).
+
+- **Bước 1 — Kiểm tra hằng số chuẩn hóa $$B(6, 4)$$ bằng tay:**
+  $$B(6, 4) = rac{\Gamma(6)\Gamma(4)}{\Gamma(10)} = rac{5!\,3!}{9!} = rac{120 	imes 6}{362\,880} = rac{720}{362\,880} = rac{1}{504}.$$
+  Vậy mật độ tiên nghiệm là $$p(	heta) = 504\,	heta^5(1-	heta)^3$$.
+- **Bước 2 — Tính mật độ tại $$	heta = 0.6$$ và $$	heta = 0.2$$:**
+  - Tại $$	heta = 0.6$$: $$504 	imes (0.6)^5 	imes (0.4)^3 = 504 	imes 0.07776 	imes 0.064 pprox 2.508$$.
+  - Tại $$	heta = 0.2$$: $$504 	imes (0.2)^5 	imes (0.8)^3 = 504 	imes 0.00032 	imes 0.512 pprox 0.083$$.
+  (Chú ý: mật độ $$2.508 > 1$$ hoàn toàn hợp lệ vì đây là PDF trên đoạn ngắn $$[0,1]$$, miễn tổng diện tích bằng 1).
+- **Bước 3 — Cập nhật với thử nghiệm lâm sàng gồm $$n = 15$$ bệnh nhân, $$k = 12$$ người khỏi bệnh:**
+  $$	heta \mid 	ext{data} \sim 	ext{Beta}(6 + 12, 4 + 3) = 	ext{Beta}(18, 7).$$
+  - Trung bình hậu nghiệm: $$rac{18}{25} = 0.72$$ (dịch chuyển từ prior $$0.60$$ hướng về tỷ lệ mẫu $$12/15 = 0.80$$).
+  - Độ lệch chuẩn giảm từ $$\sqrt{rac{6	imes 4}{10^2 	imes 11}} pprox 0.148$$ xuống $$\sqrt{rac{18 	imes 7}{25^2 	imes 26}} = \sqrt{rac{126}{16\,250}} pprox 0.088$$.
+
+**Hiểu lầm cần tránh:** Nghĩ rằng $$	ext{Beta}(1,1)$$ luôn "khách quan tuyệt đối". Nếu ta biến đổi tham số sang log-odds $$\eta = \lograc{	heta}{1-	heta}$$, một phân phối đều trên $$	heta$$ sẽ không còn đều trên $$\eta$$ nữa.
+
+**Kiểm tra nhanh:** Với $$	ext{Beta}(18, 7)$$, mode (MAP) bằng $$rac{18-1}{18+7-2} = rac{17}{23} pprox 0.739$$ — hơi lớn hơn trung bình $$0.72$$ vì phân phối hơi lệch trái.
+
+---
 
 ## Video tham khảo
 

@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Năm 1898, nhà thống kê Ladislaus Bortkiewicz công bố một nghiên cứu kỳ lạ nhưng kinh điển: đếm số binh sĩ Phổ tử vong vì bị ngựa đá trong từng quân đoàn suốt 20 năm. Các con số thu được — toàn số nguyên không âm $$0, 1, 2, 3, 4$$ — khớp khít một cách đáng kinh ngạc với phân phối do Siméon Denis Poisson tìm ra trước đó nửa thế kỷ. Ngày nay, cùng cấu trúc dữ liệu đếm ấy xuất hiện khắp nơi: số ca cấp cứu mỗi ngày, số lỗi phần mềm trên mỗi nghìn dòng mã, hay số đơn hàng đặt mỗi giờ.
+
+Bài học này mở rộng khung GLM sang **hồi quy Poisson Bayes** với hàm liên kết logarit, đồng thời chỉ ra cách chẩn đoán và khắc phục hiện tượng **quá phân tán (overdispersion)** bằng phân phối Negative Binomial.
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **hồi quy Poisson (Poisson regression)** như mô hình tiêu chuẩn cho **dữ liệu đếm (count data)**, tức các dữ liệu ghi nhận số lần một sự kiện xảy ra. Bạn sẽ thấy vì sao hồi quy tuyến tính không phù hợp khi biến kết quả chỉ nhận các số nguyên không âm, vì sao **hàm liên kết log (log link function)** giúp mô hình tạo ra dự đoán hợp lệ, và vì sao hệ số của mô hình nên được diễn giải thông qua **tỷ số tốc độ (rate ratio)** thay vì hiệu số cộng đơn giản. Đây là mô hình GLM quan trọng thứ hai sau hồi quy logistic.
+
+
+## Bản đồ kiến thức nền: Hàm liên kết Log, Exposure Offset và Bài toán Quá phân tán
+
+Làm chủ hồi quy dữ liệu đếm đòi hỏi nắm vững ba trụ cột:
+
+- **Hàm liên kết Log & Tỷ số tốc độ (Rate Ratio):** Trong hồi quy Poisson, $$y_i \sim \text{Poisson}(\lambda_i)$$ với $$\log \lambda_i = \alpha + \beta x_i \iff \lambda_i = e^{\alpha + \beta x_i}$$. Hàm mũ bảo đảm tốc độ kỳ vọng $$\lambda_i$$ luôn dương, và tăng $$x$$ thêm 1 đơn vị sẽ **nhân** số đếm kỳ vọng với $$e^\beta$$ (*Incidence Rate Ratio — IRR*).
+- **Biến bù phơi nhiễm (Exposure Offset):** Khi các quan sát có thời gian theo dõi hoặc quy mô khác nhau (ví dụ $$t_i$$ ngày hay $$E_i$$ nghìn người), ta mô hình hóa tốc độ trên một đơn vị phơi nhiễm: $$\log \lambda_i = \log(t_i) + \alpha + \beta x_i$$ (hệ số của $$\log(t_i)$$ cố định bằng 1).
+- **Quá phân tán (Overdispersion) & Negative Binomial:** Phân phối Poisson ép chặt $$\mathrm{Var}(y_i) = \mathbb{E}[y_i] = \lambda_i$$. Dữ liệu thực tế thường có phương sai lớn hơn trung bình rất nhiều; nếu giữ nguyên Poisson, khoảng tin cậy hậu nghiệm sẽ hẹp giả tạo. Chuyển sang **Negative Binomial** ($$\mathrm{Var}(y) = \mu + \mu^2/\phi$$) giải quyết triệt để vấn đề này.
+
+---
 
 ## Giới thiệu: Dữ liệu đếm trong thực tế
 
@@ -318,6 +335,34 @@ Hồi quy Poisson là mô hình tự nhiên cho dữ liệu đếm vì nó khắ
 Điểm cốt lõi cần nhớ là hàm liên kết log không chỉ là một phép biến đổi toán học, mà là cơ chế giúp phần tuyến tính của mô hình tương thích với bản chất của dữ liệu đếm và dữ liệu tốc độ.
 
 Bài tiếp theo: **Đánh giá mô hình cho GLMs (Model Evaluation for GLMs)**.
+
+
+## Khung giải thích (nên đọc chậm): Tính nhanh tốc độ kỳ vọng, Offset và kiểm tra Quá phân tán
+
+Khi xây dựng và đọc mô hình hồi quy Poisson Bayes, hãy kiểm tra chậm rãi 4 bước:
+
+1. **Tính $$\log \lambda$$ từ phương trình tuyến tính** (cộng thêm $$\log(\text{exposure})$$ nếu độ dài quan sát khác nhau).
+2. **Lấy hàm mũ $$\lambda = e^{\log\lambda}$$** để đọc số đếm kỳ vọng thực tế.
+3. **Diễn giải $$e^\beta$$ theo phần trăm thay đổi nhân tính:** Ví dụ $$e^\beta = 1.25$$ nghĩa là tăng 1 đơn vị $$x$$ làm số đếm kỳ vọng tăng thêm $$25\%$$.
+4. **Kiểm tra tỷ số Phương sai / Trung bình (và PPC):** Nếu phương sai phần dư lớn hơn trung bình rõ rệt, cần chuyển sang Negative Binomial.
+
+### Ví dụ tính toán cầm tay chỉ việc: Dự báo số yêu cầu hỗ trợ kỹ thuật theo số người dùng mới
+
+Giả sử mô hình hồi quy Poisson Bayes cho số ticket hỗ trợ mỗi ngày có $$\alpha = 1.5$$ và $$\beta = 0.2$$ (với $$x$$ là số nghìn người dùng mới đăng ký trong ngày):
+
+| Số nghìn người dùng mới $$x$$ | $$\log \lambda = 1.5 + 0.2x$$ | Số ticket kỳ vọng $$\lambda = e^{\log\lambda}$$ | Độ lệch chuẩn Poisson $$\sqrt{\lambda}$$ | Tỷ số so với mức trước |
+| --- | --- | --- | --- | --- |
+| $$x = 0$$ | $$1.50$$ | $$e^{1.5} \approx 4.48$$ | $$\sqrt{4.48} \approx 2.12$$ | — |
+| $$x = 1$$ | $$1.70$$ | $$e^{1.7} \approx 5.47$$ | $$\sqrt{5.47} \approx 2.34$$ | $$e^{0.2} \approx 1.221\; (+22.1\%)$$ |
+| $$x = 2$$ | $$1.90$$ | $$e^{1.9} \approx 6.69$$ | $$\sqrt{6.69} \approx 2.59$$ | $$e^{0.2} \approx 1.221\; (+22.1\%)$$ |
+
+Nếu cùng mức $$x = 2$$ nhưng ta theo dõi trong $$t = 3$$ ngày liên tiếp, chỉ cần cộng offset $$\ln(3) \approx 1.099$$: $$\lambda_{\text{3 ngày}} = \exp(1.90 + \ln 3) = 3 \times 6.69 = 20.07$$ ticket.
+
+**Hiểu lầm cần tránh:** Đặt prior phẳng quá rộng (như $$\beta \sim \mathcal{N}(0, 10^2)$$) trong hồi quy Poisson. Vì đi qua hàm mũ $$e^{\beta x}$$, chỉ cần $$\beta = 10$$ và $$x = 2$$ đã sinh ra $$\lambda = e^{20} \approx 4.85 \times 10^8$$ gây tràn số khi lấy mẫu MCMC!
+
+**Kiểm tra nhanh:** Nếu quan sát thực tế tại $$x = 2$$ có trung bình $$\bar y = 6.7$$ nhưng phương sai mẫu $$s^2 = 28.0$$ (gấp hơn 4 lần trung bình), đây là dấu hiệu rõ ràng của **quá phân tán** — cần thay Poisson bằng Negative Binomial.
+
+---
 
 ## Video tham khảo
 

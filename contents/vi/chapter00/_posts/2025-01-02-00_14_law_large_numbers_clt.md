@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Cuối thế kỷ 17, Jacob Bernoulli tự hỏi một câu vừa giản dị vừa sâu sắc: nếu một biến cố có xác suất thật $$p$$ ẩn giấu sau màn sương ngẫu nhiên, liệu ta có thể "nhìn thấy" $$p$$ chỉ bằng cách lặp đi lặp lại thí nghiệm đủ nhiều lần? Ông mất hơn hai mươi năm để chứng minh câu trả lời — Luật số lớn. Một thế kỷ sau, Pierre-Simon Laplace và Abraham de Moivre còn đi xa hơn: không chỉ biết trung bình mẫu tiến về đâu, họ phát hiện mọi dao động quanh điểm hội tụ đó đều mang chung một hình bóng kỳ lạ — đường cong chuông chuẩn.
+
+Trong thống kê Bayes hiện đại, hai định lý kinh điển này là xương sống của **phương pháp Monte Carlo và MCMC**: mỗi khi ta rút hàng nghìn mẫu từ phân phối hậu nghiệm, chính Luật số lớn đảm bảo trung bình mẫu hội tụ về kỳ vọng hậu nghiệm, còn Định lý giới hạn trung tâm cho phép đo chính xác sai số tính toán (MCSE).
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vì sao trung bình mẫu trở nên ổn định khi cỡ mẫu tăng lên (Luật số lớn — LLN), vì sao tổng hoặc trung bình của nhiều biến ngẫu nhiên có xu hướng tiến gần phân phối chuẩn (Định lý giới hạn trung tâm — CLT), và vì sao hai định lý này là nền tảng cho mô phỏng, ước lượng và kiểm định thống kê.
+
+
+## Bản đồ kiến thức nền: Hội tụ xác suất, Phân phối tiệm cận và Monte Carlo Bayes gặp nhau ở đâu?
+
+Để hiểu hai định lý này ở tầm đại học – sau đại học thay vì chỉ thuộc phát biểu, hãy đặt chúng trên ba trụ cột:
+
+- **Lý thuyết hội tụ của biến ngẫu nhiên (Convergence Modes):** Luật số lớn yếu (WLLN) phát biểu sự hội tụ theo xác suất ($$\bar X_n \xrightarrow{P} \mu$$), còn Luật số lớn mạnh (SLLN) phát biểu hội tụ hầu chắc chắn ($$\bar X_n \xrightarrow{\text{a.s.}} \mu$$). Đây là cơ sở lý thuyết giải thích vì sao ước lượng trung bình không bị trôi vô định khi cỡ mẫu tăng.
+- **Tiệm cận phân phối (Asymptotic Distribution & CLT):** Định lý giới hạn trung tâm mô tả hội tụ theo phân phối của đại lượng chuẩn hóa $$\sqrt{n}(\bar X_n - \mu)/\sigma \xrightarrow{d} \mathcal{N}(0,1)$$. Điều kỳ diệu là tính chuẩn tiệm cận không đòi hỏi dữ liệu gốc phải chuẩn, miễn phương sai hữu hạn.
+- **Cầu nối sang Thống kê Bayes & MCMC:** Trong thực hành Bayes, tích phân hậu nghiệm $$\mathbb{E}[g(\theta) \mid y]$$ thường không có công thức đóng. Ta thay tích phân bằng trung bình mẫu $$\frac{1}{S}\sum_{s=1}^S g(\theta^{(s)})$$ (nhờ LLN / định lý Ergodic cho chuỗi Markov) và đánh giá sai số chuẩn Monte Carlo $$\text{MCSE} = \hat{\sigma}_g / \sqrt{S_{\text{eff}}}$$ (nhờ CLT).
+
+---
 
 ## Giới thiệu: Vì sao ngẫu nhiên vẫn tạo ra quy luật ổn định?
 
@@ -101,6 +118,38 @@ Trong thống kê Bayesian, các ước lượng Monte Carlo cũng dựa trên t
 2. CLT: phân phối của trung bình mẫu tiến gần phân phối chuẩn với phương sai $$\sigma^2/n$$.
 3. LLN nói về điểm hội tụ; CLT nói về hình dạng và độ rộng dao động quanh điểm đó.
 4. Cả hai định lý là nền tảng cho suy luận thống kê và phương pháp mô phỏng.
+
+
+## Khung giải thích (nên đọc chậm): Bốn bước đọc tốc độ hội tụ và sai số chuẩn
+
+Nhiều người học nhớ mang máng "cỡ mẫu lớn thì chính xác hơn", nhưng lại lúng túng khi phải định lượng *cần bao nhiêu mẫu là đủ*. Hãy đọc chậm chuỗi bốn bước sau:
+
+1. **Xác định kỳ vọng và độ lệch chuẩn của một quan sát đơn lẻ ($$\mu, \sigma$$):** Một mẫu đơn lẻ $$X_i$$ có độ bất định bằng $$\sigma$$ — con số này phản ánh bản chất biến thiên của dữ liệu và không giảm khi lấy thêm mẫu.
+2. **Tính kỳ vọng và độ lệch chuẩn của trung bình mẫu ($$\bar X_n$$):** Trung bình mẫu vẫn có kỳ vọng $$\mu$$, nhưng phương sai giảm theo tỷ lệ $$1/n$$ thành $$\sigma^2/n$$, kéo theo sai số chuẩn $$\mathrm{SE} = \sigma/\sqrt{n}$$.
+3. **Áp dụng xấp xỉ chuẩn CLT:** Khi $$n$$ đủ lớn, khoảng $$\mu \pm 1.96\,\sigma/\sqrt{n}$$ chứa xấp xỉ $$95\%$$ các giá trị khả dĩ của $$\bar X_n$$.
+4. **Đánh đổi chi phí – độ chính xác:** Vì căn bậc hai $$\sqrt{n}$$ tăng chậm, muốn giảm một nửa bề rộng sai số phải tăng cỡ mẫu gấp $$4$$ lần; muốn giảm $$10$$ lần phải tăng cỡ mẫu gấp $$100$$ lần.
+
+### Ví dụ tính toán cầm tay chỉ việc: Ước lượng thời gian phản hồi máy chủ lệch phải
+
+Giả sử thời gian phản hồi của một API tuân theo phân phối mũ (rất lệch phải, hoàn toàn không phải phân phối chuẩn) với trung bình thật $$\mu = 200\text{ ms}$$ và độ lệch chuẩn $$\sigma = 200\text{ ms}$$. Ta lấy mẫu $$n$$ yêu cầu độc lập và tính trung bình mẫu $$\bar X_n$$.
+
+| Cỡ mẫu $$n$$ | Kỳ vọng $$\mathbb{E}[\bar X_n]$$ | Sai số chuẩn $$\mathrm{SE} = 200/\sqrt{n}$$ | Khoảng 95% theo CLT ($$\mu \pm 1.96\,\mathrm{SE}$$) |
+| --- | --- | --- | --- |
+| $$n = 25$$ | $$200\text{ ms}$$ | $$200 / 5 = 40.0\text{ ms}$$ | $$[121.6,\; 278.4]\text{ ms}$$ |
+| $$n = 100$$ | $$200\text{ ms}$$ | $$200 / 10 = 20.0\text{ ms}$$ | $$[160.8,\; 239.2]\text{ ms}$$ |
+| $$n = 400$$ | $$200\text{ ms}$$ | $$200 / 20 = 10.0\text{ ms}$$ | $$[180.4,\; 219.6]\text{ ms}$$ |
+
+Ta tính thử xác suất $$\bar X_{100}$$ vượt quá $$230\text{ ms}$$ theo CLT:
+
+$$
+z = \frac{230 - 200}{20} = 1.5 \implies P(\bar X_{100} > 230) \approx 1 - \Phi(1.5) \approx 1 - 0.9332 = 0.0668 \quad (6.68\%).
+$$
+
+**Hiểu lầm cần tránh:** Nghĩ rằng CLT làm cho *từng quan sát* $$X_i$$ trở thành phân phối chuẩn khi $$n$$ lớn. Thực tế dữ liệu gốc vẫn lệch phải (vẫn là phân phối mũ); chỉ có phân phối của **trung bình mẫu** $$\bar X_n$$ mới tiến gần dạng chuông chuẩn.
+
+**Kiểm tra nhanh:** Nếu muốn sai số chuẩn của $$\bar X_n$$ giảm xuống đúng $$5\text{ ms}$$, ta giải $$200/\sqrt{n} = 5 \implies \sqrt{n} = 40 \implies n = 1600$$ yêu cầu.
+
+---
 
 ## Video tham khảo
 

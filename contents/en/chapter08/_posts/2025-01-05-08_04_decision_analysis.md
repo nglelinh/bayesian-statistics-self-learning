@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Your Bayesian posterior tells you there is a **20% chance of heavy rain** tomorrow—should you carry an umbrella? That question cannot be answered by probability alone! Carrying an umbrella unnecessarily costs tiny annoyance (loss = 1), whereas getting soaked in a suit costs misery (loss = 10). Multiply posterior probabilities by **asymmetric loss**, and carrying the umbrella wins easily even at just 20% rain probability!
+
+**Bayesian Decision Theory** is the final bridge from *inference* ($$p(\theta\mid y)$$) to *optimal action* ($$a^* = \arg\min_a \mathbb{E}_{\theta\mid y}[L(a, \theta)]$$)—explaining why optimal decisions under asymmetric costs almost never use a naive `0.50` probability cutoff.
+
+---
+
+## Background Knowledge Map: From Posterior Beliefs to Optimal Decisions
+
+1. **Loss / Utility Function $$L(a, \theta)$$:** Quantifies the real-world cost of taking action $$a$$ when the true state of the world is $$\theta$$ (medical false negative vs. false positive; stockout vs. overstock).
+2. **Bayes-Optimal Action (Expected Posterior Loss):** Integrate the loss over your full posterior distribution: $$a^* = \arg\min_a \int L(a, \theta)\,p(\theta\mid y)\,d\theta$$—approximated effortlessly from MCMC draws via $$\frac{1}{S}\sum_s L(a, \theta^{(s)})$$!
+3. **Classic Point Estimators Are Just Special Loss Functions:** Squared error $$(a-\theta)^2 \implies$$ **posterior mean**; absolute error $$\lvert a-\theta\rvert \implies$$ **posterior median**; asymmetric pinball loss (cost of under-predicting is $$9\times$$ over-predicting) $$\implies$$ **90th posterior quantile**!
+4. **Value of Information (EVPI):** Quantifies the maximum dollars worth paying to collect *more data* before committing to an irreversible action.
+
+---
+
 ## Learning objectives
 
 After this lesson, you should be able to turn Bayesian inference results into concrete actions under uncertainty, through loss functions, expected loss, and the value of information. The focus of the lesson is to understand that the posterior answers the question "what do we believe", while decision theory answers a completely different question: "what should we do" when each choice carries asymmetric costs.
@@ -133,6 +148,30 @@ From a scientific viewpoint, a good Bayesian decision is not one that is "certai
 Bayesian decision analysis completes the cycle of Chapter 08: PPC helps detect where the model is wrong, WAIC/LOO helps compare predictive ability, model comparison strategies help handle model uncertainty, and decision theory turns all of that information into concrete action. If inference is the science of belief under uncertainty, then decision analysis is the discipline that turns that belief into a responsible choice.
 
 **Chapter 08 Complete**: model criticism -> model comparison -> decision.
+
+---
+
+### Worked Numerical Example: Optimal Medical / Umbrella Decision Under Asymmetric Loss
+
+Suppose your posterior probability of a severe defect ($$D=1$$) is only **$$p = 0.20$$** (and $$P(D=0) = 0.80$$). Compare two actions with asymmetric costs:
+- **Action `Inspect`:** Fixed cost = **$\$100$** whether defective or not.
+- **Action `Ship Without Inspecting`:** Cost = **$\$0$** if clean, but **$\$1{,}000$** recall disaster if defective!
+
+Compute exact expected posterior loss for both actions:
+- $$\mathbb{E}[L(\text{Inspect})] = 0.20(100) + 0.80(100) = \mathbf{\$100}.$$
+- $$\mathbb{E}[L(\text{Ship})] = 0.20(1000) + 0.80(0) = \mathbf{\$200}.$$
+- **Optimal threshold:** Inspect whenever $$1000\,p > 100 \iff \mathbf{p > 0.10}$$! Even though "no defect" is 4× more likely (80%), **Inspect** cuts expected loss in half!
+
+### Deep-Dive Explanation: Four Rules for Bayesian Decision Analysis (Read Slowly)
+
+1. **Always separate *inference* (posterior $$p(\theta\mid y)$$) from *decision* (loss $$L(a,\theta)$$):** Never distort your prior to mimic a conservative loss function—keep beliefs honest and put conservatism explicitly into the loss matrix!
+2. **Integrate loss over the *entire* posterior, not just the posterior mean:** Under nonlinear or asymmetric loss, $$L(a, \mathbb{E}[\theta]) \neq \mathbb{E}[L(a, \theta)]$$ (Jensen’s inequality!).
+3. **Use the 0.50 threshold only when false positives and false negatives cost the exact same amount:** In fraud, medicine, and SRE alerting, optimal thresholds are often `0.05` or `0.15`.
+4. **Compute Expected Value of Sample Information before running expensive experiments:** If even a 10× larger sample wouldn’t change your optimal action $$a^*$$, act now instead of delaying!
+
+**Quick check.** In the defect-inspection example above, if the recall disaster cost drops from `\$1,000` to `\$400` (still with inspection cost `\$100`), what is the new posterior probability threshold $$p^*$$ above which you should choose `Inspect`?
+
+---
 
 ## Reference videos
 

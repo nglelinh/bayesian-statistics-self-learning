@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+When a dataset arrives with 40 candidate predictors, the traditional textbook reflex is **stepwise p-value selection**—drop whichever column has $$p > 0.05$$, refit, and repeat until only "significant" stars remain. Statisticians have proved that stepwise selection is a disaster: it inflates remaining slopes, produces wildly invalid p-values, and picks completely different variable subsets if you remove just 5 rows!
+
+**Bayesian Feature Selection** offers a far more principled path: **continuous shrinkage priors (Horseshoe / Laplace)**, **Posterior Inclusion Probabilities (Spike-and-Slab)**, and **predictive projection (LOO-CV)**—separating *"which variables improve prediction?"* from *"which variables belong in my causal DAG?"*
+
+---
+
+## Background Knowledge Map: Four Bayesian Approaches to Feature Selection
+
+1. **Continuous Shrinkage (Horseshoe / Regularized Horseshoe):** Keeps all predictors in the model while shrinking irrelevant noise slopes aggressively toward `0`, avoiding brittle discrete include/exclude cliffs.
+2. **Spike-and-Slab (Posterior Inclusion Probabilities — PIP):** Places a mixture prior on each $$\beta_j$$ (a point-mass "spike" at 0 + a wide "slab"), directly estimating $$P(\beta_j \neq 0 \mid y)$$ for every feature!
+3. **Predictive Selection (LOO-CV / Projection Predictive):** Evaluates whether adding feature $$X_j$$ genuinely improves out-of-sample **ELPD** beyond Monte Carlo standard error.
+4. **Causal vs. Predictive Selection (Crucial Warning!):** Never run automated feature selection to build a *causal* model—dropping a weak confounder or keeping a strong collider can improve prediction while completely destroying causal accuracy!
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will understand **feature selection** as the problem of determining which predictors truly matter when we have a very large number of candidates. The lesson goes through Bayesian approaches such as Laplace priors, spike-and-slab, and horseshoe priors, while comparing them with familiar frequentist methods such as Lasso or stepwise procedures. The goal is not only to know which tools exist, but to understand what assumption about the sparsity of the model each tool encodes, and when each approach is more reasonable in a high-dimensional data setting.
@@ -293,6 +308,31 @@ Feature selection is the problem of choosing the predictors that are truly relev
 The most important point of the lesson is that variable selection should not be understood as a mechanical filtering operation, but as part of the process of inferring the structure of the signal in the data.
 
 **Chapter 07 Complete!** Regularization, Bias-Variance, Feature Selection.
+
+---
+
+### Worked Numerical Example: Reading Posterior Inclusion Probabilities (PIP) & Credible Intervals
+
+Suppose you fit a Bayesian Spike-and-Slab / Horseshoe model on 3 standardized candidate predictors (`X1`, `X2`, `X3`) for customer churn:
+
+| Feature | Posterior Inclusion Prob (PIP) | Posterior Mean $$\beta_j$$ | 95% Credible Interval | Decision |
+| :--- | :--- | :--- | :--- | :--- |
+| **`X1` (Tenure)** | **$$0.99$$** | $$-0.85$$ | $$[-1.08,\; -0.62]$$ | **Core predictor** (keep!) |
+| **`X2` (Support Tickets)** | **$$0.64$$** | $$+0.22$$ | $$[-0.02,\; +0.48]$$ | Moderate evidence (keep / average) |
+| **`X3` (Signup Day)** | **$$0.07$$** | $$+0.01$$ | $$[-0.09,\; +0.11]$$ | Pure noise (shrunk to ~0!) |
+
+Notice how much richer this is than a binary stepwise cutoff: instead of falsely claiming `X2` is "0% important" just because its CI barely touches `0`, Bayesian selection transparently reports 64% inclusion probability and averages over model uncertainty!
+
+### Deep-Dive Explanation: Four Rules for Responsible Bayesian Feature Selection (Read Slowly)
+
+1. **Never use stepwise p-value elimination:** It destroys post-selection uncertainty intervals and overfits heavily when predictors correlate.
+2. **Separate your *causal* adjustment set from *predictive* feature pruning:** Use a DAG to lock in confounders first; only prune remaining optional predictors for parsimony/cost.
+3. **Remember correlated features split their PIPs:** If `X1` and `X1_copy` are 95% correlated, Spike-and-Slab may assign each a PIP of ~50% (choosing one *or* the other on every draw)—check joint inclusion $$P(X_1 \text{ or } X_{1,\text{copy}} \mid y) = 99\%$$!
+4. **Measure actual ELPD gain before paying engineering cost for a new feature:** Even a "real" predictor with $$\beta = 0.05$$ may not justify maintaining a complex data pipeline if LOO-CV ELPD barely budges.
+
+**Quick check.** If two features `A` and `B` are almost identical copies of each other and one of them truly causes `Y`, why might a Spike-and-Slab model report `PIP(A) ≈ 0.50` and `PIP(B) ≈ 0.50` instead of `0.99` for both?
+
+---
 
 ## Reference videos
 

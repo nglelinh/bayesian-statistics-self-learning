@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Open almost any scientific paper and you will see error bars plotted around a mean—yet half of readers (and plenty of authors!) confuse **Standard Deviation (SD)** with **Standard Error (SE)**. When a nutrition study reports *"mean weight loss = 4 kg, SD = 12 kg, $$n = 144$$"*, individual patients vary wildly ($$\pm 12	ext{ kg}$$), yet the *standard error of the mean* is a razor-thin **$$12 / \sqrt{144} = 1.0	ext{ kg}$$**!
+
+This lesson draws an unbreakable line between **data spread (SD)** and **estimator uncertainty (SE)**, showing how the frequentist sampling distribution compares directly to the Bayesian **posterior standard deviation**.
+
+---
+
+## Background Knowledge Map: Data Spread vs. Estimator Uncertainty
+
+Four distinctions clear up every error-bar confusion forever:
+
+1. **Standard Deviation (SD, $$s$$):** Measures how spread out *individual observations* are around the mean. Collecting more data makes $$s$$ estimate $$\sigma$$ more accurately—it does **NOT** shrink $$s$$ toward zero!
+2. **Standard Error (SE, $$s/\sqrt{n}$$):** Measures how much the *sample mean* $$ar{X}_n$$ would bounce around if you repeated the entire study from scratch. As $$n 	o \infty$$, $$\mathrm{SE} 	o 0$$!
+3. **Sampling Distribution:** The theoretical distribution of a statistic ($$ar{X}_n$$, $$\hat{p}$$, $$\hat{eta}_1$$) across hypothetical repeated samples of size $$n$$.
+4. **Bayesian Counterpart (Posterior SD):** Instead of imagining repeated hypothetical samples, Bayesian inference computes the exact spread of your belief about $$\mu$$ given *this* dataset—and for large $$n$$ with a weak prior, the Bayesian posterior SD converges right onto $$\mathrm{SE} = \sigma/\sqrt{n}$$!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will clearly distinguish the raw data from the distribution of an estimate, understand that the standard error is the uncertainty of the estimator (not the spread of the data), and use this intuition to read inference results more correctly.
@@ -96,6 +113,31 @@ If you are used to thinking in terms of sampling distribution + SE, reading post
 2. The SE is the standard deviation of the estimator.
 3. The data SD and the SE are two different things.
 4. Increasing the sample size decreases the SE as $$1/\sqrt{n}$$.
+
+---
+
+### Worked Numerical Example: Watching SD Stay Flat While SE Collapses as $$n$$ Grows
+
+Suppose adult reaction times have population mean $$\mu = 250	ext{ ms}$$ and population SD $$\sigma = 36	ext{ ms}$$. Compare studies of size $$n = 9$$, $$n = 36$$, and $$n = 144$$:
+
+| Sample Size $$n$$ | Individual Spread ($$\sigma$$) | Standard Error ($$\mathrm{SE} = \sigma/\sqrt{n}$$) | 95% Interval for Mean $$\mu$$ ($$\pm 1.96\,\mathrm{SE}$$) |
+| :--- | :--- | :--- | :--- |
+| $$n = 9$$ | $$36.0	ext{ ms}$$ | $$36 / 3 = \mathbf{12.0	ext{ ms}}$$ | $$ar{x} \pm 23.5	ext{ ms}$$ |
+| $$n = 36$$ | $$36.0	ext{ ms}$$ | $$36 / 6 = \mathbf{6.0	ext{ ms}}$$ | $$ar{x} \pm 11.8	ext{ ms}$$ |
+| $$n = 144$$ | $$36.0	ext{ ms}$$ | $$36 / 12 = \mathbf{3.0	ext{ ms}}$$ | $$ar{x} \pm 5.9	ext{ ms}$$ |
+
+Every 4× increase in sample size halves the SE while leaving individual human variability ($$36	ext{ ms}$$) completely unchanged!
+
+### Deep-Dive Explanation: Four Rules for Reading Error Bars Like a Statistician (Read Slowly)
+
+1. **Always check the caption: are the error bars SD, SE, or 95% CI?** Plotting `± 1 SE` makes noisy data look artificially tight—always label explicitly!
+2. **Use SD to describe people/items; use SE (or posterior SD) to describe uncertainty in an average:** A doctor telling a patient *"your outcome will likely fall within..."* needs SD (or a posterior predictive interval), never SE!
+3. **Beware non-independent samples:** If you measure 100 time points from just **5 patients**, your effective sample size for estimating the population mean is closer to 5, not 100—dividing by $$\sqrt{100}$$ severely understates true SE!
+4. **Bootstrap when no closed-form SE exists:** For medians, ratios, or AUC scores, resampling your data 2,000 times estimates the sampling distribution directly.
+
+**Quick check.** If a dataset has $$n = 100$$ independent observations with sample SD $$s = 20$$, what is the standard error of the mean—and if you collect $$300$$ *more* observations (reaching $$n = 400$$), what happens to $$s$$ and to $$\mathrm{SE}$$?
+
+---
 
 ## Reference videos
 

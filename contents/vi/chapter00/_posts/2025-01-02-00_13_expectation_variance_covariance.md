@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Nếu hai cổ phiếu mỗi mã đều có độ lệch chuẩn 10%, thì độ lệch chuẩn của tổng hai cổ phiếu đó bằng bao nhiêu? Nhiều người phản xạ trả lời 20% — nhưng tùy vào **hiệp phương sai (covariance)** giữa chúng, đáp án thực tế có thể nằm bất kỳ đâu từ **0%** (tương quan âm hoàn hảo — triệt tiêu rủi ro!) cho tới **20%** (tương quan dương hoàn hảo)! Làm chủ kỳ vọng, phương sai và hiệp phương sai là chìa khóa để hiểu cả rủi ro danh mục lẫn **độ bất định tương quan giữa các tham số trong hậu nghiệm Bayes**.
+
+Bài học này rèn luyện thành phản xạ các quy tắc tuyến tính của kỳ vọng, công thức phương sai của tổng và ý nghĩa hình học của hiệp phương sai / hệ số tương quan.
+
+---
+
+## Bản đồ kiến thức nền: Bốn đồng nhất thức Moment trụ cột trong Thống kê Bayes
+
+1. **Tính tuyến tính của Kỳ vọng (Luôn đúng mọi lúc!):** $$\mathbb{E}[aX + bY + c] = a\mathbb{E}[X] + b\mathbb{E}[Y] + c$$ đúng **kể cả khi $$X$$ và $$Y$$ phụ thuộc chặt vào nhau**!
+2. **Quy tắc biến đổi & tổng Phương sai:** $$\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)$$, và với hai biến bất kỳ: $$\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X, Y)$$.
+3. **Hiệp phương sai & Tương quan không thứ nguyên:** $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$$ phụ thuộc đơn vị đo; chia cho $$\sigma_X\sigma_Y$$ cho hệ số tương quan $$\rho \in [-1, 1]$$.
+4. **Định luật Phương sai Toàn phần (Nền tảng Bayes phân cấp):** $$\mathrm{Var}(Y) = \mathbb{E}[\mathrm{Var}(Y\mid\theta)] + \mathrm{Var}(\mathbb{E}[Y\mid\theta])$$ tách tổng bất định dự báo thành *nhiễu nội tại* cộng *bất định tham số*!
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu kỳ vọng như "giá trị trung bình dài hạn", phương sai như "độ phân tán quanh trung bình", hiệp phương sai như "mức độ biến thiên cùng chiều hay ngược chiều" giữa hai biến, và nắm rõ vì sao ba đại lượng này xuất hiện xuyên suốt trong các mô hình Bayesian.
@@ -112,6 +127,38 @@ Trong suy diễn Bayesian, trung bình hậu nghiệm (posterior mean) chính l�
 2. Phương sai đo mức độ phân tán quanh kỳ vọng.
 3. Hiệp phương sai đo chiều hướng và mức độ cùng biến thiên tuyến tính của hai biến.
 4. Ba đại lượng này là ngôn ngữ cơ bản để tóm tắt và diễn giải phân phối hậu nghiệm.
+
+---
+
+### Ví dụ tính tay cầm tay chỉ việc: Kiểm chứng công thức Phương sai của Tổng với Hiệp phương sai âm
+
+Xét hai tài sản $$(X, Y)$$ trong 3 kịch bản thị trường có xác suất bằng nhau (mỗi kịch bản $$1/3$$):
+
+| Kịch bản | Xác suất | Lợi suất $$X$$ | Lợi suất $$Y$$ | Tổng $$X + Y$$ |
+| :--- | :--- | :--- | :--- | :--- |
+| Tăng mạnh | $$1/3$$ | $$+6$$ | $$-2$$ | $$+4$$ |
+| Đi ngang | $$1/3$$ | $$0$$ | $$0$$ | $$0$$ |
+| Giảm mạnh | $$1/3$$ | $$-6$$ | $$+2$$ | $$-4$$ |
+
+1. **Kỳ vọng:** $$\mathbb{E}[X] = 0$$, $$\mathbb{E}[Y] = 0$$.
+2. **Phương sai từng tài sản:**
+   $$\mathrm{Var}(X) = \frac{36 + 0 + 36}{3} = 24, \qquad \mathrm{Var}(Y) = \frac{4 + 0 + 4}{3} = \frac{8}{3} \approx 2{,}67.$$
+3. **Hiệp phương sai:**
+   $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - 0 = \frac{6(-2) + 0 + (-6)(2)}{3} = \mathbf{-8}.$$
+4. **Kiểm chứng định luật tổng phương sai:**
+   - Theo công thức: $$\mathrm{Var}(X+Y) = 24 + \frac{8}{3} + 2(-8) = \frac{32}{3} \approx \mathbf{10{,}67}$$.
+   - Tính trực tiếp từ cột $$X+Y = (+4, 0, -4)$$: $$\frac{16 + 0 + 16}{3} = \frac{32}{3} \approx \mathbf{10{,}67}$$ — khớp khít tuyệt đối! Nhờ hiệp phương sai âm, rủi ro của danh mục giảm hơn một nửa so với giữ riêng $$X$$!
+
+### Khung giải thích: Bốn lưu ý tránh nhầm lẫn khi tính Kỳ vọng và Hiệp phương sai (nên đọc chậm)
+
+1. **Hiệp phương sai bằng 0 KHÔNG chứng minh độc lập:** Nếu $$X \in \{-1, 0, 1\}$$ đối xứng và $$Y = X^2$$, ta có $$\mathrm{Cov}(X, Y) = 0$$ dù $$Y$$ phụ thuộc hoàn toàn vào $$X$$!
+2. **Tuyệt đối không cộng độ lệch chuẩn — hãy cộng *phương sai* (cộng $$2\mathrm{Cov}$$):** Cộng trực tiếp $$\sigma_X + \sigma_Y$$ sẽ phóng đại sai số mỗi khi hai biến độc lập hoặc tương quan âm.
+3. **Trong hồi quy Bayes, hệ số chặn $$\alpha$$ và hệ số góc $$\beta$$ thường có hiệp phương sai âm mạnh:** Chuẩn hóa (đưa biến giải thích về trung bình 0) sẽ kéo $$\mathrm{Cov}(\alpha, \beta) \approx 0$$, giúp MCMC chạy mượt hơn hẳn!
+4. **Monte Carlo biến mọi kỳ vọng phức tạp thành trung bình cộng:** Khi có $$S$$ mẫu hậu nghiệm $$\theta^{(s)}$$, $$\mathbb{E}[g(\theta)\mid y] \approx \frac{1}{S}\sum g(\theta^{(s)})$$ hoạt động cho mọi hàm phi tuyến $$g$$!
+
+**Kiểm tra nhanh.** Trong bảng 3 kịch bản ở trên, hãy tính hệ số tương quan chính xác $$\rho(X, Y) = \frac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}$$!
+
+---
 
 ## Video tham khảo
 

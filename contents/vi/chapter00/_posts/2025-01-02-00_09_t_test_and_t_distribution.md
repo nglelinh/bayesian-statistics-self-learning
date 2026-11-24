@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Đầu thế kỷ 20, William Sealy Gosset làm kỹ sư kiểm soát chất lượng tại nhà máy bia Guinness ở Dublin. Khác với các nhà toán học quen làm việc trên tập mẫu hàng nghìn người, Gosset chỉ có thể thử nghiệm trên những mẻ lúa mạch rất nhỏ (3 đến 5 mẫu mỗi lần). Ông nhận ra khi thay độ lệch chuẩn quần thể $$\sigma$$ chưa biết bằng độ lệch chuẩn mẫu $$s$$, thống kê chuẩn hóa không còn tuân theo phân phối Chuẩn nữa mà có **đuôi dày hơn hẳn**. Vì Guinness cấm nhân viên công bố bí mật công nghiệp dưới tên thật, Gosset ký bút danh "Student" năm 1908 — khai sinh ra **phân phối Student-$$t$$**.
+
+Trong thống kê Bayes hiện đại, phân phối Student-$$t$$ còn có một đời sống thứ hai cực kỳ rực rỡ: nó xuất hiện **tự nhiên** khi ta tích phân hóa tham số phương sai chưa biết $$\sigma^2$$ (hậu nghiệm biên của $$\mu$$ trong mô hình Normal–Inverse-Gamma chính là Student-$$t$$!) và là lựa chọn hàng đầu để làm **hồi quy bền vững trước ngoại lai** (BEST — Bayesian Estimation Supersedes the t-Test).
+
+---
+
 ## Mục tiêu Học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ bản chất của **thống kê t (t-statistic)**, **phân phối t** và **kiểm định t (t-test)** — một trong những công cụ thống kê được dùng phổ biến nhất trong nghiên cứu. Bạn sẽ nắm được vì sao cần dùng phân phối t thay cho phân phối chuẩn, cách tính và diễn giải giá trị t, cách phân biệt các dạng t-test, cũng như các giả định và hạn chế của chúng để chuẩn bị đối chiếu với cách tiếp cận Bayesian ở các chương sau.
+
+## Bản đồ kiến thức nền: Bất định của phương sai, Phân phối đuôi nặng và Hậu nghiệm biên Student-$$t$$
+
+Ba trụ cột kết nối bài T-test cổ điển với tư duy Bayes chuyên sâu:
+
+- **Hậu quả của việc ước lượng $$\sigma$$ từ mẫu nhỏ:** Khi cỡ mẫu $$n$$ nhỏ, độ lệch chuẩn mẫu $$s$$ có thể ngẫu nhiên bị ước lượng *quá nhỏ*, làm tỷ số $$t = (ar{x} - \mu_0)/(s/\sqrt{n})$$ phình to bất thường. Bậc tự do $$
+u = n - 1$$ điều chỉnh độ dày của hai đuôi để bù đắp cho chính sự bất định này.
+- **Biểu diễn hỗn hợp tỷ lệ (Scale Mixture of Normals):** Về mặt giải tích, một phân phối Student-$$t$$ thực chất là hỗn hợp vô hạn các phân phối Chuẩn có cùng trung bình nhưng phương sai biến thiên theo phân phối Inverse-Gamma. Chính cấu trúc hỗn hợp này giúp Student-$$t$$ "chấp nhận" ngoại lai mà không bị kéo lệch tâm mạnh như phân phối Chuẩn.
+- **Cầu nối sang Thống kê Bayes (Mô hình BEST của Kruschke):** Thay vì chỉ ra một p-value nhị phân từ T-test, cách tiếp cận Bayes đặt likelihood Student-$$t$$ cho từng nhóm và tính phân phối hậu nghiệm của hiệu hai trung bình $$\mu_1 - \mu_2$$, hiệu độ lệch chuẩn $$\sigma_1 - \sigma_2$$ và độ lớn hiệu ứng (*effect size*) cùng một lúc.
+
+---
 
 ## Giới thiệu: Vấn đề khi Chưa biết Độ lệch Chuẩn Quần thể
 
@@ -239,6 +256,41 @@ T-test kế thừa các giới hạn cốt lõi của p-value: nó chỉ trả v
 ### Hướng tiếp cận Bayesian
 
 Trong các chương tiếp theo, bạn sẽ thấy thống kê Bayesian khắc phục những điểm này như thế nào: **ước lượng Bayesian** cung cấp toàn bộ phân phối hậu nghiệm của tham số thay vì chỉ một giá trị t; **khoảng credible** có diễn giải xác suất trực tiếp; **Bayes factor** so sánh định lượng mức độ ủng hộ của dữ liệu giữa các giả thuyết; và **phân phối tiên nghiệm (prior)** cho phép đưa hiểu biết nền vào mô hình một cách minh bạch.
+
+## Khung giải thích (nên đọc chậm): Tính tay một phép kiểm định $$t$$ và nhìn thấy hậu nghiệm biên Student-$$t$$
+
+Hãy đi chậm qua 4 bước để vừa làm chủ phép tính tay T-test cổ điển, vừa nhìn thấy bản chất Bayes ẩn bên trong:
+
+1. **Tính trung bình mẫu $$ar{x}$$ và độ lệch chuẩn mẫu $$s$$** (chia cho $$n - 1$$, bậc tự do $$
+u = n - 1$$).
+2. **Tính sai số chuẩn $$	ext{SE} = s/\sqrt{n}$$:** Đo độ dao động dự kiến của trung bình mẫu.
+3. **Tính thống kê $$t = rac{ar{x} - \mu_0}{	ext{SE}}$$** và so với giá trị tới hạn $$t_{
+u, 0.975}$$ (với $$
+u = 3$$ là $$3.182$$, lớn hơn hẳn mốc $$1.96$$ của phân phối Chuẩn!).
+4. **Góc nhìn Bayes tương ứng:** Với prior không thông tin chuẩn hóa $$p(\mu, \sigma^2) \propto 1/\sigma^2$$, phân phối hậu nghiệm chính xác của $$\mu$$ sau khi tích phân hóa $$\sigma^2$$ chính là phân phối Student-$$t$$ dịch chuyển:
+   $$rac{\mu - ar{x}}{s/\sqrt{n}} \;\Bigert\; 	ext{data} \;\sim\; t_{n-1}.$$
+
+### Ví dụ tính toán cầm tay chỉ việc: 4 mẻ thí nghiệm nhỏ kiểm tra hàm lượng chuẩn $$\mu_0 = 100$$
+
+Bạn đo hàm lượng hoạt chất trên $$n = 4$$ mẫu thử độc lập và thu được: $$x = \{104, 108, 102, 106\}$$.
+
+- **Bước 1 — Trung bình và độ lệch chuẩn mẫu:**
+  - $$ar{x} = rac{104 + 108 + 102 + 106}{4} = rac{420}{4} = 105$$.
+  - Độ lệch so với $$105$$: $$-1, +3, -3, +1$$; tổng bình phương $$= 1 + 9 + 9 + 1 = 20$$.
+  - $$s^2 = rac{20}{4 - 1} = rac{20}{3} pprox 6.667 \implies s pprox 2.582$$.
+- **Bước 2 — Sai số chuẩn và thống kê $$t$$:**
+  - $$	ext{SE} = rac{2.582}{\sqrt{4}} = rac{2.582}{2} = 1.291$$.
+  - $$t = rac{105 - 100}{1.291} pprox 3.873$$ với bậc tự do $$
+u = 3$$.
+- **Bước 3 — Đối chiếu hai trường phái trên cùng con số:**
+  - *Frequentist:* Vì $$t = 3.873 > t_{3, 0.975} = 3.182$$, ta bác bỏ $$H_0: \mu = 100$$ ở mức $$lpha = 0.05$$ ($$p pprox 0.030$$).
+  - *Bayes (với prior tham chiếu $$1/\sigma^2$$):* Khoảng tin cậy hậu nghiệm 95% của $$\mu$$ là $$105 \pm 3.182 	imes 1.291 = [100.89, 109.11]$$, và ta được phép phát biểu trực tiếp: *"Xác suất hậu nghiệm để hàm lượng thật lớn hơn 100 là $$1 - P(T_3 \le -3.873) pprox 98.5\%$$."*
+
+**Hiểu lầm cần tránh:** Dùng mốc $$\pm 1.96 	imes 	ext{SE}$$ cho mẫu nhỏ $$n = 4$$: khoảng thu được sẽ chỉ là $$[102.47, 107.53]$$ — hẹp giả tạo tới gần 40% vì đã bỏ qua bất định của $$\sigma$$!
+
+**Kiểm tra nhanh:** Khi $$n$$ tăng lên trên 30, giá trị tới hạn $$t_{n-1, 0.975}$$ tiến rất sát về $$1.96$$ (ví dụ $$t_{30, 0.975} pprox 2.042$$), cho thấy sự bất định do chưa biết $$\sigma$$ dần tan biến khi có nhiều dữ liệu.
+
+---
 
 ## Video tham khảo
 

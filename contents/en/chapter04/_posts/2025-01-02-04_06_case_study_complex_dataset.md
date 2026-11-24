@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+If `tips` was a gentle warm-up, the `diamonds` dataset is a full-contact stress test. Here, price does not rise linearly with carat weight—doubling a diamond from 1 carat to 2 carats more than *triples* its price, variance explodes at higher weights, and categorical attributes like cut and clarity layer nonlinearity on top of skewness. A naive linear baseline collapses across every single diagnostic check, making `diamonds` the ideal proving ground for **multi-level PPCs** and **log-log generative revisions**.
+
+**Lesson Roadmap:** Why `diamonds` breaks naive linear regression → Background Knowledge Map (Power-law scaling & log-log models, Conditional PPCs, Decision-grade uncertainty) → Hand-worked power-law calculation for 0.5, 1.0, and 2.0 carat diamonds → Full complex case study and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to grasp how to run a full Bayesian workflow on data with complex structure, where "being able to fit the model" is only a necessary condition and never a sufficient one. The focus of the lesson is not on being able to write one more regression equation, but on reasoning ability: from diagnosing a deviation, identifying its form, to proposing model revisions that fix the real cause instead of fixing by technical intuition.
@@ -17,6 +21,32 @@ After this lesson, you need to grasp how to run a full Bayesian workflow on data
 > **Opening example.** In the diamonds data, `carat` and `price` are very highly correlated, but a simple linear model can still fail badly in the tail of the price distribution, that is, right in the "safe" region but wrong in the region of greatest economic value.
 >
 > **Quick check.** Why is a very nice summary metric such as a correlation of 0.9+ still not enough to conclude that the model is trustworthy for real-world prediction?
+
+## Background Knowledge Map: Stress-Testing Bayesian Regression on Complex Data
+
+### 1. Nonlinearity and Power-Law Scaling (Log–Log Models)
+- **What it is:** Modeling $$\log(y_i) \sim \mathrm{Normal}(\alpha + \beta \log(x_i), \sigma)$$, which corresponds on the original scale to a multiplicative power law $$y_i = e^{\alpha} x_i^{\beta} \cdot e^{\varepsilon_i}$$.
+- **What it studies:** Simultaneously curing three classic real-data pathologies—convex curvature, strictly positive outcomes ($$y > 0$$), and multiplicative heteroscedasticity (error proportional to price).
+
+### 2. Multi-Level Posterior Predictive Checks (Global vs. Conditional)
+- **What it is:** Checking not only the overall marginal histogram of $$y^{\text{rep}}$$, but slicing PPCs by subgroups (e.g., low-carat vs. high-carat, or by diamond clarity).
+- **What it studies:** Catching "canceling errors" where a model looks fine globally only because over-prediction in one carat bracket masks under-prediction in another.
+
+### 3. Back-Transformation Bias on the Log Scale
+- **What it is:** Remembering that if $$\log(y) \sim \mathrm{Normal}(\mu, \sigma^2)$$, the **median** on the original scale is $$e^{\mu}$$, while the **mean** is $$e^{\mu + \sigma^2/2}$$ (Jensen's inequality).
+- **What it studies:** Avoiding systematic under-pricing in revenue/cost decisions when converting log-scale predictions back to dollars.
+
+## Deep-Dive Explanation: Hand-Checking Power-Law Pricing & Jensen's Correction (Read Slowly)
+
+Suppose a Bayesian log–log model for diamond price yields $$\log(\text{price}) \sim \mathrm{Normal}(8.45 + 1.68\log(\text{carat}),\; 0.25^2)$$. Let us compute exact dollar predictions by hand (using $$e^{8.45} \approx 4{,}675$$ and $$e^{\sigma^2/2} = e^{0.0625/2} \approx 1.0317$$):
+
+| Carat $$x$$ | $$x^{1.68}$$ | Predicted **Median** Price $$4{,}675\,x^{1.68}$$ | Predicted **Mean** Price ($$\times 1.0317$$) | Multiplicative 95% PI ($$\div 1.63$$ to $$\times 1.63$$) |
+| :--- | :--- | :--- | :--- | :--- |
+| **0.5 ct** | $$0.312$$ | $$\$1{,}459$$ | $$\$1{,}505$$ | $$[\$895,\; \$2{,}380]$$ (always positive!) |
+| **1.0 ct** | $$1.000$$ | $$\$4{,}675$$ | $$\$4{,}823$$ | $$[\$2{,}868,\; \$7{,}620]$$ |
+| **2.0 ct** | $$3.204$$ | $$\$14{,}980$$ | $$\$15{,}455$$ | $$[\$9{,}190,\; \$24{,}417]$$ |
+
+Look at the elasticity exponent $$\beta = 1.68 > 1$$: doubling carat weight from $$1.0$$ to $$2.0$$ multiplies price by $$2^{1.68} \approx \mathbf{3.20\times}$$, and the 95% interval naturally scales proportionally to price ($$e^{1.96 \times 0.25} \approx 1.63$$) instead of slapping a flat dollar band on both \$1,500 and \$15,000 stones!
 
 ## 1. Data context: why `diamonds` is a hard test
 

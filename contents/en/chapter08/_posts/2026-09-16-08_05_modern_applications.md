@@ -10,6 +10,20 @@ categories:
 lesson_type: optional
 ---
 
+In modern tech, finance, and healthcare platforms (2022–2026), nobody ships a model just because a notebook printed `elpd_loo = -124.2`—they ship models that survive **automated Posterior Predictive Checks**, **PSIS-LOO regression gates**, and **expected-utility decision rules** under real dollar constraints! From **inventory optimization (Newsvendor problem)** to **Bayesian A/B early stopping via Expected Loss**, Chapter 8’s model-checking and decision machinery is where Bayesian statistics directly creates measurable business value.
+
+This optional bridge shows how PPC, LOO-CV, and Bayesian Expected Loss operate inside modern decision pipelines.
+
+---
+
+## Background Knowledge Map: Three Production Applications of Chapter 8
+
+1. **Bayesian A/B Testing via Expected Loss (VWO / GrowthBook):** Instead of p-values, compute $$\mathbb{E}[\max(\theta_A - \theta_B,\; 0) \mid \text{data}]$$—the expected conversion loss if you ship Variant B and it turns out worse than A—and ship as soon as expected loss drops below your business threshold (e.g., `0.1%`)!
+2. **Bayesian Inventory Optimization (Newsvendor Quantile):** Given a posterior predictive demand distribution $$p(\tilde{y}\mid y)$$, stock the exact **critical fractile** $$q^* = \frac{c_{\text{under}}}{c_{\text{under}} + c_{\text{over}}}$$ rather than the mean demand!
+3. **Automated Model Monitoring (Online PPC Drift Detection):** Continuously compare live incoming production data against the model’s posterior predictive intervals—triggering retraining alerts when observed outcomes fall outside the 95% predictive band far more than 5% of the time.
+
+---
+
 ## Learning objectives
 
 After this optional lesson, you will see PPC, LOO/WAIC and decision analysis as a production workflow, not as an "appendix chapter after the fit". You will connect posterior checks with simulation-based calibration, model comparison with the uncertainty of the LOO difference itself, and the Bayes action rule with Bayesian optimization and bandits.
@@ -61,6 +75,28 @@ Testing models before production, choosing forecasting models for tables and for
 ## Limitations and extensions
 
 SBC requires many model fits. LOO assumes that the observations contribute in a nearly factorizable way. Bayesian optimization depends strongly on the prior over $$f$$ and will be naive if the noise is misunderstood. The course has no dedicated Gaussian process chapter, so this lesson uses the GP only as a posterior that serves decisions. If a later chapter opens up nonparametrics, you will see that the kernel of BO is exactly that model.
+
+---
+
+### Worked Numerical Example: Bayesian Newsvendor Optimal Stocking Quantile
+
+A bakery earns **$$c_{\text{under}} = \$6$$** profit per croissant sold (lost profit if it stocks out), and loses **$$c_{\text{over}} = \$2$$** per unsold croissant thrown away at closing:
+1. **Optimal critical fractile:**
+   $$q^* = \frac{c_{\text{under}}}{c_{\text{under}} + c_{\text{over}}} = \frac{6}{6 + 2} = \frac{6}{8} = \mathbf{0.75} \quad (\text{75th percentile!}).$$
+2. **Apply to posterior predictive demand** $$\tilde{y} \sim \mathcal{N}(100,\; 20^2)$$ (where the 75th percentile of standard Normal is $$z_{0.75} \approx +0.674$$):
+   $$Q^* = 100 + 0.674(20) \approx \mathbf{113.5 \to 114\text{ croissants}}!$$
+   Stocking the *mean* (100 croissants) leaves money on the table every busy morning; stocking the **75th posterior predictive percentile (114)** maximizes expected daily profit!
+
+### Deep-Dive Explanation: Four Rules for Shipping Bayesian Decision Systems (Read Slowly)
+
+1. **Always evaluate decisions on *posterior predictive* draws $$\tilde{y}^{(s)}$$, not just parameter draws:** Real-world profit depends on noisy future outcomes $$\tilde{y}$$, not just the noiseless mean $$\mu$$!
+2. **Expected Loss stopping rules are intuitive for executives:** Saying *"if we ship B today, our expected downside risk is under 0.05% conversion"* beats explaining Type I error every time.
+3. **Pair LOO-CV with domain-specific business metrics:** A model with slightly higher ELPD should still be checked against actual simulated expected profit.
+4. **Re-audit loss weights quarterly:** When unit margins or cloud costs shift, update $$c_{\text{under}}, c_{\text{over}}$$—your optimal action updates immediately without even retraining the posterior!
+
+**Quick check.** In the bakery Newsvendor problem above, if profit per sold croissant rises to `\$8` while waste cost stays `\$2`, what is the new optimal stocking quantile $$q^*$$?
+
+---
 
 ## Reference videos
 

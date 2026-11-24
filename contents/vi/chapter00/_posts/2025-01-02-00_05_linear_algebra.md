@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Khi mô hình thống kê chỉ có một tham số $$	heta$$, ta có thể viết mọi thứ bằng đại số phổ thông. Nhưng đời thực hiếm khi dừng ở một biến: hồi quy đa biến có hàng chục hệ số $$oldsymbol{eta}$$, phân phối Chuẩn đa biến có cả ma trận hiệp phương sai $$oldsymbol{\Sigma}$$, và mạng nơ-ron Bayes có hàng nghìn trọng số tương tác chéo. Đại số tuyến tính chính là chiếc kính viễn vọng giúp nén hàng nghìn phương trình lộn xộn thành một dòng gọn sắc: $$\mathbf{y} = \mathbf{X}oldsymbol{eta} + oldsymbol{arepsilon}$$.
+
+Trong thống kê Bayes, đại số tuyến tính còn mang ý nghĩa hình học trực tiếp: **trị riêng và vector riêng của ma trận hiệp phương sai cho ta biết các trục chính của "đám mây bất định" hậu nghiệm**, quyết định tốc độ hội tụ của mọi thuật toán MCMC.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vì sao đại số tuyến tính là nền tảng toán học của mô hình thống kê Bayesian: dữ liệu được biểu diễn dưới dạng vector và ma trận, tham số hồi quy được viết thành toán tử tuyến tính, và nhiều thuật toán suy diễn dựa trực tiếp vào các phép biến đổi tuyến tính. Bạn cũng sẽ nắm được ý nghĩa hình học của các phép toán thay vì chỉ thao tác ký hiệu.
+
+## Bản đồ kiến thức nền: Không gian vector, Ma trận xác định dương và Hồi quy Bayes đa biến
+
+Ba trụ cột đại số tuyến tính thiết yếu cho suy diễn Bayes:
+
+- **Tích ma trận & Chiếu trực giao (Linear Maps & Projections):** Ma trận thiết kế $$\mathbf{X}$$ ánh xạ vector tham số $$oldsymbol{eta}$$ sang không gian dự đoán $$\hat{\mathbf{y}} = \mathbf{X}oldsymbol{eta}$$. Nghiệm bình phương tối thiểu cổ điển $$\hat{oldsymbol{eta}}_{	ext{OLS}} = (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y}$$ thực chất là phép chiếu trực giao vector dữ liệu $$\mathbf{y}$$ xuống không gian cột của $$\mathbf{X}$$.
+- **Ma trận đối xứng xác định dương & Phân rã phổ (SPD Matrices & Eigendecomposition):** Mọi ma trận hiệp phương sai $$oldsymbol{\Sigma}$$ và ma trận độ chính xác $$oldsymbol{\Lambda} = oldsymbol{\Sigma}^{-1}$$ hợp lệ đều đối xứng và bán xác định dương (mọi trị riêng $$\lambda_i \ge 0$$). Phân rã Cholesky $$oldsymbol{\Sigma} = \mathbf{L}\mathbf{L}^T$$ là công cụ cốt lõi để sinh mẫu Chuẩn đa biến và tính log-determinant ổn định mà không cần nghịch đảo ma trận trực tiếp.
+- **Cầu nối sang Hồi quy Tuyến tính Bayes (Ridge = Gaussian Prior):** Khi đặt prior Chuẩn $$oldsymbol{eta} \sim \mathcal{N}(\mathbf{0}, 	au^2 \mathbf{I})$$, ma trận độ chính xác hậu nghiệm trở thành $$\mathbf{X}^T\mathbf{X}/\sigma^2 + \mathbf{I}/	au^2$$. Phép cộng $$\lambda \mathbf{I}$$ vào đường chéo làm tăng mọi trị riêng thêm $$\lambda > 0$$, giúp ma trận **luôn khả nghịch** ngay cả khi dữ liệu bị đa cộng tuyến!
+
+---
 
 ## Giới thiệu: Từ công thức rời rạc đến cấu trúc tuyến tính
 
@@ -544,6 +560,36 @@ print(f"\nR² = {r_squared:.4f}")
 | Nghịch đảo (Inverse) | $$\mathbf{A}^{-1}$$ | $$\mathbf{AA}^{-1} = \mathbf{I}$$ |
 | Định thức (Determinant) | $$\det(\mathbf{A})$$ | Giá trị vô hướng |
 | Trị riêng (Eigenvalue) | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
+
+## Khung giải thích (nên đọc chậm): Hình học của ma trận hiệp phương sai và Hồi quy Bayes tính tay 2×2
+
+Tại sao trị riêng của $$oldsymbol{\Sigma}$$ lại quan trọng đến vậy trong thống kê Bayes? Hãy đi chậm qua 4 bước:
+
+1. **Dạng toàn phương (Quadratic Form):** Trong mật độ Chuẩn đa biến $$\expigl(-rac{1}{2}(\mathbf{x}-oldsymbol{\mu})^Toldsymbol{\Sigma}^{-1}(\mathbf{x}-oldsymbol{\mu})igr)$$, các đường đồng mức xác suất là những **hình elip** (hoặc ellipsoid nhiều chiều).
+2. **Hướng và bán trục của elip:** Các vector riêng của $$oldsymbol{\Sigma}$$ chỉ phương các trục chính của elip, còn căn bậc hai trị riêng $$\sqrt{\lambda_i}$$ chính là độ dài bán trục (độ lệch chuẩn dọc theo phương đó).
+3. **Số điều kiện (Condition Number):** Tỷ số $$\lambda_{\max}/\lambda_{\min}$$ càng lớn thì elip hậu nghiệm càng dẹt như điếu xì gà — khiến bộ lấy mẫu Metropolis–Hastings nhảy bước đều bị kẹt (hoặc bước quá lớn đụng tường, hoặc bước quá nhỏ đi mãi không tới).
+4. **Cộng độ chính xác ở dạng ma trận:** Cập nhật Normal–Normal đa biến hoàn toàn tương tự 1 chiều, chỉ thay số vô hướng bằng ma trận: $$oldsymbol{\Lambda}_{	ext{post}} = oldsymbol{\Lambda}_0 + rac{1}{\sigma^2}\mathbf{X}^T\mathbf{X}$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Giải trị riêng ma trận hiệp phương sai 2×2 và cập nhật Ridge–Bayes
+
+Xét hai tham số $$(eta_1, eta_2)$$ có ma trận hiệp phương sai hậu nghiệm:
+$$oldsymbol{\Sigma} = egin{pmatrix} 5 & 3 \ 3 & 5 \end{pmatrix}.$$
+
+- **Bước 1 — Tìm trị riêng từ phương trình đặc trưng $$\det(oldsymbol{\Sigma} - \lambda \mathbf{I}) = 0$$:**
+  $$(5 - \lambda)^2 - 9 = 0 \implies 5 - \lambda = \pm 3 \implies \lambda_1 = 8,\quad \lambda_2 = 2.$$
+  Vì cả hai trị riêng đều dương, $$oldsymbol{\Sigma}$$ là ma trận xác định dương hợp lệ.
+- **Bước 2 — Tìm vector riêng đơn vị và ý nghĩa hình học:**
+  - Với $$\lambda_1 = 8$$: $$(-3)v_1 + 3v_2 = 0 \implies \mathbf{u}_1 = rac{1}{\sqrt{2}}egin{pmatrix}1 \ 1\end{pmatrix}$$. Độ lệch chuẩn dọc trục chéo này là $$\sqrt{8} pprox 2.83$$.
+  - Với $$\lambda_2 = 2$$: $$3v_1 + 3v_2 = 0 \implies \mathbf{u}_2 = rac{1}{\sqrt{2}}egin{pmatrix}1 \ -1\end{pmatrix}$$. Độ lệch chuẩn dọc trục vuông góc chỉ là $$\sqrt{2} pprox 1.41$$.
+- **Bước 3 — Tính hệ số tương quan để đối chiếu:**
+  $$ho = rac{\Sigma_{12}}{\sqrt{\Sigma_{11}\Sigma_{22}}} = rac{3}{\sqrt{5 	imes 5}} = rac{3}{5} = 0.60.$$
+  Đám mây hậu nghiệm nghiêng $$45^\circ$$, dài gấp $$\sqrt{8/2} = 2$$ lần bề ngang.
+
+**Hiểu lầm cần tránh:** Tính nghịch đảo tường minh `np.linalg.inv(A) @ b` trong mã thực tế; cách chuẩn về mặt số học là giải hệ tuyến tính `np.linalg.solve(A, b)` hoặc phân rã Cholesky để tránh khuếch đại sai số làm tròn.
+
+**Kiểm tra nhanh:** Định thức $$\det(oldsymbol{\Sigma}) = 5 	imes 5 - 3 	imes 3 = 16$$, khớp hoàn toàn với tích hai trị riêng $$\lambda_1 \lambda_2 = 8 	imes 2 = 16$$; vết $$	ext{tr}(oldsymbol{\Sigma}) = 5 + 5 = 10$$, khớp với tổng $$\lambda_1 + \lambda_2 = 8 + 2 = 10$$.
+
+---
 
 ## Video tham khảo
 

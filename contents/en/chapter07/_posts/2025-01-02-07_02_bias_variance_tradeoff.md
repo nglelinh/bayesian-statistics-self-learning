@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Give a polynomial regression enough flexibility (degree 9 on 10 data points), and it will wiggle cleanly through **every single training point** with 0.00 training error—yet predict catastrophic nonsense one millimeter outside the training points! That classic tension between **underfitting** (too rigid, high bias) and **overfitting** (memorizing noise, high variance) is the **Bias–Variance Trade-off**—the compass of all model selection.
+
+This lesson reframes the Bias–Variance Trade-off in Bayesian terms: showing how **regularizing priors** and **posterior averaging** tame variance automatically, and why **out-of-sample predictive accuracy** is the only honest judge of model complexity.
+
+---
+
+## Background Knowledge Map: Complexity, Generalization, and Bayesian Averaging
+
+1. **Underfitting (High Bias) vs. Overfitting (High Variance):** Too few parameters miss real curvature (both train and test error stay high); too many unregularized parameters chase random sample noise (train error $$\to 0$$, test error explodes!).
+2. **In-Sample Deviance Always Improves With Complexity:** Adding any extra parameter never worsens training fit—which is why comparing models on training $$R^2$$ or training log-likelihood guarantees overfitting!
+3. **Regularizing Priors Shift the Sweet Spot:** Tightening the prior on higher-order terms adds tiny bias while slashing variance dramatically, letting richer models generalize cleanly.
+4. **Posterior Averaging Reduces Variance Further:** Integrating predictions over all posterior draws $$\theta^{(s)}$$ (instead of plugging in one MLE/MAP point!) acts like an automatic ensemble, softening overconfident out-of-sample predictions.
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will have a deep understanding of the **bias-variance tradeoff**, one of the most fundamental ideas in machine learning and statistics. The lesson explains why a model that is too simple usually has **high bias**, why a model that is too complex usually has **high variance**, and why the real goal of model selection is not to push one component as low as possible, but to find the balance point that makes the overall error smallest. This is the direct basis for understanding regularization, overfitting, and even the logic of choosing models.
@@ -216,6 +231,33 @@ The bias-variance tradeoff shows that prediction error cannot be understood by a
 The point to remember most is that a model that fits the training data beautifully is not necessarily a good model; a good model is one that generalizes well to new data.
 
 Next lesson: **Feature Selection** (completing the case study with stability selection and uncertainty-aware interpretation).
+
+---
+
+### Worked Numerical Example: Watching Train vs. Test Deviance Diverge Across Polynomial Degrees
+
+Fit polynomial models of degree 1, 2, 5, and 9 (with flat priors) to $$n = 15$$ noisy points from a true quadratic curve:
+
+| Model Complexity | Parameters $$p$$ | In-Sample Train Deviance | Out-of-Sample Test Deviance | Diagnosis |
+| :--- | :--- | :--- | :--- | :--- |
+| **Degree 1 (Line)** | $$2$$ | $$24.5$$ | $$26.1$$ | **Underfit** (high bias — misses curve) |
+| **Degree 2 (Quadratic)** | $$3$$ | $$8.4$$ | **$$9.6$$** | **Sweet spot!** (lowest test error) |
+| **Degree 5** | $$6$$ | $$6.1$$ | $$15.8$$ | Starting to chase sample noise |
+| **Degree 9 (Flat Prior)** | $$10$$ | **$$1.2$$** | **$$64.0$$** | **Severe Overfit!** (huge variance!) |
+| **Degree 9 ($$\mathcal{N}(0, 0.3)$$ Prior)** | $$10$$ | $$8.9$$ | **$$10.2$$** | **Regularizing prior rescues generalization!** |
+
+Look at the bottom two rows: the exact same 10-parameter architecture drops out-of-sample deviance from **64.0 down to 10.2** simply by adding a skeptical Bayesian prior!
+
+### Deep-Dive Explanation: Four Rules for Navigating the Bias–Variance Trade-Off (Read Slowly)
+
+1. **Never pick a model by training fit alone:** Always evaluate via cross-validation (LOO-CV / k-fold) or a locked held-out test set.
+2. **Plot the *gap* between train and test deviance:** A tiny train error paired with a huge test error is the unmistakable fingerprint of overfitting; both high signals underfitting.
+3. **Prefer regularizing priors over crude manual dropping of variables:** Smoothly shrinking weak effects toward zero avoids the abrupt variance spikes of all-or-nothing variable deletion.
+4. **More data cures variance, not structural bias:** Collecting 10× more samples won’t make a straight line fit a parabola—you must fix underfitting by enriching the model family!
+
+**Quick check.** In the polynomial table above, why did adding a $$\mathcal{N}(0, 0.3)$$ prior to the Degree-9 model make its *in-sample training deviance* slightly worse (`1.2` $$\to$$ `8.9`) while cutting its *out-of-sample test deviance* by more than 6× (`64.0` $$\to$$ `10.2`)?
+
+---
 
 ## Reference videos
 

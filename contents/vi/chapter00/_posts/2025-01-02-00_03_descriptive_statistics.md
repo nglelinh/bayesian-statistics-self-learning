@@ -10,9 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Năm 1973, nhà thống kê Francis Anscombe công bố bốn bộ dữ liệu kỳ lạ mà sau này được gọi là *Bộ tứ Anscombe*: cả bốn bộ đều có trung bình $$x$$ bằng 9, trung bình $$y$$ bằng 7.50, phương sai giống hệt nhau và hệ số tương quan cùng bằng $$0.816$$ — nhưng khi vẽ lên đồ thị, một bộ là đường thẳng, một bộ là parabol, một bộ có ngoại lai phá hỏng đường hồi quy! Câu chuyện ấy dạy ta bài học đầu tiên của khoa học dữ liệu: **con số tóm tắt chỉ có giá trị khi ta hiểu nó đang giữ lại điều gì và che khuất điều gì**.
+
+Trong thống kê Bayes, thống kê mô tả không chỉ dùng để khám phá dữ liệu thô ban đầu, mà còn là công cụ hằng ngày để **tóm tắt phân phối hậu nghiệm** rút ra từ hàng nghìn mẫu MCMC (posterior mean, median, SD, quantiles và tương quan giữa các tham số).
+
+---
+
 ## Mục tiêu Học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rằng thống kê mô tả không chỉ là việc tính các con số tóm tắt, mà là cách nắm bắt cấu trúc, xu hướng và mức độ biến thiên của dữ liệu. Bạn sẽ biết cách diễn giải trung bình, trung vị và độ lệch chuẩn theo bản chất dữ liệu thay vì áp dụng máy móc, đồng thời hình thành trực giác chọn thống kê phù hợp trong phân tích Bayesian — nơi việc khám phá phân phối dữ liệu luôn là bước khởi đầu trước khi xây dựng mô hình.
+
+## Bản đồ kiến thức nền: Thống kê mô tả, Thống kê bền vững và Tóm tắt Hậu nghiệm Bayes
+
+Ba trụ cột gắn kết bài học này với suy diễn Bayes hiện đại:
+
+- **Tâm và Độ phân tán (Location & Scale):** Trung bình (*mean*), trung vị (*median*) và yếu vị (*mode*) đo vị trí trung tâm; phương sai (*variance*), độ lệch chuẩn (*SD*) và khoảng tứ phân vị (*IQR*) đo mức độ trải rộng. Trong lý thuyết quyết định Bayes, chọn **posterior mean** tối thiểu hóa sai số bình phương kỳ vọng ($$L_2$$ loss), còn chọn **posterior median** tối thiểu hóa sai số tuyệt đối kỳ vọng ($$L_1$$ loss)!
+- **Thống kê bền vững (Robust Statistics):** Trung bình và độ lệch chuẩn rất nhạy với ngoại lai (*outliers*), trong khi trung vị và IQR bền vững hơn nhiều. Tương tự, khi hậu nghiệm bị lệch (như phân phối của phương sai $$\sigma^2$$ hoặc tỷ lệ gần 0), median và khoảng tin cậy (credible interval) cho bức tranh trung thực hơn mean ± SD.
+- **Tương quan và Hình học Hậu nghiệm:** Hệ số tương quan Pearson đo mối quan hệ tuyến tính. Trong MCMC, tương quan mạnh giữa hai tham số hậu nghiệm (ví dụ hệ số chặn và độ dốc trong hồi quy) tạo ra "hẻm núi hẹp" khiến bộ lấy mẫu chậm hội tụ — lúc đó ta cần chuẩn hóa dữ liệu (centering/scaling) trước khi chạy mô hình.
+
+---
 
 ## Giới thiệu: Tại sao chúng ta cần Thống kê Mô tả?
 
@@ -162,6 +178,37 @@ Cần lưu ý hai điểm quan trọng khi diễn giải tương quan. Thứ nh�
 *Hình 3c: Tương quan tổng thể có thể phát sinh do cấu trúc nhóm ẩn, nên luôn cần quan sát biểu đồ trước khi tin vào một con số tóm tắt.*
 
 Trong phân tích Bayesian, mối quan hệ giữa các biến thường được mô hình hóa tường minh qua tham số mô hình. Chẳng hạn, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ biểu diễn mối liên hệ giữa biến giải thích và biến phản hồi, còn phân phối hậu nghiệm của $$\beta$$ định lượng độ bất định quanh ước lượng đó.
+
+## Khung giải thích (nên đọc chậm): Vì sao Mean, Median và Mode tách nhau — và ý nghĩa khi đọc mẫu MCMC
+
+Khi nhìn vào một tập dữ liệu hay một chuỗi mẫu hậu nghiệm từ MCMC, đừng bao giờ chỉ đọc mỗi số trung bình. Hãy đi chậm qua 4 bước đọc tóm tắt:
+
+1. **So sánh Mean và Median để phát hiện độ lệch:** Nếu Mean $$>$$ Median đáng kể, phân phối lệch phải (có đuôi dài bên phải hoặc ngoại lai lớn).
+2. **Dùng SD kết hợp với IQR:** Với phân phối Chuẩn, $$	ext{IQR} pprox 1.35 	imes 	ext{SD}$$. Nếu SD lớn bất thường so với IQR, gần như chắc chắn có ngoại lai hoặc đuôi nặng.
+3. **Liên hệ với hàm mất mát Bayes:** Nếu bạn phải chốt một con số duy nhất từ hậu nghiệm, Mean tối ưu cho phạt sai số bậc hai, Median tối ưu cho phạt sai số bậc một, còn Mode (MAP) tối ưu cho sai số 0–1.
+4. **Kiểm tra tương quan giữa các chiều:** Tương quan $$r pprox 0$$ chỉ loại trừ quan hệ *tuyến tính*, không loại trừ quan hệ phi tuyến (như parabol $$y = x^2$$).
+
+### Ví dụ tính toán cầm tay chỉ việc: Tóm tắt mẫu dữ liệu (hoặc mẫu hậu nghiệm) bị lệch
+
+Giả sử bạn thu thập 5 quan sát về thời gian phản hồi API (tính bằng mili-giây): $$x = \{10, 12, 14, 14, 50\}$$.
+
+- **Bước 1 — Vị trí trung tâm:**
+  - Mean: $$ar{x} = rac{10 + 12 + 14 + 14 + 50}{5} = rac{100}{5} = 20	ext{ ms}$$.
+  - Median (giá trị đứng thứ 3 sau khi sắp xếp): $$14	ext{ ms}$$.
+  - Mode (xuất hiện nhiều nhất): $$14	ext{ ms}$$.
+  Nhận xét: Chỉ một ngoại lai $$50$$ đã kéo Mean lên $$20$$ — cao hơn cả 4/5 giá trị thực tế!
+- **Bước 2 — Độ phân tán (tính tay phương sai mẫu hiệu chỉnh $$n-1$$):**
+  - Các độ lệch $$(x_i - 20)$$: $$-10, -8, -6, -6, +30$$.
+  - Tổng bình phương độ lệch: $$100 + 64 + 36 + 36 + 900 = 1136$$.
+  - Phương sai mẫu: $$s^2 = rac{1136}{5 - 1} = 284 \implies s = \sqrt{284} pprox 16.85	ext{ ms}$$.
+- **Bước 3 — Tương phản khi bỏ ngoại lai $$50$$ (chỉ xét 4 giá trị đầu):**
+  - Mean mới: $$rac{10+12+14+14}{4} = 12.5	ext{ ms}$$; độ lệch chuẩn mới chỉ còn $$\sqrt{rac{6.25+0.25+2.25+2.25}{3}} pprox 1.91	ext{ ms}$$ — giảm gần 9 lần!
+
+**Hiểu lầm cần tránh:** Dùng công thức $$ar{x} \pm 2s$$ để báo cáo khoảng bất định cho phân phối lệch: trong ví dụ trên, $$20 - 2(16.85) = -13.7	ext{ ms}$$ — một thời gian phản hồi âm vô nghĩa! Trong Bayes, luôn dùng phân vị hậu nghiệm (ví dụ phân vị 2.5% và 97.5%) hoặc HDI.
+
+**Kiểm tra nhanh:** Nếu ta nhân toàn bộ dữ liệu với 2 (đổi đơn vị), Mean và SD tăng gấp 2 lần, còn phương sai tăng gấp $$2^2 = 4$$ lần.
+
+---
 
 ## Video tham khảo
 

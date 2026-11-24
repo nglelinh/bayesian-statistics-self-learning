@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Một cỗ máy MCMC có thể chạy trơn tru, cho $$\hat{R} = 1.00$$, số mẫu hiệu dụng lên tới hàng nghìn và khoảng tin cậy 95% của hệ số dốc hẹp như sợi chỉ — nhưng mô hình đó vẫn có thể **sai hoàn toàn**. Lý do rất đơn giản: định lý Bayes chỉ trả lời chính xác *trong phạm vi thế giới giả định của mô hình bạn viết ra*. Muốn biết thế giới giả định ấy có giống thế giới thực hay không, ta phải cho mô hình tự sinh lại dữ liệu và đặt dữ liệu giả lập ấy cạnh dữ liệu thật — bước phê bình mô hình mà George Box gọi là linh hồn của vòng lặp khoa học.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu rằng việc khớp mô hình (fitting) mới chỉ là nửa đầu của quy trình hồi quy Bayes. Nửa còn lại là kiểm tra xem mô hình có mô tả dữ liệu một cách hợp lý hay không, đồng thời sử dụng phân phối hậu nghiệm để dự đoán dữ liệu mới kèm đầy đủ mức độ bất định. Trọng tâm của bài là kỹ thuật **kiểm tra dự báo hậu nghiệm** (posterior predictive check — PPC) và phân tích phần dư.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ hiểu rằng việc khớp mô hình (fitting) mới 
 >
 > **Câu hỏi tự kiểm tra.** Vì sao một phân phối hậu nghiệm "trông gọn đẹp" vẫn chưa đủ cơ sở để kết luận mô hình là tốt?
 
+
+## Bản đồ kiến thức nền: Tích phân dự báo hậu nghiệm, Thống kê kiểm tra và Giải phẫu phần dư
+
+Bước kiểm tra mô hình (model checking) và dự đoán trong thống kê Bayes dựa trên ba khái niệm then chốt:
+
+- **Phân phối dự báo hậu nghiệm (Posterior Predictive Distribution):** Tích phân $$p(\tilde y \mid y) = \int p(\tilde y \mid \theta)p(\theta \mid y)\,d\theta$$ gộp đồng thời bất định tham số $$p(\theta \mid y)$$ và nhiễu sinh dữ liệu $$p(\tilde y \mid \theta)$$. Trong thực hành, nó đóng hai vai trò: dự đoán cho quan sát mới ngoài mẫu và tạo tập dữ liệu tái lập $$y_{\text{rep}}$$ để kiểm tra mô hình.
+- **Thống kê kiểm tra $$T(y)$$ và giá trị $$p$$ dự báo hậu nghiệm (Bayesian $$p$$-value):** Thay vì chỉ nhìn mắt thường, ta chọn một hàm thống kê $$T(y)$$ phản ánh khía cạnh quan tâm (trung bình, phương sai, cực đại, độ lệch) rồi đo tỷ lệ mẫu mô phỏng vượt quá giá trị quan sát: $$p_B = P(T(y_{\text{rep}}) \ge T(y_{\text{obs}}) \mid y)$$. Nếu $$p_B$$ quá gần 0 hoặc 1 (chẳng hạn $$<0.05$$ hoặc $$>0.95$$), mô hình đang bỏ sót đặc trưng đó của dữ liệu.
+- **Giải phẫu phần dư (Residual Diagnostics):** Phần dư $$e_i = y_i - \mathbb{E}[\tilde y_i \mid y]$$ là "dấu vân tay" của những gì mô hình chưa giải thích được. Hình cong tố cáo quan hệ phi tuyến; hình quạt tố cáo phương sai thay đổi (heteroskedasticity); biểu đồ Q–Q cong chữ S ở hai đầu tố cáo sai số đuôi dày (heavy tails).
 ## 1. Khớp dữ liệu tốt chưa đồng nghĩa với mô hình tốt
 
 Nhiều người học hồi quy thường dừng lại ngay sau khi ước lượng hệ số dốc và đọc khoảng tin cậy. Tuy nhiên, một quy trình Bayes đầy đủ đòi hỏi ta phải đặt thêm ba câu hỏi quan trọng: mô hình có tái tạo được đặc trưng của dữ liệu quan sát không, phần dư (residual) có còn chứa quy luật có hệ thống nào không, và dự đoán cho dữ liệu mới có hợp lý trong thực tế hay không.
@@ -164,6 +174,25 @@ Giả sử với nhóm học sinh học 6 giờ, mô hình cho:
 - Khoảng dự đoán cho một học sinh cụ thể mới: từ 6.0 đến 9.3.
 
 Khoảng thứ nhất trả lời câu hỏi về điểm trung bình của cả nhóm học sinh cùng học 6 giờ; khoảng thứ hai trả lời câu hỏi về khoảng điểm khả dĩ của một cá nhân cụ thể. Dùng nhầm khoảng thứ nhất để dự báo cho một cá nhân sẽ tạo ra cảm giác chắc chắn quá mức so với thực tế.
+
+### Khung giải thích (nên đọc chậm): Tính tay Bayesian $$p$$-value và phân tách hai nguồn phương sai dự đoán
+
+Hãy tự kiểm chứng hai phép tính cốt lõi của kiểm tra mô hình và dự đoán bằng những con số nhỏ gọn:
+
+**1. Tự tính Bayesian $$p$$-value cho độ phân tán:**
+Giả sử trên tập dữ liệu thực tế, bạn đo được độ lệch chuẩn mẫu là $$T(y_{\text{obs}}) = 4.2$$. Bạn rút $$S = 10$$ tập dữ liệu giả lập $$y_{\text{rep}}^{(1)}, \dots, y_{\text{rep}}^{(10)}$$ từ phân phối dự báo hậu nghiệm và tính được 10 độ lệch chuẩn mô phỏng:
+
+$$\{2.8,\ 3.0,\ 3.1,\ 3.3,\ 3.4,\ 3.5,\ 3.6,\ 3.7,\ 3.9,\ 4.3\}.$$
+
+Đếm số giá trị $$\ge 4.2$$: chỉ có đúng 1 trên 10 tập ($$4.3$$), nên $$p_B = 1/10 = 0.10$$ (nếu chạy $$S=1000$$ tập và chỉ có 12 tập vượt quá $$4.2$$ thì $$p_B = 0.012$$). Khi $$p_B$$ rất nhỏ như vậy, dữ liệu thực phân tán rộng hơn nhiều so với điều mô hình giả định — ta cần xem lại giả định nhiễu hoặc bổ sung biến giải thích.
+
+**2. Tự phân tách phương sai của $$\mu_{\text{new}}$$ và $$y_{\text{new}}$$:**
+Giả sử tại mức 6 giờ học, bất định đường trung bình có $$\mathrm{SD}(\mu_{\text{new}} \mid y) = 0.30$$ (tức phương sai $$0.30^2 = 0.09$$), còn độ nhiễu cá thể quanh đường hồi quy là $$\sigma = 0.80$$ (phương sai $$0.80^2 = 0.64$$). Theo quy tắc cộng phương sai của hai nguồn bất định độc lập:
+
+- **Cho điểm trung bình nhóm:** $$\mathrm{SD}(\mu_{\text{new}} \mid y) = 0.30 \implies$$ khoảng 95% rộng $$\pm 1.96(0.30) \approx \pm 0.59$$ điểm.
+- **Cho một học sinh cụ thể:** $$\operatorname{Var}(y_{\text{new}} \mid y) = 0.09 + 0.64 = 0.73 \implies \mathrm{SD}(y_{\text{new}} \mid y) = \sqrt{0.73} \approx 0.854 \implies$$ khoảng 95% rộng $$\pm 1.96(0.854) \approx \pm 1.67$$ điểm.
+
+Ngay cả khi ta thu thập 100.000 học sinh để phương sai đường trung bình giảm từ $$0.09$$ về gần $$0$$, độ lệch chuẩn dự đoán cho một học sinh mới vẫn bị chặn dưới bởi $$\sigma = 0.80$$.
 
 ## 8. Kiểm tra mô hình không phải phép thử nhị phân
 

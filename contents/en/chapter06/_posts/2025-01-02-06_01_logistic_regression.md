@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Linear regression happily predicts probabilities of `1.42` or `-0.18` when fed binary outcomes like *survived/died* or *clicked/ignored*. **Bayesian Logistic Regression** fixes that cleanly by modeling the **log-odds (logit)** linearly—$$\ln\frac{p_i}{1-p_i} = \alpha + \beta x_i$$—and passing it through the inverse-logit (sigmoid) curve $$p_i = \frac{1}{1+e^{-\eta_i}} \in (0, 1)$$.
+
+Because the sigmoid is nonlinear, every Bayesian logistic model holds a crucial surprise: **a constant change in log-odds produces a *different* jump in probability depending on where you start on the S-curve!** This lesson masters link functions, odds ratios, and sensible log-odds priors.
+
+---
+
+## Background Knowledge Map: Link Functions, Odds Ratios, and Log-Odds Priors
+
+1. **Bernoulli/Binomial Likelihood + Logit Link:** Connects an unconstrained linear predictor $$\eta_i \in (-\infty, \infty)$$ to a valid probability $$p_i = \sigma(\eta_i) \in (0,1)$$.
+2. **Multiplicative Odds Ratios ($$e^\beta$$):** Increasing $$x$$ by +1 adds $$\beta$$ to log-odds, which **multiplies odds** $$\frac{p}{1-p}$$ by $$e^\beta$$—regardless of the baseline probability!
+3. **Why Priors Must Be Narrower on the Logit Scale:** Because $$\sigma(+5) = 0.993$$ and $$\sigma(-5) = 0.007$$, a seemingly "vague" Normal prior $$\alpha \sim \mathcal{N}(0, 10^2)$$ piles nearly all prior probability onto the extreme walls `0` and `1`! Weakly informative priors like $$\alpha \sim \mathcal{N}(0, 1.5),\; \beta \sim \mathcal{N}(0, 1.0)$$ keep prior predictive probabilities sensible!
+4. **Divide-by-4 Rule (Gelman):** Near $$p = 0.5$$ (steepest point of the sigmoid, where $$\sigma'(0) = 0.25$$), a +1 unit change in $$x$$ changes probability by **at most $$\beta / 4$$**!
+
+---
+
 ## Learning objectives
 
 After completing this lesson, you will understand **Logistic Regression** as a foundational model for **binary outcomes** such as yes/no, success/failure, or 0/1. The focus of the lesson is not merely to swap in another regression formula, but to understand why linear regression is not suitable for binary data, why we need a **link function**, and why the model's coefficients must be interpreted through the **odds ratio** rather than with ordinary linear intuition. This is also the first doorway into the family of **Generalized Linear Models (GLMs)**.
@@ -364,6 +379,32 @@ Logistic regression is the natural answer when the outcome has only two states. 
 The most important point to keep is the GLM way of thinking: we still start with a linear part, but use an appropriate link function to handle outcomes that no longer follow the familiar Gaussian model.
 
 Next lesson: **Poisson Regression** for count data.
+
+---
+
+### Worked Numerical Example: Tracing Non-Constant Probability Jumps Along $$\eta = -1.5 + 0.8x$$
+
+Suppose a Bayesian logistic regression has posterior mean $$\eta(x) = -1.5 + 0.8x$$ (odds ratio per +1 unit of $$x$$ is $$e^{0.8} \approx \mathbf{2.226\times}$$):
+
+| $$x$$ | Log-Odds $$\eta = -1.5 + 0.8x$$ | Odds $$e^\eta$$ | Probability $$p = \frac{1}{1+e^{-\eta}}$$ | Step Jump $$\Delta p$$ |
+| :--- | :--- | :--- | :--- | :--- |
+| $$0$$ | $$-1.5$$ | $$0.223$$ | $$18.2\%$$ | — |
+| $$1$$ | $$-0.7$$ | $$0.497$$ | $$33.2\%$$ | $$+15.0\%$$ |
+| $$2$$ | $$+0.1$$ | $$1.105$$ | $$52.5\%$$ | **$$+19.3\%$$** (near $$\beta/4 = 20\%$$!) |
+| $$3$$ | $$+0.9$$ | $$2.460$$ | $$71.1\%$$ | $$+18.6\%$$ |
+
+Look at the columns: every step multiplies **Odds** by the exact same $$2.226\times$$, yet **$$\Delta p$$** peaks right around $$50\%$$ ($$+19.3\%$$, matching Gelman’s $$\beta/4 = 0.8/4 = 20\%$$ ceiling!) and flattens near the extremes!
+
+### Deep-Dive Explanation: Four Rules for Bayesian Logistic Regression (Read Slowly)
+
+1. **Always check prior predictive probabilities on the $$[0,1]$$ scale:** Plot histograms of $$\sigma(\alpha + \beta x)$$ drawn from your prior—if it looks like a U-shape piled at 0 and 1, tighten your log-odds priors!
+2. **Present results on the *probability* scale for stakeholders:** Saying *"probability rises from 18% to 33% (95% CI: 26%–41%)"* communicates far more clearly than *"log-odds increase by 0.8."*
+3. **Bayesian priors cure Complete Separation automatically:** When a predictor perfectly separates 0s and 1s, frequentist MLE blows up to $$\beta = \pm\infty$$; a $$\mathcal{N}(0, 2.5)$$ prior keeps the posterior finite and well-behaved!
+4. **Even without an explicit $$x_1 x_2$$ product, logistic predictors *interact* on the probability scale** because of the curved sigmoid boundary!
+
+**Quick check.** Using Gelman’s divide-by-4 rule, if a standardized predictor has logistic slope $$\beta = 0.60$$, what is the *maximum* possible probability change $$\Delta p$$ from a +1 SD increase in that predictor?
+
+---
 
 ## Reference videos
 

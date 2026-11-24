@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+Stand by a quiet highway and watch cars pass at an average rate of $$\lambda = 3$$ cars per minute. Two twin questions immediately arise: *How many cars will pass in the next minute?* (**Poisson**), and *How long will I wait until the very next car arrives?* (**Exponential**). They are not two unrelated textbook formulas—they are two faces of the exact same continuous-time **Poisson process**!
+
+This lesson builds intuitive command over Poisson counts and Exponential waiting times, explains the startling **memoryless property**, warns against real-world overdispersion, and sets up their natural Bayesian conjugate partner: the **Gamma distribution**.
+
+---
+
+## Background Knowledge Map: The Duality of Counts and Waiting Times
+
+Four structural facts link Poisson, Exponential, and Bayesian rate modeling:
+
+1. **Poisson Count Distribution:** Counts independent events occurring at constant rate $$\lambda$$ per unit time: $$P(N=k\mid \lambda) = rac{\lambda^k e^{-\lambda}}{k!}$$ with exact **equidispersion** $$\mathbb{E}[N] = \mathrm{Var}(N) = \lambda$$.
+2. **Exponential Waiting Time:** The waiting time $$T$$ until the next event has PDF $$f(t\mid \lambda) = \lambda e^{-\lambda t}$$ ($$t \ge 0$$), mean $$1/\lambda$$, and survival function $$P(T > t) = e^{-\lambda t}$$. Notice that $$P(T > 1) = e^{-\lambda} = P(N = 0)$$—waiting more than 1 minute is literally identical to seeing 0 cars in 1 minute!
+3. **The Memoryless Property:** $$P(T > s + t \mid T > s) = P(T > t)$$. Having waited 5 minutes with no bus tells you nothing about the remaining wait if arrivals are truly Poisson (useful for radioactive decay, dangerous for aging machinery!).
+4. **Bayesian Gamma–Poisson Conjugacy:** Writing $$L(\lambda) \propto \lambda^{\sum k_i} e^{-n\lambda}$$ has the exact algebraic kernel of a **Gamma distribution**, letting us update our belief about an unknown rate $$\lambda$$ by simple addition!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will be able to model count data with the Poisson, model waiting times with the Exponential, and understand why these two distributions are two faces of the same random event process over time.
@@ -146,6 +163,30 @@ In Bayes, a Gamma prior for $$\lambda$$ combined with a Poisson likelihood gives
 ---
 
 *Next lesson: [0.4 Normal and CLT Intuition]({{ site.baseurl }}/contents/en/chapter00/00_02_03_normal_clt_intuition/)*
+
+---
+
+### Worked Numerical Example: Server Errors at Rate $$\lambda = 2$$ per Hour
+
+Suppose a microservice logs errors as a Poisson process with rate $$\lambda = 2$$ errors/hour:
+1. **Probability of a completely clean hour ($$N = 0$$):**
+   $$P(N = 0) = rac{2^0 e^{-2}}{0!} = e^{-2} pprox 0.1353 \quad (13.5\%).$$
+2. **Probability of at least 1 error in an hour ($$N \ge 1$$):**
+   $$P(N \ge 1) = 1 - P(N=0) = 1 - 0.1353 = 0.8647 \quad (86.5\%).$$
+3. **Probability of waiting more than 30 minutes ($$t = 0.5$$ hr) for the next error:**
+   $$P(T > 0.5) = e^{-\lambda t} = e^{-2(0.5)} = e^{-1} pprox 0.3679 \quad (36.8\%).$$
+4. **Check the duality:** Probability of 0 errors in 30 minutes (effective rate $$\lambda_{	ext{half}} = 2 	imes 0.5 = 1$$) is $$e^{-1} pprox 0.3679$$—identical to $$P(T > 0.5)$$!
+
+### Deep-Dive Explanation: Four Modeling Checks Before Choosing Poisson/Exponential (Read Slowly)
+
+1. **Always check $$\mathrm{Var}(N)$$ vs. $$\mathbb{E}[N]$$:** If your real-world click or error counts have sample variance $$3	imes$$ larger than the mean, Poisson will understate tail risk—upgrade to a **Gamma–Poisson (Negative Binomial)** mixture.
+2. **Scale $$\lambda$$ proportionally to exposure time:** If rate is $$\lambda = 2$$ per hour, over $$t = 3$$ hours the count is $$\mathrm{Poisson}(6)$$, never $$\mathrm{Poisson}(2)$$.
+3. **Verify whether memorylessness makes physical sense:** Lightbulbs and servers *age* (hazard rate increases), so Weibull or Gamma waiting times beat Exponential for reliability modeling.
+4. **Spot the Bayesian kernel early:** Whenever you see $$\lambda^k e^{-t\lambda}$$, think immediately of a Gamma posterior $$\mathrm{Gamma}(lpha + k,\; eta + t)$$.
+
+**Quick check.** If errors arrive at $$\lambda = 2$$ per hour and you have already waited 45 minutes with zero errors, what is the probability you will wait *at least another 30 minutes* under the memoryless Exponential model?
+
+---
 
 ## Reference videos
 

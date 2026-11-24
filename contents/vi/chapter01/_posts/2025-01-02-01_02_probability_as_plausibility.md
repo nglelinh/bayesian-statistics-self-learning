@@ -10,6 +10,12 @@ categories:
 lesson_type: required
 ---
 
+Năm 1946, nhà vật lý Richard Cox đặt ra một câu hỏi tưởng thuộc về triết học thuần túy: nếu ta muốn mở rộng logic đúng/sai của Aristotle sang thế giới không chắc chắn — sao cho mức độ hợp lý của các mệnh đề luôn nhất quán — thì bộ quy tắc toán học nào là duy nhất? Kết quả chứng minh của ông gây kinh ngạc: bất kỳ hệ thống suy luận hợp lý nhất quán nào cũng *bắt buộc* phải đẳng cấu với các quy tắc xác suất (quy tắc cộng và quy tắc nhân), từ đó kéo theo định lý Bayes.
+
+Trước đó ít lâu, Frank Ramsey và Bruno de Finetti cũng đi tới đúng kết luận ấy từ một hướng khác hoàn toàn: nếu niềm tin của bạn vi phạm tiên đề xác suất, đối thủ có thể lập một tổ hợp kèo cược (*Dutch book*) khiến bạn chắc chắn thua tiền bất kể thực tế diễn ra thế nào.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn cần hiểu vì sao thống kê Bayes xem xác suất là **mức độ hợp lý của niềm tin** chứ không chỉ là tần suất dài hạn. Bạn cũng cần thấy được lợi thế của cách hiểu này trong những bài toán thực tế, nơi ta cần đánh giá các biến cố chỉ xảy ra một lần, các giả thuyết và các tham số chưa biết.
@@ -17,6 +23,17 @@ Sau bài này, bạn cần hiểu vì sao thống kê Bayes xem xác suất là 
 > **Ví dụ mini.** Khi nghe “70% khả năng mưa ngày mai”, bạn hiểu đó là mức độ tin cậy hiện tại để quyết định có mang ô hay không, chứ không phải tần suất thu được từ vô số lần lặp lại của “ngày mai”.
 >
 > **Câu hỏi tự kiểm tra.** Vì sao câu “xác suất trời mưa ngày mai là 70%” khó diễn giải theo nghĩa tần suất nhưng lại rất tự nhiên theo quan điểm Bayes?
+
+
+## Bản đồ kiến thức nền: Diễn giải xác suất, Định lý Cox và Tính nhất quán Dutch Book
+
+Bài học này đặt nền móng triết học – toán học cho toàn bộ khóa học thông qua ba trụ cột:
+
+- **Tần suất dài hạn so với Độ hợp lý (Frequentist vs. Epistemic Probability):** Trường phái tần suất định nghĩa xác suất qua giới hạn của thí nghiệm lặp vô hạn, nên không thể gán xác suất cho sự kiện đơn lẻ hay tham số cố định. Trường phái Bayes xem xác suất là **độ hợp lý có điều kiện trên thông tin hiện có**, áp dụng thống nhất cho cả dữ liệu lẫn tham số chưa biết.
+- **Định lý Cox & Lập luận Dutch Book:** Chứng minh rằng xác suất Bayes không phải sự tùy tiện chủ quan, mà là hệ quả logic duy nhất của yêu cầu nhất quán (*coherence*).
+- **Cầu nối sang Mô hình hóa Bayes:** Khi xem tham số $$\theta$$ cũng có phân phối xác suất biểu diễn trạng thái tri thức, mọi bài toán suy luận, dự báo và kiểm định đều quy về một phép toán duy nhất: tính xác suất có điều kiện và biên hóa.
+
+---
 
 ## 1. Một câu hỏi tưởng đơn giản: xác suất thực chất là gì?
 
@@ -133,6 +150,31 @@ Nếu chưa chấp nhận rằng xác suất có thể biểu diễn mức độ
 Nếu tóm gọn trong một câu: trường phái tần suất gắn xác suất với tần suất dài hạn của dữ liệu có thể lặp lại, còn trường phái Bayes gắn xác suất với mức độ hợp lý của niềm tin dựa trên thông tin hiện có. Không phải một bên hoàn toàn sai và bên kia hoàn toàn đúng trong mọi bối cảnh, nhưng cách hiểu Bayes linh hoạt hơn nhiều đối với các câu hỏi khoa học thực tế.
 
 > **3 ý cần nhớ.** Frequentist và Bayesian khác nhau trước hết ở cách định nghĩa xác suất chứ không chỉ ở kỹ thuật tính toán; quan điểm Bayes xem xác suất là độ hợp lý nên áp dụng tự nhiên cho giả thuyết, tham số và các sự kiện chỉ xảy ra một lần; và tính “chủ quan” trong Bayes không đồng nghĩa với tùy tiện vì mọi niềm tin đều phải tuân thủ quy tắc nhất quán của xác suất.
+
+
+## Khung giải thích (nên đọc chậm): Chứng minh bằng con số vì sao niềm tin bất nhất sẽ bị "Dutch Book"
+
+Nhiều người nghĩ tính nhất quán xác suất chỉ là lý thuyết suông. Hãy đọc chậm ví dụ đặt cược 4 bước sau để thấy bất kỳ sự vi phạm tiên đề cộng nào cũng dẫn đến thua lỗ chắc chắn:
+
+1. **Liên hệ niềm tin với giá cược công bằng:** Nếu bạn tin biến cố $$A$$ có độ hợp lý $$q$$, bạn sẵn sàng mua/bán một vé trả $$100\text{ nghìn}$$ khi $$A$$ xảy ra với giá $$100q\text{ nghìn}$$.
+2. **Giả sử niềm tin bị bất nhất:** Bạn gán xác suất đội X thắng là $$0.60$$ và đội X không thắng là $$0.50$$ — tổng bằng $$1.10 > 1$$ (vi phạm tiên đề chuẩn hóa).
+3. **Đối thủ thiết lập bộ kèo Dutch Book:** Đối thủ bán cho bạn cả hai vé (một vé "đội X thắng" giá $$60\text{ nghìn}$$, một vé "đội X không thắng" giá $$50\text{ nghìn}$$).
+4. **Kiểm tra mọi kịch bản thực tế:** Tổng tiền bạn bỏ ra là $$110\text{ nghìn}$$, nhưng dù kết quả trận đấu thế nào bạn cũng chỉ thắng đúng một vé và nhận lại $$100\text{ nghìn}$$ — lỗ chắc chắn $$10\text{ nghìn}$$!
+
+### Ví dụ tính toán cầm tay chỉ việc: Bảng kết quả của một Dutch Book
+
+| Kịch bản thực tế | Tiền bạn bỏ ra mua 2 vé | Tiền nhận về từ vé thắng | Lãi / Lỗ ròng của bạn |
+| --- | --- | --- | --- |
+| Đội X thắng ($$A$$) | $$60 + 50 = 110\text{ nghìn}$$ | $$100\text{ nghìn}$$ | $$-10\text{ nghìn}$$ |
+| Đội X không thắng ($$A^c$$) | $$60 + 50 = 110\text{ nghìn}$$ | $$100\text{ nghìn}$$ | $$-10\text{ nghìn}$$ |
+
+Để không bao giờ rơi vào tình huống thua chắc chắn như vậy (dù ở vai người mua hay người bán vé), bộ niềm tin $$q(A)$$ bắt buộc phải thỏa mãn đúng ba tiên đề Kolmogorov và quy tắc cập nhật Bayes khi có thêm thông tin!
+
+**Hiểu lầm cần tránh:** Nghĩ rằng "xác suất chủ quan" trong Bayes nghĩa là ai muốn bịa số nào cũng được. Thực chất "chủ quan" có nghĩa là *phụ thuộc vào thông tin hiện có*, và mọi bước cập nhật từ thông tin đó đều bị ràng buộc chặt chẽ bởi toán học.
+
+**Kiểm tra nhanh:** Nếu bạn gán $$q(A) = 0.45$$ và $$q(A^c) = 0.45$$ (tổng $$0.90 < 1$$), đối thủ chỉ cần *mua lại* cả hai vé từ bạn với tổng giá $$90\text{ nghìn}$$ và chắc chắn thu về $$100\text{ nghìn}$$ từ bạn — bạn vẫn lỗ chắc chắn $$10\text{ nghìn}$$.
+
+---
 
 ## Video tham khảo
 

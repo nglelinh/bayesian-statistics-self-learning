@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Năm 1899, nhà thống kê người Anh Udny Yule đối diện một tranh luận gay gắt về chính sách trợ cấp xã hội: các quận phát nhiều trợ cấp ngoài trại tế bần lại có tỷ lệ nghèo cao hơn. Liệu trợ cấp có làm tăng nghèo đói? Khi Yule lần đầu tiên đưa thêm biến tỷ lệ người cao tuổi và tốc độ tăng dân số vào cùng một phương trình hồi quy, bức tranh đổi khác hoàn toàn. Đó là thời khắc hồi quy đa biến chứng minh sức mạnh thực sự của nó: biến những cuộc tranh cãi cảm tính thành phép so sánh có điều kiện rõ ràng.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vì sao phần lớn bài toán thực tế không thể giải quyết thỏa đáng chỉ với một biến dự báo (predictor). Bạn cũng sẽ nắm nguyên tắc cốt lõi của hồi quy đa biến (multiple regression): mỗi hệ số phản ánh tác động của một biến khi tất cả các biến dự báo còn lại trong mô hình được giữ cố định. Đây là nền tảng để đọc đúng kết quả hồi quy trong toàn bộ Chương 5.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ hiểu vì sao phần lớn bài toán thực tế kh�
 >
 > **Câu hỏi tự kiểm tra.** Nếu hai người có cùng số năm kinh nghiệm nhưng trình độ học vấn khác nhau, một mô hình chỉ có một biến dự báo có nắm bắt được chênh lệch lương giữa họ không?
 
+
+## Bản đồ kiến thức nền: Siêu phẳng tuyến tính, Phép chiếu trực giao và Thiên lệch bỏ sót biến
+
+Để hiểu sâu sắc cơ chế bên trong hồi quy đa biến ở trình độ đại học, hãy nối bài học này với ba trụ cột toán học:
+
+- **Siêu phẳng kỳ vọng và đạo hàm riêng:** Khi có $$k$$ biến dự báo, đường thẳng hồi quy trở thành một siêu phẳng $$\mu(x) = \alpha + \sum_{j=1}^k \beta_j x_j$$ trong $$\mathbb{R}^{k+1}$$. Hệ số $$\beta_j = \partial \mu / \partial x_j$$ chính là đạo hàm riêng theo tọa độ $$x_j$$ — giải thích vì sao ta luôn phải đọc kèm điều kiện "giữ các biến còn lại cố định".
+- **Phép chiếu trực giao và Định lý Frisch–Waugh–Lovell:** Trong đại số tuyến tính, ước lượng $$\beta_1$$ trong mô hình có cả $$x_1$$ và $$x_2$$ tương đương với việc lấy *phần dư* của $$x_1$$ sau khi đã trừ đi phần giải thích được bởi $$x_2$$, rồi mới hồi quy $$y$$ trên phần dư đó. Nói cách khác, $$\beta_1$$ chỉ sử dụng **phần thông tin độc lập** của $$x_1$$ mà $$x_2$$ chưa biết.
+- **Phân phối hậu nghiệm đồng thời trên không gian vector tham số:** Trong hồi quy đa biến Bayes, phân phối hậu nghiệm $$p(\alpha, \beta_1, \dots, \beta_k, \sigma \mid X, y)$$ chứa cả phương sai riêng của từng hệ số lẫn hiệp phương sai giữa các hệ số — cho ta biết hai biến dự báo có đang "giành nhau" cùng một phần biến thiên của $$y$$ hay không.
 ## 1. Vì sao một biến dự báo thường là chưa đủ?
 
 Ở Chương 4, ta đã làm quen với hồi quy tuyến tính đơn:
@@ -107,6 +117,20 @@ Nói ngắn gọn, hai mô hình trả lời hai câu hỏi khác nhau:
 
 - **Hồi quy đơn:** Nhìn tổng thể, biến này biến thiên cùng chiều hay ngược chiều với kết quả như thế nào?
 - **Hồi quy đa biến:** Khi giữ cố định các biến khác trong mô hình, biến này còn liên hệ với kết quả ở mức độ nào?
+
+### Khung giải thích (nên đọc chậm): Tính tay công thức thiên lệch bỏ sót biến (Omitted Variable Bias)
+
+Vì sao hệ số của một biến lại thay đổi mạnh khi ta thêm một biến dự báo thứ hai? Không cần suy đoán — công thức đại số sau cho bạn câu trả lời chính xác chỉ bằng một phép nhân và một phép cộng:
+
+1. **Giả sử cơ chế sinh dữ liệu thật** có hai biến đã dịch tâm $$x_1$$ (học vấn) và $$x_2$$ (kinh nghiệm):
+   $$y = 2.0\,x_1 + 3.0\,x_2 + \varepsilon,$$
+   trong đó tác động riêng thật sự của $$x_1$$ là $$\beta_1 = 2.0$$ và của $$x_2$$ là $$\beta_2 = 3.0$$.
+2. **Giả sử $$x_1$$ và $$x_2$$ tương quan dương trong tập dữ liệu**, cụ thể khi hồi quy $$x_2$$ theo $$x_1$$ ta có độ dốc $$\gamma = 0.5$$ (tức $$\mathbb{E}[x_2 \mid x_1] = 0.5\,x_1$$).
+3. **Chuyện gì xảy ra nếu bạn bỏ sót $$x_2$$ và chỉ chạy hồi quy đơn $$y \sim x_1$$?** Lấy kỳ vọng có điều kiện hai vế theo $$x_1$$:
+   $$\mathbb{E}[y \mid x_1] = 2.0\,x_1 + 3.0\,\mathbb{E}[x_2 \mid x_1] = 2.0\,x_1 + 3.0(0.5\,x_1) = 3.5\,x_1.$$
+4. **Đối chiếu kết quả:** Hồi quy đơn trả về hệ số $$\beta_1^{\text{đơn}} = 3.5$$ — bị phóng đại thêm đúng $$\beta_2 \cdot \gamma = 3.0 \times 0.5 = +1.5$$ do $$x_1$$ đã "gánh hộ" phần ảnh hưởng của $$x_2$$. Khi bạn đưa $$x_2$$ vào mô hình đa biến, hệ số của $$x_1$$ hạ từ $$3.5$$ xuống đúng $$2.0$$.
+
+**Kiểm tra nhanh:** Nếu $$x_1$$ và $$x_2$$ không tương quan ($$\gamma = 0$$), thì $$\beta_1^{\text{đơn}} = 2.0 + 3.0(0) = 2.0$$ — hệ số không hề đổi. Chính sự tương quan giữa các biến dự báo mới là nguồn gốc làm dịch chuyển hệ số.
 
 ## 5. Ví dụ thực tế: dự đoán giá nhà
 

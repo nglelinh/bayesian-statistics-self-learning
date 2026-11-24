@@ -14,6 +14,23 @@ This lesson introduces the fundamental concepts of continuity and uniform contin
 
 ---
 
+When you approximate a continuous Bayesian posterior integral $$\int_0^1 p(	heta\mid y)\,d	heta$$ on a finite grid of step size $$\Delta	heta = 0.01$$, what mathematical guarantee ensures that making the grid finer actually converges to the exact integral everywhere at once? The answer is **uniform continuity**—the stronger cousin of ordinary continuity where a single step size $$\delta$$ controls the function’s wobble simultaneously across the *entire* domain!
+
+This mathematical reference sharpens the distinction between **pointwise continuity** and **uniform continuity**, highlights the **Heine–Cantor theorem** (every continuous function on a closed bounded interval $$[a,b]$$ is automatically uniformly continuous!), and shows why steep singularities on unbounded domains break naive grid approximations.
+
+---
+
+## Background Knowledge Map: Continuity, Compactness, and Numerical Integration
+
+Four analysis concepts connect real analysis directly to Bayesian grid approximation and density theory:
+
+1. **Pointwise Continuity:** At a *fixed* point $$x_0$$, you can keep $$\lvert f(x)-f(x_0)vert < arepsilon$$ by choosing $$\delta(arepsilon, x_0)$$—allowing $$\delta$$ to shrink arbitrarily tiny in steeper regions of the graph.
+2. **Uniform Continuity:** One single $$\delta(arepsilon)$$ works for **every** pair $$x, y$$ across the entire domain simultaneously—guaranteeing controlled variation everywhere.
+3. **Heine–Cantor Theorem:** Any continuous function on a compact (closed and bounded) interval $$[a,b]$$ is automatically uniformly continuous—explaining why smooth posteriors on $$[0,1]$$ (like $$\mathrm{Beta}(lpha,eta)$$ with $$lpha,eta \ge 1$$) integrate cleanly on uniform grids!
+4. **Failure Modes on Open/Unbounded Domains:** Functions like $$1/x$$ on $$(0,1]$$ (blowing up near 0, like $$\mathrm{Beta}(0.5, 0.5)$$!) or $$x^2$$ on $$(0,\infty)$$ are continuous everywhere yet **not** uniformly continuous—requiring adaptive quadrature or log-transformations.
+
+---
+
 ## Continuity and Uniform Continuity
 
 **Continuity** and **Uniform Continuity** are fundamental concepts that describe the behavior of functions, particularly concerning their "smoothness" or "predictability." While closely related, they capture distinct properties, with uniform continuity being a stronger condition than mere continuity.
@@ -109,6 +126,32 @@ The three types of continuity form a hierarchy of increasingly strong conditions
 **Example 4: $$f(x) = \sqrt{x}$$**
 - **On $$[0,1]$$**: Continuous and uniformly continuous, but not Lipschitz (derivative unbounded near $$x = 0$$)
 - **On $$[a,1]$$ for $$a > 0$$**: Lipschitz with $$L = 1/(2\sqrt{a})$$
+
+---
+
+### Worked Numerical Example: Proving $$f(x) = x^2$$ Is Continuous Yet NOT Uniformly Continuous on $$[0, \infty)$$
+
+Test whether a single step size $$\delta$$ can keep $$\lvert f(y) - f(x)vert < 1$$ everywhere on $$[0, \infty)$$:
+Pick the sequence of pairs $$x_n = n$$ and $$y_n = n + rac{1}{n}$$ for $$n = 1, 10, 100, \dots$$:
+
+| $$n$$ | $$x_n$$ | $$y_n = n + 1/n$$ | Input Gap $$\lvert y_n - x_nvert$$ | Output Jump $$\lvert y_n^2 - x_n^2vert = 2 + 1/n^2$$ |
+| :--- | :--- | :--- | :--- | :--- |
+| $$1$$ | $$1$$ | $$2.00$$ | $$1.00$$ | $$3.00$$ |
+| $$10$$ | $$10$$ | $$10.10$$ | $$0.10$$ | $$2.01$$ |
+| $$100$$ | $$100$$ | $$100.01$$ | $$0.01$$ | $$2.0001$$ |
+
+Even as the input gap $$1/n 	o 0$$ becomes smaller than *any* proposed $$\delta > 0$$, the output jump stays strictly above **$$2$$**! Yet restrict $$f(x) = x^2$$ to the compact interval $$[0, 10]$$, and $$\lvert y^2 - x^2vert = \lvert y+xvert\lvert y-xvert \le 20\lvert y-xvert$$—so $$\delta = arepsilon / 20$$ works uniformly everywhere!
+
+### Deep-Dive Explanation: Four Takeaways Connecting Continuity to Bayesian Computing (Read Slowly)
+
+1. **Bounded slope implies Lipschitz $$\implies$$ uniform continuity:** Whenever $$\lvert f'(x)vert \le M$$ on an interval, $$\lvert f(y)-f(x)vert \le M\lvert y-xvert$$ gives an instant, explicit uniform step size $$\delta = arepsilon/M$$.
+2. **Watch boundary singularities in Beta/Gamma densities:** $$\mathrm{Beta}(0.5, 0.5)$$ shoots to $$\infty$$ at $$p = 0$$ and $$p = 1$$—evaluating it on a naive grid starting at `p = 0.0` produces `inf`!
+3. **Log-posterior smoothness matters for HMC/NUTS:** Hamiltonian Monte Carlo uses fixed leapfrog step sizes $$\epsilon$$; when log-posterior curvature varies wildly (failing uniform Lipschitz gradients, like Neal’s Funnel!), HMC produces **divergences** until you reparameterize.
+4. **Compact domains are friendly; infinite tails need care:** Always verify tail decay before truncating a numerical grid on $$(-\infty, \infty)$$.
+
+**Quick check.** Is $$f(x) = rac{1}{x}$$ uniformly continuous on the closed interval $$[1, 10]$$? What about on the open interval $$(0, 1]$$?
+
+---
 
 ## Reference videos
 

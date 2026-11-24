@@ -10,6 +10,25 @@ categories:
 lesson_type: required
 ---
 
+Every continuous Bayesian inference problem quietly runs on two engines from calculus: **integration** (summing area under the prior $$	imes$$ likelihood curve to compute the normalizing evidence $$P(D) = \int P(D\mid	heta)P(	heta)\,d	heta$$) and **differentiation** (finding the peak MAP estimate where $$
+abla_	heta \log p(	heta\mid D) = 0$$ and steering **Hamiltonian Monte Carlo / NUTS** along the gradient of the log-posterior!).
+
+This lesson refreshes single- and multi-variable calculus directly through a Bayesian lens: derivatives, gradients, Hessians (curvature = precision!), and integrals as expectations.
+
+---
+
+## Background Knowledge Map: Where Calculus Shows Up Inside Bayesian Inference
+
+Four calculus tools power almost every algorithm in this course:
+
+1. **Derivatives & Optimization (MLE / MAP):** Setting the first derivative of the log-posterior $$rac{d}{d	heta}\log p(	heta\mid D) = 0$$ locates the **Maximum A Posteriori (MAP)** mode cleanly without ever needing to compute the normalizing integral!
+2. **Second Derivative / Hessian = Curvature = Posterior Precision:** The negative second derivative $$-rac{d^2}{d	heta^2}\log p(	heta\mid D)$$ at the mode measures how sharply peaked the posterior is—giving the **Laplace approximation** variance $$\sigma_{	ext{post}}^2 pprox \left(-\ell''(\hat{	heta})ight)^{-1}$$!
+3. **Gradients & Automatic Differentiation (HMC / NUTS):** Modern Bayesian samplers (Stan, PyMC) treat $$-\log p(	heta\mid D)$$ as a gravitational potential energy landscape and use exact gradients $$
+abla_	heta \log p(	heta\mid D)$$ to glide efficiently across high-dimensional posteriors.
+4. **Integrals as Expectations & Marginalization:** Posterior means $$\mathbb{E}[	heta\mid D] = \int 	heta\,p(	heta\mid D)\,d	heta$$ and posterior predictive distributions are integrals—computed analytically for conjugate models or approximated by Monte Carlo averages $$rac{1}{S}\sum 	heta^{(s)}$$.
+
+---
+
 ## Learning objectives
 
 After this lesson, you will grasp the roles of derivatives, integrals, and optimization in Bayesian statistical inference. Specifically, you will understand the derivative as a tool for sensitivity analysis and finding extrema, the integral as normalization and computing probabilities over continuous domains, and optimization as the step of finding approximate solutions (for example the MAP) before or alongside sampling the posterior.
@@ -583,6 +602,35 @@ print(f"\nMAP: {theta_map:.4f}")
 print(f"Laplace std: {std_laplace:.4f}")
 print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2 * (alpha_post + beta_post + 1))):.4f}")
 ```
+
+---
+
+### Worked Numerical Example: Finding the MAP Mode and Laplace Variance of $$\mathrm{Beta}(8, 12)$$ by Hand
+
+Take the unnormalized log-posterior of $$\mathrm{Beta}(lpha=8, eta=12)$$:
+
+$$g(p) = \ln\!igl(p^{8-1}(1-p)^{12-1}igr) = 7\ln p + 11\ln(1-p).$$
+
+1. **First derivative $$	o$$ exact MAP mode:**
+   $$g'(p) = rac{7}{p} - rac{11}{1-p} = 0 \implies 7(1-p) = 11p \implies 18p = 7 \implies \hat{p}_{	ext{MAP}} = rac{7}{18} pprox \mathbf{0.3889}.$$
+2. **Second derivative at the mode $$	o$$ Laplace curvature & SD:**
+   $$g''(p) = -rac{7}{p^2} - rac{11}{(1-p)^2}.$$
+   Evaluate at $$\hat{p} = 7/18$$ (so $$1-\hat{p} = 11/18$$):
+   $$-g''(\hat{p}) = rac{7}{(7/18)^2} + rac{11}{(11/18)^2} = rac{18^2}{7} + rac{18^2}{11} = 324\!\left(rac{18}{77}ight) pprox 75.74.$$
+   Invert to get the Laplace approximate variance and SD:
+   $$\sigma_{	ext{Laplace}} = rac{1}{\sqrt{75.74}} pprox \mathbf{0.1149}$$
+   *(remarkably close to the exact $$\mathrm{Beta}(8,12)$$ standard deviation $$0.1069$$!)*
+
+### Deep-Dive Explanation: Four Calculus Insights That Make Bayesian Algorithms Click (Read Slowly)
+
+1. **Always differentiate the *log*-posterior, never the raw posterior:** Taking logs turns products of $$n$$ likelihood terms into sums, makes derivatives linear, and guarantees concavity for exponential families.
+2. **Higher curvature means *less* uncertainty:** A sharp, narrow log-posterior peak has a large negative second derivative $$-g''(\hat{	heta})$$, which translates directly into a small posterior variance!
+3. **Never confuse an integral over *data* with an integral over *parameters*:** Normalization integrates over $$	heta$$ ($$\int p(D\mid	heta)p(	heta)\,d	heta$$), which is why a likelihood function $$L(	heta)$$ by itself does *not* integrate to 1 over $$	heta$$!
+4. **Change-of-variables requires a Jacobian:** If you transform a parameter (e.g., $$\phi = \log \sigma$$ for unconstrained HMC sampling), you must multiply the density by $$\lvert rac{d\sigma}{d\phi}vert$$ so total probability mass is conserved.
+
+**Quick check.** For $$\mathrm{Beta}(8, 12)$$, the exact posterior mean is $$8/20 = 0.400$$ while the MAP mode we just found is $$7/18 pprox 0.389$$. Why is the mode slightly smaller than the mean? *(Hint: check which direction $$\mathrm{Beta}(8,12)$$ is skewed!)*
+
+---
 
 ## Reference videos
 

@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+One-parameter coin flips only take you so far. The moment you model real-world data—predicting house prices from 10 features, modeling correlated gene expressions, or running a **Multivariate Normal** Bayesian regression—scalars turn into vectors and matrices, and variance turns into a **covariance matrix $$\Sigma$$**.
+
+This lesson builds the exact geometric and matrix intuition you need for multi-parameter Bayesian models: dot products, linear transformations, **positive-definite covariance matrices**, **eigenvalues/eigenvectors** (which reveal the principal axes of a correlated posterior!), and **Cholesky decomposition** (the engine that samples correlated Gaussian draws!).
+
+---
+
+## Background Knowledge Map: How Linear Algebra Powers Multi-Parameter Bayes
+
+Four linear-algebra ideas reappear constantly across Bayesian regression and MCMC:
+
+1. **Design Matrix $$\mathbf{X}$$ & Linear Predictors $$\mathbf{X}oldsymbol{eta}$$:** Packs $$n$$ observations and $$p$$ predictors into one matrix multiply, turning regression into vector geometry.
+2. **Symmetric Positive-Definite (SPD) Covariance & Precision Matrices:** A valid covariance matrix $$\Sigma$$ is symmetric with all eigenvalues $$> 0$$. Its inverse $$\Lambda = \Sigma^{-1}$$ (the **precision matrix**) adds linearly in Multivariate Normal Bayesian updating!
+3. **Eigenvalues & Posterior Geometry:** The eigenvectors of $$\Sigma$$ point along the principal axes of the elliptical posterior contour, and the square roots of the eigenvalues give the standard deviations along those axes—explaining why highly correlated parameters create narrow "diagonal bananas/ridges" that slow down naive MCMC!
+4. **Cholesky Decomposition ($$\Sigma = L L^T$$):** The matrix square root of a covariance matrix—multiplying standard independent Normal draws $$\mathbf{z} \sim \mathcal{N}(\mathbf{0}, I)$$ by $$L$$ instantly generates correlated draws $$oldsymbol{\mu} + L\mathbf{z} \sim \mathcal{N}(oldsymbol{\mu}, \Sigma)$$!
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand why linear algebra is the mathematical infrastructure of Bayesian statistical models: data is represented as vectors and matrices, regression parameters are written as linear operators, and many inference algorithms rely directly on linear transformations. You will also be able to read the geometric meaning of formulas instead of just manipulating symbols.
@@ -552,6 +569,36 @@ print(f"\nR² = {r_squared:.4f}")
 | Inverse | $$\mathbf{A}^{-1}$$ | $$\mathbf{AA}^{-1} = \mathbf{I}$$ |
 | Determinant | $$\det(\mathbf{A})$$ | Scalar value |
 | Eigenvalue | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
+
+---
+
+### Worked Numerical Example: Hand-Computing Cholesky & Precision Updating on a $$2	imes 2$$ Covariance Matrix
+
+Suppose a 2-parameter posterior has covariance matrix:
+
+$$\Sigma = egin{pmatrix} 4 & 2 \ 2 & 5 \end{pmatrix}.$$
+
+1. **Check correlation & positive definiteness:**
+   - Standard deviations: $$\sigma_1 = \sqrt{4} = 2$$, $$\sigma_2 = \sqrt{5} pprox 2.236$$; correlation $$ho = rac{2}{2\sqrt{5}} pprox 0.447$$.
+   - Determinant: $$\det(\Sigma) = 4(5) - 2^2 = 16 > 0$$ and trace $$4+5=9 > 0$$ $$\implies$$ strictly positive definite!
+2. **Compute its lower-triangular Cholesky factor $$L$$ ($$\Sigma = L L^T$$) by hand:**
+   - $$L_{11} = \sqrt{4} = 2$$.
+   - $$L_{21} = rac{2}{L_{11}} = rac{2}{2} = 1$$.
+   - $$L_{22} = \sqrt{5 - L_{21}^2} = \sqrt{5 - 1} = 2$$.
+   So $$L = egin{pmatrix} 2 & 0 \ 1 & 2 \end{pmatrix}$$! Verify: $$L L^T = egin{pmatrix} 2 & 0 \ 1 & 2 \end{pmatrix}egin{pmatrix} 2 & 1 \ 0 & 2 \end{pmatrix} = egin{pmatrix} 4 & 2 \ 2 & 5 \end{pmatrix}$$—exact!
+3. **Generate one correlated draw from $$\mathbf{z} = (1, -1)^T$$:**
+   $$L\mathbf{z} = egin{pmatrix} 2(1) + 0 \ 1(1) + 2(-1) \end{pmatrix} = egin{pmatrix} 2 \ -1 \end{pmatrix}.$$
+
+### Deep-Dive Explanation: Four Linear-Algebra Habits for Bayesian Modeling (Read Slowly)
+
+1. **Never invert a matrix explicitly when solving $$A\mathbf{x}=\mathbf{b}$$:** Use `np.linalg.solve(A, b)` or Cholesky solves instead of `np.linalg.inv(A) @ b` for far higher speed and numerical stability.
+2. **Watch the condition number of $$\mathbf{X}^T\mathbf{X}$$:** Collinear predictors create tiny eigenvalues in $$\mathbf{X}^T\mathbf{X}$$, stretching the posterior into a razor-thin ridge—standardizing predictors (`(x - mean)/sd`) immediately improves geometry!
+3. **Think in precision matrices ($$\Sigma^{-1}$$) for Gaussian Bayes:** Just as 1D precisions add ($$	au_{	ext{post}} = 	au_{	ext{prior}} + 	au_{	ext{data}}$$), in $$d$$ dimensions $$\Sigma_{	ext{post}}^{-1} = \Sigma_{	ext{prior}}^{-1} + rac{1}{\sigma^2}\mathbf{X}^T\mathbf{X}$$!
+4. **Use Cholesky for non-centered parameterizations in Stan/PyMC:** Sampling standard Normal $$\mathbf{z}$$ and transforming via $$L\mathbf{z}$$ lets Hamiltonian Monte Carlo explore correlated posteriors effortlessly.
+
+**Quick check.** For the matrix $$\Sigma = egin{pmatrix} 4 & 2 \ 2 & 5 \end{pmatrix}$$ above (with $$\det(\Sigma) = 16$$), what is its inverse—the **precision matrix** $$\Lambda = \Sigma^{-1}$$?
+
+---
 
 ## Reference videos
 

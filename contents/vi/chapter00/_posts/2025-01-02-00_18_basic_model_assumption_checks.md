@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Năm 1976, nhà thống kê George Box viết một câu nói trở thành kim chỉ nam cho mọi người làm dữ liệu: *"Mọi mô hình đều sai, nhưng một số mô hình hữu ích."* Câu nói đó không phải lời biện minh để bỏ qua kiểm tra giả định, mà ngược lại: vì mọi mô hình đều là bản đồ đơn giản hóa của thực tại, việc đầu tiên của nhà phân tích là kiểm tra xem bản đồ có đang sai ở đúng chỗ quyết định hay không.
+
+Trước khi đi vào các mô hình hồi quy hay MCMC phức tạp, bài học này trang bị cho bạn thói quen chẩn đoán có hệ thống: nhìn phần dư, phát hiện ngoại lai, kiểm tra phương sai thay đổi và tính độc lập để không bao giờ tin mù quáng vào một bảng kết quả đẹp mã.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ biết cách kiểm tra có hệ thống các giả định cốt lõi của mô hình (dạng phân phối, tính độc lập, cấu trúc sai số), nhận diện sớm dấu hiệu sai đặc tả mô hình (misspecification), và chuyển kết quả chẩn đoán thành bước cải tiến mô hình cụ thể.
+
+
+## Bản đồ kiến thức nền: Chẩn đoán giả định, Cơ chế sinh dữ liệu và Phản biện mô hình Bayes
+
+Kiểm tra giả định không phải thủ tục hình thức mà là sự giao thoa của ba trụ cột:
+
+- **Bốn giả định cốt lõi của mô hình tuyến tính (LINE):** Tuyến tính (*Linearity*), Độc lập (*Independence*), Phân phối phần dư (*Normality*) và Phương sai đồng nhất (*Equal variance / Homoscedasticity*). Mỗi giả định tương ứng với một bộ phận cụ thể trong phương trình sinh dữ liệu.
+- **Chẩn đoán bằng đồ thị và kiểm định (Residual & Influence Diagnostics):** Biểu đồ phần dư theo giá trị dự đoán, Q-Q plot và chỉ số đòn bẩy giúp nhìn thấy ngay cấu trúc bị bỏ sót mà các chỉ số tổng hợp như $$R^2$$ thường che giấu.
+- **Cầu nối sang Quy trình Bayes (Bayesian Workflow):** Trong thống kê Bayes, khi phát hiện giả định bị vi phạm, ta không vội "xóa điểm dữ liệu cho đẹp", mà chủ động nâng cấp mô hình sinh: thay Gaussian bằng Student-$$t$$ khi có đuôi dày/ngoại lai, thêm thành phần phân cấp khi dữ liệu gom cụm, hoặc chuyển sang GLM (Poisson/Negative Binomial) cho dữ liệu đếm.
+
+---
 
 ## 1) Giả định mô hình là gì và nằm ở đâu?
 
@@ -237,6 +254,33 @@ Mục tiêu không phải chứng minh mô hình "đúng tuyệt đối", mà l�
 3. Bộ kiểm tra tối thiểu gồm: phân phối đầu ra, phần dư, ngoại lai/điểm ảnh hưởng và tính độc lập.
 4. Dấu hiệu sai đặc tả cần được chuyển thành điều chỉnh cụ thể ở hàm hợp lý hoặc cấu trúc mô hình.
 5. Sai mô hình là thông tin chẩn đoán để cải tiến, không phải thất bại.
+
+
+## Khung giải thích (nên đọc chậm): Bốn câu hỏi chẩn đoán trước khi tin kết quả
+
+Mỗi khi vừa khớp xong một mô hình cơ bản, hãy đọc chậm và lần lượt kiểm tra bốn câu hỏi sau trên phần dư $$e_i = y_i - \hat y_i$$:
+
+1. **Phần dư có còn hình dáng có quy luật (cong hình chữ U hay chữ S)?** Nếu có, quan hệ thật là phi tuyến — cần thêm bậc đa thức, spline hoặc biến đổi biến.
+2. **Độ phân tán của phần dư có phình to dần theo $$\hat y$$ (hình phễu)?** Nếu có, phương sai không đồng nhất (heteroscedasticity) — khoảng tin cậy sẽ sai lệch nếu giữ nguyên giả định $$\sigma$$ cố định.
+3. **Có điểm ngoại lai nào kéo nghiêng đường hồi quy không?** Chỉ một quan sát bất thường cũng có thể làm lệch mạnh trung bình và độ dốc dưới hàm mất mát bình phương (Gaussian).
+4. **Phần dư liên tiếp có tương quan theo thời gian hoặc theo nhóm không?** Nếu có, giả định độc lập bị phá vỡ và sai số chuẩn bị đánh giá thấp một cách giả tạo.
+
+### Ví dụ tính toán cầm tay chỉ việc: Một điểm ngoại lai làm lệch ước lượng ra sao?
+
+Xét 5 phép đo thời gian hoàn thành một tác vụ (đơn vị: giây): $$10, 11, 12, 13, 14$$. Giả sử ở lần ghi thứ 5 bị lỗi nhập liệu từ $$14$$ thành $$64$$ (một điểm ngoại lai duy nhất). So sánh ước lượng trung bình (tương ứng likelihood Gaussian) và trung vị (tương ứng likelihood Laplace / bền vững):
+
+| Tập dữ liệu | Trung bình mẫu $$\bar x$$ | Độ lệch chuẩn mẫu $$s$$ | Trung vị (Median) | Khoảng tứ phân vị (IQR) |
+| --- | --- | --- | --- | --- |
+| Dữ liệu sạch: $$10, 11, 12, 13, 14$$ | $$60 / 5 = 12.0\text{ s}$$ | $$1.58\text{ s}$$ | $$12.0\text{ s}$$ | $$13 - 11 = 2.0\text{ s}$$ |
+| Có 1 ngoại lai: $$10, 11, 12, 13, 64$$ | $$110 / 5 = 22.0\text{ s}$$ | $$23.51\text{ s}$$ | $$12.0\text{ s}$$ | $$13 - 11 = 2.0\text{ s}$$ |
+
+Chỉ **một** điểm ngoại lai đã kéo trung bình tăng vọt từ $$12\text{ s}$$ lên $$22\text{ s}$$ (lệch hơn $$83\%$$) và làm độ lệch chuẩn phình gấp gần **15 lần** (từ $$1.58\text{ s}$$ lên $$23.51\text{ s}$$), trong khi trung vị và IQR hầu như bất biến. Đây là lý do trong hồi quy Bayes thực tế ta thường thay likelihood Gaussian bằng phân phối Student-$$t$$ khi phát hiện ngoại lai.
+
+**Hiểu lầm cần tránh:** Nghĩ rằng chỉ cần hệ số $$R^2$$ cao (chẳng hạn $$R^2 = 0.90$$) thì các giả định mô hình chắc chắn đã thỏa mãn. Bộ tứ Anscombe kinh điển chứng minh 4 tập dữ liệu có cùng $$R^2$$ và cùng đường hồi quy nhưng cấu trúc phần dư hoàn toàn khác nhau.
+
+**Kiểm tra nhanh:** Nếu dùng mô hình Gaussian trên tập có ngoại lai trên, khoảng tin cậy 95% thô $$\bar x \pm 1.96\,s/\sqrt{5}$$ trở thành $$22.0 \pm 20.6 = [1.4,\; 42.6]\text{ s}$$ — rộng vô nghĩa vì vi phạm giả định đuôi mỏng.
+
+---
 
 ## Video tham khảo
 

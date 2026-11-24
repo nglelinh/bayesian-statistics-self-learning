@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+What is the probability that it will rain on your wedding day next month, or that a brand-new rocket design will succeed on its *very first* launch? Under the strict frequentist definition (*"long-run relative frequency over infinite identical repetitions"*), you cannot even assign a probability to a unique, one-time event! Yet every engineer, doctor, and human being reasons quantitatively about unique uncertain events every single day.
+
+This lesson introduces the philosophical bedrock of Bayesian statistics: **probability as quantified plausibility (degree of rational belief given information)**—grounded mathematically by **Cox’s theorem** and **Dutch Book coherence**.
+
+---
+
+## Background Knowledge Map: Frequentist Frequency vs. Bayesian Plausibility
+
+1. **Frequentist View (Long-Run Frequency):** Probability applies strictly to repeatable random sampling; parameters $$\theta$$ are fixed unknown constants, so statements like "$$P(\theta > 0 \mid \text{data}) = 0.92$$" are syntactically illegal!
+2. **Bayesian View (Epistemic Plausibility):** Probability measures rational uncertainty about *any* proposition—repeatable or one-off—given explicit background information $$I$$, written $$P(A \mid I)$$.
+3. **Cox’s Theorem (1946):** Proved that *any* quantitative system of plausible reasoning obeying three commonsense consistency axioms is mathematically **isomorphic to the laws of probability and Bayes’ theorem**!
+4. **Calibration & Betting Coherence (Dutch Book):** If your stated probabilities violate probability axioms (e.g., assigning 60% to Rain and 60% to No Rain), a bookmaker can construct a **Dutch Book**—a guaranteed-loss set of bets regardless of the outcome!
+
+---
+
 ## Learning objectives
 
 After this lesson, you need to understand why Bayesian statistics sees probability as the **degree of plausibility of a belief** and not just as long-run frequency. You also need to see the strength of this view on real problems, where we must talk about events that happen only once, about hypotheses, and about unknown parameters.
@@ -159,6 +174,28 @@ If we had to sum it up in just two sentences, the Frequentist ties probability t
 Neither side is completely wrong and the other completely right in every situation. But Bayes is much more flexible for real scientific questions.
 
 > **3 key ideas.** Frequentist and Bayesian differ first of all in how they define probability, not only in computational technique; the Bayesian view treats probability as plausibility, so it applies naturally to hypotheses, parameters and events that happen only once; and "subjective" in Bayes does not mean arbitrary, because beliefs must still obey the coherent rules of probability.
+
+---
+
+### Worked Numerical Example: Constructing a Dutch Book Against Incoherent Beliefs
+
+Suppose a forecaster violates the sum rule by assigning $$P(\text{Rain}) = 0.60$$ and $$P(\text{No Rain}) = 0.60$$ (summing to $$1.20 > 1$$). That means they think $0.60 is a fair price to buy a ticket paying $1.00 if Rain occurs, *and* $0.60 is a fair price for a ticket paying $1.00 if No Rain occurs!
+- **Bookmaker sells both tickets** to the forecaster for $$0.60 + 0.60 = \mathbf{\$1.20}$$.
+- **If it rains:** Forecaster collects $\$1.00$ $$\implies$$ **net loss of $-\$0.20$**.
+- **If it stays dry:** Forecaster collects $\$1.00$ $$\implies$$ **net loss of $-\$0.20$**.
+
+The forecaster loses money with **100% certainty**! Coherence forces probabilities of mutually exclusive exhaustive events to sum to exactly $$1.00$$—and forces belief updates to obey Bayes’ theorem!
+
+### Deep-Dive Explanation: Four Clarifications on "Subjective" Bayesian Probability (Read Slowly)
+
+1. **"Subjective" means *information-dependent*, not arbitrary:** Two scientists with different background information $$I_1 \neq I_2$$ rationally assign different probabilities—and once they share the same data, Bayes’ rule pulls their posteriors together!
+2. **Probability is a property of your *knowledge*, not just the physical coin:** Before you peek under your hand at a coin already flipped, the physical coin is fixed, yet $$P(\text{Heads} \mid I) = 0.5$$ accurately describes your uncertainty.
+3. **Frequentist and Bayesian probabilities agree on symmetric physical games:** On a known fair die, both views assign $$1/6$$—Bayesian probability strictly *generalizes* frequency to parameters and unique events.
+4. **Always make your conditioning information explicit:** Writing $$P(\theta \mid D, M)$$ reminds you that every conclusion depends on both the data $$D$$ and the modeling assumptions $$M$$.
+
+**Quick check.** If a model predicts 70% probability of Team A winning and 45% probability of Team B winning (no ties possible), how much guaranteed profit can a bookmaker lock in per $1 payout pair?
+
+---
 
 ## Reference videos
 

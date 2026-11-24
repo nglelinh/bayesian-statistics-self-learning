@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Đầu thế kỷ 20, William Sealy Gosset làm việc tại nhà máy bia Guinness ở Dublin với một bài toán hết sức thực tế: ông chỉ có thể thử nghiệm trên vài mẻ lúa mạch nhỏ, nhưng vẫn cần biết trung bình mẫu của mình dao động mạnh đến mức nào nếu lặp lại thí nghiệm. Công trình ký bút danh "Student" của ông đã làm rõ khái niệm **phân phối lấy mẫu (sampling distribution)** — chiếc cầu nối giữa một mẫu hữu hạn ta cầm trên tay và quần thể ẩn phía sau.
+
+Dù thống kê Bayes sử dụng phân phối hậu nghiệm thay cho phân phối lấy mẫu tần suất để suy luận trực tiếp về tham số, việc hiểu rạch ròi sự khác biệt giữa độ lệch chuẩn của dữ liệu (SD), sai số chuẩn của ước lượng (SE) và độ lệch chuẩn hậu nghiệm là điều kiện bắt buộc để đọc đúng mọi bảng kết quả thống kê.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ phân biệt rõ phân phối của dữ liệu gốc với phân phối của ước lượng, hiểu sai số chuẩn (standard error) là độ bất định của bộ ước lượng chứ không phải độ phân tán của dữ liệu, và vận dụng trực giác này để đọc kết quả suy luận thống kê chính xác hơn.
+
+
+## Bản đồ kiến thức nền: Biến thiên dữ liệu, Phân phối lấy mẫu và Độ bất định ước lượng
+
+Để không bao giờ nhầm lẫn giữa các loại "độ lệch chuẩn" trong thống kê, hãy đặt bài học này trên ba trụ cột:
+
+- **Thống kê mẫu như biến ngẫu nhiên (Sampling Distribution):** Một thống kê như $$\bar X$$ hay $$\hat p$$ là hàm của dữ liệu ngẫu nhiên, nên bản thân nó cũng có phân phối xác suất riêng khi lặp lại quá trình lấy mẫu.
+- **Độ lệch chuẩn (SD) so với Sai số chuẩn (SE):** SD đo mức độ phân tán giữa *các cá thể* trong dữ liệu ($$\sigma$$), còn SE đo mức độ dao động của *bản thân ước lượng* qua các lần lấy mẫu lặp lại ($$\sigma/\sqrt{n}$$).
+- **Cầu nối sang Thống kê Bayes:** Trong Bayes, ta không cần giả định lấy mẫu lặp vô hạn để đo bất định của tham số; thay vào đó, ta đọc trực tiếp độ lệch chuẩn hậu nghiệm $$\mathrm{SD}(\theta \mid y)$$ và sai số chuẩn Monte Carlo (MCSE) của chuỗi MCMC — hai đại lượng song hành với tư duy SE nhưng trả lời trực tiếp câu hỏi về tham số.
+
+---
 
 ## Giới thiệu: Từ một mẫu dữ liệu đến độ ổn định của ước lượng
 
@@ -90,6 +107,31 @@ Trong thống kê Bayesian, độ lệch chuẩn hậu nghiệm (posterior SD) c
 2. Sai số chuẩn (SE) là độ lệch chuẩn của bộ ước lượng.
 3. Độ lệch chuẩn dữ liệu (SD) và sai số chuẩn (SE) đo hai đại lượng khác nhau.
 4. Khi cỡ mẫu tăng, SE giảm theo tỷ lệ $$1/\sqrt{n}$$.
+
+
+## Khung giải thích (nên đọc chậm): Tách bạch ba tầng độ bất định
+
+Khi đọc một báo cáo có ghi "trung bình $$50 \pm 2$$", hãy dừng lại và hỏi con số $$2$$ đó thuộc tầng nào trong ba tầng sau:
+
+1. **Tầng dữ liệu (SD = $$s$$):** Phản ánh khoảng chênh lệch tự nhiên giữa các cá thể. Lấy thêm dữ liệu chỉ giúp ước lượng $$s$$ chính xác hơn chứ không làm $$s$$ tiến về 0.
+2. **Tầng ước lượng (SE = $$s/\sqrt{n}$$):** Phản ánh độ ổn định của trung bình mẫu $$\bar x$$. Khi $$n$$ tăng gấp 4 lần, SE giảm đi một nửa và tiến về 0 khi $$n \to \infty$$.
+3. **Tầng dự báo cá thể mới:** Khi dự đoán một quan sát mới $$X_{\text{new}}$$, độ bất định gộp cả hai nguồn: $$\sqrt{s^2 + s^2/n}$$ — luôn lớn hơn hoặc bằng SD.
+
+### Ví dụ tính toán cầm tay chỉ việc: Khảo sát chiều cao sinh viên
+
+Giả sử đo chiều cao của $$n = 36$$ sinh viên, ta thu được trung bình mẫu $$\bar x = 168.0\text{ cm}$$ và độ lệch chuẩn mẫu $$s = 6.0\text{ cm}$$.
+
+| Đại lượng | Công thức | Giá trị tính tay | Ý nghĩa thực tế |
+| --- | --- | --- | --- |
+| Độ lệch chuẩn mẫu (SD) | $$s$$ | $$6.0\text{ cm}$$ | Chênh lệch điển hình giữa các sinh viên trong lớp |
+| Sai số chuẩn (SE) | $$s / \sqrt{n}$$ | $$6.0 / \sqrt{36} = 1.0\text{ cm}$$ | Độ dao động dự kiến của trung bình mẫu $$\bar x$$ |
+| Biên sai số 95% của $$\bar x$$ | $$1.96 \times \mathrm{SE}$$ | $$1.96 \times 1.0 = 1.96\text{ cm}$$ | Khoảng tin cậy 95% cho chiều cao trung bình: $$[166.04,\; 169.96]\text{ cm}$$ |
+
+**Hiểu lầm cần tránh:** Nhìn thấy khoảng $$168.0 \pm 1.96\text{ cm}$$ rồi kết luận "95% sinh viên cao từ 166 cm đến 170 cm". Thực tế đó là khoảng bất định cho *trung bình quần thể*, còn 95% sinh viên cá lẻ sẽ trải rộng quanh $$\bar x \pm 1.96 s \approx [156.2,\; 179.8]\text{ cm}$$.
+
+**Kiểm tra nhanh:** Nếu tăng cỡ mẫu từ $$n = 36$$ lên $$n = 144$$ (gấp 4 lần), SD vẫn xoay quanh $$6.0\text{ cm}$$, còn SE giảm một nửa từ $$1.0\text{ cm}$$ xuống $$6.0 / \sqrt{144} = 0.5\text{ cm}$$.
+
+---
 
 ## Video tham khảo
 

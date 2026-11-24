@@ -10,6 +10,8 @@ categories:
 lesson_type: required
 ---
 
+Hãy thử tưởng tượng một nông dân tưới nước cho hai thửa ruộng hoa tulip: một thửa đặt ngoài trời nắng, một thửa đặt trong nhà tối hoàn toàn. Ở thửa có nắng, thêm nước làm hoa nở rực rỡ; ở thửa tối om, thêm bao nhiêu nước cây vẫn không lớn nổi. Trong thế giới thực, các nguyên nhân hiếm khi hoạt động độc lập như những viên gạch xếp chồng lên nhau — chúng thường **kích hoạt, khuếch đại hoặc triệt tiêu lẫn nhau**. Hạng tương tác trong hồi quy Bayes chính là cách toán học cho phép bản thân "độ dốc" của một biến trở thành hàm số của bối cảnh.
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu hiệu ứng tương tác (interaction effect) là gì và vì sao nhiều hiện tượng thực tế không thể mô tả đầy đủ bằng mô hình cộng đơn giản. Bạn cũng sẽ biết cách diễn giải tương tác theo hiệu ứng có điều kiện — tức tác động của một biến thay đổi tùy theo giá trị của biến khác — thay vì xem mọi hệ số là hằng số cố định.
@@ -18,6 +20,14 @@ Sau bài này, bạn sẽ hiểu hiệu ứng tương tác (interaction effect) 
 >
 > **Câu hỏi tự kiểm tra.** Nếu tác động của một biến dự báo thay đổi theo mức của một biến dự báo khác, mô hình cộng đơn giản sẽ bỏ sót điều gì?
 
+
+## Bản đồ kiến thức nền: Đạo hàm riêng hỗn hợp, Tính đối xứng của tương tác và Phép dịch tâm
+
+Ở góc độ giải tích nhiều biến và thống kê Bayes, hiệu ứng tương tác xoay quanh ba ý niệm cốt lõi:
+
+- **Đạo hàm hỗn hợp và mặt cong uốn xoắn:** Trong mô hình $$\mu(x_1, x_2) = \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1 x_2$$, độ dốc theo $$x_1$$ là $$\frac{\partial \mu}{\partial x_1} = \beta_1 + \beta_3 x_2$$, còn đạo hàm riêng hỗn hợp là $$\frac{\partial^2 \mu}{\partial x_1 \partial x_2} = \beta_3$$. Về mặt hình học, $$\beta_3 \neq 0$$ uốn mặt phẳng hồi quy thành một mặt yên ngựa (hyperbolic paraboloid).
+- **Tính đối xứng tuyệt đối của tương tác:** Vì $$\frac{\partial^2 \mu}{\partial x_1 \partial x_2} = \frac{\partial^2 \mu}{\partial x_2 \partial x_1} = \beta_3$$, dữ liệu không phân biệt "biến nào điều tiết biến nào". Nếu tác động của giờ học thay đổi theo trình độ nền, thì đồng thời tác động của trình độ nền cũng thay đổi theo số giờ học.
+- **Dịch tâm biến (Centering) trước khi nhân tương tác:** Khi giữ biến gốc chưa dịch tâm, hiệu ứng chính $$\beta_1$$ đo độ dốc tại $$x_2 = 0$$ (thường vô nghĩa) và tích $$x_1 x_2$$ tương quan rất mạnh với chính $$x_1, x_2$$ (gây đa cộng tuyến nhân tạo). Dịch tâm $$\tilde x_j = x_j - \bar x_j$$ khôi phục ý nghĩa cho mọi hiệu ứng chính và làm MCMC hội tụ nhanh hơn.
 ## 1. Các yếu tố trong thực tế hiếm khi chỉ cộng dồn độc lập
 
 Mô hình hồi quy cộng (additive model) có dạng:
@@ -116,6 +126,26 @@ Hiệu ứng tương tác không chỉ giới hạn ở biến nhị phân mà c
 ![Contour plot của tương tác giữa hai biến liên tục]({{ site.baseurl }}/img/chapter_img/chapter05/chapter05_continuous_interaction_contour.png)
 
 Với tương tác giữa hai biến liên tục, các đồ thị trực quan như biểu đồ đường đồng mức (contour plot), biểu đồ bề mặt 3D hoặc đồ thị hiệu ứng có điều kiện tại vài mức tiêu biểu của biến kia dễ đọc hơn nhiều so với bảng hệ số thuần túy.
+
+### Khung giải thích (nên đọc chậm): Chứng minh bằng tay vì sao dịch tâm (centering) cứu nguyên ý nghĩa của hiệu ứng chính
+
+Giả sử ta mô hình hóa điểm thi theo số giờ học $$x_1$$ (trung bình lớp $$\bar x_1 = 5$$ giờ) và điểm nền tảng đầu vào $$x_2$$ (trung bình lớp $$\bar x_2 = 7$$ điểm):
+
+$$\mu = 1.0 + 0.10\,x_1 + 0.50\,x_2 + 0.05\,x_1 x_2.$$
+
+1. **Cái bẫy khi đọc trực tiếp ở thang gốc:** Nếu đọc vội $$\beta_1 = 0.10$$ là "học thêm 1 giờ tăng 0.10 điểm", bạn đang mắc sai lầm nghiêm trọng! Con số $$0.10$$ chỉ đúng khi $$x_2 = 0$$ (học sinh có 0 điểm đầu vào). Tại mức học sinh trung bình của lớp ($$x_2 = 7$$), tác động thực sự của 1 giờ học thêm là:
+   $$\left.\frac{\partial \mu}{\partial x_1}\right|_{x_2 = 7} = 0.10 + 0.05(7) = 0.45\text{ điểm/giờ}$$
+   — gấp **4.5 lần** con số $$0.10$$ hiển thị ở bảng hệ số!
+2. **Đặt biến dịch tâm $$\tilde x_1 = x_1 - 5$$ và $$\tilde x_2 = x_2 - 7$$** (suy ra $$x_1 = \tilde x_1 + 5,\ x_2 = \tilde x_2 + 7$$), thay vào phương trình và khai triển:
+   $$\begin{aligned}
+   \mu &= 1.0 + 0.10(\tilde x_1 + 5) + 0.50(\tilde x_2 + 7) + 0.05(\tilde x_1 + 5)(\tilde x_2 + 7) \\
+   &= (1.0 + 0.50 + 3.50 + 1.75) + (0.10 + 0.35)\tilde x_1 + (0.50 + 0.25)\tilde x_2 + 0.05\,\tilde x_1 \tilde x_2 \\
+   &= 6.75 + 0.45\,\tilde x_1 + 0.75\,\tilde x_2 + 0.05\,\tilde x_1 \tilde x_2.
+   \end{aligned}$$
+3. **Đọc lại bảng hệ số mới:**
+   - Hệ số chặn $$6.75$$ là điểm kỳ vọng của học sinh trung bình (học 5 giờ, đầu vào 7 điểm).
+   - Hiệu ứng chính $$\tilde\beta_1 = 0.45$$ là tác động đúng của 1 giờ học tại mức đầu vào trung bình.
+   - Hệ số tương tác $$\beta_3 = 0.05$$ **hoàn toàn bất biến** — chứng tỏ hai mô hình dự đoán giống hệt nhau từng chữ số, nhưng mô hình dịch tâm cho khả năng diễn giải minh bạch hơn hẳn.
 
 ## 7. Khi nào nên cân nhắc đưa hạng tương tác vào mô hình?
 

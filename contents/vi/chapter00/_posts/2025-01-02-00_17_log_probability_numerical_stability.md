@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Trên bảng phấn, tích của 1.000 xác suất bằng $$0.1$$ chỉ là một dòng ký hiệu gọn gàng $$10^{-1000}$$. Nhưng ngay khi bạn gõ công thức ấy vào máy tính dấu phẩy động 64-bit chuẩn IEEE 754, con số đó lập tức biến mất thành đúng `0.0` vì vượt quá giới hạn dưới khoảng $$10^{-308}$$. Trong một lần chạy công thức Bayes, chỉ cần tử số và mẫu số cùng bị làm tròn về `0.0`, toàn bộ thuật toán lập tức sập với `0.0 / 0.0 = NaN`.
+
+Bài học này bóc tách **cầu nối giữa toán học lý tưởng và tính toán số thực tế**: làm việc trên thang logarit và sử dụng thủ thuật `log-sum-exp` không phải mẹo lập trình vặt, mà là kỹ thuật sống còn trong mọi phần mềm Bayes hiện đại như PyMC hay Stan.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài này, bạn sẽ hiểu vì sao thực hành Bayesian gần như luôn thao tác trên thang log, nhận diện được các sự cố số học như underflow, overflow, `-inf` và `nan`, biết cách viết log-likelihood và log-posterior đúng chuẩn, đồng thời nắm kỹ thuật log-sum-exp để chuẩn hóa trọng số hậu nghiệm an toàn.
+
+
+## Bản đồ kiến thức nền: Số học dấu phẩy động, Đại số Logarit và Ổn định MCMC
+
+Để hiểu vì sao mọi công cụ Bayes chuyên nghiệp đều tính hoàn toàn trong không gian log, hãy kết nối ba trụ cột:
+
+- **Biểu diễn dấu phẩy động IEEE 754 (Floating-Point Arithmetic):** Số `float64` chỉ biểu diễn được các số dương lớn hơn khoảng $$2.2 \times 10^{-308}$$ (và nhỏ hơn $$1.8 \times 10^{308}$$). Khi nhân hàng trăm xác suất nhỏ hơn 1, hiện tượng tràn dưới (*underflow*) chắc chắn xảy ra.
+- **Phép biến đổi đơn điệu Logarit (Log-Space Algebra):** Hàm $$\log$$ biến tích thành tổng ($$\log\prod p_i = \sum \log p_i$$), giữ nguyên thứ tự lớn nhỏ (nên $$\arg\max$$ không đổi) và thu gọn dải giá trị $$10^{-1000}$$ thành một con số hết sức bình thường là $$-2302.6$$.
+- **Kỹ thuật Log-Sum-Exp & Cầu nối sang Bayes:** Khi chuẩn hóa phân phối hậu nghiệm trên lưới hay tính trọng số mô hình (WAIC/LOO), ta buộc phải cộng các xác suất từ thang log. Đẳng thức $$\log\sum_i e^{a_i} = m + \log\sum_i e^{a_i - m}$$ (với $$m = \max_i a_i$$) triệt tiêu cả tràn trên lẫn tràn dưới mà không làm mất một chữ số chính xác nào.
+
+---
 
 ## Giới thiệu: Đúng về mặt toán chưa đủ, còn phải ổn định trên máy tính
 
@@ -290,6 +307,36 @@ Nguyên tắc cốt lõi cần nhớ: **trong tính toán Bayesian, hãy giữ p
 3. Tính toán Bayesian chủ yếu làm việc với log-likelihood và log-posterior chưa chuẩn hóa.
 4. Khi cần cộng hoặc chuẩn hóa từ thang log, dùng log-sum-exp hoặc kỹ thuật trừ `max`.
 5. Các giá trị `-inf`, `inf` và `nan` là tín hiệu chẩn đoán quan trọng trong quy trình tính toán.
+
+
+## Khung giải thích (nên đọc chậm): Ba bước chuẩn hóa hậu nghiệm an toàn bằng Log-Sum-Exp
+
+Khi bạn có vectơ log-posterior chưa chuẩn hóa $$\mathbf{a} = (a_1, \dots, a_K)$$ gồm các số âm rất lớn, hãy luôn thực hiện đúng ba bước sau thay vì gọi `exp(a)` trực tiếp:
+
+1. **Tìm điểm neo cực đại:** Đặt $$m = \max_k a_k$$.
+2. **Dịch chuyển về gần 0 trước khi lấy mũ:** Tính $$b_k = a_k - m \le 0$$. Phần tử lớn nhất có $$b_{k^*} = 0 \implies e^{b_{k^*}} = 1$$, đảm bảo không bao giờ tràn trên (overflow) và mẫu số luôn $$\ge 1$$ (không bao giờ chia cho 0).
+3. **Tính hằng số chuẩn hóa và xác suất hậu nghiệm:** $$\log Z = m + \log\sum_k e^{b_k}$$, rồi $$p_k = \exp(a_k - \log Z)$$.
+
+### Ví dụ tính toán cầm tay chỉ việc: Chuẩn hóa 3 mô hình có log-posterior bằng $$-1000$$
+
+Giả sử sau khi quan sát tập dữ liệu lớn, ba giả thuyết $$H_1, H_2, H_3$$ có log-posterior chưa chuẩn hóa lần lượt là $$a_1 = -1000.0$$, $$a_2 = -1001.0$$, $$a_3 = -1002.0$$.
+
+Nếu tính trực tiếp trên `float64`: $$\exp(-1000) = 0.0$$, nên tổng bằng `0.0` và tỷ số `0.0 / 0.0 = NaN`! Bây giờ áp dụng `log-sum-exp` với $$m = -1000.0$$:
+
+| Giả thuyết | Log gốc $$a_k$$ | Dịch chuyển $$b_k = a_k - m$$ | $$e^{b_k}$$ | Xác suất chuẩn hóa $$p_k = e^{b_k} / \sum e^{b_j}$$ |
+| --- | --- | --- | --- | --- |
+| $$H_1$$ | $$-1000.0$$ | $$0.0$$ | $$1.0000$$ | $$1.0000 / 1.5032 \approx 0.6652$$ |
+| $$H_2$$ | $$-1001.0$$ | $$-1.0$$ | $$0.3679$$ | $$0.3679 / 1.5032 \approx 0.2447$$ |
+| $$H_3$$ | $$-1002.0$$ | $$-2.0$$ | $$0.1353$$ | $$0.1353 / 1.5032 \approx 0.0900$$ |
+| **Tổng** | — | — | **$$1.5032$$** | **$$1.0000$$** |
+
+Hằng số chuẩn hóa trên thang log là $$\log Z = -1000.0 + \ln(1.5032) \approx -999.5924$$. Kết quả chính xác tuyệt đối và hoàn toàn tránh được `NaN`.
+
+**Hiểu lầm cần tránh:** Nhầm rằng trừ cùng một hằng số $$m$$ khỏi các giá trị log sẽ làm thay đổi xác suất cuối cùng. Thực tế trừ $$m$$ trên thang log tương đương chia cả tử và mẫu cho $$e^m$$ trên thang xác suất — tỷ số không hề thay đổi.
+
+**Kiểm tra nhanh:** Nếu cộng thêm $$-5000$$ vào cả ba giá trị $$a_1, a_2, a_3$$ (thành $$-6000, -6001, -6002$$), các giá trị dịch chuyển $$b_k$$ vẫn là $$0, -1, -2$$, nên xác suất hậu nghiệm vẫn y hệt $$(0.6652, 0.2447, 0.0900)$$.
+
+---
 
 ## Video tham khảo
 

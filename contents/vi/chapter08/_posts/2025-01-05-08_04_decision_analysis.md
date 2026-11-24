@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Một mô hình Bayes xuất sắc cho bạn biết: *"Xác suất khách hàng rời bỏ dịch vụ là 35%"*, hoặc *"Xác suất phương án B tốt hơn phương án A là 72%"*. Nhưng đến đây công việc vẫn chưa xong — người quản lý vẫn phải chọn **một hành động cụ thể**: có gửi ưu đãi giữ chân hay không, có triển khai tính năng B cho toàn bộ người dùng hay không? Khi chi phí của sai lầm dương tính giả và âm tính giả chênh lệch nhau 10 lần, ngưỡng mặc định 50% trở thành sai lầm đắt giá.
+
+**Phân tích quyết định Bayes (Bayesian Decision Analysis)** — nền tảng từ Abraham Wald và Leonard Savage — khép lại toàn bộ vòng tròn suy luận: kết hợp trực tiếp phân phối hậu nghiệm $$p(\theta \mid y)$$ với **hàm tổn thất (loss function)** $$L(a, \theta)$$ để tìm hành động tối ưu $$a^*$$.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học này, bạn sẽ biết cách chuyển kết quả suy luận Bayes thành hành động cụ thể dưới độ bất định thông qua hàm mất mát (loss function), mất mát kỳ vọng (expected loss) và giá trị thông tin (value of information). Trọng tâm của bài là phân biệt hai câu hỏi khác nhau: phân phối hậu nghiệm trả lời "ta tin điều gì?", còn lý thuyết quyết định trả lời "ta nên làm gì?" khi mỗi lựa chọn đi kèm chi phí sai lầm không đối xứng.
+
+
+## Bản đồ kiến thức nền: Hàm tổn thất, Tổn thất hậu nghiệm kỳ vọng và Giá trị thông tin
+
+Chuyển từ suy luận sang hành động dựa trên ba trụ cột toán học:
+
+- **Nguyên tắc tối thiểu hóa tổn thất hậu nghiệm kỳ vọng (Bayes Optimal Action):** Với mỗi hành động ứng viên $$a$$, ta tính kỳ vọng tổn thất trên toàn bộ phân phối hậu nghiệm: $$\mathbb{E}_{\theta \mid y}[L(a, \theta)] = \int L(a, \theta) p(\theta \mid y)\,d\theta$$ và chọn $$a^* = \arg\min_a \mathbb{E}_{\theta \mid y}[L(a, \theta)]$$.
+- **Ngưỡng quyết định từ chi phí bất đối xứng:** Trong bài toán quyết định nhị phân (hành động hay không hành động), nếu chi phí báo động giả là $$C_{\text{FP}}$$ và chi phí bỏ sót ca thật là $$C_{\text{FN}}$$, ngưỡng xác suất hậu nghiệm tối ưu không phải $$0.50$$ mà chính xác là $$p^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}}$$.
+- **Giá trị kỳ vọng của thông tin (EVPI / EVSI):** Cho phép định lượng bằng tiền xem việc thu thập thêm dữ liệu (chạy thí nghiệm A/B lâu hơn, làm thêm xét nghiệm y khoa) có thực sự đáng chi phí hay không.
+
+---
 
 ## 1. Suy luận không đồng nghĩa với quyết định
 
@@ -133,6 +150,36 @@ Dưới góc nhìn khoa học, một quyết định Bayes tốt không phải l
 Phân tích quyết định Bayes khép lại chu trình của Chương 08: PPC giúp phát hiện sai lệch của mô hình, WAIC/LOO giúp so sánh năng lực dự báo, các chiến lược so sánh mô hình giúp xử lý độ bất định mô hình, và lý thuyết quyết định chuyển toàn bộ kết quả suy luận thành hành động cụ thể. Nếu suy luận là khoa học cập nhật niềm tin dưới bất định, thì phân tích quyết định là kỷ luật biến niềm tin đó thành lựa chọn có cơ sở.
 
 Kết thúc Chương 08: phê bình mô hình → so sánh mô hình → ra quyết định.
+
+
+## Khung giải thích (nên đọc chậm): Tính ngưỡng quyết định tối ưu và ra quyết định bằng bảng tổn thất
+
+Thay vì dùng ngưỡng cảm tính 50% hay 95%, hãy đi chậm qua 4 bước quyết định Bayes:
+
+1. **Lập ma trận tổn thất $$L(a, \theta)$$** theo đúng đơn vị tiền tệ hoặc hậu quả thực tế.
+2. **Lấy xác suất hậu nghiệm $$p = P(\theta = 1 \mid y)$$** từ mô hình Bayes.
+3. **Tính tổn thất kỳ vọng của từng hành động** bằng phép nhân xác suất với từng cột chi phí.
+4. **Chọn hành động có tổn thất kỳ vọng nhỏ nhất** (hoặc kiểm tra $$p > p^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}}$$).
+
+### Ví dụ tính toán cầm tay chỉ việc: Quyết định bảo trì phòng ngừa cho một máy chủ quan trọng
+
+Giả sử mô hình Bayes ước lượng xác suất một máy chủ bị hỏng trong tuần tới là $$p = 0.15$$ (chỉ 15%!). Tuy nhiên, chi phí bất đối xứng rất mạnh:
+- Nếu **bảo trì ngay ($$a_1$$)** khi máy thực ra không hỏng: tốn chi phí bảo trì $$C_{\text{FP}} = 2\text{ triệu VNĐ}$$.
+- Nếu **không bảo trì ($$a_0$$)** mà máy hỏng thật: thiệt hại gián đoạn dịch vụ $$C_{\text{FN}} = 38\text{ triệu VNĐ}$$.
+- (Giả sử nếu bảo trì khi máy sắp hỏng thì ngăn được sự cố, chỉ tốn $$2\text{ triệu}$$ bảo trì; không bảo trì khi máy tốt tốn $$0$$.)
+
+| Hành động | Máy tốt ($$1 - p = 0.85$$) | Máy hỏng ($$p = 0.15$$) | Tổn thất hậu nghiệm kỳ vọng |
+| --- | --- | --- | --- |
+| $$a_1$$: Bảo trì ngay | $$2\text{ triệu}$$ | $$2\text{ triệu}$$ | $$0.85(2) + 0.15(2) = \mathbf{2.0\text{ triệu}}$$ |
+| $$a_0$$: Không bảo trì | $$0\text{ triệu}$$ | $$38\text{ triệu}$$ | $$0.85(0) + 0.15(38) = 5.7\text{ triệu}$$ |
+
+Ngưỡng xác suất tối ưu để hành động là $$p^* = \frac{2}{38} \approx 0.0526$$ (chỉ $$5.26\%$$!). Dù xác suất hỏng mới ở mức $$15\%$$ (nhỏ hơn nhiều so với 50%), hành động tối ưu theo Bayes vẫn là **bảo trì ngay**, giúp tiết kiệm kỳ vọng $$5.7 - 2.0 = 3.7\text{ triệu VNĐ}$$.
+
+**Hiểu lầm cần tránh:** Dùng ngưỡng phân loại mặc định $$p > 0.50$$ hoặc ngưỡng ý nghĩa thống kê $$p > 0.95$$ cho mọi bài toán kinh doanh/y tế mà không đưa hàm chi phí vào tính toán.
+
+**Kiểm tra nhanh:** Nếu chi phí gián đoạn chỉ còn $$10\text{ triệu VNĐ}$$ (giữ nguyên chi phí bảo trì $$2\text{ triệu}$$), tổn thất kỳ vọng của "không bảo trì" là $$0.15 \times 10 = 1.5\text{ triệu} < 2.0\text{ triệu}$$, nên lúc này hành động tối ưu đổi sang **chưa cần bảo trì** (ngưỡng $$p^* = 2/10 = 20\%$$).
+
+---
 
 ## Video tham khảo
 

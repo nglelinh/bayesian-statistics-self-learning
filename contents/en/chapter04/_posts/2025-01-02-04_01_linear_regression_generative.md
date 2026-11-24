@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+In an introductory statistics class, linear regression is often reduced to a geometric chore: drop a single straight line through a cloud of dots by minimizing squared vertical errors. Yet the moment you ask *"How confident should I be in a prediction for someone 195 cm tall?"* or *"Could this data realistically have come from a flat line?"*, a single best-fit line falls silent. Bayesian linear regression flips the script completely: instead of hunting for one line, we write down a **generative story** for how the data came to be, and let Bayes' rule hand us an entire probability distribution of plausible lines.
+
+**Lesson Roadmap:** From one OLS line to a full generative model → Background Knowledge Map (Generative likelihoods, Posterior over parameters, Epistemic vs. Aleatoric uncertainty) → Hand-worked exact Bayesian regression on 4 points → Full model specification, real examples, and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to see Bayesian linear regression as a **data-generating story**, not just the problem of "fitting a straight line". You also need to understand the roles of the intercept, slope, and noise in the model, and why Bayesian regression always keeps the uncertainty of both the parameters and the predictions.
@@ -17,6 +21,35 @@ After this lesson, you need to see Bayesian linear regression as a **data-genera
 > **Mini example.** You want to describe the relationship between height and weight. The old view is "find the best straight line". The Bayesian view is "each person's weight is generated around an average trend, and we are not certain about that trend".
 >
 > **Quick check.** Why shouldn't Bayesian-style regression be understood simply as finding a single straight line?
+
+## Background Knowledge Map: The Architecture of Bayesian Linear Regression
+
+### 1. Generative Modeling (Forward Data-Generating Process)
+- **What it is:** Specifying a complete probability machine $$y_i \sim \mathrm{Normal}(\mu_i, \sigma)$$, $$\mu_i = \alpha + \beta x_i$$, together with prior distributions on $$(\alpha, \beta, \sigma)$$.
+- **What it studies:** How parameters generate synthetic datasets *before* seeing data (prior predictive simulation) and *after* updating (posterior predictive simulation), turning regression from curve-fitting into scientific modeling.
+
+### 2. Joint Posterior Distribution over $$(\alpha, \beta, \sigma)$$
+- **What it is:** Applying Bayes' rule $$p(\alpha, \beta, \sigma \mid x, y) \propto \prod_{i=1}^n \mathrm{Normal}(y_i \mid \alpha + \beta x_i, \sigma)\, p(\alpha, \beta, \sigma)$$.
+- **What it studies:** Quantifying parameter uncertainty and correlation (for example, why uncentered $$x$$ creates a strong negative correlation between intercept $$\alpha$$ and slope $$\beta$$).
+
+### 3. Two Distinct Sources of Predictive Uncertainty
+- **What it is:** Decomposing total predictive variance $$\mathrm{Var}(y^* \mid x^*, D) = \underbrace{\sigma^2}_{\text{aleatoric}} + \underbrace{\mathrm{Var}(\alpha + \beta x^* \mid D)}_{\text{epistemic}}$$.
+- **What it studies:** Separating irreducible observation noise ($$\sigma^2$$, which never shrinks even with infinite data) from parameter uncertainty (which shrinks as $$1/n$$ and flares outward as $$x^*$$ moves away from $$\bar{x}$$).
+
+## Deep-Dive Explanation: Exact Bayesian Slope & Prediction on 4 Points (Read Slowly)
+
+Consider 4 centered observations: $$x = [-2, -1, 1, 2]$$ (so $$\sum x_i = 0$$ and $$\sum x_i^2 = 10$$) and $$y = [1, 3, 7, 9]$$ (so $$\bar{y} = 5$$ and $$\sum x_i y_i = -2 - 3 + 7 + 18 = 20$$). Assume known observation noise $$\sigma = 1$$, known intercept $$\alpha = 5$$, and a Gaussian prior on the slope $$\beta \sim \mathrm{Normal}(0, 1^2)$$ (prior precision $$1/\tau_0^2 = 1$$).
+
+1. **OLS slope:** $$\hat{\beta}_{\text{OLS}} = \frac{\sum x_i y_i}{\sum x_i^2} = \frac{20}{10} = \mathbf{2.00}$$.
+2. **Bayesian posterior precision & variance:** Precision adds cleanly:
+   $$ \frac{1}{\tau_n^2} = \frac{1}{\tau_0^2} + \frac{\sum x_i^2}{\sigma^2} = 1 + \frac{10}{1} = 11 \implies \tau_n^2 = \frac{1}{11} \approx 0.0909 \quad (\tau_n \approx 0.302). $$
+3. **Bayesian posterior mean:** Precision-weighted average of prior mean ($$0$$) and OLS estimate ($$2.00$$):
+   $$ \mu_n = \frac{1 \cdot 0 + 10 \cdot 2.00}{11} = \frac{20}{11} \approx \mathbf{1.818}. $$
+   Notice how the prior gently shrinks $$2.00 \to 1.818$$ (exact Ridge / L2 regularization!).
+4. **Predicting a new point at $$x^* = 3$$:**
+   - Predictive mean: $$\mathbb{E}[y^* \mid x^* = 3, D] = 5 + 1.818(3) = \mathbf{10.45}$$.
+   - Predictive variance: $$\mathrm{Var}(y^*) = \underbrace{1.000}_{\sigma^2 \text{ (noise)}} + \underbrace{3^2 \cdot \frac{1}{11}}_{\text{slope uncertainty}} = 1 + 0.818 = \mathbf{1.818} \implies \text{SD} \approx \mathbf{1.348}. $$
+   Far from the center ($$x^* = 3$$), epistemic uncertainty nearly doubles the variance compared to noise alone!
 
 ## 1. Regression is not just drawing a straight line
 

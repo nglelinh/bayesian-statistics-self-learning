@@ -10,9 +10,26 @@ categories:
 lesson_type: required
 ---
 
+Trong các bộ dữ liệu sinh học, tài chính hay hành vi người dùng hiện đại, ta thường có hàng chục đến hàng nghìn biến dự báo nhưng chỉ một nhóm nhỏ trong đó thực sự mang tín hiệu. Chọn lọc từng biến bằng phương pháp truyền thống kiểu *stepwise regression* (thêm/bớt theo $$p$$-value) nổi tiếng là mong manh: chỉ cần bỏ đi vài dòng dữ liệu, danh sách biến "có ý nghĩa" đã đổi khác hoàn toàn, nhất là khi các biến có đa cộng tuyến.
+
+Thống kê Bayes tiếp cận chọn lọc đặc trưng theo hướng nhân văn và trung thực hơn nhiều: thay vì ép buộc câu trả lời cứng "chọn hay bỏ", ta tính **xác suất hậu nghiệm chọn biến (Posterior Inclusion Probability — PIP)** hoặc dùng **prior co cụm liên tục (Horseshoe)** để giữ trọn vẹn bất định chọn mô hình.
+
+---
+
 ## Mục tiêu học tập
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **chọn biến (feature selection)** như bài toán xác định những biến dự báo thực sự quan trọng trong số rất nhiều biến ứng viên. Bài học trình bày các hướng tiếp cận Bayes như tiên nghiệm Laplace, spike-and-slab và horseshoe, đồng thời so sánh với các phương pháp tần suất quen thuộc như Lasso hay chọn biến từng bước (stepwise). Mục tiêu không chỉ là biết các công cụ hiện có, mà là hiểu mỗi công cụ mã hóa giả định gì về độ thưa của mô hình và khi nào nên áp dụng từng cách tiếp cận trong dữ liệu nhiều chiều.
+
+
+## Bản đồ kiến thức nền: Không gian $$2^p$$ mô hình, PIP và Prior Co cụm Thưa
+
+Để nắm chắc chiến lược chọn lọc biến Bayes, hãy kết nối ba trụ cột:
+
+- **Vấn đề tổ hợp $$2^p$$ mô hình & Bất ổn của Stepwise:** Với $$p$$ biến dự báo, có tới $$2^p$$ tập con mô hình khả dĩ. Các thuật toán tham lam chọn ra đúng một tập con duy nhất thường đánh giá quá cao độ chắc chắn của các hệ số còn lại (*post-selection inference bias*).
+- **Spike-and-Slab & Xác suất chọn biến (PIP):** Mô hình hóa mỗi hệ số qua biến chỉ thị $$\gamma_j \in \{0, 1\}$$: nếu $$\gamma_j = 0$$ hệ số nằm ở đỉnh nhọn tại 0 (*spike*); nếu $$\gamma_j = 1$$ hệ số lấy từ phân phối rộng (*slab*). Trung bình hậu nghiệm $$\mathrm{PIP}_j = P(\gamma_j = 1 \mid y)$$ cho biết xác suất biến $$j$$ thuộc mô hình.
+- **Co cụm liên tục (Horseshoe) & Lựa chọn theo Dự báo (Projection Predictive):** Trong thực hành với PyMC/Stan, lấy mẫu biến rời rạc $$\gamma_j$$ có thể khó hội tụ; prior Horseshoe (liên tục, thân thiện với HMC/NUTS) và phương pháp *projection predictive* (Piironen & Vehtari) là lựa chọn hiện đại vừa ổn định vừa đạt độ chính xác dự báo cao.
+
+---
 
 ## Giới thiệu: Bài toán khi có quá nhiều biến dự báo
 
@@ -293,6 +310,41 @@ Chọn biến (feature selection) nhằm nhận diện các biến dự báo th�
 Chọn biến không nên bị xem như thao tác lọc cơ học, mà là một phần của quá trình suy luận về cấu trúc tín hiệu trong dữ liệu.
 
 Kết thúc Chương 07 về điều chuẩn (Regularization), đánh đổi độ lệch – phương sai (Bias-Variance) và chọn biến (Feature Selection).
+
+
+## Khung giải thích (nên đọc chậm): Tính Xác suất chọn biến (PIP) từ trọng số hậu nghiệm của không gian mô hình
+
+Khi nhiều mô hình con cùng giải thích dữ liệu gần tương đương nhau (đặc biệt khi hai biến dự báo tương quan mạnh), PIP giúp ta không đưa ra kết luận cực đoan. Hãy đi qua 3 bước:
+
+1. **Tính xác suất hậu nghiệm $$P(M_k \mid y)$$ cho từng mô hình con $$M_k$$** (tổng các xác suất mô hình bằng 1).
+2. **Với mỗi biến $$X_j$$, cộng xác suất hậu nghiệm của tất cả các mô hình có chứa $$X_j$$:**
+   $$\mathrm{PIP}_j = \sum_{k:\; X_j \in M_k} P(M_k \mid y).$$
+3. **Diễn giải theo ngưỡng hành động:** $$\mathrm{PIP}_j > 0.5$$ tương ứng mô hình xác suất trung vị (*median probability model*); nếu hai biến tương quan cao cùng chia nhau $$\mathrm{PIP} \approx 0.45$$ mỗi biến, tổng xác suất có ít nhất một trong hai biến lại rất cao ($$\approx 0.90$$).
+
+### Ví dụ tính toán cầm tay chỉ việc: Tính PIP khi $$X_2$$ và $$X_3$$ đa cộng tuyến
+
+Giả sử có 3 biến dự báo $$X_1, X_2, X_3$$ (trong đó $$X_2$$ và $$X_3$$ tương quan mạnh với nhau). Ta xét 4 mô hình có xác suất hậu nghiệm đáng kể:
+
+| Mô hình $$M_k$$ | Các biến có mặt | Xác suất hậu nghiệm $$P(M_k \vert y)$$ |
+| --- | --- | --- |
+| $$M_1$$ | $$\{X_1, X_2\}$$ | $$0.45$$ |
+| $$M_2$$ | $$\{X_1, X_3\}$$ | $$0.40$$ |
+| $$M_3$$ | $$\{X_1, X_2, X_3\}$$ | $$0.10$$ |
+| $$M_4$$ | $$\{X_1\}$$ | $$0.05$$ |
+| **Tổng** | — | **$$1.00$$** |
+
+Tính tay PIP cho từng biến:
+- $$\mathrm{PIP}(X_1) = 0.45 + 0.40 + 0.10 + 0.05 = 1.00$$ (chắc chắn quan trọng).
+- $$\mathrm{PIP}(X_2) = 0.45 + 0.10 = 0.55$$.
+- $$\mathrm{PIP}(X_3) = 0.40 + 0.10 = 0.50$$.
+
+Nếu chỉ chọn mô hình đỉnh $$M_1$$, ta sẽ vứt bỏ $$X_3$$ và tuyên bố nhầm rằng $$X_3$$ "không liên quan". Bảng PIP cho thấy đúng sự thật: dữ liệu cần $$X_1$$ cùng với *ít nhất một trong hai* biến $$X_2$$ hoặc $$X_3$$ (xác suất $$0.45 + 0.40 + 0.10 = 0.95$$), nhưng không đủ để phân định rạch ròi giữa hai biến tương quan này.
+
+**Hiểu lầm cần tránh:** Nhầm rằng $$\mathrm{PIP}_j = 0.50$$ nghĩa là biến $$X_j$$ vô dụng. Khi có đa cộng tuyến, xác suất bị chia đôi giữa các biến thay thế nhau — cần kiểm tra cả xác suất hậu nghiệm đồng thời của cụm biến.
+
+**Kiểm tra nhanh:** Trong ví dụ trên, xác suất mô hình chứa đồng thời cả hai biến tương quan $$X_2$$ và $$X_3$$ chỉ là $$P(M_3 \mid y) = 0.10$$ — phản ánh cơ chế "dao cạo Occam" tự động phạt độ phức tạp thừa của suy diễn Bayes.
+
+---
 
 ## Video tham khảo
 

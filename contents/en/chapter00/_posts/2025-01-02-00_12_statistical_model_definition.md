@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+What actually *is* a statistical model? It is not a black-box `model.fit()` call—it is a **mathematical story of how your data could have been generated!** In Bayesian statistics, writing down a statistical model means specifying two clean ingredients: a **data-generating process** $$p(y\mid	heta)$$ (how observable measurements emerge given hidden parameters) and a **prior** $$p(	heta)$$ (what parameter values are plausible before seeing data).
+
+This lesson teaches you to read and write generative statistical models fluently, separate **parameters** from **data** and **hyperparameters**, and simulate synthetic data forward before ever fitting real observations.
+
+---
+
+## Background Knowledge Map: The Anatomy of a Generative Statistical Model
+
+Four elements define every Bayesian statistical model you will build in this course:
+
+1. **Data-Generating Story (Likelihood $$p(y\mid	heta)$$):** A family of probability distributions indexed by unknown parameter(s) $$	heta$$ describing how noise and signal combine to produce observations $$y$$.
+2. **Prior Distribution $$p(	heta\mid\phi)$$:** Encodes domain constraints and plausible scales for $$	heta$$, controlled by fixed **hyperparameters** $$\phi$$ (or learned hyperpriors in hierarchical models).
+3. **Forward Simulation (Prior Predictive):** Because a Bayesian model is fully generative, you can sample $$	heta \sim p(	heta)$$ and then $$y_{	ext{sim}} \sim p(y\mid	heta)$$ *before* touching real data—catching absurd priors immediately (like predicting negative human heights!).
+4. **All Models Are Wrong, Some Are Useful (George Box):** A statistical model is a deliberate simplification; its value is judged by how well it explains observed structure, quantifies uncertainty, and predicts new observations.
+
+---
+
 ## Learning objectives
 
 After this lesson, you will understand a practical definition of a statistical model as a probability description of how data are generated, distinguish observed data from unknown parameters, and see why asking "what assumptions does this model make?" matters more than memorizing formulas.
@@ -127,6 +144,31 @@ The key point is that choosing a model is not just choosing a convenient formula
 2. It links unknown parameters to observed data via a generative mechanism.
 3. Every model carries assumptions; understanding assumptions is central.
 4. In Bayes, the model provides the likelihood that updates prior to posterior.
+
+---
+
+### Worked Numerical Example: Checking a Generative Normal Model via Prior Predictive Variance
+
+Suppose you model exam scores $$Y$$ with known measurement noise $$\sigma = 10$$ and an uncertain class mean $$\mu$$:
+
+$$\mu \sim \mathcal{N}(70,\; 5^2), \qquad Y \mid \mu \sim \mathcal{N}(\mu,\; 10^2).$$
+
+What distribution does a single *future* score $$Y$$ follow before seeing any data (**Prior Predictive**)? Write $$Y = \mu + arepsilon$$ where $$\mu \sim \mathcal{N}(70, 25)$$ and $$arepsilon \sim \mathcal{N}(0, 100)$$ are independent:
+1. **Prior predictive mean:** $$\mathbb{E}[Y] = 70 + 0 = 70$$.
+2. **Prior predictive variance (variances of independent sources add!):**
+   $$\mathrm{Var}(Y) = \mathrm{Var}(\mu) + \mathrm{Var}(arepsilon) = 5^2 + 10^2 = 25 + 100 = 125 \implies \mathrm{SD}(Y) = \sqrt{125} pprox \mathbf{11.18}.$$
+3. **95% Prior Predictive Range:** $$70 \pm 1.96(11.18) = [48.1,\; 91.9]$$—completely sensible for a 0–100 exam! *(Whereas a lazy "flat" prior $$\mu \sim \mathcal{N}(70, 1000^2)$$ would predict exam scores from $$-1890$$ to $$+2030$$!)*
+
+### Deep-Dive Explanation: Four Rules for Specifying Clean Statistical Models (Read Slowly)
+
+1. **Always write the model in mathematical notation before writing code:** Two lines like $$\mu \sim \mathcal{N}(70, 5^2); \; y_i \mid \mu \sim \mathcal{N}(\mu, 10^2)$$ clarify every assumption in seconds.
+2. **Distinguish epistemic uncertainty (about $$	heta$$) from aleatoric noise (about $$Y\mid	heta$$):** Collecting more data shrinks $$\mathrm{Var}(\mu\mid y) 	o 0$$, but never shrinks $$\sigma^2 = 100$$.
+3. **Run prior predictive checks on every new model:** Simulating fake datasets from your prior instantly flags scale mistakes before you waste time running MCMC.
+4. **Start simple and expand iteratively:** Begin with a minimal baseline model (e.g., Normal or Binomial), check where its predictions fail real data, and only then add hierarchy or heavy tails.
+
+**Quick check.** In the exam model above, if you knew the class mean $$\mu = 70$$ with 100% certainty ($$\mathrm{SD}(\mu) = 0$$), what would the predictive standard deviation of a new student’s score $$Y$$ be?
+
+---
 
 ## Reference videos
 

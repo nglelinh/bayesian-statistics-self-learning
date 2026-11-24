@@ -10,6 +10,31 @@ categories:
 lesson_type: required
 ---
 
+In 1908, William Sealy Gosset—a chemist working at the Guinness brewery in Dublin—had a practical problem: testing barley yields and yeast batches with **only 4 to 10 samples at a time**. Standard Normal $$z$$-tables kept giving him too many false alarms because he didn’t know the true population standard deviation $$\sigma$$; he had to estimate it from the tiny sample itself! Publishing under the pseudonym **"Student"** (because Guinness forbade employees from publishing trade secrets), Gosset derived the **Student-$$t$$ distribution**.
+
+This lesson explains *why* estimating $$\sigma$$ thickens the tails of the sampling distribution, walks through a hand-verifiable $$t$$-test, and reveals the Student-$$t$$ distribution’s second life in Bayesian statistics: as the **exact marginal posterior** for an unknown Normal mean AND the go-to **robust likelihood** against outliers!
+
+---
+
+## Background Knowledge Map: Student-$$t$$ in Both Frequentist and Bayesian Worlds
+
+Four insights connect Gosset’s 1908 brewery discovery directly to modern Bayesian modeling:
+
+1. **The Price of Unknown $$\sigma$$:** Replacing known $$\sigma$$ with noisy sample $$S$$ in $$T = rac{ar{X}-\mu}{S/\sqrt{n}}$$ injects extra variability into the denominator, producing heavier tails governed by **degrees of freedom $$
+u = n - 1$$**.
+2. **Convergence to Normal as $$
+u 	o \infty$$:** At $$
+u = 3$$, the 95% critical value is $$3.182$$ (far wider than $$1.960$$); by $$
+u = 30$$ it shrinks to $$2.042$$; as $$
+u	o\infty$$, $$t_
+u 	o \mathcal{N}(0,1)$$.
+3. **Exact Bayesian Appearance (Marginalizing $$\sigma^2$$):** In a Bayesian Normal model with unknown mean $$\mu$$ *and* unknown variance $$\sigma^2$$, integrating out $$\sigma^2$$ yields an exact **Student-$$t$$ posterior** for $$\mu$$!
+4. **Heavy-Tailed Robustness:** Because Student-$$t$$ (with small $$
+u$, say $$
+u = 3	ext{–}5$$) assigns much higher probability to extreme values than a Gaussian, using a Student-$$t$$ likelihood in Bayesian regression makes your posterior nearly immune to wild outliers!
+
+---
+
 ## Learning Objectives
 
 After completing this lesson, you will deeply understand the **t-statistic**, the **t distribution**, and the **t-test** - one of the most common statistical tools in scientific research. You will learn why we need the t distribution (instead of the normal distribution), how to compute and interpret the t-value, and the different types of t-tests. More importantly, you will understand the assumptions and limitations of the t-test, preparing a foundation for comparison with Bayesian methods in later chapters.
@@ -273,6 +298,30 @@ Although the t-test is very useful, it still carries limitations close to those 
 ### The Bayesian Approach
 
 In later chapters, you will see how the Bayesian approach addresses these limitations. **Bayesian estimation** provides the full distribution of the parameter instead of just a single t-value, **credible intervals** have a more direct interpretation than confidence intervals, **Bayes factors** allow comparing evidence between hypotheses, and **priors** allow prior knowledge to be incorporated into inference transparently.
+
+---
+
+### Worked Numerical Example: One-Sample $$t$$-Test on a Small Batch ($$n = 4$$ vs. $$n = 25$$)
+
+Suppose Guinness tests $$n = 4$$ barley batches and measures yield difference from target ($$\mu_0 = 0$$): `[2, 4, 6, 8]`:
+1. **Sample mean & SD:** $$ar{x} = 5.0$$; sum of squared deviations $$(-3)^2 + (-1)^2 + 1^2 + 3^2 = 20$$; sample variance $$s^2 = rac{20}{4-1} = 6.667 \implies s pprox 2.582$$.
+2. **Standard error & $$t$$-statistic:**
+   $$\mathrm{SE} = rac{2.582}{\sqrt{4}} = 1.291, \qquad t = rac{5.0 - 0}{1.291} = \mathbf{3.873} \quad (df = 3).$$
+3. **Compare $$t$$ critical value vs. naive Normal $$z$$:**
+   - Naive $$z$$-test (WRONG for $$n=4$$!): 95% critical value $$1.960$$ $$\implies$$ CI $$5.0 \pm 2.53 = [2.47, 7.53]$$ (falsely narrow!).
+   - Proper $$t$$-test ($$df = 3$$): 95% critical value $$t_{0.025;\,3} = \mathbf{3.182}$$ $$\implies$$ CI $$5.0 \pm 4.11 = [0.89, 9.11]$$ (**62% wider**!).
+   Since $$3.873 > 3.182$$ ($$p pprox 0.030 < 0.05$$), we still reject $$H_0$$, but with an *honest* uncertainty interval!
+
+### Deep-Dive Explanation: Four Rules for Using Student-$$t$$ Effectively (Read Slowly)
+
+1. **Always prefer Welch’s two-sample $$t$$-test (unequal variances):** Assuming two groups have identical variance (`equal_var=True`) is rarely justified; Welch’s $$t$$-test adjusts degrees of freedom automatically with virtually zero loss of power.
+2. **Use paired $$t$$-tests when measurements share a subject:** Before/after measurements on the same person cancel out individual baseline variation—dramatically boosting power compared to an unpaired test.
+3. **Remember Student-$$t$$’s Bayesian upgrade (BEST — Kruschke):** Instead of a two-sample $$t$$-test, Bayesian Estimation Supersedes the $$t$$-test fits a Student-$$t$$ model to both groups and gives you the full posterior distribution over the difference in means *and* difference in variances!
+4. **Watch extreme skewness at tiny $$n$$:** When $$n < 10$$ and data is wildly skewed, check residuals or use a non-parametric / Bayesian model matching the true data shape.
+
+**Quick check.** Why does the 95% critical value of the $$t$$-distribution shrink from $$3.182$$ at $$df = 3$$ down toward $$1.960$$ as sample size $$n$$ grows large?
+
+---
 
 ## Reference videos
 

@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+How do you compare two competing Bayesian models—say a simple linear model vs. a complex hierarchical spline—on out-of-sample predictive accuracy *without* having to refit your expensive MCMC sampler 1,000 times for Leave-One-Out Cross-Validation? Enter **WAIC (Watanabe–Akaike Information Criterion)** and **PSIS-LOO (Pareto-Smoothed Importance Sampling Leave-One-Out)**—two breakthroughs that estimate true out-of-sample **Expected Log Pointwise Predictive Density (ELPD)** directly from *one single* MCMC run!
+
+This lesson builds crystal-clear intuition for **lppd**, the **effective number of parameters ($$p_{\text{WAIC}}$$)**, and the **Pareto-$$k$$ diagnostic** that warns you when a single influential outlier needs exact refitting.
+
+---
+
+## Background Knowledge Map: Estimating Out-of-Sample Predictive Accuracy From One MCMC Run
+
+1. **Log Pointwise Predictive Density ($$\mathrm{lppd}$$):** Averages likelihood across posterior draws *first*, then takes the log: $$\mathrm{lppd} = \sum_{i=1}^n \ln\!\left(\frac{1}{S}\sum_{s=1}^S p(y_i \mid \theta^{(s)})\right)$$. Measures in-sample predictive fit using the *entire* posterior!
+2. **Effective Number of Parameters ($$p_{\text{WAIC}}$$):** Penalizes overfitting by summing the posterior *variance* of log-likelihood at every data point: $$p_{\text{WAIC}} = \sum_{i=1}^n \mathrm{Var}_s\!\bigl(\ln p(y_i \mid \theta^{(s)})\bigr)$$. Notice that hierarchical shrinkage can make $$p_{\text{WAIC}}$$ *far smaller* than the raw parameter count!
+3. **WAIC & ELPD:** $$\widehat{\mathrm{elpd}}_{\text{WAIC}} = \mathrm{lppd} - p_{\text{WAIC}}$$ (higher is better!), or on the deviance scale $$\mathrm{WAIC} = -2\,\widehat{\mathrm{elpd}}_{\text{WAIC}}$$ (lower is better!).
+4. **PSIS-LOO & Pareto-$$k$$ Diagnostic (Vehtari et al.):** Uses importance sampling to approximate exact Leave-One-Out CV—and automatically flags high-leverage observations where **Pareto-$$k > 0.7$$** (a built-in reliability alarm that WAIC lacks!).
+
+---
+
 ## Learning objectives
 
 After this lesson, you should understand WAIC and LOO as tools for approximating the out-of-sample predictive ability of Bayesian models, and know how to read results in terms of estimation uncertainty rather than with a "hard ranking" mindset. The focus of the lesson is methodological reasoning: why out-of-sample predictive criteria should be preferred, when the difference between models is large enough to conclude, and when to move from model selection to model averaging.
@@ -92,6 +107,33 @@ From the workflow perspective, WAIC/LOO does not replace PPC: a model with a bet
 WAIC and LOO provide a quantitative language for comparing models by out-of-sample predictive ability, but their greatest value lies in disciplined interpretation: always read differences together with uncertainty, always check the diagnostics of the approximation, and always tie the model-choice decision to a concrete predictive goal rather than to the habit of choosing the top rank.
 
 Next lesson: **Model Comparison Strategies**, where we go deeper into the choice between selection, averaging, and expansion.
+
+---
+
+### Worked Numerical Example: Hand-Computing $$\mathrm{lppd}$$, $$p_{\text{WAIC}}$$, and WAIC on 2 Data Points
+
+Suppose we have $$n = 2$$ observations and $$S = 2$$ posterior draws $$\theta^{(1)}, \theta^{(2)}$$ with pointwise likelihoods $$p(y_i\mid\theta^{(s)})$$:
+
+| Observation $$i$$ | $$p(y_i\mid\theta^{(1)})$$ | $$p(y_i\mid\theta^{(2)})$$ | Mean Lik $$\bar{p}_i$$ | $$\ln \bar{p}_i$$ | $$\ln p^{(1)}, \ln p^{(2)}$$ | Sample Var $$v_i$$ ($$ddof=1$$) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| $$i = 1$$ | $$0.50$$ | $$0.50$$ | $$0.50$$ | $$-0.693$$ | $$-0.693,\; -0.693$$ | $$0.000$$ |
+| $$i = 2$$ | $$0.80$$ | $$0.20$$ | $$0.50$$ | $$-0.693$$ | $$-0.223,\; -1.609$$ | $$0.961$$ |
+
+Sum across both data points:
+1. **$$\mathrm{lppd} = -0.693 + (-0.693) = \mathbf{-1.386}$$.**
+2. **Effective parameters $$p_{\text{WAIC}} = 0.000 + 0.961 = \mathbf{0.961}$$.** *(Notice observation 2 varies wildly across draws, contributing the entire overfitting penalty!)*
+3. **$$\widehat{\mathrm{elpd}}_{\text{WAIC}} = -1.386 - 0.961 = \mathbf{-2.347}$$** $$\implies \mathrm{WAIC} = -2(-2.347) = \mathbf{4.694}$$!
+
+### Deep-Dive Explanation: Four Rules for Using WAIC & PSIS-LOO Correctly (Read Slowly)
+
+1. **Prefer `az.loo` (PSIS-LOO) over WAIC as your default:** Both target exact LOO-CV, yet PSIS-LOO gives you the **Pareto-$$k$$** diagnostic warning whenever an observation has extreme leverage ($$k > 0.7$$).
+2. **Only compare models fitted to the *exact same* observed outcome vector $$y$$:** You cannot compare WAIC/LOO between a model on $$y$$ and a model on $$\log(y)$$ without adding the Jacobian correction, nor between datasets with different dropped missing rows!
+3. **Never confuse predictive ELPD with causal truth:** A confounded model (or one conditioning on a collider!) can easily achieve *better* LOO-CV ELPD than the true causal model!
+4. **Always inspect `dse` (the standard error of the difference):** Raw `elpd_diff` without `dse` is meaningless.
+
+**Quick check.** In the 2-observation table above, why did observation $$i = 1$$ contribute **$$0.000$$** to the complexity penalty $$p_{\text{WAIC}}$$, whereas observation $$i = 2$$ contributed $$0.961$$?
+
+---
 
 ## Reference videos
 

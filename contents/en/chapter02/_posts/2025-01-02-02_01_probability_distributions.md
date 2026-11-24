@@ -10,6 +10,21 @@ categories:
 lesson_type: required
 ---
 
+Picking a probability distribution in Bayesian modeling is like choosing the right architectural blueprint for a building: use a Normal distribution for strictly positive server latencies and your model will predict *negative* response times; use a Poisson for overdispersed retail sales and your inventory buffer will constantly run dry! Every distribution family encodes a specific set of **domain constraints and maximum-entropy assumptions**.
+
+This Chapter 2 opener organizes the essential discrete and continuous distributions into a clean **Bayesian Modeling Periodic Table**—matching each data type (binary, counts, bounded proportions, positive continuous, unbounded) to its natural likelihood and prior families.
+
+---
+
+## Background Knowledge Map: Matching Data Domains to Distribution Families
+
+1. **Domain & Support First:** Binary $$\{0,1\} \to$$ Bernoulli/Binomial; unbounded counts $$\{0,1,2,\dots\} \to$$ Poisson / Negative Binomial; proportions $$(0,1) \to$$ Beta; positive continuous $$(0,\infty) \to$$ Exponential / Gamma / Log-Normal / Half-Normal; unbounded $$\mathbb{R} \to$$ Normal / Student-$$t$$.
+2. **Maximum Entropy Principle (Jaynes):** Among all distributions with fixed mean and variance on $$\mathbb{R}$$, the **Gaussian** has maximum entropy (makes the fewest extra assumptions). Knowing only a positive mean gives the **Exponential**; knowing only bounds $$[a,b]$$ gives the **Uniform**.
+3. **Location–Scale vs. Shape–Rate Parameterizations:** Always check how a library parameterizes a family (e.g., Normal by SD $$\sigma$$ vs. variance $$\sigma^2$$ vs. precision $$\tau=1/\sigma^2$$; Gamma by rate $$\beta$$ vs. scale $$\theta=1/\beta$$).
+4. **Mixture & Hierarchical Extensions:** When real data doesn’t match one textbook family (e.g., bimodal incomes or zero-inflated counts), Bayesian models compose simple distributions into mixtures or hierarchical layers.
+
+---
+
 ## Learning objectives
 
 After this lesson, you should be able to read a probability distribution as a story about uncertainty, distinguish discrete from continuous settings, and explain why Bayesian analysis keeps the **full distribution** instead of only a single point estimate.
@@ -195,6 +210,30 @@ No. Even with lots of data, distributions still matter for risk communication an
 **Probability distributions are the core language of Bayesian statistics.** They tell us not only which values are plausible, but also how certain we are, how much risk remains, and how future outcomes might behave.
 
 > **3 key takeaways.** A distribution always carries more information than a point estimate because it keeps uncertainty visible; two distributions can share the same center and still imply very different levels of certainty; and in Bayesian inference, prior, likelihood, and posterior are all distributions playing different roles.
+
+---
+
+### Worked Numerical Example: Selecting the Right Family for 4 Real Datasets
+
+| Observed Variable $$Y$$ | Legal Support | Wrong Naive Choice | Proper Bayesian Likelihood | Natural Prior for Key Param |
+| :--- | :--- | :--- | :--- | :--- |
+| Conversions in $$n$$ clicks | $$\{0,\dots,n\}$$ | Normal | **Binomial($$n, p$$)** | $$\mathrm{Beta}(\alpha,\beta)$$ |
+| Daily ER arrivals (Var > Mean) | $$\{0,1,2,\dots\}$$ | Poisson | **Negative Binomial($$\mu, \phi$$)** | $$\mathrm{Gamma} / \mathrm{HalfNormal}$$ |
+| API latency (ms, right-skew) | $$(0,\infty)$$ | Normal | **Log-Normal($$\mu, \sigma$$)** | $$\mu\sim\mathcal{N},\; \sigma\sim\mathrm{HalfNormal}$$ |
+| Test scores with wild outliers | $$\mathbb{R}$$ | Normal | **Student-$$t(\nu, \mu, \sigma)$$** | $$\nu\sim\mathrm{Gamma}(2,0.1)$$ |
+
+Check the Log-Normal latency numbers: if $$\log(\text{latency}) \sim \mathcal{N}(\ln 100,\; 0.5^2)$$, the **median** latency is $$e^{\ln 100} = 100\text{ ms}$$, while the **mean** is $$100 \cdot e^{0.5^2/2} = 100 \cdot e^{0.125} \approx \mathbf{113.3\text{ ms}}$$—and latency can *never* go negative!
+
+### Deep-Dive Explanation: Four Rules for Choosing Distributions Like a Bayesian Modeler (Read Slowly)
+
+1. **Let the physical/data-generating constraints pick the support:** Never use an unbounded Gaussian when zeros or negatives are physically impossible—unless the mean sits many SDs above zero.
+2. **Check mean–variance relationships:** In Binomial and Poisson models, variance is locked to the mean; when real data varies more widely, introduce a dispersion parameter (Beta-Binomial, Negative Binomial).
+3. **Use Half-Normal or Exponential priors for scale parameters ($$\sigma > 0$$):** Avoid old textbook flat `InverseGamma(0.001, 0.001)` priors, which put bizarre spikes near zero.
+4. **Verify your choice with Prior Predictive Simulation:** Plot 20 simulated datasets from your chosen distribution—if they look alien compared to domain reality, swap the family before fitting!
+
+**Quick check.** Why is a Normal likelihood a poor choice for modeling daily e-commerce order counts when the average is only $$\mu = 1.5$$ orders/day?
+
+---
 
 ## Reference videos
 

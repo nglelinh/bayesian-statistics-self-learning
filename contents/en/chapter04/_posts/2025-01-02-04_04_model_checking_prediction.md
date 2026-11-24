@@ -10,6 +10,10 @@ categories:
 lesson_type: required
 ---
 
+Your MCMC chains converged cleanly with $$\hat{R} = 1.00$$, zero divergences, and 4,000 effective samples. Time to celebrate and ship the model? Not yet! Convergence only proves that your sampler accurately explored the posterior of *the model you wrote down*—it says nothing about whether that model is a decent description of reality. A perfectly converged linear model fit to curved or heavy-tailed data will produce confidently wrong predictions. That is why every serious Bayesian workflow pivots from inference to **model criticism**: Posterior Predictive Checks (PPC) and residual diagnostics.
+
+**Lesson Roadmap:** Why convergence $$\neq$$ a good model → Background Knowledge Map (Posterior predictive distribution, Bayesian p-values & test statistics, Mean vs. Prediction intervals) → Hand-worked Bayesian p-value & predictive interval width comparison → Residual analysis, uncertainty, and exercises.
+
 ## Learning objectives
 
 After this lesson, you need to understand that fitting the model is only the first half of Bayesian regression. The other half is checking whether the model describes the data reasonably, and using the posterior to predict new data honestly. You also need to grasp posterior predictive checks as the central tool of this step.
@@ -17,6 +21,35 @@ After this lesson, you need to understand that fitting the model is only the fir
 > **Mini example.** A regression line can look very nice on a scatter plot, but if it does not generate data that looks like the real data, the model still has a problem. Model checking is the way to interrogate the model instead of trusting it just because it has finished running.
 >
 > **Quick check.** Why is a posterior that "looks fine" not enough to conclude that the model is good?
+
+## Background Knowledge Map: Criticizing and Predicting with Bayesian Models
+
+### 1. Posterior Predictive Distribution ($$p(y^{\text{rep}} \mid y)$$)
+- **What it is:** Averaging the data likelihood over the entire posterior $$p(y^{\text{rep}} \mid y) = \int p(y^{\text{rep}} \mid \theta) p(\theta \mid y)\,d\theta$$—implemented by drawing $$\theta^{(s)}$$ from the posterior and then simulating synthetic data $$y^{\text{rep},(s)} \sim p(y \mid \theta^{(s)})$$.
+- **What it studies:** Answering the acid test of generative modeling: *"If my fitted model were truly the data-generating machine, would its simulated worlds look like the real dataset I actually observed?"*
+
+### 2. Posterior Predictive Checks (PPC) and Tail-Area Diagnostics
+- **What it is:** Comparing observed summary statistics $$T(y)$$ (mean, spread, max, skewness, fraction of zeros) against the distribution of $$T(y^{\text{rep},(s)})$$, summarized by the Bayesian $$p$$-value $$p_B = P(T(y^{\text{rep}}) \ge T(y) \mid y)$$.
+- **What it studies:** Pinpointing *exactly how* a model fails—for instance, matching the mean perfectly while missing skewness, heteroscedasticity, or extreme outliers.
+
+### 3. Credible Interval for the Mean vs. Prediction Interval for New Data
+- **What it is:** Separating uncertainty about the regression line $$\mu(x^*)$$ from uncertainty about a brand-new observation $$y^* = \mu(x^*) + \varepsilon$$.
+- **What it studies:** Preventing dangerously overconfident forecasts by always adding observation noise $$\sigma^2$$ when predicting individual future outcomes.
+
+## Deep-Dive Explanation: Bayesian p-Value & Prediction Interval Width by Hand (Read Slowly)
+
+### Part 1: Reading a Posterior Predictive Check via $$p_B$$
+Suppose you fit a Normal linear model and check whether it captures extreme observations using the test statistic $$T(y) = \max_i \vert r_i \vert$$ (largest standardized residual). In your real dataset, $$T(y) = 4.2$$. Across $$S = 1{,}000$$ posterior predictive replications $$y^{\text{rep},(s)}$$, only **12** simulations produce a max residual $$\ge 4.2$$:
+$$ p_B = \frac{12}{1{,}000} = \mathbf{0.012}. $$
+A value near $$0.5$$ means the model reproduces that feature effortlessly; $$p_B = 0.012$$ (close to 0 or 1) flags a concrete mismatch—here, heavier tails than a Normal likelihood, pointing directly toward a Student-$$t$$ revision!
+
+### Part 2: Why a 95% Prediction Interval Is Much Wider Than a 95% Mean Interval
+Suppose at $$x^* = 3$$, your posterior gives $$\mathrm{Var}(\alpha \mid D) = 0.25$$, $$\mathrm{Var}(\beta \mid D) = 0.16$$ (uncorrelated), and noise variance $$\sigma^2 = 4.00$$:
+- **Uncertainty of the regression line $$\mu(3)$$:**
+  $$ \mathrm{Var}(\mu(3)) = 0.25 + 3^2(0.16) = 1.69 \implies \mathrm{SD} = \mathbf{1.30} \quad (\text{95\% half-width } \approx \pm 2.55). $$
+- **Uncertainty of a single new observation $$y^*(3)$$:**
+  $$ \mathrm{Var}(y^*(3)) = 4.00 + 1.69 = 5.69 \implies \mathrm{SD} = \mathbf{2.385} \quad (\text{95\% half-width } \approx \pm 4.67). $$
+The prediction interval is **$$1.83\times$$ wider**—because knowing the average line accurately still cannot eliminate individual observation noise $$\sigma$$.
 
 ## 1. A good fit is not necessarily a good model
 

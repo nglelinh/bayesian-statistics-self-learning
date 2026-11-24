@@ -10,9 +10,26 @@ categories:
 lesson_type: optional
 ---
 
+Dù các mô hình học sâu ngày nay có hàng tỷ tham số, những cặp liên hợp giản dị như Beta–Binomial hay Gamma–Poisson vẫn đang chạy trong trái tim của nhiều hệ thống công nghiệp khổng lồ: từ thuật toán *Thompson Sampling* phân bổ quảng cáo theo thời gian thực, hệ thống ước lượng tỷ lệ lỗi vi dịch vụ (microservices) đến các bộ lọc dự báo nhu cầu bán lẻ có hàng triệu mã hàng.
+
+Bài tổng kết Chương 2 này kết nối các khái niệm cốt lõi — prior, likelihood, posterior, liên hợp và xấp xỉ lưới — với cách kỹ sư dữ liệu ứng dụng chúng để ra quyết định nhanh, ổn định và có kiểm soát bất định trong thực tế.
+
+---
+
 ## Mục tiêu học tập
 
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận prior liên hợp (conjugate prior) và xấp xỉ lưới (grid approximation) như những lựa chọn thiết kế hệ thống thực tế chứ không chỉ là kỹ thuật làm bài tập. Bạn có thể quan sát một hệ thống đang vận hành — như quảng cáo, xếp hạng hay giám sát sự cố — và chỉ ra likelihood đang giả định điều gì, họ prior nào giữ chi phí cập nhật ở mức thấp, và khi nào phép tính giải tích phải nhường chỗ cho mô phỏng.
+
+
+## Bản đồ kiến thức nền: Cập nhật liên hợp trong hệ thống trực tuyến và Thử nghiệm thích nghi
+
+Ba trụ cột ứng dụng dưới đây giải thích vì sao kiến thức Chương 2 có sức sống bền bỉ trong kỹ thuật hiện đại:
+
+- **Cập nhật trực tuyến chi phí $$O(1)$$ (Streaming Conjugate Updates):** Trong các hệ thống thời gian thực xử lý hàng triệu sự kiện mỗi giây, không thể chạy MCMC lại từ đầu mỗi khi có một lượt nhấp chuột mới. Mô hình Beta–Binomial và Gamma–Poisson cho phép cập nhật hậu nghiệm tức thì chỉ bằng phép cộng số đếm.
+- **Thompson Sampling (Multi-Armed Bandits):** Thay vì chia đều lưu lượng 50/50 trong suốt thí nghiệm A/B, thuật toán rút ngẫu nhiên một mẫu $$\tilde p_a \sim \text{Beta}(\alpha_a, \beta_a)$$ từ hậu nghiệm của mỗi phương án và chọn phương án có mẫu lớn nhất — tự động giảm thiểu tổn thất cơ hội (*regret*).
+- **Làm trơn dữ liệu thưa (Empirical Bayes Shrinkage):** Khi xếp hạng hàng nghìn sản phẩm hay bài viết mới chỉ có vài lượt đánh giá, thay tỷ lệ thô bằng kỳ vọng hậu nghiệm giúp chống nhiễu mẫu nhỏ cực kỳ hiệu quả.
+
+---
 
 ## Kiến thức cần có
 
@@ -67,6 +84,30 @@ Quảng cáo, hệ xếp hạng, giám sát độ tin cậy hệ thống và th�
 ## Giới hạn và hướng mở rộng
 
 Empirical Bayes chỉ ước lượng điểm các siêu tham số nên thường đánh giá thấp độ bất định của chính prior. Cách tiếp cận Bayes phân cấp đầy đủ — được mở ra qua tư duy đa mức ở Chương 5 — đặt phân phối hậu nghiệm lên chính $$(\alpha,\beta)$$. Trong khi đó, xấp xỉ lưới nhanh chóng mất khả thi khi số chiều vượt quá vài tham số. Bước tiến trung thực tiếp theo không phải là mở rộng bảng công thức liên hợp mà là sử dụng bộ lấy mẫu — trọng tâm của Chương 4.
+
+
+## Khung giải thích (nên đọc chậm): Giải bài toán "5 sao nhưng chỉ có 1 lượt đánh giá" bằng co cụm Bayes
+
+Trong thương mại điện tử, một sản phẩm có 1/1 đánh giá tốt (100%) có thực sự đáng tin hơn sản phẩm có 90/100 đánh giá tốt (90%) không? Hãy đi qua 3 bước xử lý bằng prior liên hợp:
+
+1. **Ước lượng mức nền toàn sàn làm Prior:** Giả sử trung bình toàn sàn có tỷ lệ đánh giá tốt là $$80\%$$, chọn prior $$\text{Beta}(8, 2)$$ (cỡ mẫu ảo $$M = 10$$).
+2. **Cập nhật hậu nghiệm cho từng sản phẩm:** Cộng số đánh giá tốt vào $$\alpha = 8$$ và số đánh giá xấu vào $$\beta = 2$$.
+3. **Xếp hạng theo kỳ vọng hậu nghiệm (hoặc cận dưới 5% của hậu nghiệm):** Sản phẩm ít dữ liệu bị kéo về mức nền toàn sàn, còn sản phẩm nhiều dữ liệu giữ sát tỷ lệ thực tế của chính nó.
+
+### Ví dụ tính toán cầm tay chỉ việc: Xếp hạng 2 sản phẩm với Prior $$\text{Beta}(8, 2)$$
+
+| Sản phẩm | Dữ liệu $$(k / n)$$ | Tỷ lệ thô (MLE) | Hậu nghiệm | Kỳ vọng hậu nghiệm $$\mathbb{E}[p \vert y]$$ |
+| --- | --- | --- | --- | --- |
+| Sản phẩm A (mới) | $$1 / 1$$ | $$100.0\%$$ | $$\text{Beta}(9, 2)$$ | $$9 / 11 \approx 81.8\%$$ |
+| Sản phẩm B (uy tín) | $$90 / 100$$ | $$90.0\%$$ | $$\text{Beta}(98, 12)$$ | $$98 / 110 \approx 89.1\%$$ |
+
+Thứ tự xếp hạng lập tức trở nên hợp lý: Sản phẩm B ($$89.1\%$$) đứng trên Sản phẩm A ($$81.8\%$$), khắc phục triệt để lỗi "nhiễu mẫu nhỏ" mà không cần đặt các luật lọc cứng nhắc tùy tiện.
+
+**Hiểu lầm cần tránh:** Dùng cùng một prior toàn cục cho các danh mục hàng hóa có chất lượng nền hoàn toàn khác nhau — khi đó nên nâng cấp lên mô hình phân cấp (Chương 5) để mỗi danh mục có prior riêng.
+
+**Kiểm tra nhanh:** Nếu Sản phẩm A tiếp tục nhận thêm 19 đánh giá tốt nữa (tổng 20/20), hậu nghiệm trở thành $$\text{Beta}(28, 2)$$ với kỳ vọng $$28/30 \approx 93.3\%$$ — lúc này bằng chứng đã đủ mạnh để vượt lên trên Sản phẩm B.
+
+---
 
 ## Video tham khảo
 

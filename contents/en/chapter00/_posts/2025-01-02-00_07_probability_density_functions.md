@@ -10,6 +10,23 @@ categories:
 lesson_type: required
 ---
 
+A student plots a continuous probability distribution, sees a peak value of `f(x) = 3.5`, and panics: *"Wait—how can a probability be greater than 1?!"* That moment of confusion is one of the most important conceptual hurdles in continuous probability: **a Probability Density Function (PDF) is NOT a probability**—it is probability *per unit length* (density), just as physical density (kg/m$$^3$$) only becomes mass when you multiply by volume!
+
+This lesson builds crystal-clear intuition for continuous PDFs, CDFs, why $$P(X = c) = 0$$ at any exact point, and how density values greater than 1 arise routinely in tight Bayesian posteriors.
+
+---
+
+## Background Knowledge Map: Density, Area, and Continuous Bayesian Posteriors
+
+Four concepts eliminate every misconception about continuous densities:
+
+1. **Density vs. Probability Mass:** For a continuous variable $$X$$, $$f(x) \ge 0$$ can be *arbitrarily large* (e.g., $$f(x) = 10$$ on $$[0, 0.1]$$) as long as the total **area** integrates to 1: $$\int_{-\infty}^{\infty} f(x)\,dx = 1$$.
+2. **Intervals Carry Probability, Points Have Zero Area:** $$P(a \le X \le b) = \int_a^b f(x)\,dx = F(b) - F(a)$$, whereas for any single exact point $$c$$, $$P(X = c) = 0$$.
+3. **PDF–CDF Derivative Pair:** The Cumulative Distribution Function $$F(x) = P(X \le x)$$ climbs monotonically from 0 to 1, and its slope is the PDF: $$f(x) = F'(x)$$.
+4. **Why Posterior PDFs Easily Exceed 1:** As you collect more data, a Bayesian posterior narrows around the true parameter (say width $$pprox 0.02$$); to keep total area equal to 1, its peak height *must* shoot up to roughly $$1 / 0.02 = 50$$!
+
+---
+
 ## Learning objectives
 
 This lesson presents a systematic treatment of the **probability density function (PDF), the essential difference between the PDF and the probability mass function (PMF)**, as well as how to correctly interpret the PDF in continuous models. 
@@ -260,6 +277,28 @@ $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqr
 
 Here, each $$f(x_i \mid \mu)$$ is the value of the PDF at the data point $$x_i$$, with parameter $$\mu$$. The Maximum Likelihood Estimate (MLE) is the value $$\hat{\mu}$$ that maximizes $$L(\mu)$$.
 
+---
+
+### Worked Numerical Example: A Tight Triangular/Uniform Density Whose Height Exceeds 1
+
+Consider a narrow uniform posterior $$	heta \sim \mathrm{Uniform}(0.40,\; 0.65)$$ (width $$w = 0.65 - 0.40 = 0.25$$):
+1. **Constant PDF height:** To make total area equal 1, the density height must be:
+   $$f(	heta) = rac{1}{0.25} = \mathbf{4.0} \quad 	ext{for } 	heta \in [0.40, 0.65]$$
+   —four times larger than 1, and 100% mathematically valid!
+2. **Probability of a small interval $$[0.45, 0.50]$$ (width $$0.05$$):**
+   $$P(0.45 \le 	heta \le 0.50) = 	ext{height} 	imes 	ext{width} = 4.0 	imes 0.05 = \mathbf{0.20} \quad (20\%).$$
+3. **Check a Normal density peak:** For $$\mathcal{N}(0, \sigma^2)$$ with $$\sigma = 0.1$$, the peak height at $$x=0$$ is $$f(0) = rac{1}{\sigma\sqrt{2\pi}} = rac{1}{0.1 	imes 2.5066} pprox \mathbf{3.99} > 1$$!
+
+### Deep-Dive Explanation: Four Rules for Reading Continuous PDFs Correctly (Read Slowly)
+
+1. **Always check the units of the horizontal axis:** If you change units from meters to kilometers, interval widths shrink by $$1000	imes$$, so PDF heights multiply by $$1000	imes$$ to keep total area equal to 1!
+2. **Read *ratios* of densities, not raw heights:** Saying $$f(0.7) / f(0.5) = 2.28$$ means a tiny interval around $$0.7$$ is $$2.28	imes$$ as probable as an equally wide interval around $$0.5$$—this ratio is scale-free and drives Metropolis–Hastings acceptance!
+3. **Use the CDF (or quantiles) for tail probabilities:** `F(b) - F(a)` answers probability questions directly without hand integration.
+4. **Don’t panic when log-density is positive:** Whenever $$f(x) > 1$$ (a tight posterior!), $$\log f(x) > 0$$—completely normal for continuous PDFs (only discrete PMFs must satisfy $$\log P \le 0$$)!
+
+**Quick check.** If a continuous random variable has a positive log-density $$\log f(x) = +2.3$$ at a point $$x$$, is there a bug in your code—or what is the density height $$f(x) = e^{2.3}$$?
+
+---
 
 ## Reference videos
 
