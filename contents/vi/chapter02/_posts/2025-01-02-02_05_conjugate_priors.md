@@ -25,7 +25,7 @@ Sau bài này, bạn cần hiểu prior liên hợp (conjugate prior) không ph�
 > **Câu hỏi tự kiểm tra.** Điều gì làm cho một prior được gọi là “liên hợp” với một likelihood?
 
 
-## Bản đồ kiến thức nền: Họ mũ, Thống kê đủ và Bốn cặp liên hợp kinh điển
+## Kiến thức cần nhớ: Họ mũ, Thống kê đủ và Bốn cặp liên hợp kinh điển
 
 Tính liên hợp không phải sự trùng hợp ngẫu nhiên mà xuất phát trực tiếp từ cấu trúc toán học của **họ phân phối mũ (Exponential Family)**:
 
@@ -585,7 +585,7 @@ Không đúng. Prior liên hợp vẫn là nền tảng xây dựng trực giác
 **Prior liên hợp là prior đảm bảo posterior thuộc cùng một họ phân phối sau khi cập nhật.** Nhờ tính chất này, các bài toán cơ bản có thể giải tay gọn gàng, dễ diễn giải và cập nhật tuần tự nhanh chóng. Bốn cặp nền tảng cần nắm gồm Beta–Binomial, Beta–Geometric, Gamma–Poisson và Normal–Normal. Tuy nhiên, cần luôn ghi nhớ rằng sự tiện lợi về đại số không đồng nghĩa với mô hình tốt nhất: khi prior liên hợp không còn phản ánh đúng thực tế, ta nên chuyển sang các phương pháp tính toán linh hoạt hơn.
 
 
-## Khung giải thích (nên đọc chậm): Công thức cập nhật 3 cặp liên hợp cốt lõi và ví dụ Gamma–Poisson
+## Giải thích: Công thức cập nhật 3 cặp liên hợp cốt lõi và ví dụ Gamma–Poisson
 
 Bất cứ khi nào nhận ra bài toán thuộc họ liên hợp, bạn chỉ cần làm đúng 3 bước: (1) xác định cặp likelihood–prior khớp miền, (2) tính thống kê đủ từ dữ liệu, và (3) cộng trực tiếp vào siêu tham số của prior:
 
@@ -595,7 +595,7 @@ Bất cứ khi nào nhận ra bài toán thuộc họ liên hợp, bạn chỉ c
 | Đếm sự kiện: $$\text{Poisson}(\lambda)$$ | $$\text{Gamma}(\alpha, \beta)$$ (rate) | $$(n, \sum y_i)$$ | $$\text{Gamma}\!\left(\alpha + \sum y_i,\; \beta + n\right)$$ |
 | Liên tục (biết $$\sigma^2$$): $$\mathcal{N}(\mu, \sigma^2)$$ | $$\mathcal{N}(\mu_0, \tau_0^2)$$ | $$(n, \bar y)$$ | Độ chính xác $$\tau_n^{-2} = \tau_0^{-2} + \frac{n}{\sigma^2}$$, trung bình $$\mu_n = \tau_n^2\!\left(\frac{\mu_0}{\tau_0^2} + \frac{n\bar y}{\sigma^2}\right)$$ |
 
-### Ví dụ tính toán cầm tay chỉ việc: Ước lượng tốc độ lỗi máy chủ bằng Gamma–Poisson
+### Ví dụ tính toán làm từng bước: Ước lượng tốc độ lỗi máy chủ bằng Gamma–Poisson
 
 Giả sử số lỗi máy chủ mỗi giờ tuân theo $$\text{Poisson}(\lambda)$$. Trước khi nâng cấp hệ thống, đội ngũ đặt prior $$\lambda \sim \text{Gamma}(\alpha = 6, \beta = 2)$$ (tương ứng kỳ vọng ban đầu $$\alpha/\beta = 6/2 = 3.0$$ lỗi/giờ, dựa trên 2 giờ quan sát giả định). Sau nâng cấp, ta theo dõi $$n = 5$$ giờ và ghi nhận số lỗi lần lượt là $$1, 2, 0, 2, 1$$ (tổng $$\sum y_i = 6$$ lỗi).
 

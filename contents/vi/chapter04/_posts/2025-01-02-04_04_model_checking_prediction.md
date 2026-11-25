@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu rằng việc khớp mô hình (fitting) mới 
 > **Câu hỏi tự kiểm tra.** Vì sao một phân phối hậu nghiệm "trông gọn đẹp" vẫn chưa đủ cơ sở để kết luận mô hình là tốt?
 
 
-## Bản đồ kiến thức nền: Tích phân dự báo hậu nghiệm, Thống kê kiểm tra và Giải phẫu phần dư
+## Kiến thức cần nhớ: Tích phân dự báo hậu nghiệm, Thống kê kiểm tra và Giải phẫu phần dư
 
 Bước kiểm tra mô hình (model checking) và dự đoán trong thống kê Bayes dựa trên ba khái niệm then chốt:
 
@@ -175,7 +175,7 @@ Giả sử với nhóm học sinh học 6 giờ, mô hình cho:
 
 Khoảng thứ nhất trả lời câu hỏi về điểm trung bình của cả nhóm học sinh cùng học 6 giờ; khoảng thứ hai trả lời câu hỏi về khoảng điểm khả dĩ của một cá nhân cụ thể. Dùng nhầm khoảng thứ nhất để dự báo cho một cá nhân sẽ tạo ra cảm giác chắc chắn quá mức so với thực tế.
 
-### Khung giải thích (nên đọc chậm): Tính tay Bayesian $$p$$-value và phân tách hai nguồn phương sai dự đoán
+### Giải thích: Tính tay Bayesian $$p$$-value và phân tách hai nguồn phương sai dự đoán
 
 Hãy tự kiểm chứng hai phép tính cốt lõi của kiểm tra mô hình và dự đoán bằng những con số nhỏ gọn:
 

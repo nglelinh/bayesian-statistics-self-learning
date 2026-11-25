@@ -20,7 +20,7 @@ Trong thống kê Bayes, thống kê mô tả không chỉ dùng để khám ph�
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rằng thống kê mô tả không chỉ là việc tính các con số tóm tắt, mà là cách nắm bắt cấu trúc, xu hướng và mức độ biến thiên của dữ liệu. Bạn sẽ biết cách diễn giải trung bình, trung vị và độ lệch chuẩn theo bản chất dữ liệu thay vì áp dụng máy móc, đồng thời hình thành trực giác chọn thống kê phù hợp trong phân tích Bayesian — nơi việc khám phá phân phối dữ liệu luôn là bước khởi đầu trước khi xây dựng mô hình.
 
-## Bản đồ kiến thức nền: Thống kê mô tả, Thống kê bền vững và Tóm tắt Hậu nghiệm Bayes
+## Kiến thức cần nhớ: Thống kê mô tả, Thống kê bền vững và Tóm tắt Hậu nghiệm Bayes
 
 Ba trụ cột gắn kết bài học này với suy diễn Bayes hiện đại:
 
@@ -179,7 +179,7 @@ Cần lưu ý hai điểm quan trọng khi diễn giải tương quan. Thứ nh�
 
 Trong phân tích Bayesian, mối quan hệ giữa các biến thường được mô hình hóa tường minh qua tham số mô hình. Chẳng hạn, trong hồi quy tuyến tính Bayesian, hệ số hồi quy $$\beta$$ biểu diễn mối liên hệ giữa biến giải thích và biến phản hồi, còn phân phối hậu nghiệm của $$\beta$$ định lượng độ bất định quanh ước lượng đó.
 
-## Khung giải thích (nên đọc chậm): Vì sao Mean, Median và Mode tách nhau — và ý nghĩa khi đọc mẫu MCMC
+## Giải thích: Vì sao Mean, Median và Mode tách nhau — và ý nghĩa khi đọc mẫu MCMC
 
 Khi nhìn vào một tập dữ liệu hay một chuỗi mẫu hậu nghiệm từ MCMC, đừng bao giờ chỉ đọc mỗi số trung bình. Hãy đi chậm qua 4 bước đọc tóm tắt:
 
@@ -188,7 +188,7 @@ Khi nhìn vào một tập dữ liệu hay một chuỗi mẫu hậu nghiệm t�
 3. **Liên hệ với hàm mất mát Bayes:** Nếu bạn phải chốt một con số duy nhất từ hậu nghiệm, Mean tối ưu cho phạt sai số bậc hai, Median tối ưu cho phạt sai số bậc một, còn Mode (MAP) tối ưu cho sai số 0–1.
 4. **Kiểm tra tương quan giữa các chiều:** Tương quan $$r pprox 0$$ chỉ loại trừ quan hệ *tuyến tính*, không loại trừ quan hệ phi tuyến (như parabol $$y = x^2$$).
 
-### Ví dụ tính toán cầm tay chỉ việc: Tóm tắt mẫu dữ liệu (hoặc mẫu hậu nghiệm) bị lệch
+### Ví dụ tính toán làm từng bước: Tóm tắt mẫu dữ liệu (hoặc mẫu hậu nghiệm) bị lệch
 
 Giả sử bạn thu thập 5 quan sát về thời gian phản hồi API (tính bằng mili-giây): $$x = \{10, 12, 14, 14, 50\}$$.
 

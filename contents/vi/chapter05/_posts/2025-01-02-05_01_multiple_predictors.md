@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu vì sao phần lớn bài toán thực tế kh�
 > **Câu hỏi tự kiểm tra.** Nếu hai người có cùng số năm kinh nghiệm nhưng trình độ học vấn khác nhau, một mô hình chỉ có một biến dự báo có nắm bắt được chênh lệch lương giữa họ không?
 
 
-## Bản đồ kiến thức nền: Siêu phẳng tuyến tính, Phép chiếu trực giao và Thiên lệch bỏ sót biến
+## Kiến thức cần nhớ: Siêu phẳng tuyến tính, Phép chiếu trực giao và Thiên lệch bỏ sót biến
 
 Để hiểu sâu sắc cơ chế bên trong hồi quy đa biến ở trình độ đại học, hãy nối bài học này với ba trụ cột toán học:
 
@@ -118,7 +118,7 @@ Nói ngắn gọn, hai mô hình trả lời hai câu hỏi khác nhau:
 - **Hồi quy đơn:** Nhìn tổng thể, biến này biến thiên cùng chiều hay ngược chiều với kết quả như thế nào?
 - **Hồi quy đa biến:** Khi giữ cố định các biến khác trong mô hình, biến này còn liên hệ với kết quả ở mức độ nào?
 
-### Khung giải thích (nên đọc chậm): Tính tay công thức thiên lệch bỏ sót biến (Omitted Variable Bias)
+### Giải thích: Tính tay công thức thiên lệch bỏ sót biến (Omitted Variable Bias)
 
 Vì sao hệ số của một biến lại thay đổi mạnh khi ta thêm một biến dự báo thứ hai? Không cần suy đoán — công thức đại số sau cho bạn câu trả lời chính xác chỉ bằng một phép nhân và một phép cộng:
 

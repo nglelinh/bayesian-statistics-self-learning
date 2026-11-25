@@ -21,7 +21,7 @@ Bài học này khép lại Chương 1 bằng cách nối nền tảng triết h
 Sau bài học tùy chọn này, bạn sẽ nhìn định lý Bayes không chỉ như một công thức chẩn đoán trong sách giáo khoa, mà như quy tắc cập nhật niềm tin đang vận hành trong bộ lọc thư rác, hệ thống phát hiện gian lận và bài toán định lượng bất định của mô hình ngôn ngữ. Trọng tâm cần thay đổi nằm ở câu hỏi: không dừng ở “công thức viết thế nào?”, mà đặt câu hỏi “prior, likelihood và posterior nằm ở đâu trong một hệ thống thực tế?”.
 
 
-## Bản đồ kiến thức nền: Định lý Bayes trong Hệ thống Thông minh và Khoa học Máy tính
+## Kiến thức cần nhớ: Định lý Bayes trong Hệ thống Thông minh và Khoa học Máy tính
 
 Ba trụ cột sau cho thấy cách định lý Bayes vượt ra khỏi sách giáo khoa để vận hành các hệ thống quy mô lớn:
 
@@ -82,7 +82,7 @@ Cả ba lĩnh vực — lọc thư rác/lừa đảo, phát hiện gian lận th
 Giả định độc lập giữa các từ trong Naive Bayes là một mô hình sinh khá thô. Semantic entropy phụ thuộc vào một mô hình đánh giá tương đương nghĩa mà bản thân nó cũng chứa độ bất định. Ngoài ra, một mô hình được hiệu chỉnh tốt trên một bộ tiêu chuẩn đánh giá không bảo đảm vẫn giữ nguyên độ hiệu chỉnh khi phân phối dữ liệu dịch chuyển. Bài học này không đi lại vào lý thuyết cập nhật; Chương 2 sẽ trình bày tường minh các thành phần likelihood, prior và posterior.
 
 
-## Khung giải thích (nên đọc chậm): Giải phẫu bộ lọc spam Naive Bayes trên thang tỷ số Odds
+## Giải thích: Giải phẫu bộ lọc spam Naive Bayes trên thang tỷ số Odds
 
 Để thấy định lý Bayes hoạt động nhanh và gọn thế nào trong khoa học máy tính, hãy theo dõi 4 bước phân loại một email mới:
 
@@ -91,7 +91,7 @@ Giả định độc lập giữa các từ trong Naive Bayes là một mô hìn
 3. **Nhân dồn các hệ số Bayes (hoặc cộng trên thang log):** Dưới giả định độc lập có điều kiện (Naive Bayes), tỷ số Odds hậu nghiệm bằng Odds tiên nghiệm nhân với tích các hệ số Bayes.
 4. **Quy đổi sang xác suất hậu nghiệm và áp ngưỡng chi phí:** $$P(\text{Spam} \mid \mathbf{w}) = \frac{\text{Odds}}{1 + \text{Odds}}$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Chấm điểm một email chứa hai từ khóa
+### Ví dụ tính toán làm từng bước: Chấm điểm một email chứa hai từ khóa
 
 Giả sử $$20\%$$ email đến là Spam ($$\text{Prior Odds} = 0.20 / 0.80 = 0.25$$). Một email chứa đồng thời hai từ khóa `"khuyến mãi"` và `"chuyển khoản"` có thống kê như sau:
 

@@ -12,7 +12,7 @@ lesson_type: required
 
 If `tips` was a gentle warm-up, the `diamonds` dataset is a full-contact stress test. Here, price does not rise linearly with carat weight—doubling a diamond from 1 carat to 2 carats more than *triples* its price, variance explodes at higher weights, and categorical attributes like cut and clarity layer nonlinearity on top of skewness. A naive linear baseline collapses across every single diagnostic check, making `diamonds` the ideal proving ground for **multi-level PPCs** and **log-log generative revisions**.
 
-**Lesson Roadmap:** Why `diamonds` breaks naive linear regression → Background Knowledge Map (Power-law scaling & log-log models, Conditional PPCs, Decision-grade uncertainty) → Hand-worked power-law calculation for 0.5, 1.0, and 2.0 carat diamonds → Full complex case study and exercises.
+**Lesson Roadmap:** Why `diamonds` breaks naive linear regression → Key ideas (Power-law scaling & log-log models, Conditional PPCs, Decision-grade uncertainty) → Hand-worked power-law calculation for 0.5, 1.0, and 2.0 carat diamonds → Full complex case study and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to grasp how to run a full Bayesian workflow on data
 >
 > **Quick check.** Why is a very nice summary metric such as a correlation of 0.9+ still not enough to conclude that the model is trustworthy for real-world prediction?
 
-## Background Knowledge Map: Stress-Testing Bayesian Regression on Complex Data
+## Key ideas: Stress-Testing Bayesian Regression on Complex Data
 
 ### 1. Nonlinearity and Power-Law Scaling (Log–Log Models)
 - **What it is:** Modeling $$\log(y_i) \sim \mathrm{Normal}(\alpha + \beta \log(x_i), \sigma)$$, which corresponds on the original scale to a multiplicative power law $$y_i = e^{\alpha} x_i^{\beta} \cdot e^{\varepsilon_i}$$.
@@ -36,7 +36,7 @@ After this lesson, you need to grasp how to run a full Bayesian workflow on data
 - **What it is:** Remembering that if $$\log(y) \sim \mathrm{Normal}(\mu, \sigma^2)$$, the **median** on the original scale is $$e^{\mu}$$, while the **mean** is $$e^{\mu + \sigma^2/2}$$ (Jensen's inequality).
 - **What it studies:** Avoiding systematic under-pricing in revenue/cost decisions when converting log-scale predictions back to dollars.
 
-## Deep-Dive Explanation: Hand-Checking Power-Law Pricing & Jensen's Correction (Read Slowly)
+## Explanation: Hand-Checking Power-Law Pricing & Jensen's Correction
 
 Suppose a Bayesian log–log model for diamond price yields $$\log(\text{price}) \sim \mathrm{Normal}(8.45 + 1.68\log(\text{carat}),\; 0.25^2)$$. Let us compute exact dollar predictions by hand (using $$e^{8.45} \approx 4{,}675$$ and $$e^{\sigma^2/2} = e^{0.0625/2} \approx 1.0317$$):
 

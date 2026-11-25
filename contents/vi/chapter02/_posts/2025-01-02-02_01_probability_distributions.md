@@ -25,7 +25,7 @@ Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, đ
 > **Câu hỏi tự kiểm tra.** Nếu chỉ báo cáo một con số $$75\%$$, bạn đã bỏ sót thông tin quan trọng nào?
 
 
-## Bản đồ kiến thức nền: PMF/PDF, Họ phân phối và Ba vai trò trong Suy diễn Bayes
+## Kiến thức cần nhớ: PMF/PDF, Họ phân phối và Ba vai trò trong Suy diễn Bayes
 
 Để đọc và chọn phân phối thành thạo trong mô hình hóa Bayes, hãy gắn kết ba trụ cột sau:
 
@@ -253,7 +253,7 @@ Ngay cả khi dữ liệu rất lớn, phân phối vẫn cần thiết để di
 > **3 ý cần nhớ.** Phân phối luôn giàu thông tin hơn ước lượng điểm vì nó giữ lại toàn bộ độ bất định; hai phân phối có cùng trung tâm vẫn mang ý nghĩa rất khác nếu độ rộng khác nhau; và trong thống kê Bayes, prior, likelihood và posterior đều là những phân phối đảm nhận các vai trò riêng biệt trong suy luận.
 
 
-## Khung giải thích (nên đọc chậm): Đọc một phân phối qua 4 câu hỏi thay vì chỉ nhìn trung bình
+## Giải thích: Đọc một phân phối qua 4 câu hỏi thay vì chỉ nhìn trung bình
 
 Mỗi khi gặp một phân phối xác suất trong mô hình Bayes, hãy đọc chậm qua 4 câu hỏi sau:
 
@@ -262,7 +262,7 @@ Mỗi khi gặp một phân phối xác suất trong mô hình Bayes, hãy đọ
 3. **Độ phân tán và độ dày đuôi thế nào?** Hai phân phối cùng trung bình nhưng khác phương sai hoặc độ dày đuôi dẫn đến quyết định rủi ro rất khác nhau.
 4. **Hàm mật độ có mang ý nghĩa vật lý/sinh dữ liệu gì?** Ví dụ: tổng $$n$$ phép thử Bernoulli sinh ra Binomial; thời gian chờ giữa các sự kiện Poisson sinh ra Exponential.
 
-### Ví dụ tính toán cầm tay chỉ việc: So sánh hai phân phối Beta có cùng trung bình $$0.5$$
+### Ví dụ tính toán làm từng bước: So sánh hai phân phối Beta có cùng trung bình $$0.5$$
 
 Xét hai phân phối mô tả niềm tin về tỷ lệ chuyển đổi $$p \in [0, 1]$$: $$\text{Beta}(2, 2)$$ và $$\text{Beta}(20, 20)$$. Sử dụng công thức kỳ vọng $$\mu = \frac{\alpha}{\alpha+\beta}$$ và phương sai $$\sigma^2 = \frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}$$:
 

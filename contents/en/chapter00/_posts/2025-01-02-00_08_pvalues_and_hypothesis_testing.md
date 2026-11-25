@@ -16,7 +16,7 @@ This lesson unpacks frequentist hypothesis testing honestly—null/alternative f
 
 ---
 
-## Background Knowledge Map: Frequentist Testing Mechanics vs. What People Wish It Answered
+## Key ideas: Frequentist Testing Mechanics vs. What People Wish It Answered
 
 Four distinctions clarify exactly what p-values can and cannot tell you:
 
@@ -359,19 +359,21 @@ Suppose a factory claims lightbulbs last $$\mu_0 = 1000	ext{ hours}$$ (known $$\
 
 1. **Standard error of the mean:** $$\mathrm{SE} = rac{100}{\sqrt{25}} = 20	ext{ hours}$$.
 2. **Test statistic:** $$z = rac{955 - 1000}{20} = -2.25$$.
-3. **Two-sided p-value:** $$P(\lvert Zvert \ge 2.25) = 2 	imes 0.0122 = \mathbf{0.0244} < 0.05$$ $$\implies$$ reject $$H_0$$.
+3. **Two-sided p-value:** $$P(\lvert Z
+vert \ge 2.25) = 2 	imes 0.0122 = \mathbf{0.0244} < 0.05$$ $$\implies$$ reject $$H_0$$.
 4. **Now check the sample-size sensitivity:** Suppose the true difference were a tiny **5 hours** ($$ar{x} = 995$$):
    - At $$n = 25$$: $$z = -5/20 = -0.25 \implies p = 0.80$$ (not significant).
    - At $$n = 25{,}000$$: $$\mathrm{SE} = 100/\sqrt{25{,}000} pprox 0.632 \implies z = -7.91 \implies p < 10^{-14}$$ ("highly significant" for a trivial 0.5% change!).
 
-### Deep-Dive Explanation: Four Rules for Reading p-values Without Falling Into Traps (Read Slowly)
+### Explanation: Four Rules for Reading p-values Without Falling Into Traps
 
 1. **Never translate `p = 0.024` as "2.4% chance $$H_0$$ is true":** That flips $$P(D\mid H_0)$$ into $$P(H_0\mid D)$$, ignoring the prior plausibility of $$H_0$$!
 2. **Never interpret `p = 0.20` as "proof of no effect":** High p-values often just mean low sample size / low statistical power.
 3. **Always pair p-values with effect size and confidence/credible intervals:** Knowing the bulb lasts $$955 \pm 39.2	ext{ hours}$$ tells you *how much* shorter it lasts, not just whether it differs from 1000.
 4. **Watch out for multiple comparisons and stopping early:** Testing 20 hypotheses at $$lpha = 0.05$$ gives a $$1 - 0.95^{20} = 64.2\%$$ chance of at least one false positive!
 
-**Quick check.** In the lightbulb test above ($$\mu_0 = 1000, \sigma = 100, ar{x} = 955$$), if you had only tested $$n = 9$$ bulbs instead of $$25$$, what would the new $$z$$-statistic be, and would you still reject $$H_0$$ at $$lpha = 0.05$$ ($$\lvert zvert > 1.96$$)?
+**Quick check.** In the lightbulb test above ($$\mu_0 = 1000, \sigma = 100, ar{x} = 955$$), if you had only tested $$n = 9$$ bulbs instead of $$25$$, what would the new $$z$$-statistic be, and would you still reject $$H_0$$ at $$lpha = 0.05$$ ($$\lvert z
+vert > 1.96$$)?
 
 ---
 

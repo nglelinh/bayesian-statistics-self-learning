@@ -21,7 +21,7 @@ Bài học này mở rộng khung GLM sang **hồi quy Poisson Bayes** với hà
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **hồi quy Poisson (Poisson regression)** như mô hình tiêu chuẩn cho **dữ liệu đếm (count data)**, tức các dữ liệu ghi nhận số lần một sự kiện xảy ra. Bạn sẽ thấy vì sao hồi quy tuyến tính không phù hợp khi biến kết quả chỉ nhận các số nguyên không âm, vì sao **hàm liên kết log (log link function)** giúp mô hình tạo ra dự đoán hợp lệ, và vì sao hệ số của mô hình nên được diễn giải thông qua **tỷ số tốc độ (rate ratio)** thay vì hiệu số cộng đơn giản. Đây là mô hình GLM quan trọng thứ hai sau hồi quy logistic.
 
 
-## Bản đồ kiến thức nền: Hàm liên kết Log, Exposure Offset và Bài toán Quá phân tán
+## Kiến thức cần nhớ: Hàm liên kết Log, Exposure Offset và Bài toán Quá phân tán
 
 Làm chủ hồi quy dữ liệu đếm đòi hỏi nắm vững ba trụ cột:
 
@@ -337,7 +337,7 @@ Hồi quy Poisson là mô hình tự nhiên cho dữ liệu đếm vì nó khắ
 Bài tiếp theo: **Đánh giá mô hình cho GLMs (Model Evaluation for GLMs)**.
 
 
-## Khung giải thích (nên đọc chậm): Tính nhanh tốc độ kỳ vọng, Offset và kiểm tra Quá phân tán
+## Giải thích: Tính nhanh tốc độ kỳ vọng, Offset và kiểm tra Quá phân tán
 
 Khi xây dựng và đọc mô hình hồi quy Poisson Bayes, hãy kiểm tra chậm rãi 4 bước:
 
@@ -346,7 +346,7 @@ Khi xây dựng và đọc mô hình hồi quy Poisson Bayes, hãy kiểm tra ch
 3. **Diễn giải $$e^\beta$$ theo phần trăm thay đổi nhân tính:** Ví dụ $$e^\beta = 1.25$$ nghĩa là tăng 1 đơn vị $$x$$ làm số đếm kỳ vọng tăng thêm $$25\%$$.
 4. **Kiểm tra tỷ số Phương sai / Trung bình (và PPC):** Nếu phương sai phần dư lớn hơn trung bình rõ rệt, cần chuyển sang Negative Binomial.
 
-### Ví dụ tính toán cầm tay chỉ việc: Dự báo số yêu cầu hỗ trợ kỹ thuật theo số người dùng mới
+### Ví dụ tính toán làm từng bước: Dự báo số yêu cầu hỗ trợ kỹ thuật theo số người dùng mới
 
 Giả sử mô hình hồi quy Poisson Bayes cho số ticket hỗ trợ mỗi ngày có $$\alpha = 1.5$$ và $$\beta = 0.2$$ (với $$x$$ là số nghìn người dùng mới đăng ký trong ngày):
 

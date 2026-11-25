@@ -12,13 +12,13 @@ lesson_type: optional
 
 Why did Bayesian statistics explode from a niche academic corner into the backbone of modern scientific modeling, epidemiology, and probabilistic ML over the past decade? The turning point was not a new theorem—it was a physics-inspired sampler called **Hamiltonian Monte Carlo (HMC)** and its self-tuning heir, **NUTS** (the No-U-Turn Sampler). By treating the negative log-posterior as a frictionless landscape and rolling a marble across it using exact gradients, NUTS turns high-dimensional posteriors that once took weeks into seconds—and even sounds an alarm (**divergent transitions**) whenever the geometry gets treacherous.
 
-**Lesson Roadmap:** How physics revolutionized Bayesian computation → Background Knowledge Map (Hamiltonian dynamics & leapfrog integration, NUTS adaptive trajectory length, Divergences as geometric alarms) → Hand-worked 1-step leapfrog integration conserving energy → Modern applications, limitations, and exercises.
+**Lesson Roadmap:** How physics revolutionized Bayesian computation → Key ideas (Hamiltonian dynamics & leapfrog integration, NUTS adaptive trajectory length, Divergences as geometric alarms) → Hand-worked 1-step leapfrog integration conserving energy → Modern applications, limitations, and exercises.
 
 ## Learning objectives
 
 After this optional lesson, you understand that Hamiltonian Monte Carlo and NUTS are not decorative algorithms added after Bayesian linear regression, but an inevitable consequence once the posterior no longer has a closed form. You will be able to read a Stan, PyMC or NumPyro chain as a controlled approximation of the same generative model that Chapter 4 wrote in words.
 
-## Background Knowledge Map: Why HMC and NUTS Power Modern Bayesian Practice
+## Key ideas: Why HMC and NUTS Power Modern Bayesian Practice
 
 ### 1. Hamiltonian Dynamics and Symplectic (Leapfrog) Integration
 - **What it is:** Augmenting parameter position $$q$$ with an auxiliary momentum $$p \sim \mathrm{Normal}(0, M)$$ and simulating Hamilton's equations for total energy $$H(q, p) = U(q) + K(p)$$, where potential energy $$U(q) = -\log \tilde{\pi}(q)$$.
@@ -32,7 +32,7 @@ After this optional lesson, you understand that Hamiltonian Monte Carlo and NUTS
 - **What it is:** Steps where the leapfrog integrator's energy error $$\vert \Delta H \vert$$ blows up because curvature changes faster than step size $$\varepsilon$$ (such as Neal's funnel in hierarchical models).
 - **What it studies:** Turning numerical failure into an actionable diagnostic—unlike random-walk MH, which silently misses narrow funnels without warning.
 
-## Deep-Dive Explanation: One Leapfrog Step of HMC by Hand (Read Slowly)
+## Explanation: One Leapfrog Step of HMC by Hand
 
 Take the 1D standard normal posterior $$\tilde{\pi}(q) = e^{-q^2/2}$$, so potential energy is $$U(q) = \frac{1}{2}q^2$$ (gradient $$\nabla U(q) = q$$) and kinetic energy is $$K(p) = \frac{1}{2}p^2$$. Start at position $$q_0 = 1.0$$ with momentum $$p_0 = 0.0$$, giving initial energy:
 $$ H_0 = U(1.0) + K(0.0) = \frac{1.0^2}{2} + 0 = \mathbf{0.5000}. $$

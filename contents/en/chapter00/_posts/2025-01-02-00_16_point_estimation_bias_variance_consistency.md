@@ -16,7 +16,7 @@ This lesson unpacks **bias**, **variance**, **MSE**, and **consistency**, and pr
 
 ---
 
-## Background Knowledge Map: Evaluating Estimators Through the Bias–Variance Lens
+## Key ideas: Evaluating Estimators Through the Bias–Variance Lens
 
 Four principles bridge classical point estimation and Bayesian shrinkage:
 
@@ -139,7 +139,7 @@ Even if the true coin is *biased* at $$p = 0.7$$ (where $$\mathrm{Var}(K) = 4(0.
 - **MLE:** $$\mathrm{Bias} = 0$$, $$\mathrm{MSE} = 0.84/16 = \mathbf{0.0525}$$.
 - **Bayesian $$\mathrm{Beta}(2,2)$$:** $$\mathbb{E}[\hat{p}_{	ext{Bayes}}] = rac{2.8+2}{8} = 0.60 \implies \mathrm{Bias} = -0.10$$, $$\mathrm{Var} = 0.84/64 = 0.0131$$, so $$\mathrm{MSE} = (-0.10)^2 + 0.0131 = \mathbf{0.0231}$$ — **still more than 2× lower total error than unbiased MLE!**
 
-### Deep-Dive Explanation: Four Takeaways on Bias, Variance, and Bayesian Shrinkage (Read Slowly)
+### Explanation: Four Takeaways on Bias, Variance, and Bayesian Shrinkage
 
 1. **Unbiasedness is a property of averages, not individual estimates:** An unbiased estimator with huge variance can land wildly far from the truth on *your* single dataset.
 2. **Every Bayesian prior acts as a principled regularizer:** Just as Ridge regression shrinks noisy regression slopes to cut MSE, a weakly informative prior shrinks small-sample estimates toward plausible values.

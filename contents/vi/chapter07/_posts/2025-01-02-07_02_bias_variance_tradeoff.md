@@ -21,7 +21,7 @@ Bài học này không chỉ chứng minh phép phân rã sai số dự báo th�
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ **sự đánh đổi giữa độ lệch và phương sai (bias-variance tradeoff)** — một trong những khái niệm nền tảng của học máy và thống kê. Bài học giải thích vì sao mô hình quá đơn giản thường có **độ lệch cao (high bias)**, vì sao mô hình quá phức tạp thường có **phương sai cao (high variance)**, và vì sao mục tiêu của chọn mô hình không phải là đẩy một thành phần xuống thấp nhất có thể, mà là tìm điểm cân bằng giúp tổng sai số dự báo nhỏ nhất. Đây là cơ sở trực tiếp để hiểu điều chuẩn, quá khớp và logic của việc lựa chọn mô hình.
 
 
-## Bản đồ kiến thức nền: Phân rã Sai số Dự báo, Đường cong Học và Cách giải của Bayes
+## Kiến thức cần nhớ: Phân rã Sai số Dự báo, Đường cong Học và Cách giải của Bayes
 
 Bức tranh tổng thể về độ phức tạp mô hình đứng trên ba trụ cột:
 
@@ -235,7 +235,7 @@ Sự đánh đổi giữa độ lệch và phương sai cho thấy sai số dự
 Bài tiếp theo: **Chọn biến (Feature Selection)** — hoàn tất nghiên cứu tình huống bằng kiểm tra độ ổn định (stability selection) và diễn giải có xét đến độ bất định.
 
 
-## Khung giải thích (nên đọc chậm): Tính trực tiếp ba thành phần của MSE để chọn độ phức tạp tối ưu
+## Giải thích: Tính trực tiếp ba thành phần của MSE để chọn độ phức tạp tối ưu
 
 Khi so sánh 3 mô hình có độ phức tạp tăng dần trên cùng một bài toán có nhiễu nền $$\sigma_\varepsilon = 2.0$$ (tức $$\sigma_\varepsilon^2 = 4.0$$), hãy đọc bảng phân rã theo 3 bước:
 
@@ -243,7 +243,7 @@ Khi so sánh 3 mô hình có độ phức tạp tăng dần trên cùng một b�
 2. **Tính $$\mathrm{Variance}$$:** Đo độ dao động của dự báo khi thay đổi tập huấn luyện.
 3. **Cộng với nhiễu không thể khử $$\sigma_\varepsilon^2$$:** Chọn mô hình cực tiểu hóa **tổng** cả ba thành phần, chứ không chọn mô hình có Bias = 0!
 
-### Ví dụ tính toán cầm tay chỉ việc: Chọn giữa Mô hình đơn giản, Vừa phải và Phức tạp
+### Ví dụ tính toán làm từng bước: Chọn giữa Mô hình đơn giản, Vừa phải và Phức tạp
 
 Giả sử hàm thật tại $$x_0$$ là $$f(x_0) = 10.0$$ và nhiễu đo lường có phương sai $$\sigma_\varepsilon^2 = 4.0$$. Kết quả đánh giá ba mô hình:
 

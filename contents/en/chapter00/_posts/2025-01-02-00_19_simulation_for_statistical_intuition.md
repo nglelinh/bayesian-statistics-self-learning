@@ -16,7 +16,7 @@ This lesson turns forward simulation into an everyday Bayesian habit—showing h
 
 ---
 
-## Background Knowledge Map: Four Ways Simulation Supercharges Bayesian Workflow
+## Key ideas: Four Ways Simulation Supercharges Bayesian Workflow
 
 In modern Bayesian data analysis (Gelman’s Bayesian Workflow), simulation is not a toy—it is a core validation tool:
 
@@ -109,7 +109,7 @@ Suppose your model for 10 user visits is $$	heta \sim \mathrm{Beta}(2, 8)$$ (pri
 
 From these simulated worlds, average simulated clicks $$pprox 2.0$$ (matching $$\mathbb{E}[y] = 10 	imes 0.20 = 2.0$$), and typical counts sit in $$[0, 5]$$. If your real domain routinely sees 8–9 clicks out of 10, this 5-second simulation immediately warns you that $$\mathrm{Beta}(2,8)$$ is far too pessimistic!
 
-### Deep-Dive Explanation: Four Rules for Reliable Statistical Simulations (Read Slowly)
+### Explanation: Four Rules for Reliable Statistical Simulations
 
 1. **Always test your inference code on simulated data with known $$	heta_{	ext{true}}$$ first:** If your sampler cannot recover $$	heta_{	ext{true}} = 0.65$$ from 500 clean simulated coin flips, never trust it on messy real-world data!
 2. **Check Monte Carlo error of your simulation itself:** Running only 50 repetitions has $$\mathrm{SE} pprox 7\%$$ for a coverage rate; use $$1{,}000	ext{–}10{,}000$$ vectorized repetitions for crisp answers.

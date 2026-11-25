@@ -21,7 +21,7 @@ Trong thống kê Bayes hiện đại, hai định lý kinh điển này là xư
 Sau bài này, bạn sẽ hiểu vì sao trung bình mẫu trở nên ổn định khi cỡ mẫu tăng lên (Luật số lớn — LLN), vì sao tổng hoặc trung bình của nhiều biến ngẫu nhiên có xu hướng tiến gần phân phối chuẩn (Định lý giới hạn trung tâm — CLT), và vì sao hai định lý này là nền tảng cho mô phỏng, ước lượng và kiểm định thống kê.
 
 
-## Bản đồ kiến thức nền: Hội tụ xác suất, Phân phối tiệm cận và Monte Carlo Bayes gặp nhau ở đâu?
+## Kiến thức cần nhớ: Hội tụ xác suất, Phân phối tiệm cận và Monte Carlo Bayes gặp nhau ở đâu?
 
 Để hiểu hai định lý này ở tầm đại học – sau đại học thay vì chỉ thuộc phát biểu, hãy đặt chúng trên ba trụ cột:
 
@@ -120,7 +120,7 @@ Trong thống kê Bayesian, các ước lượng Monte Carlo cũng dựa trên t
 4. Cả hai định lý là nền tảng cho suy luận thống kê và phương pháp mô phỏng.
 
 
-## Khung giải thích (nên đọc chậm): Bốn bước đọc tốc độ hội tụ và sai số chuẩn
+## Giải thích: Bốn bước đọc tốc độ hội tụ và sai số chuẩn
 
 Nhiều người học nhớ mang máng "cỡ mẫu lớn thì chính xác hơn", nhưng lại lúng túng khi phải định lượng *cần bao nhiêu mẫu là đủ*. Hãy đọc chậm chuỗi bốn bước sau:
 
@@ -129,7 +129,7 @@ Nhiều người học nhớ mang máng "cỡ mẫu lớn thì chính xác hơn"
 3. **Áp dụng xấp xỉ chuẩn CLT:** Khi $$n$$ đủ lớn, khoảng $$\mu \pm 1.96\,\sigma/\sqrt{n}$$ chứa xấp xỉ $$95\%$$ các giá trị khả dĩ của $$\bar X_n$$.
 4. **Đánh đổi chi phí – độ chính xác:** Vì căn bậc hai $$\sqrt{n}$$ tăng chậm, muốn giảm một nửa bề rộng sai số phải tăng cỡ mẫu gấp $$4$$ lần; muốn giảm $$10$$ lần phải tăng cỡ mẫu gấp $$100$$ lần.
 
-### Ví dụ tính toán cầm tay chỉ việc: Ước lượng thời gian phản hồi máy chủ lệch phải
+### Ví dụ tính toán làm từng bước: Ước lượng thời gian phản hồi máy chủ lệch phải
 
 Giả sử thời gian phản hồi của một API tuân theo phân phối mũ (rất lệch phải, hoàn toàn không phải phân phối chuẩn) với trung bình thật $$\mu = 200\text{ ms}$$ và độ lệch chuẩn $$\sigma = 200\text{ ms}$$. Ta lấy mẫu $$n$$ yêu cầu độc lập và tính trung bình mẫu $$\bar X_n$$.
 

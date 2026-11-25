@@ -20,7 +20,7 @@ Trong thống kê Bayes, Bernoulli và Binomial là **phòng thí nghiệm đầ
 
 Sau bài này, bạn sẽ phân biệt rõ phân phối Bernoulli và Binomial, hiểu cơ chế sinh dữ liệu nối giữa hai phân phối này, và biết cách diễn giải các tham số theo ngôn ngữ thực tế thay vì chỉ đọc công thức.
 
-## Bản đồ kiến thức nền: Mô hình sinh dữ liệu nhị phân, Likelihood và Tính liên hợp
+## Kiến thức cần nhớ: Mô hình sinh dữ liệu nhị phân, Likelihood và Tính liên hợp
 
 Để đọc sâu bài này dưới góc nhìn tốt nghiệp đại học, hãy nối ba mảnh ghép:
 
@@ -149,7 +149,7 @@ Trong thống kê Bayesian, ta thường đặt phân phối tiên nghiệm (pri
 
 *Bài học tiếp theo: [0.3 Poisson và Exponential]({{ site.baseurl }}/contents/vi/chapter00/00_02_02_poisson_exponential/)*
 
-## Khung giải thích (nên đọc chậm): Từ một chuỗi tung xu đến cập nhật Beta–Binomial bằng tay
+## Giải thích: Từ một chuỗi tung xu đến cập nhật Beta–Binomial bằng tay
 
 Nhiều bạn thắc mắc: *vì sao khi tính posterior cho Binomial ta được phép bỏ qua hệ số $$inom{n}{k}$$?* Hãy đi chậm qua 4 bước:
 
@@ -158,7 +158,7 @@ Nhiều bạn thắc mắc: *vì sao khi tính posterior cho Binomial ta đượ
 3. **Nhân với prior $$	ext{Beta}(lpha, eta)$$:** Mật độ hậu nghiệm tỷ lệ với $$p^{lpha-1}(1-p)^{eta-1} \cdot p^k(1-p)^{n-k} = p^{(lpha+k)-1}(1-p)^{(eta+n-k)-1}$$.
 4. **Nhận diện họ phân phối:** Biểu thức trên chính là lõi của $$	ext{Beta}(lpha+k, eta+n-k)$$, nên mọi hằng số không chứa $$p$$ (kể cả $$inom{n}{k}$$) tự động triệt tiêu khi chuẩn hóa!
 
-### Ví dụ tính toán cầm tay chỉ việc: Đánh giá tỷ lệ chuyển đổi landing page
+### Ví dụ tính toán làm từng bước: Đánh giá tỷ lệ chuyển đổi landing page
 
 Một sản phẩm mới chưa có dữ liệu, nên bạn đặt prior không thiên vị $$	ext{Beta}(2, 2)$$ (trung bình tiên nghiệm $$rac{2}{2+2} = 0.50$$, tương đương 4 lượt thử ảo: 2 thành công, 2 thất bại). Sau ngày đầu chạy thử với $$n = 10$$ khách truy cập, có $$k = 3$$ người mua hàng.
 

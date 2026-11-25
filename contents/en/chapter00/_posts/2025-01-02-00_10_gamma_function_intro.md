@@ -16,7 +16,7 @@ This lesson strips the mystery off $$\Gamma(z)$$ with its two core identities—
 
 ---
 
-## Background Knowledge Map: Where the Gamma Function Appears in Bayesian Models
+## Key ideas: Where the Gamma Function Appears in Bayesian Models
 
 Four properties turn $$\Gamma(z)$$ from an intimidating integral into an everyday algebraic tool:
 
@@ -139,14 +139,18 @@ print(gammaln(100))  # log(Gamma(100))
 
 **Part A — Stepping down a half-integer:**
 Using $$\Gamma(z+1) = z\Gamma(z)$$ and $$\Gamma(1/2) = \sqrt{\pi} pprox 1.7725$$:
-$$\Gamma\!\left(rac{5}{2}ight) = rac{3}{2}\,\Gamma\!\left(rac{3}{2}ight) = rac{3}{2}\cdotrac{1}{2}\,\Gamma\!\left(rac{1}{2}ight) = rac{3}{4}\sqrt{\pi} pprox \mathbf{1.3293}.$$
+$$\Gamma\!\left(rac{5}{2}
+ight) = rac{3}{2}\,\Gamma\!\left(rac{3}{2}
+ight) = rac{3}{2}\cdotrac{1}{2}\,\Gamma\!\left(rac{1}{2}
+ight) = rac{3}{4}\sqrt{\pi} pprox \mathbf{1.3293}.$$
 
 **Part B — Exact normalizing constant of $$\mathrm{Beta}(lpha=2,\; eta=3)$$:**
 $$B(2, 3) = rac{\Gamma(2)\,\Gamma(3)}{\Gamma(2+3)} = rac{1!\cdot 2!}{4!} = rac{1 	imes 2}{24} = rac{1}{12}.$$
 Therefore the exact PDF of $$\mathrm{Beta}(2, 3)$$ is $$f(p) = 12\,p(1-p)^2$$ on $$[0,1]$$! Verify by direct integration:
-$$\int_0^1 12(p - 2p^2 + p^3)\,dp = 12\!\left(rac{1}{2} - rac{2}{3} + rac{1}{4}ight) = 12\cdotrac{1}{12} = \mathbf{1}$$ — exact!
+$$\int_0^1 12(p - 2p^2 + p^3)\,dp = 12\!\left(rac{1}{2} - rac{2}{3} + rac{1}{4}
+ight) = 12\cdotrac{1}{12} = \mathbf{1}$$ — exact!
 
-### Deep-Dive Explanation: Four Practical Takeaways on the Gamma Function (Read Slowly)
+### Explanation: Four Practical Takeaways on the Gamma Function
 
 1. **Remember the off-by-one shift:** $$\Gamma(n) = (n-1)!$$, so $$\Gamma(1) = 0! = 1$$ and $$\Gamma(5) = 4! = 24$$—never $$\Gamma(5) = 5!$$.
 2. **You rarely need to integrate Beta/Gamma kernels by hand:** Whenever you see $$\int_0^1 p^{a-1}(1-p)^{b-1}\,dp$$, immediately recognize it as $$B(a,b) = rac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$$.

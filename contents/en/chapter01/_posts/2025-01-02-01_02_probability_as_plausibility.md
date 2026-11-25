@@ -16,7 +16,7 @@ This lesson introduces the philosophical bedrock of Bayesian statistics: **proba
 
 ---
 
-## Background Knowledge Map: Frequentist Frequency vs. Bayesian Plausibility
+## Key ideas: Frequentist Frequency vs. Bayesian Plausibility
 
 1. **Frequentist View (Long-Run Frequency):** Probability applies strictly to repeatable random sampling; parameters $$\theta$$ are fixed unknown constants, so statements like "$$P(\theta > 0 \mid \text{data}) = 0.92$$" are syntactically illegal!
 2. **Bayesian View (Epistemic Plausibility):** Probability measures rational uncertainty about *any* proposition—repeatable or one-off—given explicit background information $$I$$, written $$P(A \mid I)$$.
@@ -186,7 +186,7 @@ Suppose a forecaster violates the sum rule by assigning $$P(\text{Rain}) = 0.60$
 
 The forecaster loses money with **100% certainty**! Coherence forces probabilities of mutually exclusive exhaustive events to sum to exactly $$1.00$$—and forces belief updates to obey Bayes’ theorem!
 
-### Deep-Dive Explanation: Four Clarifications on "Subjective" Bayesian Probability (Read Slowly)
+### Explanation: Four Clarifications on "Subjective" Bayesian Probability
 
 1. **"Subjective" means *information-dependent*, not arbitrary:** Two scientists with different background information $$I_1 \neq I_2$$ rationally assign different probabilities—and once they share the same data, Bayes’ rule pulls their posteriors together!
 2. **Probability is a property of your *knowledge*, not just the physical coin:** Before you peek under your hand at a coin already flipped, the physical coin is fixed, yet $$P(\text{Heads} \mid I) = 0.5$$ accurately describes your uncertainty.

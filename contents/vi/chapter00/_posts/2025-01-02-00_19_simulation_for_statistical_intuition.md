@@ -21,7 +21,7 @@ Năm 1946, khi nằm dưỡng bệnh và chơi trò xếp bài Solitaire, nhà t
 Sau bài này, bạn sẽ sử dụng mô phỏng như một công cụ suy luận thực thụ chứ không chỉ để minh họa, biết dùng mô phỏng để kiểm chứng công thức, phát hiện các điểm mù trực giác, và chuẩn bị nền tảng cho quy trình làm việc Bayesian dựa trên cơ chế sinh dữ liệu (generative story).
 
 
-## Bản đồ kiến thức nền: Mô hình sinh dữ liệu, Monte Carlo và Kiểm chứng quy trình Bayes
+## Kiến thức cần nhớ: Mô hình sinh dữ liệu, Monte Carlo và Kiểm chứng quy trình Bayes
 
 Mô phỏng kết nối ba trụ cột quan trọng của khoa học dữ liệu định lượng:
 
@@ -81,7 +81,7 @@ Mô phỏng là "phòng thí nghiệm" cốt lõi của quy trình làm việc B
 4. Khi trực giác mâu thuẫn với mô phỏng, hãy kiểm tra lại mã nguồn rồi xem lại chính giả định và trực giác ban đầu.
 
 
-## Khung giải thích (nên đọc chậm): Bốn bước kiểm chứng trực giác bằng mô phỏng
+## Giải thích: Bốn bước kiểm chứng trực giác bằng mô phỏng
 
 Khi gặp một câu hỏi xác suất khó hoặc nghi ngờ một bộ ước lượng, hãy dùng quy trình mô phỏng 4 bước:
 
@@ -90,7 +90,7 @@ Khi gặp một câu hỏi xác suất khó hoặc nghi ngờ một bộ ước 
 3. **Áp dụng đúng quy trình suy diễn lên từng kịch bản:** Tính thống kê quan tâm (trung bình mẫu, khoảng tin cậy, xác suất sự kiện).
 4. **Đo sai số Monte Carlo:** Kiểm tra $$\mathrm{MCSE} = \sqrt{\hat p(1-\hat p)/M}$$ để chắc chắn số lần mô phỏng $$M$$ đủ lớn nhằm kết luận đáng tin cậy.
 
-### Ví dụ tính toán cầm tay chỉ việc: Đo độ chính xác ước lượng xác suất bằng Monte Carlo
+### Ví dụ tính toán làm từng bước: Đo độ chính xác ước lượng xác suất bằng Monte Carlo
 
 Giả sử bạn mô phỏng bài toán kiểm tra xem tổng của 2 viên xúc xắc công bằng có lớn hơn hoặc bằng 10 hay không (giá trị lý thuyết chính xác là $$p = 6/36 = 1/6 \approx 0.1667$$). Hãy theo dõi sai số chuẩn Monte Carlo $$\mathrm{MCSE} = \sqrt{p(1-p)/M}$$ khi tăng số lần chạy $$M$$:
 

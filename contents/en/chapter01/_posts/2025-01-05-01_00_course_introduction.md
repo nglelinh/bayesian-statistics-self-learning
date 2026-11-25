@@ -16,7 +16,7 @@ Welcome to the course roadmap: this introduction shows you how all twelve chapte
 
 ---
 
-## Background Knowledge Map: The Four-Stage Journey of Bayesian Data Analysis
+## Key ideas: The Four-Stage Journey of Bayesian Data Analysis
 
 1. **Stage 1 — Foundations & Updating (Chapters 0–2):** Probability as plausibility, Bayes’ rule, likelihoods, priors, posteriors, and exact conjugate families (Beta–Binomial, Normal–Normal, Gamma–Poisson).
 2. **Stage 2 — Computation Beyond Conjugacy (Chapters 3–4):** Grid approximation, Quadratic/Laplace approximation, and **Markov Chain Monte Carlo (MCMC / Metropolis / HMC-NUTS)** so you can fit *any* model you can write down.
@@ -130,7 +130,7 @@ Before writing a single line of Stan or PyMC, see the entire Bayesian workflow o
 2. **Summarize:** Posterior mean $$\mathbb{E}[p\mid D] = \frac{3}{3+2} = \mathbf{0.60}$$, mode $$\frac{3-1}{3+2-2} = \mathbf{0.667}$$.
 3. **Predict next flip (Posterior Predictive):** Probability Flip 4 is Heads equals the posterior mean **$$60\%$$**—automatically hedging between the raw sample rate (66.7%) and prior ignorance (50%)!
 
-### Deep-Dive Explanation: Four Study Habits That Make This Course Stick (Read Slowly)
+### Explanation: Four Study Habits That Make This Course Stick
 
 1. **Always sketch the generative story first:** Every model in Chapters 1–12 can be drawn as a 3-line prior $$\to$$ likelihood diagram.
 2. **Run and break every Python lab:** Change the prior strength, cut $$n$$ in half, or inject an outlier to *see* how the posterior reacts.

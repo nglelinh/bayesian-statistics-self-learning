@@ -16,7 +16,7 @@ Because the sigmoid is nonlinear, every Bayesian logistic model holds a crucial 
 
 ---
 
-## Background Knowledge Map: Link Functions, Odds Ratios, and Log-Odds Priors
+## Key ideas: Link Functions, Odds Ratios, and Log-Odds Priors
 
 1. **Bernoulli/Binomial Likelihood + Logit Link:** Connects an unconstrained linear predictor $$\eta_i \in (-\infty, \infty)$$ to a valid probability $$p_i = \sigma(\eta_i) \in (0,1)$$.
 2. **Multiplicative Odds Ratios ($$e^\beta$$):** Increasing $$x$$ by +1 adds $$\beta$$ to log-odds, which **multiplies odds** $$\frac{p}{1-p}$$ by $$e^\beta$$—regardless of the baseline probability!
@@ -395,7 +395,7 @@ Suppose a Bayesian logistic regression has posterior mean $$\eta(x) = -1.5 + 0.8
 
 Look at the columns: every step multiplies **Odds** by the exact same $$2.226\times$$, yet **$$\Delta p$$** peaks right around $$50\%$$ ($$+19.3\%$$, matching Gelman’s $$\beta/4 = 0.8/4 = 20\%$$ ceiling!) and flattens near the extremes!
 
-### Deep-Dive Explanation: Four Rules for Bayesian Logistic Regression (Read Slowly)
+### Explanation: Four Rules for Bayesian Logistic Regression
 
 1. **Always check prior predictive probabilities on the $$[0,1]$$ scale:** Plot histograms of $$\sigma(\alpha + \beta x)$$ drawn from your prior—if it looks like a U-shape piled at 0 and 1, tighten your log-odds priors!
 2. **Present results on the *probability* scale for stakeholders:** Saying *"probability rises from 18% to 33% (95% CI: 26%–41%)"* communicates far more clearly than *"log-odds increase by 0.8."*

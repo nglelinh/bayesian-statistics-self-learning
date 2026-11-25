@@ -16,7 +16,7 @@ This lesson equips you with the exact floating-point survival kit used inside St
 
 ---
 
-## Background Knowledge Map: Floating-Point Arithmetic Inside Bayesian Samplers
+## Key ideas: Floating-Point Arithmetic Inside Bayesian Samplers
 
 Four numerical-computing rules keep Bayesian software from ever returning `0.0 / 0.0 = NaN`:
 
@@ -358,7 +358,7 @@ Suppose two candidate models have unnormalized log-posteriors $$\ell_1 = -1000.0
 
 Zero underflow, zero overflow, and exact to full machine precision!
 
-### Deep-Dive Explanation: Four Numerical Rules Every Bayesian Coder Must Follow (Read Slowly)
+### Explanation: Four Numerical Rules Every Bayesian Coder Must Follow
 
 1. **Always call `.logpdf()` / `.logpmf()`, never `np.log(dist.pdf(...))`:** Taking `log` *after* `pdf` underflows to `0.0` still returns `-inf`! Built-in `.logpdf()` evaluates the algebraic log formula directly.
 2. **Use `scipy.special.logsumexp` (or `log1p` / `expm1`) for every normalization step:** Never hand-roll `np.exp(log_p) / np.sum(np.exp(log_p))`.

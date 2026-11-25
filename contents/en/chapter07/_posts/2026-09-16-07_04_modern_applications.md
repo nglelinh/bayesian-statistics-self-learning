@@ -16,7 +16,7 @@ This optional bridge links Chapter 7’s priors and regularization directly to 2
 
 ---
 
-## Background Knowledge Map: Four Practical Approximations to Bayesian Deep Learning
+## Key ideas: Four Practical Approximations to Bayesian Deep Learning
 
 1. **Weight Decay = Gaussian Prior MAP:** Standard `AdamW` weight decay is literally placing $$\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \tau^2 I)$$ and keeping only the single peak—fast, yet blind to posterior width!
 2. **Last-Layer Laplace Approximation:** Freezes the deep feature backbone and computes the exact Hessian covariance $$(-\mathbf{H})^{-1}$$ only on the final linear layer—adding calibrated Bayesian uncertainty in seconds with zero retraining!
@@ -87,7 +87,7 @@ Suppose 4 independently trained ensemble networks predict the probability of pne
 - **Out-of-Distribution Blurry Non-X-Ray Image:** `[0.91, 0.12, 0.65, 0.30]`
   - Mean prediction: $$\bar{p} = \mathbf{0.495}$$; Ensemble SD: **$$0.354$$** (**11× wider epistemic disagreement** $$\implies$$ flag for human doctor review!).
 
-### Deep-Dive Explanation: Four Takeaways on Bayesian Deep Learning in Practice (Read Slowly)
+### Explanation: Four Takeaways on Bayesian Deep Learning in Practice
 
 1. **You don’t need full HMC over 100 million weights to get Bayesian benefits:** A 5-model Deep Ensemble or a Last-Layer Laplace head captures 90% of practical OOD detection and calibration gains at tiny cost.
 2. **Separate *epistemic* (model disagreement) from *aleatoric* (inherent data noise):** High epistemic variance means *"show this to a human and label it for the next training round"* (Active Learning!).

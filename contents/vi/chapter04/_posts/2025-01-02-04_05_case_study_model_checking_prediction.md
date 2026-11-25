@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ thực hành trọn vẹn một quy trình hồi quy B
 > **Câu hỏi tự kiểm tra.** Nếu phân phối hậu nghiệm cho hệ số dốc dương rõ rệt nhưng PPC thất bại ở vùng hóa đơn lớn, bạn nên rút ra kết luận gì?
 
 
-## Bản đồ kiến thức nền: Phương sai giải thích được, Thống kê đuôi và Nhiễu cộng vs. Nhiễu nhân
+## Kiến thức cần nhớ: Phương sai giải thích được, Thống kê đuôi và Nhiễu cộng vs. Nhiễu nhân
 
 Để đọc hiểu trọn vẹn nghiên cứu tình huống `tips`, cần nắm chắc ba khái niệm cầu nối giữa thống kê mô tả và mô hình hóa Bayes:
 
@@ -164,7 +164,7 @@ Giả sử cần dự đoán tiền boa cho một bàn ăn mới có `total_bill
 
 Khoảng thứ hai rộng hơn đáng kể vì gộp thêm độ nhiễu cá thể của bàn ăn mới. Khi ứng dụng vào thực tế, nếu mục tiêu là lập kế hoạch doanh thu trung bình thì dùng khoảng của trung bình; nếu mục tiêu là đánh giá biến động hoặc rủi ro của từng giao dịch cụ thể thì phải dùng khoảng dự đoán.
 
-### Khung giải thích (nên đọc chậm): Tính tay sự sụp đổ của mô hình nhiễu cộng ở hai đầu hóa đơn
+### Giải thích: Tính tay sự sụp đổ của mô hình nhiễu cộng ở hai đầu hóa đơn
 
 Hãy đặt hai mô hình — tuyến tính Gaussian nhiễu cộng và mô hình tỷ lệ log-normal — lên cùng hai bàn ăn thực tế để thấy sự khác biệt bằng con số cụ thể:
 

@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu hồi quy tuyến tính Bayes như một **mô 
 > **Câu hỏi tự kiểm tra.** Vì sao không nên hiểu hồi quy Bayes chỉ đơn thuần là việc tìm một đường thẳng duy nhất?
 
 
-## Bản đồ kiến thức nền: Mô hình sinh dữ liệu, Phân phối có điều kiện và Bất định hai tầng
+## Kiến thức cần nhớ: Mô hình sinh dữ liệu, Phân phối có điều kiện và Bất định hai tầng
 
 Với người đọc đã có nền tảng đại học (giải tích, đại số tuyến tính, xác suất cơ bản), bước chuyển lớn nhất khi học hồi quy Bayes không nằm ở công thức mới mà ở cách thay đổi góc nhìn trên ba trụ cột:
 
@@ -190,7 +190,7 @@ $$
 
 Ngược lại, khi phương sai nhiễu chưa biết và phải được suy luận đồng thời từ dữ liệu, phân phối hậu nghiệm biên của $$\beta$$ thường có đuôi dày hơn (trong thiết lập liên hợp là phân phối Student-t), khiến khoảng hậu nghiệm rộng hơn để phản ánh thêm bất định về nhiễu. Vì vậy, khi báo cáo khoảng ước lượng cho hệ số dốc, cần nêu rõ phương sai nhiễu đang được cố định hay được ước lượng từ dữ liệu.
 
-### Khung giải thích (nên đọc chậm): Từ 3 điểm dữ liệu đến phân phối hậu nghiệm và hai tầng bất định
+### Giải thích: Từ 3 điểm dữ liệu đến phân phối hậu nghiệm và hai tầng bất định
 
 Để thấy cơ chế Bayes vận hành cụ thể ra sao thay vì dừng ở ký hiệu tổng quát, hãy tự tay tính một mô hình hồi quy nhỏ từ đầu đến cuối.
 

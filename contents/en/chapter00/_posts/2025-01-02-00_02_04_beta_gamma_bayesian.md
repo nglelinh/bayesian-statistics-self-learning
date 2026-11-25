@@ -16,7 +16,7 @@ This lesson demystifies Beta and Gamma through the unforgettable **pseudo-count 
 
 ---
 
-## Background Knowledge Map: Parameter-Space Distributions & Conjugacy
+## Key ideas: Parameter-Space Distributions & Conjugacy
 
 Four concepts make Beta and Gamma second nature for every Bayesian practitioner:
 
@@ -293,7 +293,7 @@ Start with prior $$\mathrm{Gamma}(lpha_0 = 4,\; eta_0 = 2)$$ (prior mean $$4/2
 - Posterior: $$\mathrm{Gamma}(4 + 11,\; 2 + 3) = \mathbf{\mathrm{Gamma}(15,\; 5)}$$.
 - Posterior mean: $$rac{15}{5} = \mathbf{3.0}$$ bugs/day; posterior SD: $$rac{\sqrt{15}}{5} pprox 0.775$$ bugs/day!
 
-### Deep-Dive Explanation: Four Rules for Choosing Beta and Gamma Priors (Read Slowly)
+### Explanation: Four Rules for Choosing Beta and Gamma Priors
 
 1. **Always check shape–rate vs. shape–scale parameterization in software:** `scipy.stats.gamma` uses `scale = 1/rate`, whereas Bayesian textbooks and Stan often use `rate = eta`! Mixing them up inverts your mean!
 2. **Use prior predictive checks to verify your pseudo-counts:** Ask *"does $$\mathrm{Beta}(2,8)$$ put reasonable mass across the conversion rates I consider plausible before seeing data?"*

@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ biết cách lựa chọn phân phối tiên nghiệm 
 > **Câu hỏi tự kiểm tra.** Vì sao cùng một phân phối tiên nghiệm có thể hợp lý ở thang đo này nhưng lại bất hợp lý ở thang đo khác?
 
 
-## Bản đồ kiến thức nền: Bất biến thang đo, Điều chuẩn hình học và Dự báo tiên nghiệm
+## Kiến thức cần nhớ: Bất biến thang đo, Điều chuẩn hình học và Dự báo tiên nghiệm
 
 Để không còn cảm giác "chọn prior là đoán mò", hãy đặt bài toán này trên ba trụ cột toán học quen thuộc từ bậc đại học:
 
@@ -147,7 +147,7 @@ Nếu phân phối tiên nghiệm sinh ra các đường hồi quy có độ d�
 
 ![Prior predictive với slope quá rộng]({{ site.baseurl }}/img/chapter_img/chapter04/chapter04_prior_predictive_too_wide.png)
 
-### Khung giải thích (nên đọc chậm): Tự tính khoảng dự báo tiên nghiệm bằng tay trước khi chạy mô hình
+### Giải thích: Tự tính khoảng dự báo tiên nghiệm bằng tay trước khi chạy mô hình
 
 Trước khi cần đến máy tính mô phỏng hàng nghìn đường thẳng, bạn có thể kiểm tra nhanh một lựa chọn phân phối tiên nghiệm chỉ bằng phép cộng phương sai.
 

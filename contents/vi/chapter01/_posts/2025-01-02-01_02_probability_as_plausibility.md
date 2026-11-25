@@ -25,7 +25,7 @@ Sau bài này, bạn cần hiểu vì sao thống kê Bayes xem xác suất là 
 > **Câu hỏi tự kiểm tra.** Vì sao câu “xác suất trời mưa ngày mai là 70%” khó diễn giải theo nghĩa tần suất nhưng lại rất tự nhiên theo quan điểm Bayes?
 
 
-## Bản đồ kiến thức nền: Diễn giải xác suất, Định lý Cox và Tính nhất quán Dutch Book
+## Kiến thức cần nhớ: Diễn giải xác suất, Định lý Cox và Tính nhất quán Dutch Book
 
 Bài học này đặt nền móng triết học – toán học cho toàn bộ khóa học thông qua ba trụ cột:
 
@@ -152,7 +152,7 @@ Nếu tóm gọn trong một câu: trường phái tần suất gắn xác suấ
 > **3 ý cần nhớ.** Frequentist và Bayesian khác nhau trước hết ở cách định nghĩa xác suất chứ không chỉ ở kỹ thuật tính toán; quan điểm Bayes xem xác suất là độ hợp lý nên áp dụng tự nhiên cho giả thuyết, tham số và các sự kiện chỉ xảy ra một lần; và tính “chủ quan” trong Bayes không đồng nghĩa với tùy tiện vì mọi niềm tin đều phải tuân thủ quy tắc nhất quán của xác suất.
 
 
-## Khung giải thích (nên đọc chậm): Chứng minh bằng con số vì sao niềm tin bất nhất sẽ bị "Dutch Book"
+## Giải thích: Chứng minh bằng con số vì sao niềm tin bất nhất sẽ bị "Dutch Book"
 
 Nhiều người nghĩ tính nhất quán xác suất chỉ là lý thuyết suông. Hãy đọc chậm ví dụ đặt cược 4 bước sau để thấy bất kỳ sự vi phạm tiên đề cộng nào cũng dẫn đến thua lỗ chắc chắn:
 
@@ -161,7 +161,7 @@ Nhiều người nghĩ tính nhất quán xác suất chỉ là lý thuyết su�
 3. **Đối thủ thiết lập bộ kèo Dutch Book:** Đối thủ bán cho bạn cả hai vé (một vé "đội X thắng" giá $$60\text{ nghìn}$$, một vé "đội X không thắng" giá $$50\text{ nghìn}$$).
 4. **Kiểm tra mọi kịch bản thực tế:** Tổng tiền bạn bỏ ra là $$110\text{ nghìn}$$, nhưng dù kết quả trận đấu thế nào bạn cũng chỉ thắng đúng một vé và nhận lại $$100\text{ nghìn}$$ — lỗ chắc chắn $$10\text{ nghìn}$$!
 
-### Ví dụ tính toán cầm tay chỉ việc: Bảng kết quả của một Dutch Book
+### Ví dụ tính toán làm từng bước: Bảng kết quả của một Dutch Book
 
 | Kịch bản thực tế | Tiền bạn bỏ ra mua 2 vé | Tiền nhận về từ vé thắng | Lãi / Lỗ ròng của bạn |
 | --- | --- | --- | --- |

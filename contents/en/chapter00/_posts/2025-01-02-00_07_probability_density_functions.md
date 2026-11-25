@@ -16,7 +16,7 @@ This lesson builds crystal-clear intuition for continuous PDFs, CDFs, why $$P(X 
 
 ---
 
-## Background Knowledge Map: Density, Area, and Continuous Bayesian Posteriors
+## Key ideas: Density, Area, and Continuous Bayesian Posteriors
 
 Four concepts eliminate every misconception about continuous densities:
 
@@ -289,7 +289,7 @@ Consider a narrow uniform posterior $$	heta \sim \mathrm{Uniform}(0.40,\; 0.65)$
    $$P(0.45 \le 	heta \le 0.50) = 	ext{height} 	imes 	ext{width} = 4.0 	imes 0.05 = \mathbf{0.20} \quad (20\%).$$
 3. **Check a Normal density peak:** For $$\mathcal{N}(0, \sigma^2)$$ with $$\sigma = 0.1$$, the peak height at $$x=0$$ is $$f(0) = rac{1}{\sigma\sqrt{2\pi}} = rac{1}{0.1 	imes 2.5066} pprox \mathbf{3.99} > 1$$!
 
-### Deep-Dive Explanation: Four Rules for Reading Continuous PDFs Correctly (Read Slowly)
+### Explanation: Four Rules for Reading Continuous PDFs Correctly
 
 1. **Always check the units of the horizontal axis:** If you change units from meters to kilometers, interval widths shrink by $$1000	imes$$, so PDF heights multiply by $$1000	imes$$ to keep total area equal to 1!
 2. **Read *ratios* of densities, not raw heights:** Saying $$f(0.7) / f(0.5) = 2.28$$ means a tiny interval around $$0.7$$ is $$2.28	imes$$ as probable as an equally wide interval around $$0.5$$—this ratio is scale-free and drives Metropolis–Hastings acceptance!

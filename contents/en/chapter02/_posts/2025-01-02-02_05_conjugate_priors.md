@@ -16,7 +16,7 @@ This lesson builds a complete cheat sheet of the **Big Four Conjugate Families**
 
 ---
 
-## Background Knowledge Map: The Algebra of Conjugacy & Exponential Families
+## Key ideas: The Algebra of Conjugacy & Exponential Families
 
 1. **Definition of Conjugacy:** Prior $$p(\theta)$$ is conjugate to likelihood $$p(y\mid\theta)$$ if the posterior $$p(\theta\mid y)$$ belongs to the **same parametric family** as $$p(\theta)$$—turning integration into simple hyperparameter addition!
 2. **Kernel Matching (Drop Constants, Match Exponents):** You never need to carry normalizing constants when deriving a conjugate posterior—simply multiply the $$\theta$$-dependent **kernels** and read off the updated parameters!
@@ -486,7 +486,7 @@ Now observe $$n = 14$$ clicks: **9 Red, 3 Blue, 2 Green**:
 3. **Exact posterior means:**
    $$\mathbb{E}[p_{\text{Red}}\mid D] = \frac{11}{20} = \mathbf{55\%}, \qquad \mathbb{E}[p_{\text{Blue}}\mid D] = \frac{5}{20} = \mathbf{25\%}, \qquad \mathbb{E}[p_{\text{Green}}\mid D] = \frac{4}{20} = \mathbf{20\%}!$$
 
-### Deep-Dive Explanation: Four Rules for Mastering Conjugate Priors (Read Slowly)
+### Explanation: Four Rules for Mastering Conjugate Priors
 
 1. **Memorize the Big Four updating rules—they cover 80% of rapid back-of-the-envelope Bayes:** Beta–Binomial (add successes/failures), Gamma–Poisson (add counts/exposure), Normal–Normal (add precisions), Dirichlet–Multinomial (add category counts).
 2. **Never distort your scientific model just to force conjugacy:** Conjugacy is a convenience, not a law of nature—if your data has outliers or hierarchical groups, use MCMC with the *right* likelihood instead!

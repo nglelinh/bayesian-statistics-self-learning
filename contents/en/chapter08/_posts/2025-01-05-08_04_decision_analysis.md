@@ -16,7 +16,7 @@ Your Bayesian posterior tells you there is a **20% chance of heavy rain** tomorr
 
 ---
 
-## Background Knowledge Map: From Posterior Beliefs to Optimal Decisions
+## Key ideas: From Posterior Beliefs to Optimal Decisions
 
 1. **Loss / Utility Function $$L(a, \theta)$$:** Quantifies the real-world cost of taking action $$a$$ when the true state of the world is $$\theta$$ (medical false negative vs. false positive; stockout vs. overstock).
 2. **Bayes-Optimal Action (Expected Posterior Loss):** Integrate the loss over your full posterior distribution: $$a^* = \arg\min_a \int L(a, \theta)\,p(\theta\mid y)\,d\theta$$—approximated effortlessly from MCMC draws via $$\frac{1}{S}\sum_s L(a, \theta^{(s)})$$!
@@ -162,7 +162,7 @@ Compute exact expected posterior loss for both actions:
 - $$\mathbb{E}[L(\text{Ship})] = 0.20(1000) + 0.80(0) = \mathbf{\$200}.$$
 - **Optimal threshold:** Inspect whenever $$1000\,p > 100 \iff \mathbf{p > 0.10}$$! Even though "no defect" is 4× more likely (80%), **Inspect** cuts expected loss in half!
 
-### Deep-Dive Explanation: Four Rules for Bayesian Decision Analysis (Read Slowly)
+### Explanation: Four Rules for Bayesian Decision Analysis
 
 1. **Always separate *inference* (posterior $$p(\theta\mid y)$$) from *decision* (loss $$L(a,\theta)$$):** Never distort your prior to mimic a conservative loss function—keep beliefs honest and put conservatism explicitly into the loss matrix!
 2. **Integrate loss over the *entire* posterior, not just the posterior mean:** Under nonlinear or asymmetric loss, $$L(a, \mathbb{E}[\theta]) \neq \mathbb{E}[L(a, \theta)]$$ (Jensen’s inequality!).

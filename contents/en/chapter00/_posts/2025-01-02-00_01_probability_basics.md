@@ -16,7 +16,7 @@ This opening lesson builds the exact grammar of uncertainty—sample spaces, con
 
 ---
 
-## Background Knowledge Map: Four Axiomatic Pillars Behind Bayesian Reasoning
+## Key ideas: Four Axiomatic Pillars Behind Bayesian Reasoning
 
 Every Bayesian calculation in this entire course is built from just four elementary probability rules:
 
@@ -202,7 +202,7 @@ $$P(D \mid +) = rac{99}{99 + 495} = rac{99}{594} = rac{1}{6} pprox \mathbf{1
 
 Even with a 99%-accurate test, five out of six positive results are false alarms because healthy people outnumber sick people 99-to-1!
 
-### Deep-Dive Explanation: Four Rules to Never Misfire on Conditional Probability (Read Slowly)
+### Explanation: Four Rules to Never Misfire on Conditional Probability
 
 1. **Never confuse $$P(A\mid B)$$ with $$P(B\mid A)$$:** Confusing $$P(+\mid D) = 99\%$$ with $$P(D\mid +) = 16.7\%$$ is the *base-rate fallacy*—the #1 statistical error in medicine, law, and machine learning.
 2. **Always check the denominator (marginal evidence):** Conditioning replaces the whole sample space with the slice where the observed evidence holds (`594` positive tests, not `10,000` people).

@@ -20,7 +20,7 @@ Câu trả lời là **Hàm Mật độ Xác suất (PDF)** — khái niệm tư
 
 Bài học này trình bày có hệ thống về **hàm mật độ xác suất (PDF)**, làm rõ **sự khác biệt bản chất giữa PDF và hàm khối lượng xác suất (PMF)**, cũng như cách diễn giải chính xác PDF trong các mô hình xác suất liên tục.
 
-## Bản đồ kiến thức nền: Độ đo Lebesgue, Tích phân mật độ và Biểu diễn Hậu nghiệm liên tục
+## Kiến thức cần nhớ: Độ đo Lebesgue, Tích phân mật độ và Biểu diễn Hậu nghiệm liên tục
 
 Ba trụ cột toán học làm nên bản chất của PDF trong thống kê Bayes:
 
@@ -260,7 +260,7 @@ $$L(\mu) = \prod_{i=1}^{n} f(x_i \mid \mu) = \prod_{i=1}^{n} \frac{1}{\sigma\sqr
 
 Mỗi thừa số $$f(x_i \mid \mu)$$ là giá trị PDF tại quan sát $$x_i$$ ứng với tham số $$\mu$$, và ước lượng hợp lý cực đại (MLE) là giá trị $$\hat{\mu}$$ làm cực đại $$L(\mu)$$.
 
-## Khung giải thích (nên đọc chậm): Tại sao PDF có thể lớn hơn 1 — và cách đọc diện tích bằng tay
+## Giải thích: Tại sao PDF có thể lớn hơn 1 — và cách đọc diện tích bằng tay
 
 Hãy đọc chậm bốn quy tắc vàng để không bao giờ hiểu sai đồ thị PDF của prior hay posterior:
 
@@ -269,24 +269,27 @@ Hãy đọc chậm bốn quy tắc vàng để không bao giờ hiểu sai đồ
 3. **Tỷ số mật độ mới mang ý nghĩa bất biến theo đơn vị:** Khi so sánh hai điểm $$x_1$$ và $$x_2$$, tỷ số $$f(x_1)/f(x_2)$$ cho biết một khoảng hẹp quanh $$x_1$$ có xác suất lớn gấp bao nhiêu lần khoảng cùng bề rộng quanh $$x_2$$ — đây chính là thứ thuật toán **Metropolis–Hastings** sử dụng trong tỷ số chấp nhận!
 4. **Khoảng tin cậy Bayes là bài toán diện tích:** Tìm khoảng 95% hậu nghiệm nghĩa là tìm $$[a, b]$$ sao cho $$\int_a^b p(	heta \mid y)\,d	heta = 0.95$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Kiểm tra PDF tam giác và tính xác suất khoảng
+### Ví dụ tính toán làm từng bước: Kiểm tra PDF tam giác và tính xác suất khoảng
 
 Xét một hàm mật độ đơn giản trên đoạn $$[0, 0.5]$$ (ví dụ một prior tam giác tập trung gần $$0.5$$):
 $$f(	heta) = c\,	heta \quad 	ext{với } 0 \le 	heta \le 0.5, \quad 	ext{và } f(	heta) = 0 	ext{ ở ngoài.}$$
 
 - **Bước 1 — Tìm hằng số chuẩn hóa $$c$$ sao cho tổng diện tích bằng 1:**
-  $$\int_0^{0.5} c\,	heta\,d	heta = c \left[rac{	heta^2}{2}ight]_0^{0.5} = c \cdot rac{0.25}{2} = rac{c}{8} = 1 \implies c = 8.$$
+  $$\int_0^{0.5} c\,	heta\,d	heta = c \left[rac{	heta^2}{2}
+ight]_0^{0.5} = c \cdot rac{0.25}{2} = rac{c}{8} = 1 \implies c = 8.$$
 - **Bước 2 — Kiểm tra giá trị PDF tại đỉnh $$	heta = 0.5$$:**
   $$f(0.5) = 8 	imes 0.5 = 4 > 1!$$
   Điều này hoàn toàn hợp lệ: hình tam giác có đáy $$0.5$$ và chiều cao $$4$$ nên diện tích đúng bằng $$rac{1}{2} 	imes 0.5 	imes 4 = 1$$.
 - **Bước 3 — Tính xác suất $$	heta$$ rơi vào khoảng $$[0.25, 0.50]$$:**
-  $$P(0.25 \le 	heta \le 0.50) = \int_{0.25}^{0.50} 8	heta\,d	heta = \left[4	heta^2ight]_{0.25}^{0.50} = 4(0.25) - 4(0.0625) = 1 - 0.25 = 0.75.$$
+  $$P(0.25 \le 	heta \le 0.50) = \int_{0.25}^{0.50} 8	heta\,d	heta = \left[4	heta^2
+ight]_{0.25}^{0.50} = 4(0.25) - 4(0.0625) = 1 - 0.25 = 0.75.$$
 - **Bước 4 — Xấp xỉ xác suất trên khoảng hẹp $$[0.40, 0.41]$$ bằng công thức $$f(x)\Delta x$$:**
   $$f(0.405) 	imes 0.01 = (8 	imes 0.405) 	imes 0.01 = 3.24 	imes 0.01 = 0.0324$$ (đúng tuyệt đối vì $$f$$ tuyến tính!).
 
 **Hiểu lầm cần tránh:** Thấy $$f(	heta) = 4$$ rồi kết luận "mô hình bị lỗi vì xác suất vượt quá 1" hoặc dùng trực tiếp $$f(	heta)$$ để cộng dồn mà quên nhân với bề rộng $$\Delta 	heta$$.
 
-**Kiểm tra nhanh:** Kỳ vọng của phân phối tam giác trên là $$\mathbb{E}[	heta] = \int_0^{0.5} 	heta \cdot 8	heta\,d	heta = \left[rac{8	heta^3}{3}ight]_0^{0.5} = rac{8 	imes 0.125}{3} = rac{1}{3} pprox 0.333$$.
+**Kiểm tra nhanh:** Kỳ vọng của phân phối tam giác trên là $$\mathbb{E}[	heta] = \int_0^{0.5} 	heta \cdot 8	heta\,d	heta = \left[rac{8	heta^3}{3}
+ight]_0^{0.5} = rac{8 	imes 0.125}{3} = rac{1}{3} pprox 0.333$$.
 
 ---
 

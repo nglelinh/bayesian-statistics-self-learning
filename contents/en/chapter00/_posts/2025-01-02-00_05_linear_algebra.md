@@ -16,7 +16,7 @@ This lesson builds the exact geometric and matrix intuition you need for multi-p
 
 ---
 
-## Background Knowledge Map: How Linear Algebra Powers Multi-Parameter Bayes
+## Key ideas: How Linear Algebra Powers Multi-Parameter Bayes
 
 Four linear-algebra ideas reappear constantly across Bayesian regression and MCMC:
 
@@ -579,7 +579,8 @@ Suppose a 2-parameter posterior has covariance matrix:
 $$\Sigma = egin{pmatrix} 4 & 2 \ 2 & 5 \end{pmatrix}.$$
 
 1. **Check correlation & positive definiteness:**
-   - Standard deviations: $$\sigma_1 = \sqrt{4} = 2$$, $$\sigma_2 = \sqrt{5} pprox 2.236$$; correlation $$ho = rac{2}{2\sqrt{5}} pprox 0.447$$.
+   - Standard deviations: $$\sigma_1 = \sqrt{4} = 2$$, $$\sigma_2 = \sqrt{5} pprox 2.236$$; correlation $$
+ho = rac{2}{2\sqrt{5}} pprox 0.447$$.
    - Determinant: $$\det(\Sigma) = 4(5) - 2^2 = 16 > 0$$ and trace $$4+5=9 > 0$$ $$\implies$$ strictly positive definite!
 2. **Compute its lower-triangular Cholesky factor $$L$$ ($$\Sigma = L L^T$$) by hand:**
    - $$L_{11} = \sqrt{4} = 2$$.
@@ -589,7 +590,7 @@ $$\Sigma = egin{pmatrix} 4 & 2 \ 2 & 5 \end{pmatrix}.$$
 3. **Generate one correlated draw from $$\mathbf{z} = (1, -1)^T$$:**
    $$L\mathbf{z} = egin{pmatrix} 2(1) + 0 \ 1(1) + 2(-1) \end{pmatrix} = egin{pmatrix} 2 \ -1 \end{pmatrix}.$$
 
-### Deep-Dive Explanation: Four Linear-Algebra Habits for Bayesian Modeling (Read Slowly)
+### Explanation: Four Linear-Algebra Habits for Bayesian Modeling
 
 1. **Never invert a matrix explicitly when solving $$A\mathbf{x}=\mathbf{b}$$:** Use `np.linalg.solve(A, b)` or Cholesky solves instead of `np.linalg.inv(A) @ b` for far higher speed and numerical stability.
 2. **Watch the condition number of $$\mathbf{X}^T\mathbf{X}$$:** Collinear predictors create tiny eigenvalues in $$\mathbf{X}^T\mathbf{X}$$, stretching the posterior into a razor-thin ridge—standardizing predictors (`(x - mean)/sd`) immediately improves geometry!

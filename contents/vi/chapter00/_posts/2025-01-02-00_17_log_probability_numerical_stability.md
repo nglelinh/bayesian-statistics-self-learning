@@ -12,7 +12,7 @@ lesson_type: required
 
 Trên bảng phấn, tích của 1.000 xác suất bằng $$0.1$$ chỉ là một dòng ký hiệu gọn gàng $$10^{-1000}$$. Nhưng ngay khi bạn gõ công thức ấy vào máy tính dấu phẩy động 64-bit chuẩn IEEE 754, con số đó lập tức biến mất thành đúng `0.0` vì vượt quá giới hạn dưới khoảng $$10^{-308}$$. Trong một lần chạy công thức Bayes, chỉ cần tử số và mẫu số cùng bị làm tròn về `0.0`, toàn bộ thuật toán lập tức sập với `0.0 / 0.0 = NaN`.
 
-Bài học này bóc tách **cầu nối giữa toán học lý tưởng và tính toán số thực tế**: làm việc trên thang logarit và sử dụng thủ thuật `log-sum-exp` không phải mẹo lập trình vặt, mà là kỹ thuật sống còn trong mọi phần mềm Bayes hiện đại như PyMC hay Stan.
+Bài học này bóc tách **cầu nối giữa toán học lý tưởng và tính toán số thực tế**: làm việc trên thang logarit và sử dụng thủ thuật `log-sum-exp` không phải mẹo lập trình vặt, mà là kỹ thuật quan trọng trong mọi phần mềm Bayes hiện đại như PyMC hay Stan.
 
 ---
 
@@ -21,7 +21,7 @@ Bài học này bóc tách **cầu nối giữa toán học lý tưởng và tí
 Sau bài này, bạn sẽ hiểu vì sao thực hành Bayesian gần như luôn thao tác trên thang log, nhận diện được các sự cố số học như underflow, overflow, `-inf` và `nan`, biết cách viết log-likelihood và log-posterior đúng chuẩn, đồng thời nắm kỹ thuật log-sum-exp để chuẩn hóa trọng số hậu nghiệm an toàn.
 
 
-## Bản đồ kiến thức nền: Số học dấu phẩy động, Đại số Logarit và Ổn định MCMC
+## Kiến thức cần nhớ: Số học dấu phẩy động, Đại số Logarit và Ổn định MCMC
 
 Để hiểu vì sao mọi công cụ Bayes chuyên nghiệp đều tính hoàn toàn trong không gian log, hãy kết nối ba trụ cột:
 
@@ -309,7 +309,7 @@ Nguyên tắc cốt lõi cần nhớ: **trong tính toán Bayesian, hãy giữ p
 5. Các giá trị `-inf`, `inf` và `nan` là tín hiệu chẩn đoán quan trọng trong quy trình tính toán.
 
 
-## Khung giải thích (nên đọc chậm): Ba bước chuẩn hóa hậu nghiệm an toàn bằng Log-Sum-Exp
+## Giải thích: Ba bước chuẩn hóa hậu nghiệm an toàn bằng Log-Sum-Exp
 
 Khi bạn có vectơ log-posterior chưa chuẩn hóa $$\mathbf{a} = (a_1, \dots, a_K)$$ gồm các số âm rất lớn, hãy luôn thực hiện đúng ba bước sau thay vì gọi `exp(a)` trực tiếp:
 
@@ -317,7 +317,7 @@ Khi bạn có vectơ log-posterior chưa chuẩn hóa $$\mathbf{a} = (a_1, \dots
 2. **Dịch chuyển về gần 0 trước khi lấy mũ:** Tính $$b_k = a_k - m \le 0$$. Phần tử lớn nhất có $$b_{k^*} = 0 \implies e^{b_{k^*}} = 1$$, đảm bảo không bao giờ tràn trên (overflow) và mẫu số luôn $$\ge 1$$ (không bao giờ chia cho 0).
 3. **Tính hằng số chuẩn hóa và xác suất hậu nghiệm:** $$\log Z = m + \log\sum_k e^{b_k}$$, rồi $$p_k = \exp(a_k - \log Z)$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Chuẩn hóa 3 mô hình có log-posterior bằng $$-1000$$
+### Ví dụ tính toán làm từng bước: Chuẩn hóa 3 mô hình có log-posterior bằng $$-1000$$
 
 Giả sử sau khi quan sát tập dữ liệu lớn, ba giả thuyết $$H_1, H_2, H_3$$ có log-posterior chưa chuẩn hóa lần lượt là $$a_1 = -1000.0$$, $$a_2 = -1001.0$$, $$a_3 = -1002.0$$.
 

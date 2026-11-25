@@ -21,7 +21,7 @@ Bài tổng kết Chương 7 này kết nối điều chuẩn Bayes cổ điển
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận weight decay, horseshoe, xấp xỉ Laplace và deep ensemble như những cách khác nhau để đặt phân phối tiên nghiệm lên các mô hình quá linh hoạt. Mục tiêu không phải là ghi nhớ tên thuật toán, mà là thấy rằng vấn đề quá khớp ở Chương 7 chính là động lực dẫn đến học sâu Bayes (Bayesian deep learning): khi mạng nơ-ron có quá nhiều tham số, ta cần một phân phối trên tập các hàm thay vì chỉ một nghiệm tối ưu điểm duy nhất.
 
 
-## Bản đồ kiến thức nền: Từ Điều chuẩn Cổ điển đến Học sâu Bayes (BDL)
+## Kiến thức cần nhớ: Từ Điều chuẩn Cổ điển đến Học sâu Bayes (BDL)
 
 Ba trụ cột sau nối liền Chương 7 với nghiên cứu học máy hiện đại:
 
@@ -80,7 +80,7 @@ Chấm điểm dữ liệu bảng, phát hiện dữ liệu ngoài phân phối 
 Xấp xỉ Laplace chỉ có giá trị cục bộ. VBLL giả định lớp cuối tuyến tính trên bộ đặc trưng cố định. Deep ensemble làm tăng chi phí huấn luyện theo số lượng mô hình thành phần. Không có phương pháp nào thay thế được nhu cầu kiểm chứng mô hình sẽ trình bày ở Chương 8. Bài học này không nhằm mở rộng thành một chương riêng về học sâu, mà chỉ cho thấy cách tư duy về tiên nghiệm từ bài 7.1 đã đi vào các kiến trúc mạng hiện đại theo những hướng tiếp cận thực dụng.
 
 
-## Khung giải thích (nên đọc chậm): Tách độ bất định Aleatoric và Epistemic bằng định luật tổng phương sai
+## Giải thích: Tách độ bất định Aleatoric và Epistemic bằng định luật tổng phương sai
 
 Với một tổ hợp gồm $$M$$ mô hình (từ mẫu MCMC, MC Dropout hoặc Deep Ensemble), mỗi mô hình $$m$$ dự đoán một trung bình $$\mu_m$$ và một phương sai nhiễu dữ liệu $$\sigma_m^2$$. Ta tách tổng bất định dự báo theo đúng định luật tổng phương sai (*Law of Total Variance*):
 
@@ -89,7 +89,7 @@ Với một tổ hợp gồm $$M$$ mô hình (từ mẫu MCMC, MC Dropout hoặc
 3. **Bất định Epistemic (độ bất đồng giữa các mô hình):** $$\sigma_{\text{epi}}^2 = \frac{1}{M}\sum_{m=1}^M (\mu_m - \bar\mu)^2$$.
 4. **Tổng phương sai dự báo:** $$\sigma_{\text{total}}^2 = \sigma_{\text{ale}}^2 + \sigma_{\text{epi}}^2$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: So sánh ảnh trong phân phối (ID) và ảnh lạ ngoài phân phối (OOD)
+### Ví dụ tính toán làm từng bước: So sánh ảnh trong phân phối (ID) và ảnh lạ ngoài phân phối (OOD)
 
 Giả sử một Deep Ensemble gồm $$M = 3$$ mạng dự đoán độ tuổi sinh học trên hai ca (A: dữ liệu quen thuộc; B: dữ liệu lạ ngoài phân phối):
 

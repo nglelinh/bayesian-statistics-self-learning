@@ -16,7 +16,7 @@ This lesson draws an unbreakable line between **data spread (SD)** and **estimat
 
 ---
 
-## Background Knowledge Map: Data Spread vs. Estimator Uncertainty
+## Key ideas: Data Spread vs. Estimator Uncertainty
 
 Four distinctions clear up every error-bar confusion forever:
 
@@ -128,7 +128,7 @@ Suppose adult reaction times have population mean $$\mu = 250	ext{ ms}$$ and pop
 
 Every 4× increase in sample size halves the SE while leaving individual human variability ($$36	ext{ ms}$$) completely unchanged!
 
-### Deep-Dive Explanation: Four Rules for Reading Error Bars Like a Statistician (Read Slowly)
+### Explanation: Four Rules for Reading Error Bars Like a Statistician
 
 1. **Always check the caption: are the error bars SD, SE, or 95% CI?** Plotting `± 1 SE` makes noisy data look artificially tight—always label explicitly!
 2. **Use SD to describe people/items; use SE (or posterior SD) to describe uncertainty in an average:** A doctor telling a patient *"your outcome will likely fall within..."* needs SD (or a posterior predictive interval), never SE!

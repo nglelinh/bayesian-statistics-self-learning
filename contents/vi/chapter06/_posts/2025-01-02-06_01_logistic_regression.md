@@ -21,7 +21,7 @@ Trong bối cảnh Bayes, hồi quy logistic không chỉ cho bạn một bộ h
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **hồi quy logistic (logistic regression)** như một mô hình nền tảng cho các **biến kết quả nhị phân (binary outcomes)** như có/không, thành công/thất bại, hay 0/1. Trọng tâm của bài không chỉ là thay một công thức hồi quy khác, mà là hiểu vì sao hồi quy tuyến tính không phù hợp với dữ liệu nhị phân, vì sao ta cần **hàm liên kết (link function)**, và vì sao hệ số của mô hình phải được diễn giải thông qua **tỷ số odds (odds ratio)** thay vì theo trực giác tuyến tính thông thường. Đây cũng là bước mở đầu để tiếp cận họ **mô hình tuyến tính tổng quát (Generalized Linear Models — GLMs)**.
 
 
-## Bản đồ kiến thức nền: Hàm liên kết Logit, Tỷ số Odds và Suy diễn Bayes phi liên hợp
+## Kiến thức cần nhớ: Hàm liên kết Logit, Tỷ số Odds và Suy diễn Bayes phi liên hợp
 
 Để làm chủ hồi quy logistic Bayes ở trình độ chuyên sâu, hãy kết nối ba trụ cột:
 
@@ -373,7 +373,7 @@ Hồi quy logistic là lựa chọn tự nhiên khi biến kết quả chỉ có
 Bài tiếp theo: **Hồi quy Poisson (Poisson Regression)** cho dữ liệu đếm.
 
 
-## Khung giải thích (nên đọc chậm): Chuyển đổi chính xác giữa Log-Odds, Odds và Xác suất
+## Giải thích: Chuyển đổi chính xác giữa Log-Odds, Odds và Xác suất
 
 Lỗi phổ biến nhất khi đọc kết quả hồi quy logistic là diễn giải nhầm hệ số $$\beta$$ hoặc $$e^\beta$$ trực tiếp như mức tăng xác suất. Hãy đi chậm qua 4 bước quy đổi:
 
@@ -382,7 +382,7 @@ Lỗi phổ biến nhất khi đọc kết quả hồi quy logistic là diễn g
 3. **Chuyển sang xác suất bằng hàm sigmoid:** $$p = \frac{\text{Odds}}{1 + \text{Odds}} = \frac{1}{1 + e^{-\eta}}$$.
 4. **Tính mức thay đổi xác suất thực tế:** So sánh trực tiếp $$p(x+1) - p(x)$$ tại điểm quan tâm thay vì chỉ báo cáo $$e^\beta$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Tác động của số giờ tự học lên xác suất qua môn
+### Ví dụ tính toán làm từng bước: Tác động của số giờ tự học lên xác suất qua môn
 
 Giả sử hậu nghiệm cho ra trung bình $$\alpha = -2.0$$ và $$\beta = 0.8$$ (mỗi giờ tự học thêm tăng log-odds thêm $$0.8$$, tức Odds Ratio $$= e^{0.8} \approx 2.226$$). Hãy tính xác suất qua môn tại $$x = 1, 2, 3, 4$$ giờ:
 

@@ -27,7 +27,7 @@ Khóa học này được xây dựng với một mục tiêu rõ ràng: giúp b
 ![Bayesian reasoning trong đời sống hằng ngày]({{ site.baseurl }}/img/chapter_img/chapter01/bayesian_daily_life_small.png)
 
 
-## Bản đồ kiến thức nền: Lộ trình 4 tầng của Tư duy Thống kê Bayes
+## Kiến thức cần nhớ: Lộ trình 4 tầng của Tư duy Thống kê Bayes
 
 Toàn bộ khóa học này được thiết kế như một hành trình gồm ba trụ cột liên kết chặt chẽ với nhau:
 
@@ -120,7 +120,7 @@ Bạn chỉ cần sự kiên nhẫn để chấp nhận ba nguyên tắc: độ 
 Bài tiếp theo là [1.1 Replication Crisis & P-values]({{ site.baseurl }}/contents/vi/chapter01/01_01_replication_crisis_pvalues/), nơi Chương 1 bắt đầu đặt câu hỏi: khi cách suy luận thống kê truyền thống bộc lộ nhiều giới hạn, ta có lựa chọn nào phù hợp hơn không? Nếu cần ôn lại nền tảng trước khi vào chương, bạn có thể xem [Chapter 00: Prerequisites](/vi/chapter00/).
 
 
-## Khung giải thích (nên đọc chậm): Chu trình làm việc Bayes 5 bước (Bayesian Workflow)
+## Giải thích: Chu trình làm việc Bayes 5 bước (Bayesian Workflow)
 
 Suốt khóa học, dù bài toán đơn giản hay phức tạp, bạn sẽ luôn đi theo cùng một vòng lặp 5 bước:
 
@@ -130,7 +130,7 @@ Suốt khóa học, dù bài toán đơn giản hay phức tạp, bạn sẽ lu�
 4. **Kiểm tra dự báo hậu nghiệm (Posterior Predictive Check):** So sánh dữ liệu mô phỏng từ hậu nghiệm với dữ liệu thật để tìm điểm yếu của mô hình.
 5. **So sánh và ra quyết định:** Dùng WAIC/LOO để so sánh mô hình và tối thiểu hóa kỳ vọng tổn thất để đưa ra hành động cụ thể.
 
-### Ví dụ tính toán cầm tay chỉ việc: Bản thu nhỏ cả khóa học trong 3 dòng số
+### Ví dụ tính toán làm từng bước: Bản thu nhỏ cả khóa học trong 3 dòng số
 
 Giả sử bạn tung một đồng xu mới $$n = 5$$ lần và thấy $$4$$ mặt Ngửa. Với niềm tin ban đầu trung lập $$\text{Beta}(1, 1)$$ (kỳ vọng $$0.50$$), toàn bộ quy trình Bayes cho ra:
 

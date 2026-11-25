@@ -16,7 +16,7 @@ This optional bridge shows how Bayes’ theorem powers modern computer science s
 
 ---
 
-## Background Knowledge Map: Three Ways Bayes’ Theorem Ships in Computer Science
+## Key ideas: Three Ways Bayes’ Theorem Ships in Computer Science
 
 1. **Sequential Filtering (Robotics & Tracking):** Kalman filters (exact linear-Gaussian Bayes) and Particle filters fuse noisy GPS + LiDAR + IMU streams every 20 milliseconds by turning the previous millisecond’s posterior into the next millisecond’s prior.
 2. **Thompson Sampling (Multi-Armed Bandits):** Instead of wasting 50% of traffic on a losing A/B variant for weeks, Thompson Sampling samples $$\theta_k \sim \mathrm{Beta}(\alpha_k, \beta_k)$$ for each arm and plays the winner—automatically shifting traffic toward better options while keeping exploration alive!
@@ -89,7 +89,7 @@ Suppose 20% of incoming emails are Spam ($$\text{prior odds} = \frac{0.20}{0.80}
 3. **Convert back to probability:**
    $$P(\text{Spam} \mid \text{"lottery"}) = \frac{10}{10 + 1} = \frac{10}{11} \approx \mathbf{90.9\%}!$$
 
-### Deep-Dive Explanation: Four Takeaways on Bayesian Algorithms in CS (Read Slowly)
+### Explanation: Four Takeaways on Bayesian Algorithms in CS
 
 1. **Odds form makes sequential updates pure multiplication (or log-addition):** Every new word or sensor reading simply adds $$\ln(\mathrm{LR})$$ to the running log-odds!
 2. **Uncertainty drives smart exploration:** In Thompson Sampling and Bayesian Optimization, *high posterior variance* is a feature—it tells the agent where learning has the highest payoff.

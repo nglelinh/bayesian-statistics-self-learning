@@ -21,7 +21,7 @@ Thống kê Bayes tiếp cận chọn lọc đặc trưng theo hướng nhân v�
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **chọn biến (feature selection)** như bài toán xác định những biến dự báo thực sự quan trọng trong số rất nhiều biến ứng viên. Bài học trình bày các hướng tiếp cận Bayes như tiên nghiệm Laplace, spike-and-slab và horseshoe, đồng thời so sánh với các phương pháp tần suất quen thuộc như Lasso hay chọn biến từng bước (stepwise). Mục tiêu không chỉ là biết các công cụ hiện có, mà là hiểu mỗi công cụ mã hóa giả định gì về độ thưa của mô hình và khi nào nên áp dụng từng cách tiếp cận trong dữ liệu nhiều chiều.
 
 
-## Bản đồ kiến thức nền: Không gian $$2^p$$ mô hình, PIP và Prior Co cụm Thưa
+## Kiến thức cần nhớ: Không gian $$2^p$$ mô hình, PIP và Prior Co cụm Thưa
 
 Để nắm chắc chiến lược chọn lọc biến Bayes, hãy kết nối ba trụ cột:
 
@@ -312,7 +312,7 @@ Chọn biến không nên bị xem như thao tác lọc cơ học, mà là một
 Kết thúc Chương 07 về điều chuẩn (Regularization), đánh đổi độ lệch – phương sai (Bias-Variance) và chọn biến (Feature Selection).
 
 
-## Khung giải thích (nên đọc chậm): Tính Xác suất chọn biến (PIP) từ trọng số hậu nghiệm của không gian mô hình
+## Giải thích: Tính Xác suất chọn biến (PIP) từ trọng số hậu nghiệm của không gian mô hình
 
 Khi nhiều mô hình con cùng giải thích dữ liệu gần tương đương nhau (đặc biệt khi hai biến dự báo tương quan mạnh), PIP giúp ta không đưa ra kết luận cực đoan. Hãy đi qua 3 bước:
 
@@ -321,7 +321,7 @@ Khi nhiều mô hình con cùng giải thích dữ liệu gần tương đương
    $$\mathrm{PIP}_j = \sum_{k:\; X_j \in M_k} P(M_k \mid y).$$
 3. **Diễn giải theo ngưỡng hành động:** $$\mathrm{PIP}_j > 0.5$$ tương ứng mô hình xác suất trung vị (*median probability model*); nếu hai biến tương quan cao cùng chia nhau $$\mathrm{PIP} \approx 0.45$$ mỗi biến, tổng xác suất có ít nhất một trong hai biến lại rất cao ($$\approx 0.90$$).
 
-### Ví dụ tính toán cầm tay chỉ việc: Tính PIP khi $$X_2$$ và $$X_3$$ đa cộng tuyến
+### Ví dụ tính toán làm từng bước: Tính PIP khi $$X_2$$ và $$X_3$$ đa cộng tuyến
 
 Giả sử có 3 biến dự báo $$X_1, X_2, X_3$$ (trong đó $$X_2$$ và $$X_3$$ tương quan mạnh với nhau). Ta xét 4 mô hình có xác suất hậu nghiệm đáng kể:
 

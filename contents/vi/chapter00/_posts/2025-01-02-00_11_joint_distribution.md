@@ -16,7 +16,7 @@ Bài học này rèn luyện phản xạ làm việc với bảng phân phối �
 
 ---
 
-## Bản đồ kiến thức nền: Ba phép toán nền tảng trên mọi Phân phối Đồng thời
+## Kiến thức cần nhớ: Ba phép toán nền tảng trên mọi Phân phối Đồng thời
 
 1. **Phân phối đồng thời $$p(x, y)$$:** Lưu giữ *trọn vẹn* thông tin về cả hai biến cùng lúc (kể cả mối phụ thuộc giữa chúng); tổng (hoặc tích phân) trên toàn bộ không gian bằng đúng `1`.
 2. **Biên hóa (Marginalization — Cộng/Tích phân gộp):** $$p(x) = \sum_y p(x, y)$$ loại bỏ một biến phụ để nhìn riêng phân phối của $$X$$ — đây chính là cơ chế tính bằng chứng $$p(y) = \int p(y,\theta)\,d\theta$$ và khử tham số nhiễu trong thống kê Bayes!
@@ -90,7 +90,7 @@ $$p(x,y)=p(x\mid y)p_Y(y)=p(y\mid x)p_X(x)$$
 
 $$p(\theta\mid x)=\frac{p(x\mid\theta)p(\theta)}{p(x)}$$
 
-trong đó điểm mấu chốt là phân tách phân phối đồng thời thành tích của hàm hợp lý và phân phối tiên nghiệm:
+trong đó điểm chính là phân tách phân phối đồng thời thành tích của hàm hợp lý và phân phối tiên nghiệm:
 
 $$p(\theta,x)=p(x\mid\theta)p(\theta)$$
 
@@ -157,7 +157,7 @@ Do đó, nắm vững mối liên hệ đồng thời – biên – có điều 
 
 ---
 
-### Ví dụ tính tay cầm tay chỉ việc: Cắt lát và Biên hóa bảng đồng thời Thời tiết – Giao thông
+### Ví dụ tính tay làm từng bước: Cắt lát và Biên hóa bảng đồng thời Thời tiết – Giao thông
 
 Xét bảng phân phối đồng thời giữa **Thời tiết** ($$W \in \{\text{Mưa}, \text{Nắng}\}$$) và **Giao thông** ($$T \in \{\text{Tắc}, \text{Thông}\}$$) có tổng toàn bảng bằng $$1{,}00$$:
 
@@ -172,7 +172,7 @@ Xét bảng phân phối đồng thời giữa **Thời tiết** ($$W \in \{\tex
    $$P(\text{Mưa} \mid \text{Tắc}) = \frac{0{,}24}{0{,}40} = \mathbf{0{,}60}, \qquad P(\text{Nắng} \mid \text{Tắc}) = \frac{0{,}16}{0{,}40} = \mathbf{0{,}40}.$$
    Trước khi mở bản đồ giao thông, xác suất tiên nghiệm trời mưa là $$30\%$$; chỉ cần thấy đường tắc, xác suất hậu nghiệm trời mưa lập tức tăng gấp đôi lên **$$60\%$$**!
 
-### Khung giải thích: Bốn quy tắc vàng khi tư duy bằng phân phối đồng thời (nên đọc chậm)
+### Giải thích: Bốn quy tắc vàng khi tư duy bằng phân phối đồng thời
 
 1. **Định lý Bayes chỉ là hai cách tách tích của cùng một phân phối đồng thời:** $$p(\theta, y) = p(y\mid\theta)p(\theta) = p(\theta\mid y)p(y)$$.
 2. **Tích phân biên bảo toàn trung thực độ bất định:** Thay vì chốt cứng một điểm ước lượng cho tham số phụ $$\sigma$$, thống kê Bayes lấy tích phân trên đồng thời $$p(\mu, \sigma\mid y)$$ để bất định của $$\sigma$$ phản ánh đúng vào khoảng tin cậy của $$\mu$$.

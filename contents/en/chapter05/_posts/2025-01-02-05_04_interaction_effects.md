@@ -16,7 +16,7 @@ This lesson makes **interaction effects** effortless to specify, compute, and vi
 
 ---
 
-## Background Knowledge Map: Conditional Slopes and Interaction Geometry
+## Key ideas: Conditional Slopes and Interaction Geometry
 
 1. **Additive vs. Interactive Linear Models:** Adding $$\beta_{12} X_1 X_2$$ to $$\mu = \alpha + \beta_1 X_1 + \beta_2 X_2$$ lets the slope of $$X_1$$ vary linearly with $$X_2$$: $$\frac{\partial \mu}{\partial X_1} = \beta_1 + \beta_{12} X_2$$!
 2. **Main Effects Become Conditional Effects:** Once $$\beta_{12} X_1 X_2$$ is in the model, $$\beta_1$$ is **NO LONGER** the overall average effect of $$X_1$$—it is specifically the slope of $$X_1$$ *when $$X_2 = 0$$*! Centering $$X_2$$ at its mean makes $$\beta_1$$ immediately interpretable again.
@@ -264,7 +264,7 @@ Compute the exact effect of adding +1 unit of Water ($$\frac{\partial\mu}{\parti
 
 Notice that looking only at the main-effect coefficient $$\beta_1 = +3$$ tells you *only* about Full Sun and completely misses the negative slope in Shade!
 
-### Deep-Dive Explanation: Four Rules for Modeling Interactions Safely (Read Slowly)
+### Explanation: Four Rules for Modeling Interactions Safely
 
 1. **Always include both lower-order main effects when adding $$X_1 X_2$$:** Dropping $$X_1$$ or $$X_2$$ forces all interaction lines to cross artificially at the origin `(0, 0)`.
 2. **Center continuous predictors before multiplying them:** Without centering, $$X_1$$ and $$X_1 X_2$$ become strongly collinear, inflating posterior uncertainty and slowing MCMC.

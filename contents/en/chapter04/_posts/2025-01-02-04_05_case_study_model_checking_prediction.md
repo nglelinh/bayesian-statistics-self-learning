@@ -12,7 +12,7 @@ lesson_type: required
 
 Theory only clicks when you get your hands dirty on a real dataset that misbehaves. Restaurant tipping (`tips`) looks deceptively simple at first glance: larger bills lead to larger tips, so a straight line ought to do the job. Yet the moment we run posterior predictive checks and residual plots on `tips`, a glaring crack opens up: tips on a \$10 lunch barely vary by a dollar, whereas tips on a \$50 dinner swing wildly—and a constant-variance Normal model even predicts **negative tips**! Walking through this full workflow shows how Bayesian diagnostics turn a failed check into a principled model upgrade.
 
-**Lesson Roadmap:** Putting the full workflow on `tips` → Background Knowledge Map (End-to-end Bayesian workflow, Homoscedasticity vs. Heteroscedasticity, Targeted model revision) → Hand-worked comparison of constant-$$\sigma$$ vs. bill-scaled $$\sigma(x)$$ intervals → Full 6-step case study and exercises.
+**Lesson Roadmap:** Putting the full workflow on `tips` → Key ideas (End-to-end Bayesian workflow, Homoscedasticity vs. Heteroscedasticity, Targeted model revision) → Hand-worked comparison of constant-$$\sigma$$ vs. bill-scaled $$\sigma(x)$$ intervals → Full 6-step case study and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to be able to carry out a full, in-depth workflow on
 >
 > **Quick check.** If the posterior slope is clearly positive but the PPC fails in the large-bill region, what should you trust?
 
-## Background Knowledge Map: Executing the Full Bayesian Workflow on Real Data
+## Key ideas: Executing the Full Bayesian Workflow on Real Data
 
 ### 1. Iterative Model Building (Box's Loop)
 - **What it is:** The disciplined cycle: *Specify generative baseline → Check sampler diagnostics → Run PPC & residual plots → Diagnose failure mode → Revise model → Re-check*.
@@ -36,7 +36,7 @@ After this lesson, you need to be able to carry out a full, in-depth workflow on
 - **What it is:** Checking whether $$p(y^{\text{rep}} \mid y)$$ respects physical boundaries of the outcome (such as tips being strictly non-negative, $$y \ge 0$$).
 - **What it studies:** Selecting likelihoods or link/log transforms so predictions remain coherent at both low and high extremes of the covariate.
 
-## Deep-Dive Explanation: Catching Heteroscedasticity by Hand on `tips` (Read Slowly)
+## Explanation: Catching Heteroscedasticity by Hand on `tips`
 
 Suppose a baseline homoscedastic model on `tips` gives $$\mu(x) = 0.80 + 0.14 x$$ with constant noise $$\sigma = 1.00$$ (in USD). Compare its 95% prediction intervals ($$\mu \pm 1.96\sigma$$) against a heteroscedastic revision where $$\sigma(x) = 0.10 + 0.05 x$$:
 

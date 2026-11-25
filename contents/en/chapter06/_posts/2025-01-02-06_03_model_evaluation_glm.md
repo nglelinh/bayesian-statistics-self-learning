@@ -16,7 +16,7 @@ This lesson builds a complete GLM diagnostic workflow so you know when a classif
 
 ---
 
-## Background Knowledge Map: Four Diagnostic Tools for Bayesian GLMs
+## Key ideas: Four Diagnostic Tools for Bayesian GLMs
 
 1. **Log-Pointwise Predictive Score & Deviance ($$D = -2\sum \log p(y_i\mid\hat{\theta})$$):** Generalizes RSS to *any* likelihood family (Bernoulli, Poisson, Negative Binomial)—strictly proper and directly connects to WAIC/LOO!
 2. **Calibration vs. Discrimination (ROC-AUC vs. Calibration Plot):** ROC-AUC measures *ranking* (does a true 1 score higher than a true 0?); **calibration** measures whether predicted 70% probabilities actually happen 70% of the time!
@@ -495,7 +495,7 @@ Compare Model A vs. Model B predicting 3 binary outcomes $$y = [1,\; 0,\; 1]$$:
 
 Model A achieves **less than half the deviance** of Model B because proper log scoring heavily punishes confident mistakes!
 
-### Deep-Dive Explanation: Four Rules for Evaluating Bayesian GLMs (Read Slowly)
+### Explanation: Four Rules for Evaluating Bayesian GLMs
 
 1. **Never rely on 0.5-threshold accuracy for imbalanced binary data:** Use Log-Loss, Brier score, calibration plots, and PR-AUC.
 2. **Check dispersion (Pearson $$\chi^2 / df$$) on every Poisson GLM:** A ratio near $$1.0$$ supports Poisson; a ratio $$> 1.5\text{–}2.0$$ screams overdispersion $$\to$$ switch to Negative Binomial!

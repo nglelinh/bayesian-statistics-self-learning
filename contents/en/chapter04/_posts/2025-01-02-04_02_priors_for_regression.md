@@ -12,7 +12,7 @@ lesson_type: required
 
 Nothing makes a newcomer to Bayesian regression freeze up faster than the blank line next to `beta ~ Normal(?, ?)`. Choose a prior that is too tight and you risk steamrolling your own data; choose a "safe, uninformative" flat prior like `Normal(0, 100)` and—as we are about to verify by hand—you have accidentally told the model that a 7 cm taller human might weigh as much as a sedan! Choosing priors is not guesswork; it is a disciplined engineering loop anchored by standardization and **prior predictive checks**.
 
-**Lesson Roadmap:** Why "flat" priors are secretly absurd → Background Knowledge Map (Standardization, Weakly informative priors, Prior predictive simulation) → Hand-check of `Normal(0, 100)` vs. `Normal(0, 1)` on standardized variables → Choosing priors for $$\alpha$$, $$\beta$$, $$\sigma$$, and exercises.
+**Lesson Roadmap:** Why "flat" priors are secretly absurd → Key ideas (Standardization, Weakly informative priors, Prior predictive simulation) → Hand-check of `Normal(0, 100)` vs. `Normal(0, 1)` on standardized variables → Choosing priors for $$\alpha$$, $$\beta$$, $$\sigma$$, and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to know how to choose priors for regression in a pri
 >
 > **Quick check.** Why can the same prior look reasonable on one scale but absurd on another?
 
-## Background Knowledge Map: Principled Prior Specification for Regression
+## Key ideas: Principled Prior Specification for Regression
 
 ### 1. Standardization (Z-Scoring) as a Universal Scale
 - **What it is:** Transforming predictors and outcomes via $$x_z = (x - \bar{x})/s_x$$ and $$y_z = (y - \bar{y})/s_y$$ before specifying priors.
@@ -36,7 +36,7 @@ After this lesson, you need to know how to choose priors for regression in a pri
 - **What it is:** Drawing parameters $$(\alpha^{(s)}, \beta^{(s)}, \sigma^{(s)})$$ from the prior *alone* and plotting the implied regression lines $$\mu^{(s)}(x)$$ in observable data units.
 - **What it studies:** Translating abstract parameter numbers into concrete observable consequences so domain knowledge can immediately catch absurd priors.
 
-## Deep-Dive Explanation: Why `Normal(0, 100)` Is Not "Uninformative" (Read Slowly)
+## Explanation: Why `Normal(0, 100)` Is Not "Uninformative"
 
 Suppose you model adult weight ($$\bar{y} = 65\text{ kg},\, s_y = 10\text{ kg}$$) from height ($$\bar{x} = 170\text{ cm},\, s_x = 7\text{ cm}$$) on standardized scales $$x_z, y_z$$. Compare two candidate priors on the standardized slope $$\beta_z$$:
 

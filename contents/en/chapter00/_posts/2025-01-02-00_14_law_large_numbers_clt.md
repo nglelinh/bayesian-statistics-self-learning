@@ -16,12 +16,13 @@ This lesson builds crystal-clear intuition for LLN and CLT—not just for real-w
 
 ---
 
-## Background Knowledge Map: LLN and CLT as the Engine of Monte Carlo Bayes
+## Key ideas: LLN and CLT as the Engine of Monte Carlo Bayes
 
 Four concepts connect classical limit theorems directly to modern Bayesian computation:
 
 1. **Law of Large Numbers (LLN):** As independent draws $$S 	o \infty$$, the sample mean $$ar{X}_S = rac{1}{S}\sum_{s=1}^S X^{(s)}$$ converges to $$\mu = \mathbb{E}[X]$$—guaranteeing that Monte Carlo expectations are consistent.
-2. **Central Limit Theorem (CLT) & Monte Carlo Standard Error (MCSE):** For large $$S$$, $$ar{X}_S pprox \mathcal{N}\!\left(\mu,\; rac{\sigma^2}{S}ight)$$, so the Monte Carlo standard error is $$\mathrm{MCSE} = rac{\sigma}{\sqrt{S}}$$!
+2. **Central Limit Theorem (CLT) & Monte Carlo Standard Error (MCSE):** For large $$S$$, $$ar{X}_S pprox \mathcal{N}\!\left(\mu,\; rac{\sigma^2}{S}
+ight)$$, so the Monte Carlo standard error is $$\mathrm{MCSE} = rac{\sigma}{\sqrt{S}}$$!
 3. **The 100× Cost of One Extra Decimal Digit:** Because error shrinks like $$1/\sqrt{S}$$, cutting MCSE by $$10	imes$$ requires **$$100	imes$$ as many samples**—explaining why efficient HMC/NUTS samplers beat crude random-walk samplers by orders of magnitude.
 4. **Effective Sample Size (ESS) for Correlated MCMC Draws:** When draws are positively autocorrelated (as in MCMC), replace raw $$S$$ with the **Effective Sample Size $$S_{	ext{eff}}$$** in $$\mathrm{MCSE} = \sigma / \sqrt{S_{	ext{eff}}}$$!
 
@@ -140,7 +141,7 @@ Suppose a posterior distribution for conversion rate $$	heta$$ has standard devi
 
 Now check what happens if an MCMC chain draws $$S = 10{,}000$$ correlated samples with an Effective Sample Size of only $$S_{	ext{eff}} = 400$$: its true MCSE is $$0.10 / \sqrt{400} = 0.0050$$—five times noisier than 10,000 independent draws!
 
-### Deep-Dive Explanation: Four Rules for Using LLN & CLT Wisely (Read Slowly)
+### Explanation: Four Rules for Using LLN & CLT Wisely
 
 1. **Always check MCSE in your Bayesian summary tables (`arviz.summary`):** A posterior mean of `0.412` with `mcse_mean = 0.001` is rock-solid; with `mcse_mean = 0.04`, you need more draws or a better sampler!
 2. **LLN fails when the mean does not exist (Cauchy distribution!):** Averaging 10,000 draws from a Cauchy(0,1) distribution *never* settles down because occasional giant outliers reset the running mean.

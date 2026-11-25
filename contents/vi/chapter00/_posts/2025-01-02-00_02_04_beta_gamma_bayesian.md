@@ -20,7 +20,7 @@ Hiểu thấu đáo Beta và Gamma không chỉ giúp bạn giải tay các bài
 
 Sau bài này, bạn sẽ hiểu phân phối Beta dùng để mô tả các đại lượng nằm trong đoạn $$[0,1]$$, nắm được ý nghĩa của các tham số $$\alpha,\beta$$, hiểu vai trò của phân phối Gamma cho tham số dương, và thấy rõ chức năng của hằng số chuẩn hóa trong việc tạo ra một hàm mật độ hợp lệ.
 
-## Bản đồ kiến thức nền: Hàm đặc biệt (Gamma/Beta), Họ mũ và Prior liên hợp
+## Kiến thức cần nhớ: Hàm đặc biệt (Gamma/Beta), Họ mũ và Prior liên hợp
 
 Ba trụ cột toán học nâng đỡ bài học này:
 
@@ -259,7 +259,7 @@ print(betaln(2, 3))  # log(Beta(2,3))
 4. Hàm Beta liên hệ trực tiếp với hàm Gamma qua tỷ số $$\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}$$.
 5. Hằng số chuẩn hóa biến một biểu thức "đúng hình dạng" thành hàm mật độ xác suất hợp lệ.
 
-## Khung giải thích (nên đọc chậm): Giải mã siêu tham số như "dữ liệu ảo" (Pseudo-counts)
+## Giải thích: Giải mã siêu tham số như "dữ liệu ảo" (Pseudo-counts)
 
 Sinh viên mới học Bayes thường lúng túng: *làm sao chọn $$lpha, eta$$ cho Beta hay Gamma mà không phải đoán mò?* Câu trả lời nằm ở cách diễn giải **dữ liệu ảo**:
 
@@ -268,7 +268,7 @@ Sinh viên mới học Bayes thường lúng túng: *làm sao chọn $$lpha, e
 3. **Gamma($$lpha, eta$$) (tham số hóa shape–rate):** $$lpha$$ đóng vai trò tổng số sự kiện ảo đã thấy trong $$eta$$ đơn vị thời gian ảo, nên trung bình là $$lpha/eta$$ và phương sai là $$lpha/eta^2$$.
 4. **Cập nhật trở thành phép cộng kế toán:** Dữ liệu thực chỉ đơn giản cộng thêm vào các số đếm ảo đó.
 
-### Ví dụ tính toán cầm tay chỉ việc: Chuyển đổi niềm tin thành Beta và kiểm chứng hằng số chuẩn hóa
+### Ví dụ tính toán làm từng bước: Chuyển đổi niềm tin thành Beta và kiểm chứng hằng số chuẩn hóa
 
 Giả sử bạn tin một loại thuốc mới có tỷ lệ hiệu quả quanh $$0.6$$ với độ tin cậy tương đương đã thử trên 10 bệnh nhân. Ta chọn $$lpha = 6, eta = 4$$ (tổng $$lpha + eta = 10$$, trung bình $$6/10 = 0.6$$).
 

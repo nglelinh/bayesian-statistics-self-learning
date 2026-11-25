@@ -21,7 +21,7 @@ Một mô hình Bayes xuất sắc cho bạn biết: *"Xác suất khách hàng 
 Sau bài học này, bạn sẽ biết cách chuyển kết quả suy luận Bayes thành hành động cụ thể dưới độ bất định thông qua hàm mất mát (loss function), mất mát kỳ vọng (expected loss) và giá trị thông tin (value of information). Trọng tâm của bài là phân biệt hai câu hỏi khác nhau: phân phối hậu nghiệm trả lời "ta tin điều gì?", còn lý thuyết quyết định trả lời "ta nên làm gì?" khi mỗi lựa chọn đi kèm chi phí sai lầm không đối xứng.
 
 
-## Bản đồ kiến thức nền: Hàm tổn thất, Tổn thất hậu nghiệm kỳ vọng và Giá trị thông tin
+## Kiến thức cần nhớ: Hàm tổn thất, Tổn thất hậu nghiệm kỳ vọng và Giá trị thông tin
 
 Chuyển từ suy luận sang hành động dựa trên ba trụ cột toán học:
 
@@ -152,7 +152,7 @@ Phân tích quyết định Bayes khép lại chu trình của Chương 08: PPC 
 Kết thúc Chương 08: phê bình mô hình → so sánh mô hình → ra quyết định.
 
 
-## Khung giải thích (nên đọc chậm): Tính ngưỡng quyết định tối ưu và ra quyết định bằng bảng tổn thất
+## Giải thích: Tính ngưỡng quyết định tối ưu và ra quyết định bằng bảng tổn thất
 
 Thay vì dùng ngưỡng cảm tính 50% hay 95%, hãy đi chậm qua 4 bước quyết định Bayes:
 
@@ -161,7 +161,7 @@ Thay vì dùng ngưỡng cảm tính 50% hay 95%, hãy đi chậm qua 4 bước 
 3. **Tính tổn thất kỳ vọng của từng hành động** bằng phép nhân xác suất với từng cột chi phí.
 4. **Chọn hành động có tổn thất kỳ vọng nhỏ nhất** (hoặc kiểm tra $$p > p^* = \frac{C_{\text{FP}}}{C_{\text{FP}} + C_{\text{FN}}}$$).
 
-### Ví dụ tính toán cầm tay chỉ việc: Quyết định bảo trì phòng ngừa cho một máy chủ quan trọng
+### Ví dụ tính toán làm từng bước: Quyết định bảo trì phòng ngừa cho một máy chủ quan trọng
 
 Giả sử mô hình Bayes ước lượng xác suất một máy chủ bị hỏng trong tuần tới là $$p = 0.15$$ (chỉ 15%!). Tuy nhiên, chi phí bất đối xứng rất mạnh:
 - Nếu **bảo trì ngay ($$a_1$$)** khi máy thực ra không hỏng: tốn chi phí bảo trì $$C_{\text{FP}} = 2\text{ triệu VNĐ}$$.

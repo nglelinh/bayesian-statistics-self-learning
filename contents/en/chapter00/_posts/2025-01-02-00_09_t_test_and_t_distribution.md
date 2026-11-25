@@ -16,7 +16,7 @@ This lesson explains *why* estimating $$\sigma$$ thickens the tails of the sampl
 
 ---
 
-## Background Knowledge Map: Student-$$t$$ in Both Frequentist and Bayesian Worlds
+## Key ideas: Student-$$t$$ in Both Frequentist and Bayesian Worlds
 
 Four insights connect Gosset’s 1908 brewery discovery directly to modern Bayesian modeling:
 
@@ -312,7 +312,7 @@ Suppose Guinness tests $$n = 4$$ barley batches and measures yield difference fr
    - Proper $$t$$-test ($$df = 3$$): 95% critical value $$t_{0.025;\,3} = \mathbf{3.182}$$ $$\implies$$ CI $$5.0 \pm 4.11 = [0.89, 9.11]$$ (**62% wider**!).
    Since $$3.873 > 3.182$$ ($$p pprox 0.030 < 0.05$$), we still reject $$H_0$$, but with an *honest* uncertainty interval!
 
-### Deep-Dive Explanation: Four Rules for Using Student-$$t$$ Effectively (Read Slowly)
+### Explanation: Four Rules for Using Student-$$t$$ Effectively
 
 1. **Always prefer Welch’s two-sample $$t$$-test (unequal variances):** Assuming two groups have identical variance (`equal_var=True`) is rarely justified; Welch’s $$t$$-test adjusts degrees of freedom automatically with virtually zero loss of power.
 2. **Use paired $$t$$-tests when measurements share a subject:** Before/after measurements on the same person cancel out individual baseline variation—dramatically boosting power compared to an unpaired test.

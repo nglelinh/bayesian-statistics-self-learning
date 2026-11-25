@@ -16,7 +16,7 @@ This lesson teaches you to read and write generative statistical models fluently
 
 ---
 
-## Background Knowledge Map: The Anatomy of a Generative Statistical Model
+## Key ideas: The Anatomy of a Generative Statistical Model
 
 Four elements define every Bayesian statistical model you will build in this course:
 
@@ -159,7 +159,7 @@ What distribution does a single *future* score $$Y$$ follow before seeing any da
    $$\mathrm{Var}(Y) = \mathrm{Var}(\mu) + \mathrm{Var}(arepsilon) = 5^2 + 10^2 = 25 + 100 = 125 \implies \mathrm{SD}(Y) = \sqrt{125} pprox \mathbf{11.18}.$$
 3. **95% Prior Predictive Range:** $$70 \pm 1.96(11.18) = [48.1,\; 91.9]$$—completely sensible for a 0–100 exam! *(Whereas a lazy "flat" prior $$\mu \sim \mathcal{N}(70, 1000^2)$$ would predict exam scores from $$-1890$$ to $$+2030$$!)*
 
-### Deep-Dive Explanation: Four Rules for Specifying Clean Statistical Models (Read Slowly)
+### Explanation: Four Rules for Specifying Clean Statistical Models
 
 1. **Always write the model in mathematical notation before writing code:** Two lines like $$\mu \sim \mathcal{N}(70, 5^2); \; y_i \mid \mu \sim \mathcal{N}(\mu, 10^2)$$ clarify every assumption in seconds.
 2. **Distinguish epistemic uncertainty (about $$	heta$$) from aleatoric noise (about $$Y\mid	heta$$):** Collecting more data shrinks $$\mathrm{Var}(\mu\mid y) 	o 0$$, but never shrinks $$\sigma^2 = 100$$.

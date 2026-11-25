@@ -21,7 +21,7 @@ Bài học này mở rộng tư duy từ "chọn một người thắng cuộc" 
 Sau bài học này, bạn sẽ phân biệt rõ ba chiến lược so sánh mô hình trong thống kê Bayes: chọn một mô hình (selection), kết hợp nhiều mô hình (averaging) và mở rộng thành mô hình bao trùm (expansion). Trọng tâm là không xem so sánh mô hình như một thủ tục xếp hạng cơ học, mà như một bài toán ra quyết định dưới độ bất định về cấu trúc mô hình, trong đó chiến lược lựa chọn phụ thuộc vào mức độ tách biệt về hiệu năng dự báo và mục tiêu ứng dụng.
 
 
-## Bản đồ kiến thức nền: Chọn lọc, Kết hợp (BMA/Stacking) và Mở rộng Mô hình
+## Kiến thức cần nhớ: Chọn lọc, Kết hợp (BMA/Stacking) và Mở rộng Mô hình
 
 Ba chiến lược xử lý đa mô hình tương ứng với ba bối cảnh thực tiễn rõ rệt:
 
@@ -113,7 +113,7 @@ Không tồn tại một chiến lược so sánh mô hình duy nhất đúng ch
 Bài tiếp theo: **Phân tích quyết định Bayes (Bayesian Decision Analysis)**, chuyển kết quả suy luận thành hành động tối ưu dưới một hàm mất mát cụ thể.
 
 
-## Khung giải thích (nên đọc chậm): Tính dự báo và phương sai khi Kết hợp mô hình (Stacking / BMA)
+## Giải thích: Tính dự báo và phương sai khi Kết hợp mô hình (Stacking / BMA)
 
 Khi hai mô hình ngang sức nhau (ví dụ $$\Delta\text{elpd} < 2\,\mathrm{SE}$$), hãy đi chậm qua 3 bước để kết hợp dự báo thay vì chọn cứng:
 
@@ -122,7 +122,7 @@ Khi hai mô hình ngang sức nhau (ví dụ $$\Delta\text{elpd} < 2\,\mathrm{SE
 3. **Tính phương sai dự báo kết hợp (cộng cả độ bất đồng giữa các mô hình!):**
    $$\sigma_{\text{comb}}^2 = \sum_{k=1}^K w_k \sigma_k^2 + \sum_{k=1}^K w_k (\mu_k - \mu_{\text{comb}})^2.$$
 
-### Ví dụ tính toán cầm tay chỉ việc: Trộn dự báo doanh số từ 2 mô hình theo trọng số Stacking
+### Ví dụ tính toán làm từng bước: Trộn dự báo doanh số từ 2 mô hình theo trọng số Stacking
 
 Giả sử hai mô hình dự báo doanh số quý tới (tỷ VNĐ) có điểm LOO rất sát nhau, với trọng số Stacking là $$w_1 = 0.60$$ và $$w_2 = 0.40$$:
 - Mô hình 1 (tuyến tính): $$\mu_1 = 100$$, $$\sigma_1 = 5$$ ($$\sigma_1^2 = 25$$).

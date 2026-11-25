@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu hiệu ứng tương tác (interaction effect) 
 > **Câu hỏi tự kiểm tra.** Nếu tác động của một biến dự báo thay đổi theo mức của một biến dự báo khác, mô hình cộng đơn giản sẽ bỏ sót điều gì?
 
 
-## Bản đồ kiến thức nền: Đạo hàm riêng hỗn hợp, Tính đối xứng của tương tác và Phép dịch tâm
+## Kiến thức cần nhớ: Đạo hàm riêng hỗn hợp, Tính đối xứng của tương tác và Phép dịch tâm
 
 Ở góc độ giải tích nhiều biến và thống kê Bayes, hiệu ứng tương tác xoay quanh ba ý niệm cốt lõi:
 
@@ -127,7 +127,7 @@ Hiệu ứng tương tác không chỉ giới hạn ở biến nhị phân mà c
 
 Với tương tác giữa hai biến liên tục, các đồ thị trực quan như biểu đồ đường đồng mức (contour plot), biểu đồ bề mặt 3D hoặc đồ thị hiệu ứng có điều kiện tại vài mức tiêu biểu của biến kia dễ đọc hơn nhiều so với bảng hệ số thuần túy.
 
-### Khung giải thích (nên đọc chậm): Chứng minh bằng tay vì sao dịch tâm (centering) cứu nguyên ý nghĩa của hiệu ứng chính
+### Giải thích: Chứng minh bằng tay vì sao dịch tâm (centering) cứu nguyên ý nghĩa của hiệu ứng chính
 
 Giả sử ta mô hình hóa điểm thi theo số giờ học $$x_1$$ (trung bình lớp $$\bar x_1 = 5$$ giờ) và điểm nền tảng đầu vào $$x_2$$ (trung bình lớp $$\bar x_2 = 7$$ điểm):
 

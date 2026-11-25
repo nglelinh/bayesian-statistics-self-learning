@@ -20,7 +20,7 @@ Trong thống kê Bayes, đại số tuyến tính còn mang ý nghĩa hình h�
 
 Sau bài này, bạn sẽ hiểu vì sao đại số tuyến tính là nền tảng toán học của mô hình thống kê Bayesian: dữ liệu được biểu diễn dưới dạng vector và ma trận, tham số hồi quy được viết thành toán tử tuyến tính, và nhiều thuật toán suy diễn dựa trực tiếp vào các phép biến đổi tuyến tính. Bạn cũng sẽ nắm được ý nghĩa hình học của các phép toán thay vì chỉ thao tác ký hiệu.
 
-## Bản đồ kiến thức nền: Không gian vector, Ma trận xác định dương và Hồi quy Bayes đa biến
+## Kiến thức cần nhớ: Không gian vector, Ma trận xác định dương và Hồi quy Bayes đa biến
 
 Ba trụ cột đại số tuyến tính thiết yếu cho suy diễn Bayes:
 
@@ -561,7 +561,7 @@ print(f"\nR² = {r_squared:.4f}")
 | Định thức (Determinant) | $$\det(\mathbf{A})$$ | Giá trị vô hướng |
 | Trị riêng (Eigenvalue) | $$\lambda$$ | $$\mathbf{Av} = \lambda\mathbf{v}$$ |
 
-## Khung giải thích (nên đọc chậm): Hình học của ma trận hiệp phương sai và Hồi quy Bayes tính tay 2×2
+## Giải thích: Hình học của ma trận hiệp phương sai và Hồi quy Bayes tính tay 2×2
 
 Tại sao trị riêng của $$oldsymbol{\Sigma}$$ lại quan trọng đến vậy trong thống kê Bayes? Hãy đi chậm qua 4 bước:
 
@@ -570,7 +570,7 @@ Tại sao trị riêng của $$oldsymbol{\Sigma}$$ lại quan trọng đến v�
 3. **Số điều kiện (Condition Number):** Tỷ số $$\lambda_{\max}/\lambda_{\min}$$ càng lớn thì elip hậu nghiệm càng dẹt như điếu xì gà — khiến bộ lấy mẫu Metropolis–Hastings nhảy bước đều bị kẹt (hoặc bước quá lớn đụng tường, hoặc bước quá nhỏ đi mãi không tới).
 4. **Cộng độ chính xác ở dạng ma trận:** Cập nhật Normal–Normal đa biến hoàn toàn tương tự 1 chiều, chỉ thay số vô hướng bằng ma trận: $$oldsymbol{\Lambda}_{	ext{post}} = oldsymbol{\Lambda}_0 + rac{1}{\sigma^2}\mathbf{X}^T\mathbf{X}$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Giải trị riêng ma trận hiệp phương sai 2×2 và cập nhật Ridge–Bayes
+### Ví dụ tính toán làm từng bước: Giải trị riêng ma trận hiệp phương sai 2×2 và cập nhật Ridge–Bayes
 
 Xét hai tham số $$(eta_1, eta_2)$$ có ma trận hiệp phương sai hậu nghiệm:
 $$oldsymbol{\Sigma} = egin{pmatrix} 5 & 3 \ 3 & 5 \end{pmatrix}.$$
@@ -582,7 +582,8 @@ $$oldsymbol{\Sigma} = egin{pmatrix} 5 & 3 \ 3 & 5 \end{pmatrix}.$$
   - Với $$\lambda_1 = 8$$: $$(-3)v_1 + 3v_2 = 0 \implies \mathbf{u}_1 = rac{1}{\sqrt{2}}egin{pmatrix}1 \ 1\end{pmatrix}$$. Độ lệch chuẩn dọc trục chéo này là $$\sqrt{8} pprox 2.83$$.
   - Với $$\lambda_2 = 2$$: $$3v_1 + 3v_2 = 0 \implies \mathbf{u}_2 = rac{1}{\sqrt{2}}egin{pmatrix}1 \ -1\end{pmatrix}$$. Độ lệch chuẩn dọc trục vuông góc chỉ là $$\sqrt{2} pprox 1.41$$.
 - **Bước 3 — Tính hệ số tương quan để đối chiếu:**
-  $$ho = rac{\Sigma_{12}}{\sqrt{\Sigma_{11}\Sigma_{22}}} = rac{3}{\sqrt{5 	imes 5}} = rac{3}{5} = 0.60.$$
+  $$
+ho = rac{\Sigma_{12}}{\sqrt{\Sigma_{11}\Sigma_{22}}} = rac{3}{\sqrt{5 	imes 5}} = rac{3}{5} = 0.60.$$
   Đám mây hậu nghiệm nghiêng $$45^\circ$$, dài gấp $$\sqrt{8/2} = 2$$ lần bề ngang.
 
 **Hiểu lầm cần tránh:** Tính nghịch đảo tường minh `np.linalg.inv(A) @ b` trong mã thực tế; cách chuẩn về mặt số học là giải hệ tuyến tính `np.linalg.solve(A, b)` hoặc phân rã Cholesky để tránh khuếch đại sai số làm tròn.

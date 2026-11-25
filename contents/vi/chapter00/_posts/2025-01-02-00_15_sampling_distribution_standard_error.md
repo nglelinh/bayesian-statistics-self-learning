@@ -21,7 +21,7 @@ Dù thống kê Bayes sử dụng phân phối hậu nghiệm thay cho phân ph�
 Sau bài này, bạn sẽ phân biệt rõ phân phối của dữ liệu gốc với phân phối của ước lượng, hiểu sai số chuẩn (standard error) là độ bất định của bộ ước lượng chứ không phải độ phân tán của dữ liệu, và vận dụng trực giác này để đọc kết quả suy luận thống kê chính xác hơn.
 
 
-## Bản đồ kiến thức nền: Biến thiên dữ liệu, Phân phối lấy mẫu và Độ bất định ước lượng
+## Kiến thức cần nhớ: Biến thiên dữ liệu, Phân phối lấy mẫu và Độ bất định ước lượng
 
 Để không bao giờ nhầm lẫn giữa các loại "độ lệch chuẩn" trong thống kê, hãy đặt bài học này trên ba trụ cột:
 
@@ -109,7 +109,7 @@ Trong thống kê Bayesian, độ lệch chuẩn hậu nghiệm (posterior SD) c
 4. Khi cỡ mẫu tăng, SE giảm theo tỷ lệ $$1/\sqrt{n}$$.
 
 
-## Khung giải thích (nên đọc chậm): Tách bạch ba tầng độ bất định
+## Giải thích: Tách bạch ba tầng độ bất định
 
 Khi đọc một báo cáo có ghi "trung bình $$50 \pm 2$$", hãy dừng lại và hỏi con số $$2$$ đó thuộc tầng nào trong ba tầng sau:
 
@@ -117,7 +117,7 @@ Khi đọc một báo cáo có ghi "trung bình $$50 \pm 2$$", hãy dừng lại
 2. **Tầng ước lượng (SE = $$s/\sqrt{n}$$):** Phản ánh độ ổn định của trung bình mẫu $$\bar x$$. Khi $$n$$ tăng gấp 4 lần, SE giảm đi một nửa và tiến về 0 khi $$n \to \infty$$.
 3. **Tầng dự báo cá thể mới:** Khi dự đoán một quan sát mới $$X_{\text{new}}$$, độ bất định gộp cả hai nguồn: $$\sqrt{s^2 + s^2/n}$$ — luôn lớn hơn hoặc bằng SD.
 
-### Ví dụ tính toán cầm tay chỉ việc: Khảo sát chiều cao sinh viên
+### Ví dụ tính toán làm từng bước: Khảo sát chiều cao sinh viên
 
 Giả sử đo chiều cao của $$n = 36$$ sinh viên, ta thu được trung bình mẫu $$\bar x = 168.0\text{ cm}$$ và độ lệch chuẩn mẫu $$s = 6.0\text{ cm}$$.
 

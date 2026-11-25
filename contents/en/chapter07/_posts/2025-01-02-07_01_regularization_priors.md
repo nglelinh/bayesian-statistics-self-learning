@@ -16,7 +16,7 @@ This lesson unpacks **regularization as skeptical priors**: proving the exact eq
 
 ---
 
-## Background Knowledge Map: The Exact Dictionary Between Priors and Regularization
+## Key ideas: The Exact Dictionary Between Priors and Regularization
 
 1. **Gaussian Prior $$\iff$$ Ridge (L2) Regularization:** Taking $$-\log\bigl(p(y\mid\beta)\,p(\beta)\bigr)$$ with $$y\mid\beta \sim \mathcal{N}(X\beta, \sigma^2 I)$$ and $$\beta_j \sim \mathcal{N}(0, \tau^2)$$ produces the exact objective $$\frac{1}{2\sigma^2}\|y - X\beta\|_2^2 + \frac{1}{2\tau^2}\|\beta\|_2^2$$—Ridge with $$\lambda = \sigma^2 / \tau^2$$!
 2. **Laplace (Double-Exponential) Prior $$\iff$$ Lasso (L1) Regularization:** Replacing $$\beta_j^2$$ with $$\lvert\beta_j\rvert$$ via $$\beta_j \sim \mathrm{Laplace}(0, b)$$ yields the exact Lasso MAP objective with $$\lambda = \sigma^2 / b$$!
@@ -332,7 +332,7 @@ Suppose noise SD is $$\sigma = 2.0$$ ($$\sigma^2 = 4.0$$), and you compare three
 
 Notice the crystal-clear intuition: **cutting your prior SD $$\tau$$ in half quadruples the L2 regularization penalty $$\lambda$$!**
 
-### Deep-Dive Explanation: Four Rules for Using Regularizing Priors Effectively (Read Slowly)
+### Explanation: Four Rules for Using Regularizing Priors Effectively
 
 1. **Always standardize predictors before applying shared regularizing priors:** Putting a single $$\mathcal{N}(0, 1)$$ prior on an unstandardized variable in millimeters vs. kilometers penalizes them unfairly by a factor of $$10^{12}$$!
 2. **Do not shrink the intercept $$\alpha$$ toward zero unless $$y$$ is centered:** Shrinkage belongs on *slopes* $$\beta_j$$ (and group offsets), while the intercept sits near $$\bar{y}$$.

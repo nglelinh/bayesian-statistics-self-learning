@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu hiện tượng gây nhiễu (confounding) là 
 > **Câu hỏi tự kiểm tra.** Điều gì có thể xảy ra nếu ta bỏ qua một biến ảnh hưởng đồng thời tới cả biến can thiệp (treatment) lẫn biến kết quả (outcome)?
 
 
-## Bản đồ kiến thức nền: Mô hình cấu trúc nhân quả, Toán tử do() và Quy tắc d-separation
+## Kiến thức cần nhớ: Mô hình cấu trúc nhân quả, Toán tử do() và Quy tắc d-separation
 
 Suy luận nhân quả hiện đại (theo trường phái Judea Pearl) nâng cấp hồi quy thống kê bằng ba khái niệm nền tảng:
 
@@ -131,7 +131,7 @@ Trong **cả hai nhóm**, điều trị tích cực đều có tỷ lệ hồi p
 
 Tỷ lệ gộp bị đảo ngược không phải vì phác đồ tích cực kém hiệu quả, mà vì phần lớn ca nặng được phân bổ vào nhóm này.
 
-### Khung giải thích (nên đọc chậm): Tính tay công thức Backdoor Adjustment trên bảng Nghịch lý Simpson
+### Giải thích: Tính tay công thức Backdoor Adjustment trên bảng Nghịch lý Simpson
 
 Ở mục 6.1, số liệu gộp cho thấy điều trị tích cực ($$X=1$$) chỉ đạt tỷ lệ hồi phục $$55.7\%$$, kém hơn điều trị chuẩn ($$X=0$$) ở mức $$71.4\%$$. Hãy dùng công thức Backdoor Adjustment với biến gây nhiễu mức độ nặng $$Z \in \{\text{nặng}, \text{nhẹ}\}$$ để tính hiệu quả **can thiệp thật sự**:
 

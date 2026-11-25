@@ -16,7 +16,7 @@ This Chapter 2 opener organizes the essential discrete and continuous distributi
 
 ---
 
-## Background Knowledge Map: Matching Data Domains to Distribution Families
+## Key ideas: Matching Data Domains to Distribution Families
 
 1. **Domain & Support First:** Binary $$\{0,1\} \to$$ Bernoulli/Binomial; unbounded counts $$\{0,1,2,\dots\} \to$$ Poisson / Negative Binomial; proportions $$(0,1) \to$$ Beta; positive continuous $$(0,\infty) \to$$ Exponential / Gamma / Log-Normal / Half-Normal; unbounded $$\mathbb{R} \to$$ Normal / Student-$$t$$.
 2. **Maximum Entropy Principle (Jaynes):** Among all distributions with fixed mean and variance on $$\mathbb{R}$$, the **Gaussian** has maximum entropy (makes the fewest extra assumptions). Knowing only a positive mean gives the **Exponential**; knowing only bounds $$[a,b]$$ gives the **Uniform**.
@@ -224,7 +224,7 @@ No. Even with lots of data, distributions still matter for risk communication an
 
 Check the Log-Normal latency numbers: if $$\log(\text{latency}) \sim \mathcal{N}(\ln 100,\; 0.5^2)$$, the **median** latency is $$e^{\ln 100} = 100\text{ ms}$$, while the **mean** is $$100 \cdot e^{0.5^2/2} = 100 \cdot e^{0.125} \approx \mathbf{113.3\text{ ms}}$$—and latency can *never* go negative!
 
-### Deep-Dive Explanation: Four Rules for Choosing Distributions Like a Bayesian Modeler (Read Slowly)
+### Explanation: Four Rules for Choosing Distributions Like a Bayesian Modeler
 
 1. **Let the physical/data-generating constraints pick the support:** Never use an unbounded Gaussian when zeros or negatives are physically impossible—unless the mean sits many SDs above zero.
 2. **Check mean–variance relationships:** In Binomial and Poisson models, variance is locked to the mean; when real data varies more widely, introduce a dispersion parameter (Beta-Binomial, Negative Binomial).

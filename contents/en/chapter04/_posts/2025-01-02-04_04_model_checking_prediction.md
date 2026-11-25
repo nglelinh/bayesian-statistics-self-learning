@@ -12,7 +12,7 @@ lesson_type: required
 
 Your MCMC chains converged cleanly with $$\hat{R} = 1.00$$, zero divergences, and 4,000 effective samples. Time to celebrate and ship the model? Not yet! Convergence only proves that your sampler accurately explored the posterior of *the model you wrote down*—it says nothing about whether that model is a decent description of reality. A perfectly converged linear model fit to curved or heavy-tailed data will produce confidently wrong predictions. That is why every serious Bayesian workflow pivots from inference to **model criticism**: Posterior Predictive Checks (PPC) and residual diagnostics.
 
-**Lesson Roadmap:** Why convergence $$\neq$$ a good model → Background Knowledge Map (Posterior predictive distribution, Bayesian p-values & test statistics, Mean vs. Prediction intervals) → Hand-worked Bayesian p-value & predictive interval width comparison → Residual analysis, uncertainty, and exercises.
+**Lesson Roadmap:** Why convergence $$\neq$$ a good model → Key ideas (Posterior predictive distribution, Bayesian p-values & test statistics, Mean vs. Prediction intervals) → Hand-worked Bayesian p-value & predictive interval width comparison → Residual analysis, uncertainty, and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to understand that fitting the model is only the fir
 >
 > **Quick check.** Why is a posterior that "looks fine" not enough to conclude that the model is good?
 
-## Background Knowledge Map: Criticizing and Predicting with Bayesian Models
+## Key ideas: Criticizing and Predicting with Bayesian Models
 
 ### 1. Posterior Predictive Distribution ($$p(y^{\text{rep}} \mid y)$$)
 - **What it is:** Averaging the data likelihood over the entire posterior $$p(y^{\text{rep}} \mid y) = \int p(y^{\text{rep}} \mid \theta) p(\theta \mid y)\,d\theta$$—implemented by drawing $$\theta^{(s)}$$ from the posterior and then simulating synthetic data $$y^{\text{rep},(s)} \sim p(y \mid \theta^{(s)})$$.
@@ -36,7 +36,7 @@ After this lesson, you need to understand that fitting the model is only the fir
 - **What it is:** Separating uncertainty about the regression line $$\mu(x^*)$$ from uncertainty about a brand-new observation $$y^* = \mu(x^*) + \varepsilon$$.
 - **What it studies:** Preventing dangerously overconfident forecasts by always adding observation noise $$\sigma^2$$ when predicting individual future outcomes.
 
-## Deep-Dive Explanation: Bayesian p-Value & Prediction Interval Width by Hand (Read Slowly)
+## Explanation: Bayesian p-Value & Prediction Interval Width by Hand
 
 ### Part 1: Reading a Posterior Predictive Check via $$p_B$$
 Suppose you fit a Normal linear model and check whether it captures extreme observations using the test statistic $$T(y) = \max_i \vert r_i \vert$$ (largest standardized residual). In your real dataset, $$T(y) = 4.2$$. Across $$S = 1{,}000$$ posterior predictive replications $$y^{\text{rep},(s)}$$, only **12** simulations produce a max residual $$\ge 4.2$$:

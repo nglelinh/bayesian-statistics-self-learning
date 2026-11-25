@@ -21,7 +21,7 @@ Bài tổng kết Chương 0 này nối các khái niệm tưởng chừng rời
 Sau bài đọc mở rộng này, bạn sẽ không còn xem xác suất, phân phối đồng thời (joint distribution), kỳ vọng, log-probability và mô phỏng chỉ là phần "ôn tập trước khi học Bayes", mà nhận ra chúng chính là ngôn ngữ cốt lõi mà khoa học máy tính và khoa học dữ liệu hiện đại sử dụng khi đánh giá một mô hình có được hiệu chỉnh (calibration) hay không, có ổn định số học hay không, và có phản ánh đúng cơ chế sinh dữ liệu hay không. Mục tiêu là thay đổi góc nhìn: đưa các khái niệm nền tảng trở thành câu hỏi thiết kế trực tiếp cho hệ thống thực tế.
 
 
-## Bản đồ kiến thức nền: Xác suất nền tảng trong hệ thống dữ liệu và AI hiện đại
+## Kiến thức cần nhớ: Xác suất nền tảng trong hệ thống dữ liệu và AI hiện đại
 
 Bốn trụ cột dưới đây cho thấy kiến thức Chương 0 được "cài đặt" trực tiếp vào các hệ thống sản phẩm như thế nào:
 
@@ -80,7 +80,7 @@ Bốn tình huống trên bao phủ các bài toán xếp hạng, mô hình ngô
 Bài viết này không thay thế một học phần về học sâu hay lập trình xác suất. Độ hiệu chỉnh có thể suy giảm khi phân phối dữ liệu dịch chuyển; tính toán trên thang log không khắc phục được mô hình sai đặc tả; và kiểm tra bằng mô phỏng chỉ xác nhận được phần tính toán nằm trong kịch bản bạn đã chạy. Các chương tiếp theo sẽ đi trực tiếp vào quy trình cập nhật Bayesian.
 
 
-## Khung giải thích (nên đọc chậm): Từ một bài toán sản phẩm thực tế về đúng mô hình xác suất
+## Giải thích: Từ một bài toán sản phẩm thực tế về đúng mô hình xác suất
 
 Khi đối diện một bài toán khoa học dữ liệu mới, hãy đi chậm qua bốn bước ánh xạ sau:
 
@@ -89,7 +89,7 @@ Khi đối diện một bài toán khoa học dữ liệu mới, hãy đi chậm
 3. **Đo bất định ở hai cấp độ:** Tách biệt bất định ngẫu nhiên tự nhiên (*aleatoric* — không giảm khi thêm dữ liệu) và bất định tri thức (*epistemic* — giảm theo $$1/\sqrt{n}$$ khi thêm dữ liệu).
 4. **Kiểm chứng bằng mô phỏng trước khi triển khai:** Sinh dữ liệu giả lập để đo hiệu quả quyết định trước khi chạy trên người dùng thật.
 
-### Ví dụ tính toán cầm tay chỉ việc: So sánh hàm mất mát Log-Loss trên mô hình dự báo xác suất
+### Ví dụ tính toán làm từng bước: So sánh hàm mất mát Log-Loss trên mô hình dự báo xác suất
 
 Giả sử một mô hình phân loại rủi ro gian lận dự đoán xác suất cho 3 giao dịch có nhãn thật lần lượt là $$y = (1, 0, 1)$$. So sánh Mô hình A (hiệu chỉnh tốt) và Mô hình B (quá tự tin và đoán sai giao dịch thứ 3):
 

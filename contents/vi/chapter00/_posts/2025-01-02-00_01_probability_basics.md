@@ -20,7 +20,7 @@ Trong bài mở đầu này, ta không chỉ nhắc lại các tiên đề Kolmo
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu xác suất không chỉ là tập hợp các công thức tính toán mà là một ngôn ngữ toán học hoàn chỉnh để mô tả, định lượng và suy luận về sự không chắc chắn. Bạn sẽ nắm vững các khái niệm cơ bản về không gian mẫu, biến cố và các quy tắc xác suất, đồng thời thấy rõ vì sao chúng là nền tảng của suy diễn Bayesian. Quan trọng hơn, bạn sẽ tiếp cận xác suất như một cách mã hóa mức độ tin tưởng và cập nhật niềm tin đó khi có thêm thông tin mới.
 
-## Bản đồ kiến thức nền: Lý thuyết độ đo, Xác suất có điều kiện và Suy diễn Bayes gặp nhau ở đâu?
+## Kiến thức cần nhớ: Lý thuyết độ đo, Xác suất có điều kiện và Suy diễn Bayes gặp nhau ở đâu?
 
 Với người học đã qua chương trình đại học, câu hỏi quan trọng nhất là: *xác suất cơ bản liên quan gì đến các phương pháp hiện đại như MCMC hay suy diễn biến phân (Variational Inference)?* Bức tranh tổng thể tựa trên ba trụ cột:
 
@@ -159,7 +159,7 @@ Hơn nữa, việc nhìn nhận xác suất như **mức độ tin tưởng** ch
 
 Trong các bài học tiếp theo, mọi công cụ Bayesian — từ định lý Bayes cơ bản đến các mô hình phân cấp phức tạp — đều được xây dựng từ những nguyên tắc này. Nắm chắc nền tảng ngay từ đầu sẽ giúp bạn áp dụng phương pháp đúng chỗ, đồng thời hiểu rõ vì sao một mô hình hoạt động tốt hoặc gặp hạn chế.
 
-## Khung giải thích (nên đọc chậm): Từ bảng tần suất 2×2 đến quy tắc cập nhật Bayes
+## Giải thích: Từ bảng tần suất 2×2 đến quy tắc cập nhật Bayes
 
 Người học thường thuộc lòng công thức $$P(A \mid B) = rac{P(B \mid A)P(A)}{P(B)}$$ nhưng vẫn bị "đứng hình" khi mẫu số $$P(B)$$ bị ẩn đi. Hãy đọc chậm chuỗi bốn bước sau để thấy mọi bài toán Bayes thực chất chỉ là **cắt lát không gian mẫu**:
 
@@ -168,7 +168,7 @@ Người học thường thuộc lòng công thức $$P(A \mid B) = rac{P(B \mi
 3. **Tính xác suất đồng thời (Joint):** Nhân diện tích lát cắt với độ hợp lý để có khối lượng đồng thời $$P(A \cap B)$$ và $$P(A^c \cap B)$$.
 4. **Chuẩn hóa trên đúng lát cắt $$B$$ (Posterior):** Bỏ toàn bộ phần không xảy ra $$B$$, rồi chia mỗi phần cho tổng $$P(B) = P(A \cap B) + P(A^c \cap B)$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: Xét nghiệm sàng lọc trên 10.000 người
+### Ví dụ tính toán làm từng bước: Xét nghiệm sàng lọc trên 10.000 người
 
 Giả sử một căn bệnh hiếm có tỷ lệ lưu hành $$P(D) = 0.01$$ (1%). Một bộ xét nghiệm có độ nhạy $$P(+ \mid D) = 0.95$$ và tỷ lệ dương tính giả $$P(+ \mid D^c) = 0.05$$. Bạn nhận kết quả dương tính ($$+$$). Xác suất thực sự mắc bệnh $$P(D \mid +)$$ là bao nhiêu?
 

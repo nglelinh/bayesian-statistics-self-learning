@@ -21,7 +21,7 @@ Bài mở đầu Chương 7 này bóc tách mối tương đương toán học t
 Sau khi hoàn thành bài học này, bạn sẽ hiểu **điều chuẩn (regularization)** như một cơ chế cốt lõi để ngăn **quá khớp (overfitting)**. Bài học làm rõ vì sao phân phối tiên nghiệm (prior) trong thống kê Bayes tự nhiên thực hiện điều chuẩn, mối liên hệ giữa tiên nghiệm với hồi quy Ridge và Lasso trong thống kê tần suất (frequentist), và khi nào ta thực sự cần điều chuẩn thay vì tiếp tục tăng độ phức tạp của mô hình. Đây là kỹ năng thiết yếu khi xây dựng mô hình có nhiều **biến dự báo (predictors)**, đặc biệt khi số lượng biến vượt quá khả năng kiểm soát bằng trực giác.
 
 
-## Bản đồ kiến thức nền: Tương đương MAP – Penalty, Hình học Prior và Co cụm thích nghi
+## Kiến thức cần nhớ: Tương đương MAP – Penalty, Hình học Prior và Co cụm thích nghi
 
 Để hiểu bản chất điều chuẩn Bayes ở mức độ chuyên sâu, hãy liên kết ba trụ cột:
 
@@ -321,7 +321,7 @@ y_test_z = (y_test - mu_y) / sd_y
 Bài tiếp theo: **Đánh đổi giữa độ lệch và phương sai (Bias-Variance Tradeoff)** — đi sâu vào chiến lược kiểm định và tinh chỉnh độ phức tạp mô hình trên cùng nghiên cứu tình huống.
 
 
-## Khung giải thích (nên đọc chậm): Ánh xạ chính xác giữa độ rộng Prior $$\tau$$ và hệ số phạt Ridge $$\lambda$$
+## Giải thích: Ánh xạ chính xác giữa độ rộng Prior $$\tau$$ và hệ số phạt Ridge $$\lambda$$
 
 Nhiều người học nhớ "Gaussian là Ridge" nhưng chưa từng tự viết công thức đổi giữa $$\tau$$ và $$\lambda$$. Hãy đọc chậm 3 bước sau cho hồi quy tuyến tính chuẩn hóa ($$\sigma^2$$ là phương sai nhiễu):
 
@@ -332,7 +332,7 @@ Nhiều người học nhớ "Gaussian là Ridge" nhưng chưa từng tự viế
 3. **Đọc công thức co cụm 1 chiều (với $$\sum x_i^2 = S_{xx}$$):**
    $$\hat\beta_{\text{Ridge/MAP}} = \frac{S_{xx}}{S_{xx} + \sigma^2/\tau^2}\,\hat\beta_{\text{OLS}}.$$
 
-### Ví dụ tính toán cầm tay chỉ việc: Mức độ co cụm theo độ rộng Prior $$\tau$$
+### Ví dụ tính toán làm từng bước: Mức độ co cụm theo độ rộng Prior $$\tau$$
 
 Giả sử trên một biến dự báo đã chuẩn hóa có $$S_{xx} = 20$$, phương sai nhiễu $$\sigma^2 = 4$$ và ước lượng OLS thô là $$\hat\beta_{\text{OLS}} = 2.0$$. Hãy so sánh ba lựa chọn độ rộng prior $$\tau$$:
 

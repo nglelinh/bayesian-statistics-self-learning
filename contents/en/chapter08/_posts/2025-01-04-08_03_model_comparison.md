@@ -16,7 +16,7 @@ This lesson teaches mature **Bayesian Model Comparison**: reading `elpd_diff` al
 
 ---
 
-## Background Knowledge Map: Three Complementary Lenses for Model Comparison
+## Key ideas: Three Complementary Lenses for Model Comparison
 
 1. **Predictive Comparison (LOO-CV `elpd_diff` vs. `dse`):** Compares *pointwise* predictive differences $$d_i = \mathrm{elpd}_{i, M_2} - \mathrm{elpd}_{i, M_1}$$. Because both models are evaluated on the exact same observations, pairing cancels out shared noise—giving a clean paired SE (`dse`). Rule of thumb: $$\lvert\Delta\mathrm{elpd}\rvert > 2\text{–}4 \times \mathrm{dse}$$ signals a clear predictive win!
 2. **Marginal Likelihood & Bayes Factors ($$\mathrm{BF}_{12} = \frac{p(y\mid M_1)}{p(y\mid M_2)}$$):** Measures relative evidence under prior predictive distributions. Powerful for nested scientific hypotheses, yet **highly sensitive to prior width** (making a prior 10× wider penalizes that model’s Bayes Factor by 10×!).
@@ -125,7 +125,7 @@ Next lesson: **Bayesian Decision Analysis**, where model results are turned into
 - Difference: $$\Delta\mathrm{elpd} = \mathbf{+1.8}$$, paired $$\mathrm{dse} = \mathbf{2.9}$$ $$\implies z = 1.8 / 2.9 = \mathbf{0.62}$$!
 - Rather than betting 100% on one model, **Stacking** might assign weights $$w_D = 0.65,\; w_C = 0.35$$, combining their posterior predictive draws cleanly!
 
-### Deep-Dive Explanation: Four Rules for Wise Bayesian Model Comparison (Read Slowly)
+### Explanation: Four Rules for Wise Bayesian Model Comparison
 
 1. **Always check `dse` (difference SE), never the individual models’ `se`:** Individual `se` includes observation-to-observation difficulty; paired `dse` measures the true uncertainty in *Model B minus Model A*.
 2. **Never use flat/uninformative priors when computing Bayes Factors:** Under improper or arbitrarily wide priors, Bayes Factors automatically favor the simpler model (Lindley’s Paradox) regardless of the data!

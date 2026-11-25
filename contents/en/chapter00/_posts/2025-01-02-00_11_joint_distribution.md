@@ -16,7 +16,7 @@ This lesson builds concrete fluency with joint, marginal, and conditional distri
 
 ---
 
-## Background Knowledge Map: The Three Operations on Any Joint Distribution
+## Key ideas: The Three Operations on Any Joint Distribution
 
 Three mechanical operations govern every multi-variable probability model:
 
@@ -194,7 +194,7 @@ eq 0.24$$ $$\implies$$ Rain and Traffic Jam are strongly **dependent**!
    $$P(	ext{Rain} \mid 	ext{Jam}) = rac{0.24}{0.40} = \mathbf{0.60}, \qquad P(	ext{Dry} \mid 	ext{Jam}) = rac{0.16}{0.40} = \mathbf{0.40}.$$
    Before looking out the window, your prior probability of Rain was $$30\%$$; seeing a Traffic Jam updated your posterior probability of Rain to **$$60\%$$**!
 
-### Deep-Dive Explanation: Four Rules for Thinking in Joint Distributions (Read Slowly)
+### Explanation: Four Rules for Thinking in Joint Distributions
 
 1. **Bayes’ rule is not a separate axiom—it is just two ways to factor the same joint:** $$p(	heta, y) = p(y\mid	heta)p(	heta) = p(	heta\mid y)p(y)$$.
 2. **Marginalizing preserves uncertainty honestly:** Instead of plugging in a single point estimate for a nuisance parameter $$\sigma$$, Bayesian inference integrates over the joint $$p(\mu, \sigma \mid y)$$ so uncertainty in $$\sigma$$ widens your credible interval for $$\mu$$.

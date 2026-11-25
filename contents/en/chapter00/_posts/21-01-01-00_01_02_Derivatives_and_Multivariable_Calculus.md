@@ -20,7 +20,7 @@ This mathematical reference sharpens the exact multivariable calculus tools that
 
 ---
 
-## Background Knowledge Map: Multivariable Calculus Inside Modern Bayesian Engines
+## Key ideas: Multivariable Calculus Inside Modern Bayesian Engines
 
 1. **Gradient Vector ($$\nabla f$$):** Points in the direction of steepest ascent of the log-posterior; setting $$\nabla_\theta \log p(\theta\mid y) = \mathbf{0}$$ locates the MAP mode.
 2. **Hessian Matrix ($$\mathbf{H}$$):** The matrix of second partial derivatives measures local curvature—its negative inverse $$(-\mathbf{H})^{-1}$$ at the mode gives the **Laplace covariance matrix**!
@@ -150,7 +150,7 @@ Consider a 2-parameter Gaussian log-posterior $$g(\mu, \beta) = -\frac{1}{2}\!\l
    $$-\mathbf{H} = \begin{pmatrix} 2 & 1 \\ 1 & 4 \end{pmatrix} \implies \Sigma = (-\mathbf{H})^{-1} = \frac{1}{7}\begin{pmatrix} 4 & -1 \\ -1 & 2 \end{pmatrix}.$$
    The off-diagonal $$+1$$ in $$-\mathbf{H}$$ immediately tells you $$\mu$$ and $$\beta$$ are negatively correlated ($$\mathrm{Cov} = -1/7$$)!
 
-### Deep-Dive Explanation: Four Rules for Multivariable Calculus in Bayes (Read Slowly)
+### Explanation: Four Rules for Multivariable Calculus in Bayes
 
 1. **Always check the sign of the Hessian at a mode:** A maximum of $$\log p$$ must have a *negative-definite* Hessian (so $$-\mathbf{H}$$ is positive-definite).
 2. **Verify your analytical gradient with finite differences:** Checking $$\frac{g(\theta+\epsilon)-g(\theta-\epsilon)}{2\epsilon}$$ against your coded gradient catches 99% of chain-rule bugs in 5 seconds.

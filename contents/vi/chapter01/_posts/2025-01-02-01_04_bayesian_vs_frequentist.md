@@ -25,7 +25,7 @@ Sau bài này, bạn cần hiểu rằng sự khác nhau giữa hai trường ph
 > **Câu hỏi tự kiểm tra.** Hai trường phái này khác nhau chủ yếu ở công thức tính toán, hay ở chính câu hỏi mà họ đặt ra?
 
 
-## Bản đồ kiến thức nền: Hai hệ quy chiếu của Suy luận Thống kê
+## Kiến thức cần nhớ: Hai hệ quy chiếu của Suy luận Thống kê
 
 Để so sánh hai trường phái một cách công bằng và sắc bén ở trình độ đại học, hãy đối chiếu trên ba trục:
 
@@ -176,7 +176,7 @@ Nếu cần một cách phân biệt ngắn gọn: trường phái tần suất 
 > 3. Trong nhiều bài toán thực tế, câu trả lời theo hướng Bayes gần hơn với câu hỏi mà người dùng thực sự muốn đặt ra.
 
 
-## Khung giải thích (nên đọc chậm): Cùng một bảng số liệu, hai cách phát biểu khác nhau ra sao?
+## Giải thích: Cùng một bảng số liệu, hai cách phát biểu khác nhau ra sao?
 
 Hãy đọc chậm ba câu hỏi sau mỗi khi phải chọn giữa cách tiếp cận Frequentist và Bayesian:
 
@@ -184,7 +184,7 @@ Hãy đọc chậm ba câu hỏi sau mỗi khi phải chọn giữa cách tiếp
 2. **Dữ liệu hiện có ít hay nhiều, có cấu trúc phân cấp không?** Với mẫu nhỏ hoặc nhiều nhóm lồng nhau, prior có thông tin yếu và *partial pooling* của Bayes giúp ổn định ước lượng rõ rệt.
 3. **Chi phí tính toán cho phép đến đâu?** Ước lượng tần suất thường có công thức đóng cực nhanh; suy diễn Bayes tổng quát cần MCMC hoặc xấp xỉ biến phân nhưng đổi lại cho toàn bộ phân phối bất định.
 
-### Ví dụ tính toán cầm tay chỉ việc: Thử nghiệm A/B nhỏ với 8/10 ca thành công
+### Ví dụ tính toán làm từng bước: Thử nghiệm A/B nhỏ với 8/10 ca thành công
 
 Giả sử bạn thử một quy trình điều trị mới trên $$n = 10$$ bệnh nhân và có $$k = 8$$ ca đáp ứng tốt. Hãy so sánh hai báo cáo:
 

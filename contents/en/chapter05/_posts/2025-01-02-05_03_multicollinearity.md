@@ -16,7 +16,7 @@ This lesson demystifies **multicollinearity** from a Bayesian perspective: why p
 
 ---
 
-## Background Knowledge Map: Non-Identifiability Ridges Under Multicollinearity
+## Key ideas: Non-Identifiability Ridges Under Multicollinearity
 
 1. **The Posterior Ridge Geometry:** When $$X_1 \approx X_2$$, the linear predictor $$\beta_1 X_1 + \beta_2 X_2 \approx (\beta_1 + \beta_2)X_1$$ depends only on the **sum** $$\beta_1 + \beta_2$$. The joint posterior stretches into a long, narrow diagonal ridge with strong negative correlation $$\rho(\beta_1, \beta_2) \approx -0.99$$!
 2. **Individual Slopes Fail, Predictions Succeed:** Even when marginal CIs for $$\beta_1$$ and $$\beta_2$$ look wildly uncertain, their sum $$\beta_1 + \beta_2$$—and therefore out-of-sample predictions $$\hat{y}$$—remain razor-sharp!
@@ -235,7 +235,7 @@ Suppose true height is $$H_i = 2.0 \cdot \text{Leg}_i + \varepsilon_i$$ and left
 | **$$\beta_{\text{right}}$$ alone** | $$+0.90$$ | $$2.45$$ | $$[-3.90,\; +5.70]$$ | Looks "uncertain" marginally! |
 | **Sum $$\beta_{\text{left}} + \beta_{\text{right}}$$** | **$$+2.00$$** | **$$0.08$$** | **$$[+1.84,\; +2.16]$$** | **Pinned down with 30× higher precision!** |
 
-### Deep-Dive Explanation: Four Rules for Handling Multicollinearity in Bayes (Read Slowly)
+### Explanation: Four Rules for Handling Multicollinearity in Bayes
 
 1. **Always check posterior correlation before declaring a predictor "unimportant":** A wide marginal CI straddling zero may simply mean another predictor in the model is measuring the exact same underlying construct!
 2. **Distinguish prediction goals from causal goals:** For pure prediction, collinearity rarely hurts (especially with regularizing priors); for causal estimation, consult your DAG before dropping or combining predictors.

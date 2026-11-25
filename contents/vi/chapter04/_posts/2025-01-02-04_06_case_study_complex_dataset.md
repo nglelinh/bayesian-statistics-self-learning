@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ biết cách vận hành đầy đủ một quy trình
 > **Câu hỏi tự kiểm tra.** Vì sao một chỉ số tổng hợp rất cao như tương quan trên 0.9 vẫn chưa đủ để kết luận mô hình đáng tin cậy cho bài toán dự đoán thực tế?
 
 
-## Bản đồ kiến thức nền: Phân phối Log-Normal, Độ bao phủ có điều kiện và Gộp một phần (Partial Pooling)
+## Kiến thức cần nhớ: Phân phối Log-Normal, Độ bao phủ có điều kiện và Gộp một phần (Partial Pooling)
 
 Để làm chủ một bài toán quy mô lớn và phi đồng nhất như `diamonds`, ba công cụ lý thuyết sau đóng vai trò xương sống:
 
@@ -215,7 +215,7 @@ Tăng $$\tau$$ để quan sát sự chuyển dịch từ gộp hoàn toàn sang 
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-### Khung giải thích (nên đọc chậm): Tính tay hiệu chỉnh Log-Normal và công thức co cụm Partial Pooling
+### Giải thích: Tính tay hiệu chỉnh Log-Normal và công thức co cụm Partial Pooling
 
 Hai công thức cốt lõi ở mục 7.1 và 7.3 sẽ trở nên cực kỳ rõ ràng khi bạn tự thay số kiểm tra bằng tay:
 

@@ -16,7 +16,7 @@ This optional bridge connects Chapter 0’s foundational probability directly to
 
 ---
 
-## Background Knowledge Map: Where Chapter 0 Probability Ships in Modern Data Science
+## Key ideas: Where Chapter 0 Probability Ships in Modern Data Science
 
 Three foundational ideas from Chapter 0 underpin modern production ML infrastructure:
 
@@ -98,7 +98,7 @@ Compute the exact **Brier score** $$\mathrm{BS} = rac{1}{4}\sum_{i=1}^4 (p_i - 
 
 Even though Model B got 3 days nearly perfect, one overconfident mistake on Day 4 devastated its Brier score (and under Log-Loss it gets penalized even harder: $$-\ln(0.10) = 2.30$$!).
 
-### Deep-Dive Explanation: Four Rules for Probabilistic Thinking in Production ML (Read Slowly)
+### Explanation: Four Rules for Probabilistic Thinking in Production ML
 
 1. **Accuracy alone ignores confidence:** Both Model A and Model B have the exact same 75% classification accuracy at threshold 0.5, yet Model A is 3× better calibrated!
 2. **Always check calibration curves before using predicted probabilities for expected-value decisions:** An uncalibrated neural net predicting `0.95` when true risk is `0.60` breaks pricing, medical triage, and fraud thresholds.

@@ -16,7 +16,7 @@ This optional bridge shows how causal DAGs and Bayesian regression power real-wo
 
 ---
 
-## Background Knowledge Map: Three Production Causal-Bayesian Frameworks
+## Key ideas: Three Production Causal-Bayesian Frameworks
 
 1. **Bayesian Difference-in-Differences & Geo-Lift:** Compares a treated city’s pre-to-post jump against a synthetic control of untreated cities, yielding $$P(\text{ROI} > 1 \mid \text{data})$$ directly.
 2. **Bayesian Structural Time Series (CausalImpact):** Predicts the counterfactual trajectory *"what sales would have been without the campaign"* using correlated control markets, then subtracts counterfactual draws from observed sales to get a full posterior over cumulative lift!
@@ -91,7 +91,7 @@ A retailer runs a TV campaign in **City A (Treated)** while holding **City B (Co
 2. **Difference-in-Differences causal lift:** $$(114 - 100) - (104 - 100) = \mathbf{+10\text{K}}$$!
 3. **Bayesian decision check:** Suppose the posterior for causal lift is $$\Delta \sim \mathcal{N}(+10\text{K},\; 3\text{K}^2)$$ and the campaign cost $$C = \$7\text{K}$$. Then the posterior probability the campaign was profitable is $$P(\Delta > 7) = P(Z > -1.0) \approx \mathbf{84.1\%}$$!
 
-### Deep-Dive Explanation: Four Rules for Applied Causal Bayes in Industry (Read Slowly)
+### Explanation: Four Rules for Applied Causal Bayes in Industry
 
 1. **Always check the parallel-trends assumption before trusting DiD:** Verify that Treatment and Control tracked closely *before* launch; if they were already diverging, your counterfactual is biased.
 2. **Separate marketing spend *correlation* from incremental *causality*:** Ad platforms naturally target users who were already about to buy (confounding!); geo-experiments break that confounding cleanly.

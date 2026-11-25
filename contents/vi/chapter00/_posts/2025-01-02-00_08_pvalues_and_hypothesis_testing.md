@@ -20,7 +20,7 @@ Muốn hiểu vì sao thống kê Bayes ngày càng được giới nghiên cứ
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ bản chất của **p-value** và kiểm định giả thuyết theo quan điểm tần suất (**frequentist**), không chỉ để áp dụng đúng mà quan trọng hơn là nhận diện rõ các giới hạn của chúng. Bạn sẽ hiểu vì sao p-value thường bị diễn giải sai, vì sao nó không trả lời trực tiếp nhiều câu hỏi mà nhà khoa học quan tâm, và vì sao **phương pháp Bayesian mang lại cách tiếp cận tự nhiên và mạch lạc hơn cho suy diễn thống kê**. Mục tiêu không phải loại bỏ hoàn toàn kiểm định giả thuyết, mà là sử dụng nó một cách phản biện và biết khi nào cần chuyển sang công cụ khác.
 
-## Bản đồ kiến thức nền: Kiểm định Frequentist, Sai lầm loại I/II và Góc nhìn đối sánh Bayes
+## Kiến thức cần nhớ: Kiểm định Frequentist, Sai lầm loại I/II và Góc nhìn đối sánh Bayes
 
 Ba trụ cột giúp bạn đọc sâu bài này mà không rơi vào tranh cãi cảm tính giữa hai trường phái:
 
@@ -296,7 +296,7 @@ Khi sử dụng hoặc đọc p-value, không nên báo cáo p-value đơn lẻ 
 
 Hiểu rõ kiểm định giả thuyết tần suất là nền tảng giúp bạn đánh giá đúng vai trò của thống kê Bayesian. Phương pháp Bayesian chuyển trọng tâm từ kiểm định nhị phân sang ước lượng tham số và dự đoán, cho phép diễn giải trực tiếp xác suất của tham số, không phụ thuộc ngưỡng cắt tùy ý và tích hợp minh bạch thông tin tiên nghiệm. Tất nhiên, thống kê Bayesian không phải lời giải vạn năng — nó có những thách thức riêng về tính toán và lựa chọn prior — nhưng đem lại một khung suy luận nhất quán cho rất nhiều bài toán thực tế.
 
-## Khung giải thích (nên đọc chậm): Tại sao $$p = 0.04$$ KHÔNG có nghĩa "96% giả thuyết là đúng"?
+## Giải thích: Tại sao $$p = 0.04$$ KHÔNG có nghĩa "96% giả thuyết là đúng"?
 
 Đây là nguồn gốc lớn nhất của khủng hoảng tái lập khoa học. Hãy đi chậm qua 4 bước để tự chứng minh bằng số học đơn giản:
 
@@ -305,7 +305,7 @@ Hiểu rõ kiểm định giả thuyết tần suất là nền tảng giúp b�
 3. **Đưa vào ngưỡng $$lpha$$ và lực kiểm định (Power):** Với chuẩn $$lpha = 0.05$$ và lực kiểm định phổ biến $$1 - eta = 0.80$$, ta tính số phát hiện thật và phát hiện giả trên 1.000 thí nghiệm.
 4. **Tính xác suất hậu nghiệm bị báo động giả (False Discovery Rate):** Lấy số dương tính giả chia cho tổng số kết quả đạt $$p < 0.05$$.
 
-### Ví dụ tính toán cầm tay chỉ việc: 1.000 thí nghiệm đạt chuẩn $$p < 0.05$$
+### Ví dụ tính toán làm từng bước: 1.000 thí nghiệm đạt chuẩn $$p < 0.05$$
 
 Xét 1.000 giả thuyết được kiểm định với $$lpha = 0.05$$, lực kiểm định $$1 - eta = 0.80$$, và tỷ lệ giả thuyết đúng thực sự là $$10\%$$:
 

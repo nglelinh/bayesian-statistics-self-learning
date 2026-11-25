@@ -25,7 +25,7 @@ Sau bài này, bạn cần hiểu xấp xỉ lưới (grid approximation) như c
 > **Câu hỏi tự kiểm tra.** Khi tăng số điểm lưới từ 5 lên 100 hoặc 1000, posterior xấp xỉ sẽ thay đổi như thế nào?
 
 
-## Bản đồ kiến thức nền: Rời rạc hóa tích phân, Tính bất biến của Bayes và Lời nguyền số chiều
+## Kiến thức cần nhớ: Rời rạc hóa tích phân, Tính bất biến của Bayes và Lời nguyền số chiều
 
 Xấp xỉ lưới nối trực tiếp lý thuyết giải tích với tư duy tính toán số qua ba trụ cột:
 
@@ -288,7 +288,7 @@ Ngược lại. Xấp xỉ lưới là công cụ rất hiệu quả để xây 
 **Xấp xỉ lưới (grid approximation) ước lượng posterior bằng cách rời rạc hóa không gian tham số thành một lưới điểm hữu hạn.** Phương pháp này trực quan, dễ cài đặt, không yêu cầu prior liên hợp và đặc biệt phù hợp cho các mô hình ít tham số. Hạn chế cốt lõi của nó là không mở rộng được lên không gian nhiều chiều do lời nguyền số chiều. Nếu prior liên hợp giúp ta hiểu suy luận Bayes bằng giải tích, thì xấp xỉ lưới mở ra cánh cửa sang suy luận Bayes bằng tính toán số.
 
 
-## Khung giải thích (nên đọc chậm): Năm bước thực hiện xấp xỉ lưới không bao giờ sai
+## Giải thích: Năm bước thực hiện xấp xỉ lưới không bao giờ sai
 
 Bất kỳ bài toán Bayes 1 chiều nào cũng giải được bằng xấp xỉ lưới theo đúng 5 bước sau:
 
@@ -298,7 +298,7 @@ Bất kỳ bài toán Bayes 1 chiều nào cũng giải được bằng xấp x�
 4. **Nhân prior với likelihood** (hoặc cộng trên thang log rồi dùng `log-sum-exp`) để thu hậu nghiệm chưa chuẩn hóa $$u_j$$.
 5. **Chuẩn hóa** $$w_j = u_j / \sum_{m=1}^M u_m$$ để thu phân phối hậu nghiệm rời rạc, từ đó tính kỳ vọng $$\sum_j \theta_j w_j$$ hoặc rút mẫu trực tiếp.
 
-### Ví dụ tính toán cầm tay chỉ việc: Xấp xỉ lưới 5 điểm với prior không liên hợp
+### Ví dụ tính toán làm từng bước: Xấp xỉ lưới 5 điểm với prior không liên hợp
 
 Giả sử ta có prior bậc thang (không liên hợp): tin chắc đồng xu không thể có $$p < 0.5$$, tức $$p(\theta) = 0$$ nếu $$\theta < 0.5$$ và đều nhau nếu $$\theta \ge 0.5$$. Ta quan sát $$k = 2$$ Ngửa trong $$n = 3$$ lần tung ($$L(\theta) \propto \theta^2(1-\theta)$$) trên lưới 5 điểm $$\{0.1, 0.3, 0.5, 0.7, 0.9\}$$:
 

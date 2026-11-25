@@ -16,7 +16,7 @@ This lesson extends single-predictor Bayesian regression to multiple predictors 
 
 ---
 
-## Background Knowledge Map: Partial Effects, Standardization, and Posterior Geometry
+## Key ideas: Partial Effects, Standardization, and Posterior Geometry
 
 1. **Conditional ("Holding Other Predictors Constant") Interpretation:** In multiple regression, $$\beta_1$$ answers *"what is the expected change in $$Y$$ for a 1-unit increase in $$X_1$$ among observations with the **exact same** value of $$X_2$$?"*—not the raw marginal correlation!
 2. **Why Standardizing Predictors ($$z = (x - \bar{x})/s_x$$) Is a Bayesian Superpower:** Removes arbitrary unit scales (mm vs. km), centers the intercept $$\alpha$$ at the mean outcome (breaking correlation between $$\alpha$$ and slopes $$\beta_j$$), and lets you apply clean weakly informative priors like $$\beta_j \sim \mathcal{N}(0, 1)$$!
@@ -253,7 +253,7 @@ Suppose ice-cream sales ($$X_1$$) and shark attacks ($$Y$$) both depend on summe
   $$\mu_i = 5.0 + \underbrace{0.02}_{\beta_1 \text{ (SD } 0.15\text{)}} X_{1i} + \underbrace{0.85}_{\beta_2 \text{ (SD } 0.14\text{)}} X_{2i}.$$
 - **95% Credible Interval for $$\beta_1$$:** $$0.02 \pm 1.96(0.15) = [-0.27,\; +0.31]$$ (straddling zero cleanly!), while $$\beta_2$$ sits cleanly at $$[+0.58,\; +1.12]$$! Once you know temperature, knowing ice-cream sales adds **zero** predictive information about shark attacks!
 
-### Deep-Dive Explanation: Four Rules for Bayesian Multiple Regression (Read Slowly)
+### Explanation: Four Rules for Bayesian Multiple Regression
 
 1. **Always plot counterfactual / predictor-residual plots:** Don’t just stare at a table of 8 regression coefficients—plot predicted $$Y$$ as $$X_1$$ varies while holding $$X_2$$ fixed at its mean.
 2. **Adding more predictors is NOT always better:** As the very next lesson (DAGs & Confounding) proves, controlling for the *wrong* variable (a collider or post-treatment mediator!) can actually *create* bias out of thin air!

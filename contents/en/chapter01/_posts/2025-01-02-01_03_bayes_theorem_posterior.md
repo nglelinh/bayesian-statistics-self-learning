@@ -18,7 +18,7 @@ This lesson turns Bayes’ theorem into concrete muscle memory by walking step b
 
 ---
 
-## Background Knowledge Map: The Four Named Parts of Bayes’ Theorem
+## Key ideas: The Four Named Parts of Bayes’ Theorem
 
 1. **Prior $$P(\theta)$$:** Your belief distribution over hypotheses *before* observing the current dataset $$D$$.
 2. **Likelihood $$P(D \mid \theta)$$:** How probable the observed data $$D$$ would be *if* hypothesis $$\theta$$ were true (the bridge from model to data!).
@@ -341,7 +341,7 @@ You pull a coin from a bag containing 3 equally likely coin types: **Fair** ($$p
 
 Just two heads shifted belief in the Biased-Heads coin from $$33.3\%$$ to **$$68.8\%$$** while crashing belief in the Biased-Tails coin to $$4.3\%$$!
 
-### Deep-Dive Explanation: Four Rules of Bayesian Updating (Read Slowly)
+### Explanation: Four Rules of Bayesian Updating
 
 1. **Order of independent data does not matter (Sequential Invariance):** Updating on Flip 1 (`H`) and using that posterior as the prior for Flip 2 (`H`) gives the *exact same* `[4.3%, 26.9%, 68.8%]` as updating on `HH` all at once!
 2. **Never assign a prior of exact `0` unless logically impossible (Cromwell’s Rule):** Because $$0 \times \text{anything} = 0$$, no finite amount of data can ever rescue a hypothesis given prior probability `0`!

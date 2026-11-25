@@ -16,7 +16,7 @@ This lesson builds fluent intuition for **Bernoulli** and **Binomial** models, d
 
 ---
 
-## Background Knowledge Map: From Binary Trials to Bayesian Likelihoods
+## Key ideas: From Binary Trials to Bayesian Likelihoods
 
 Four concepts turn coin-flip math into a real-world statistical workhorse:
 
@@ -175,7 +175,7 @@ Suppose a landing page gets $$k = 7$$ signups out of $$n = 10$$ independent visi
 
 Notice the Bayesian insight: the data (7 out of 10) is $$2.28$$ times more probable under $$p=0.7$$ than under $$p=0.5$$, yet $$p=0.5$$ still has a completely non-trivial likelihood ($$11.7\%$$)—so with only 10 visits, we shouldn’t declare victory too soon!
 
-### Deep-Dive Explanation: Four Rules for Binomial Modeling in Practice (Read Slowly)
+### Explanation: Four Rules for Binomial Modeling in Practice
 
 1. **Check all three Binomial assumptions:** Fixed $$n$$, constant $$p$$ across trials, and conditional independence. If one user clicks 10 times in a row, independence fails and variance explodes (*overdispersion*).
 2. **Know why $$inom{n}{k}$$ vanishes in Bayes’ rule:** Because $$inom{n}{k}$$ is identical for every candidate $$p$$, the likelihood ratio between $$p=0.7$$ and $$p=0.5$$ depends *only* on $$p^k(1-p)^{n-k}$$.

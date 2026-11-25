@@ -16,7 +16,7 @@ Bài học này rèn luyện thành phản xạ các quy tắc tuyến tính c�
 
 ---
 
-## Bản đồ kiến thức nền: Bốn đồng nhất thức Moment trụ cột trong Thống kê Bayes
+## Kiến thức cần nhớ: Bốn đồng nhất thức Moment trụ cột trong Thống kê Bayes
 
 1. **Tính tuyến tính của Kỳ vọng (Luôn đúng mọi lúc!):** $$\mathbb{E}[aX + bY + c] = a\mathbb{E}[X] + b\mathbb{E}[Y] + c$$ đúng **kể cả khi $$X$$ và $$Y$$ phụ thuộc chặt vào nhau**!
 2. **Quy tắc biến đổi & tổng Phương sai:** $$\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)$$, và với hai biến bất kỳ: $$\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X, Y)$$.
@@ -130,7 +130,7 @@ Trong suy diễn Bayesian, trung bình hậu nghiệm (posterior mean) chính l�
 
 ---
 
-### Ví dụ tính tay cầm tay chỉ việc: Kiểm chứng công thức Phương sai của Tổng với Hiệp phương sai âm
+### Ví dụ tính tay làm từng bước: Kiểm chứng công thức Phương sai của Tổng với Hiệp phương sai âm
 
 Xét hai tài sản $$(X, Y)$$ trong 3 kịch bản thị trường có xác suất bằng nhau (mỗi kịch bản $$1/3$$):
 
@@ -149,7 +149,7 @@ Xét hai tài sản $$(X, Y)$$ trong 3 kịch bản thị trường có xác su�
    - Theo công thức: $$\mathrm{Var}(X+Y) = 24 + \frac{8}{3} + 2(-8) = \frac{32}{3} \approx \mathbf{10{,}67}$$.
    - Tính trực tiếp từ cột $$X+Y = (+4, 0, -4)$$: $$\frac{16 + 0 + 16}{3} = \frac{32}{3} \approx \mathbf{10{,}67}$$ — khớp khít tuyệt đối! Nhờ hiệp phương sai âm, rủi ro của danh mục giảm hơn một nửa so với giữ riêng $$X$$!
 
-### Khung giải thích: Bốn lưu ý tránh nhầm lẫn khi tính Kỳ vọng và Hiệp phương sai (nên đọc chậm)
+### Giải thích: Bốn lưu ý tránh nhầm lẫn khi tính Kỳ vọng và Hiệp phương sai
 
 1. **Hiệp phương sai bằng 0 KHÔNG chứng minh độc lập:** Nếu $$X \in \{-1, 0, 1\}$$ đối xứng và $$Y = X^2$$, ta có $$\mathrm{Cov}(X, Y) = 0$$ dù $$Y$$ phụ thuộc hoàn toàn vào $$X$$!
 2. **Tuyệt đối không cộng độ lệch chuẩn — hãy cộng *phương sai* (cộng $$2\mathrm{Cov}$$):** Cộng trực tiếp $$\sigma_X + \sigma_Y$$ sẽ phóng đại sai số mỗi khi hai biến độc lập hoặc tương quan âm.

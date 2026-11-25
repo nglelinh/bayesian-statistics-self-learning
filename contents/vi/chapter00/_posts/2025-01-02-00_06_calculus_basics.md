@@ -20,7 +20,7 @@ Chính sự chênh lệch độ khó giữa hai phép toán này — lấy đạ
 
 Sau bài này, bạn sẽ hiểu vai trò của đạo hàm, tích phân và tối ưu hóa trong suy luận thống kê Bayesian. Cụ thể, bạn sẽ nắm cách dùng đạo hàm để phân tích độ nhạy và tìm cực trị, dùng tích phân để chuẩn hóa mật độ và tính xác suất trên miền liên tục, và dùng tối ưu hóa để tìm ước lượng xấp xỉ (như MAP) trước hoặc song song với lấy mẫu hậu nghiệm.
 
-## Bản đồ kiến thức nền: Đạo hàm–Gradient, Tích phân chuẩn hóa và Cầu nối sang HMC / Variational Inference
+## Kiến thức cần nhớ: Đạo hàm–Gradient, Tích phân chuẩn hóa và Cầu nối sang HMC / Variational Inference
 
 Ba trụ cột giải tích mà mọi nhà thực hành Bayes cần nắm chắc:
 
@@ -28,7 +28,9 @@ Ba trụ cột giải tích mà mọi nhà thực hành Bayes cần nắm chắc
 abla_	heta \log p(	heta \mid y)$$ chỉ hướng tăng nhanh nhất của log-posterior, giúp tìm điểm MAP. Ma trận Hessian $$\mathbf{H} = 
 abla^2_	heta \log p(	heta \mid y)$$ đo độ cong tại đỉnh: đỉnh càng nhọn (độ cong âm lớn), phương sai hậu nghiệm càng nhỏ. Trong **Hamiltonian Monte Carlo (HMC / NUTS)** — động cơ mặc định của Stan và PyMC — gradient của log-posterior đóng vai trò "lực hấp dẫn" dẫn đường cho hạt chuyển động mượt mà qua không gian hàng nghìn chiều.
 - **Tích phân & Chuẩn hóa (Marginal Likelihood / Evidence):** Mẫu số $$Z = p(y) = \int p(y \mid 	heta)p(	heta)\,d	heta$$ là diện tích dưới đường cong chưa chuẩn hóa. Nếu không chuẩn hóa được bằng giải tích (như prior liên hợp), ta cần tích phân số (Grid), lấy mẫu (MCMC) hoặc cận dưới biến phân (ELBO trong Variational Inference).
-- **Biến đổi biến số & Định thức Jacobian:** Khi đổi tham số (ví dụ từ độ lệch chuẩn $$\sigma > 0$$ sang $$\phi = \log \sigma \in \mathbb{R}$$ để tối ưu không ràng buộc), mật độ xác suất phải nhân thêm $$\left\lvert rac{d\sigma}{d\phi} ightvert = e^\phi$$ để bảo toàn tổng xác suất bằng 1.
+- **Biến đổi biến số & Định thức Jacobian:** Khi đổi tham số (ví dụ từ độ lệch chuẩn $$\sigma > 0$$ sang $$\phi = \log \sigma \in \mathbb{R}$$ để tối ưu không ràng buộc), mật độ xác suất phải nhân thêm $$\left\lvert rac{d\sigma}{d\phi} 
+ight
+vert = e^\phi$$ để bảo toàn tổng xác suất bằng 1.
 
 ---
 
@@ -600,7 +602,7 @@ print(f"Laplace std: {std_laplace:.4f}")
 print(f"True std: {np.sqrt(alpha_post * beta_post / ((alpha_post + beta_post)**2 * (alpha_post + beta_post + 1))):.4f}")
 ```
 
-## Khung giải thích (nên đọc chậm): Từ đạo hàm tìm đỉnh MAP đến xấp xỉ Laplace bằng tay
+## Giải thích: Từ đạo hàm tìm đỉnh MAP đến xấp xỉ Laplace bằng tay
 
 Hãy đọc chậm chuỗi 4 bước nối liền giải tích 1 với một công cụ cực mạnh của thống kê Bayes là **xấp xỉ Laplace** (Laplace Approximation):
 
@@ -608,9 +610,10 @@ Hãy đọc chậm chuỗi 4 bước nối liền giải tích 1 với một cô
 2. **Giải $$g'(	heta) = 0$$ để tìm đỉnh $$\hat{	heta}_{	ext{MAP}}$$:** Đây là điểm có mật độ hậu nghiệm cao nhất.
 3. **Tính đạo hàm bậc hai $$g''(\hat{	heta}_{	ext{MAP}})$$ để đo độ cong:** Vì là cực đại nên $$g''(\hat{	heta}_{	ext{MAP}}) < 0$$.
 4. **Khai triển Taylor bậc 2 quanh đỉnh:** $$g(	heta) pprox g(\hat{	heta}) + rac{1}{2} g''(\hat{	heta})(	heta - \hat{	heta})^2$$. So sánh với log mật độ Chuẩn $$-rac{(	heta - \mu)^2}{2\sigma^2}$$, ta lập tức thu được xấp xỉ hậu nghiệm:
-   $$	heta \mid y pprox \mathcal{N}\!\left(\hat{	heta}_{	ext{MAP}},\; rac{-1}{g''(\hat{	heta}_{	ext{MAP}})}ight).$$
+   $$	heta \mid y pprox \mathcal{N}\!\left(\hat{	heta}_{	ext{MAP}},\; rac{-1}{g''(\hat{	heta}_{	ext{MAP}})}
+ight).$$
 
-### Ví dụ tính toán cầm tay chỉ việc: Tìm MAP và phương sai xấp xỉ Laplace cho mô hình Beta–Binomial
+### Ví dụ tính toán làm từng bước: Tìm MAP và phương sai xấp xỉ Laplace cho mô hình Beta–Binomial
 
 Giả sử bạn dùng prior $$	ext{Beta}(2, 2)$$ và quan sát $$k = 7$$ thành công trong $$n = 10$$ lần thử. Ta đã biết hậu nghiệm chính xác là $$	ext{Beta}(9, 5)$$, nên đây là cơ hội tuyệt vời để kiểm chứng phép tính đạo hàm bằng tay!
 

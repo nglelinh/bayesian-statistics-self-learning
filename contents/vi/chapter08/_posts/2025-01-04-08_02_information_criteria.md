@@ -21,7 +21,7 @@ Công trình đột phá của Sumio Watanabe (2010, WAIC) và Aki Vehtari, Andr
 Sau bài học này, bạn sẽ hiểu WAIC và LOO như những công cụ xấp xỉ năng lực dự báo ngoài mẫu của mô hình Bayes, đồng thời biết đọc kết quả kèm theo độ bất định ước lượng thay vì xếp hạng một cách cứng nhắc. Trọng tâm của bài là lập luận phương pháp: vì sao cần ưu tiên tiêu chí dự báo ngoài mẫu, khi nào chênh lệch giữa các mô hình đủ lớn để đưa ra kết luận, và khi nào nên chuyển từ chọn một mô hình sang kết hợp nhiều mô hình (model averaging).
 
 
-## Bản đồ kiến thức nền: ELPD, WAIC, PSIS-LOO và Chẩn đoán Pareto $$k$$
+## Kiến thức cần nhớ: ELPD, WAIC, PSIS-LOO và Chẩn đoán Pareto $$k$$
 
 So sánh mô hình Bayes hiện đại xoay quanh ba trụ cột toán học cốt lõi:
 
@@ -111,7 +111,7 @@ WAIC và LOO cung cấp thước đo định lượng để so sánh năng lực
 Bài tiếp theo: **Các chiến lược so sánh mô hình (Model Comparison Strategies)**, đi sâu vào lựa chọn giữa chọn mô hình (selection), kết hợp mô hình (averaging) và mở rộng mô hình (expansion).
 
 
-## Khung giải thích (nên đọc chậm): Tự tính WAIC bằng tay và đọc bảng chênh lệch ELPD có sai số chuẩn
+## Giải thích: Tự tính WAIC bằng tay và đọc bảng chênh lệch ELPD có sai số chuẩn
 
 Để thực sự hiểu WAIC và LOO đang tính gì bên dưới hàm `az.compare()`, hãy đi chậm qua 4 bước:
 
@@ -120,7 +120,7 @@ Bài tiếp theo: **Các chiến lược so sánh mô hình (Model Comparison St
 3. **Tính phạt độ phức tạp $$p_{\text{WAIC}} = \sum_{i=1}^n \mathrm{Var}_{s}(\log p(y_i \mid \theta^{(s)}))$$:** Điểm nào có log-likelihood dao động mạnh qua các mẫu hậu nghiệm thì đóng góp phạt lớn.
 4. **Tính $$\widehat{\text{elpd}}_{\text{WAIC}} = \text{lppd} - p_{\text{WAIC}}$$** và khi so hai mô hình, luôn đối chiếu $$\Delta\text{elpd}$$ với sai số chuẩn $$\mathrm{SE}(\Delta\text{elpd})$$!
 
-### Ví dụ tính toán cầm tay chỉ việc: Tính $$\text{lppd}_i$$ và $$p_{\text{WAIC},i}$$ cho 1 điểm dữ liệu với $$S = 2$$ mẫu hậu nghiệm
+### Ví dụ tính toán làm từng bước: Tính $$\text{lppd}_i$$ và $$p_{\text{WAIC},i}$$ cho 1 điểm dữ liệu với $$S = 2$$ mẫu hậu nghiệm
 
 Giả sử tại điểm dữ liệu $$i$$, hai mẫu hậu nghiệm $$\theta^{(1)}, \theta^{(2)}$$ cho xác suất hợp lý là $$p_1 = 0.20$$ và $$p_2 = 0.40$$ (tương ứng $$\log p_1 \approx -1.6094$$ và $$\log p_2 \approx -0.9163$$):
 

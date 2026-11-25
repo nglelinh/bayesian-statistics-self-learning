@@ -16,7 +16,7 @@ This lesson builds sharp numerical intuition for measures of center, spread, and
 
 ---
 
-## Background Knowledge Map: Summarizing Data—and Summarizing Bayesian Posteriors
+## Key ideas: Summarizing Data—and Summarizing Bayesian Posteriors
 
 Every descriptive summary you compute on raw data reappears directly when summarizing posterior samples:
 
@@ -205,7 +205,7 @@ Compare two tiny 5-person salary datasets (in thousands of dollars):
 
 Look at `138 ± 202` on the outlier sample: it gives a lower bound of $$-64$$ thousand dollars—completely nonsensical—while `median = 50, IQR = 10` remains rock-solid!
 
-### Deep-Dive Explanation: Four Rules for Honest Data & Posterior Summaries (Read Slowly)
+### Explanation: Four Rules for Honest Data & Posterior Summaries
 
 1. **Always pair a location statistic with a spread statistic:** A mean without SD (or median without IQR/quantiles) hides half the story.
 2. **Compare mean vs. median as an instant skewness detector:** If `mean >> median`, you have a heavy right tail; investigate outliers or consider log-transforming before assuming Gaussianity.

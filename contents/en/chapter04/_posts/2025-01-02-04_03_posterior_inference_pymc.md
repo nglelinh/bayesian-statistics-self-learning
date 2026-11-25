@@ -12,7 +12,7 @@ lesson_type: required
 
 Writing a Bayesian model on a whiteboard is deeply satisfying—until you actually want to run it on real data. That is where probabilistic programming languages like **PyMC** come in: you write the exact generative story in 6 lines of Python, hit `pm.sample()`, and NUTS automatically differentiates your log-posterior and draws thousands of correlated samples. Yet treating `pm.sample()` as a black box is dangerous: before you interpret a single credible interval, you need to know how to back-transform standardized coefficients, read $$\hat{R}$$ and ESS, and check whether your Monte Carlo standard error is small enough to trust.
 
-**Lesson Roadmap:** Translating math to PyMC code → Background Knowledge Map (Probabilistic programming & autodiff, Sampler diagnostics before interpretation, Posterior predictive propagation) → Hand-worked standardization back-transform & MCSE check → Full PyMC workflow, code, and exercises.
+**Lesson Roadmap:** Translating math to PyMC code → Key ideas (Probabilistic programming & autodiff, Sampler diagnostics before interpretation, Posterior predictive propagation) → Hand-worked standardization back-transform & MCSE check → Full PyMC workflow, code, and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to know how to turn Bayesian regression from a gener
 >
 > **Quick check.** If PyMC has already produced the posterior, why do we still have to look at diagnostics before interpreting the results?
 
-## Background Knowledge Map: From Mathematical Model to Reliable PyMC Inference
+## Key ideas: From Mathematical Model to Reliable PyMC Inference
 
 ### 1. Probabilistic Programming and Automatic Differentiation
 - **What it is:** Expressing random variables (`pm.Normal`, `pm.HalfNormal`) as nodes in a computational graph whose exact log-density gradient $$\nabla \log p(\theta \mid D)$$ is computed automatically via reverse-mode autodiff (PyTensor).
@@ -36,7 +36,7 @@ After this lesson, you need to know how to turn Bayesian regression from a gener
 - **What it is:** Distinguishing `idata.posterior` (distributions over parameters $$\alpha, \beta, \sigma$$) from `pm.sample_posterior_predictive` (distributions over *new data* $$y^*$$).
 - **What it studies:** Propagating full joint parameter uncertainty—including correlations between $$\alpha$$ and $$\beta$$—into real-world predictions and intervals.
 
-## Deep-Dive Explanation: Back-Transforming Standardized PyMC Output & Checking MCSE (Read Slowly)
+## Explanation: Back-Transforming Standardized PyMC Output & Checking MCSE
 
 Suppose you standardize height ($$\bar{x} = 170\text{ cm},\, s_x = 10\text{ cm}$$) and weight ($$\bar{y} = 65\text{ kg},\, s_y = 12\text{ kg}$$), fit a PyMC model, and `az.summary()` reports:
 - $$\alpha_z \approx 0.02$$, $$\beta_z \approx 0.80$$ (with posterior $$\mathrm{SD}(\beta_z) = 0.12$$ and $$\mathrm{ESS} = 1{,}600$$).

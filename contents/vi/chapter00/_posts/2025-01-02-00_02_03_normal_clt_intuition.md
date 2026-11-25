@@ -20,7 +20,7 @@ Trong thống kê Bayes, phân phối Chuẩn giữ hai vai trò tối quan tr�
 
 Sau bài này, bạn sẽ hiểu vai trò của phân phối Normal, diễn giải chính xác hai tham số $$\mu$$ và $$\sigma$$, đồng thời vận dụng trực giác của định lý giới hạn trung tâm (CLT) để giải thích vì sao nhiều đại lượng tổng hợp có dạng gần chuẩn.
 
-## Bản đồ kiến thức nền: Entropy cực đại, Định lý Giới hạn Trung tâm và Cập nhật Normal–Normal
+## Kiến thức cần nhớ: Entropy cực đại, Định lý Giới hạn Trung tâm và Cập nhật Normal–Normal
 
 Nhìn ở bậc đại học trở lên, sự thống trị của phân phối Chuẩn đến từ ba trụ cột lý thuyết:
 
@@ -109,7 +109,7 @@ Phân phối Normal không phù hợp khi dữ liệu bị giới hạn miền (
 
 Trong mô hình hóa Bayesian, phân phối Normal xuất hiện ở nhiều vai trò khác nhau: làm hàm hợp lý (likelihood) cho dữ liệu liên tục, làm phân phối tiên nghiệm (prior) cho các hệ số hồi quy, hoặc đóng vai trò xấp xỉ tiện lợi cho phân phối hậu nghiệm (posterior) khi cỡ mẫu đủ lớn. Tuy vậy, quy trình phân tích Bayesian luôn yêu cầu kiểm tra lại giả định mô hình thay vì mặc định gán Normal cho mọi dữ liệu liên tục.
 
-## Khung giải thích (nên đọc chậm): Cơ chế "cộng độ chính xác" trong cập nhật Normal–Normal bằng tay
+## Giải thích: Cơ chế "cộng độ chính xác" trong cập nhật Normal–Normal bằng tay
 
 Nếu bạn đã quen viết phân phối Chuẩn theo phương sai $$\sigma^2$$, cập nhật Bayes trông khá rắc rối. Bí quyết để mọi thứ trở nên trong suốt là chuyển sang **độ chính xác (*precision*)** — nghịch đảo của phương sai:
 
@@ -119,7 +119,7 @@ Nếu bạn đã quen viết phân phối Chuẩn theo phương sai $$\sigma^2$$
    $$\mu_{	ext{post}} = rac{\lambda_0 \mu_0 + \lambda_{	ext{data}} ar{y}}{\lambda_0 + \lambda_{	ext{data}}}.$$
 4. **Trực giác kéo co:** Ai có độ chính xác cao hơn (phương sai nhỏ hơn) sẽ kéo trung bình hậu nghiệm về phía mình mạnh hơn.
 
-### Ví dụ tính toán cầm tay chỉ việc: Đo tốc độ phản ứng của một cảm biến mới
+### Ví dụ tính toán làm từng bước: Đo tốc độ phản ứng của một cảm biến mới
 
 Nhà sản xuất cho biết thời gian trễ trung bình $$\mu$$ của dòng cảm biến này quanh mức $$\mu_0 = 50	ext{ ms}$$ với độ lệch chuẩn tiên nghiệm $$	au_0 = 4	ext{ ms}$$ ($$	au_0^2 = 16$$). Sai số đo mỗi lần thử đã biết là $$\sigma = 6	ext{ ms}$$ ($$\sigma^2 = 36$$). Bạn đo $$n = 9$$ lần và thu được trung bình mẫu $$ar{y} = 44	ext{ ms}$$.
 

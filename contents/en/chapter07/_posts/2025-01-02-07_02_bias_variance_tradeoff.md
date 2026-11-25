@@ -16,7 +16,7 @@ This lesson reframes the Bias–Variance Trade-off in Bayesian terms: showing ho
 
 ---
 
-## Background Knowledge Map: Complexity, Generalization, and Bayesian Averaging
+## Key ideas: Complexity, Generalization, and Bayesian Averaging
 
 1. **Underfitting (High Bias) vs. Overfitting (High Variance):** Too few parameters miss real curvature (both train and test error stay high); too many unregularized parameters chase random sample noise (train error $$\to 0$$, test error explodes!).
 2. **In-Sample Deviance Always Improves With Complexity:** Adding any extra parameter never worsens training fit—which is why comparing models on training $$R^2$$ or training log-likelihood guarantees overfitting!
@@ -248,7 +248,7 @@ Fit polynomial models of degree 1, 2, 5, and 9 (with flat priors) to $$n = 15$$ 
 
 Look at the bottom two rows: the exact same 10-parameter architecture drops out-of-sample deviance from **64.0 down to 10.2** simply by adding a skeptical Bayesian prior!
 
-### Deep-Dive Explanation: Four Rules for Navigating the Bias–Variance Trade-Off (Read Slowly)
+### Explanation: Four Rules for Navigating the Bias–Variance Trade-Off
 
 1. **Never pick a model by training fit alone:** Always evaluate via cross-validation (LOO-CV / k-fold) or a locked held-out test set.
 2. **Plot the *gap* between train and test deviance:** A tiny train error paired with a huge test error is the unmistakable fingerprint of overfitting; both high signals underfitting.

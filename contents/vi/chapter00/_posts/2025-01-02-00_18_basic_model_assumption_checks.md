@@ -21,7 +21,7 @@ Trước khi đi vào các mô hình hồi quy hay MCMC phức tạp, bài học
 Sau bài này, bạn sẽ biết cách kiểm tra có hệ thống các giả định cốt lõi của mô hình (dạng phân phối, tính độc lập, cấu trúc sai số), nhận diện sớm dấu hiệu sai đặc tả mô hình (misspecification), và chuyển kết quả chẩn đoán thành bước cải tiến mô hình cụ thể.
 
 
-## Bản đồ kiến thức nền: Chẩn đoán giả định, Cơ chế sinh dữ liệu và Phản biện mô hình Bayes
+## Kiến thức cần nhớ: Chẩn đoán giả định, Cơ chế sinh dữ liệu và Phản biện mô hình Bayes
 
 Kiểm tra giả định không phải thủ tục hình thức mà là sự giao thoa của ba trụ cột:
 
@@ -256,7 +256,7 @@ Mục tiêu không phải chứng minh mô hình "đúng tuyệt đối", mà l�
 5. Sai mô hình là thông tin chẩn đoán để cải tiến, không phải thất bại.
 
 
-## Khung giải thích (nên đọc chậm): Bốn câu hỏi chẩn đoán trước khi tin kết quả
+## Giải thích: Bốn câu hỏi chẩn đoán trước khi tin kết quả
 
 Mỗi khi vừa khớp xong một mô hình cơ bản, hãy đọc chậm và lần lượt kiểm tra bốn câu hỏi sau trên phần dư $$e_i = y_i - \hat y_i$$:
 
@@ -265,7 +265,7 @@ Mỗi khi vừa khớp xong một mô hình cơ bản, hãy đọc chậm và l�
 3. **Có điểm ngoại lai nào kéo nghiêng đường hồi quy không?** Chỉ một quan sát bất thường cũng có thể làm lệch mạnh trung bình và độ dốc dưới hàm mất mát bình phương (Gaussian).
 4. **Phần dư liên tiếp có tương quan theo thời gian hoặc theo nhóm không?** Nếu có, giả định độc lập bị phá vỡ và sai số chuẩn bị đánh giá thấp một cách giả tạo.
 
-### Ví dụ tính toán cầm tay chỉ việc: Một điểm ngoại lai làm lệch ước lượng ra sao?
+### Ví dụ tính toán làm từng bước: Một điểm ngoại lai làm lệch ước lượng ra sao?
 
 Xét 5 phép đo thời gian hoàn thành một tác vụ (đơn vị: giây): $$10, 11, 12, 13, 14$$. Giả sử ở lần ghi thứ 5 bị lỗi nhập liệu từ $$14$$ thành $$64$$ (một điểm ngoại lai duy nhất). So sánh ước lượng trung bình (tương ứng likelihood Gaussian) và trung vị (tương ứng likelihood Laplace / bền vững):
 

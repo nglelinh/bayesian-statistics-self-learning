@@ -21,7 +21,7 @@ Câu chuyện của Stein chính là cánh cửa tự nhiên dẫn sang tư duy 
 Sau bài này, bạn sẽ hiểu ba tiêu chí cốt lõi để đánh giá một bộ ước lượng (estimator): độ chệch (bias), phương sai (variance) và tính nhất quán (consistency), đồng thời nắm được sự đánh đổi độ chệch – phương sai (bias–variance tradeoff) như một nguyên lý thực hành khi thiết kế mô hình.
 
 
-## Bản đồ kiến thức nền: Lý thuyết ước lượng điểm, Phân rã MSE và Cầu nối sang Co cụm Bayes
+## Kiến thức cần nhớ: Lý thuyết ước lượng điểm, Phân rã MSE và Cầu nối sang Co cụm Bayes
 
 Bốn khái niệm trong bài này tạo thành ngôn ngữ đánh giá chuẩn cho mọi bộ ước lượng (từ MLE, OLS đến Posterior Mean và MAP):
 
@@ -112,7 +112,7 @@ Trong thống kê Bayesian, ta làm việc với toàn bộ phân phối hậu n
 4. Tính nhất quán (consistency) mô tả sự hội tụ về giá trị thật khi cỡ mẫu lớn.
 
 
-## Khung giải thích (nên đọc chậm): Khi nào một ước lượng "có chệch" lại đánh bại ước lượng "không chệch"?
+## Giải thích: Khi nào một ước lượng "có chệch" lại đánh bại ước lượng "không chệch"?
 
 Hãy đọc chậm bốn bước sau để thấy vì sao "không chệch" không phải lúc nào cũng là mục tiêu tối thượng:
 
@@ -121,7 +121,7 @@ Hãy đọc chậm bốn bước sau để thấy vì sao "không chệch" khôn
 3. **Tính toán cụ thể phần đánh đổi:** Nếu thêm một độ chệch nhỏ $$b$$ (đóng góp $$b^2$$ vào MSE) giúp giảm phương sai đi nhiều hơn $$b^2$$, tổng MSE sẽ giảm ròng.
 4. **Kiểm tra giới hạn $$n \to \infty$$:** Trọng số của prior giảm theo $$1/n$$, nên độ chệch tiến về 0 và tính nhất quán vẫn được bảo toàn.
 
-### Ví dụ tính toán cầm tay chỉ việc: So sánh MLE và Posterior Mean với $$n = 4$$
+### Ví dụ tính toán làm từng bước: So sánh MLE và Posterior Mean với $$n = 4$$
 
 Giả sử xác suất thật là $$\theta = 0.4$$ và ta tung đồng xu $$n = 4$$ lần ($$K \sim \text{Binomial}(4, 0.4)$$). So sánh hai bộ ước lượng:
 - **MLE (không chệch):** $$\hat\theta_{\text{MLE}} = K / 4$$.

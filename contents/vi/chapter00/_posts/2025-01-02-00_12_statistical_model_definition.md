@@ -16,7 +16,7 @@ Bài học này giúp bạn đọc và viết lưu loát ký hiệu mô hình si
 
 ---
 
-## Bản đồ kiến thức nền: Bốn thành phần của một Mô hình Thống kê Sinh (Generative Model)
+## Kiến thức cần nhớ: Bốn thành phần của một Mô hình Thống kê Sinh (Generative Model)
 
 1. **Cấu trúc sinh dữ liệu (Hàm hợp lý $$p(y\mid\theta)$$):** Họ phân phối xác suất mô tả cách tín hiệu và nhiễu kết hợp để tạo ra quan sát $$y$$.
 2. **Phân phối tiên nghiệm $$p(\theta\mid\phi)$$:** Mã hóa miền hợp lệ và thang đo hợp lý của tham số $$\theta$$, được điều khiển bởi các **siêu tham số** $$\phi$$.
@@ -120,7 +120,7 @@ Nếu dữ liệu không phải chiều cao mà là số cuộc gọi đến t�
 
 ---
 
-### Ví dụ tính tay cầm tay chỉ việc: Kiểm tra mô hình điểm thi qua Phân phối Dự báo Tiên nghiệm
+### Ví dụ tính tay làm từng bước: Kiểm tra mô hình điểm thi qua Phân phối Dự báo Tiên nghiệm
 
 Giả sử bạn mô hình hóa điểm thi $$Y$$ với nhiễu đo lường đã biết $$\sigma = 10$$ và điểm trung bình lớp chưa biết $$\mu$$:
 
@@ -132,7 +132,7 @@ Trước khi chấm bất kỳ bài thi nào, một điểm thi tương lai $$Y 
    $$\mathrm{Var}(Y) = \mathrm{Var}(\mu) + \mathrm{Var}(\varepsilon) = 5^2 + 10^2 = 25 + 100 = \mathbf{125} \implies \mathrm{SD}(Y) = \sqrt{125} \approx \mathbf{11{,}18}.$$
 3. **Khoảng 95% dự báo tiên nghiệm:** $$70 \pm 1{,}96(11{,}18) = \mathbf{[48{,}1;\; 91{,}9]}$$ — nằm gọn gàng trong thang điểm 0–100! *(Trái lại, một tiên nghiệm "phẳng" cẩu thả $$\mu \sim \mathcal{N}(70, 1000^2)$$ sẽ dự báo điểm thi từ $$-1890$$ đến $$+2030$$!)*
 
-### Khung giải thích: Bốn nguyên tắc xây dựng mô hình thống kê chuẩn mực (nên đọc chậm)
+### Giải thích: Bốn nguyên tắc xây dựng mô hình thống kê chuẩn mực
 
 1. **Luôn viết mô hình bằng 2–3 dòng ký hiệu toán trước khi gõ code:** Ký hiệu giúp mọi giả định ẩn hiện ra công khai để đồng nghiệp phản biện.
 2. **Tách bất định tham số (epistemic) khỏi nhiễu dữ liệu (aleatoric):** Thu thêm dữ liệu làm $$\mathrm{Var}(\mu\mid y) \to 0$$, nhưng không bao giờ làm biến mất nhiễu cá thể $$\sigma^2 = 100$$.

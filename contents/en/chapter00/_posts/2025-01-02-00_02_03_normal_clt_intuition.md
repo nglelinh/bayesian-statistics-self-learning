@@ -16,7 +16,7 @@ This lesson builds geometric intuition for the Normal distribution’s 68–95�
 
 ---
 
-## Background Knowledge Map: Why Gaussians Dominate Both Data and Posteriors
+## Key ideas: Why Gaussians Dominate Both Data and Posteriors
 
 Four deep properties explain the ubiquity of the Normal distribution in Bayesian statistics:
 
@@ -130,7 +130,7 @@ Suppose individual shipping weights follow a skewed distribution with mean $$\mu
    Since roughly $$95.4\%$$ of a standard Normal sits inside $$[-2, +2]$$, the upper tail $$P(Z > 2.0) pprox rac{1 - 0.9545}{2} pprox \mathbf{2.28\%}$$!
 3. **Contrast with a single package:** For $$n=1$$, $$520	ext{ g}$$ is only $$+0.5\sigma$$ above the mean (very common, ~31%); averaging 16 packages concentrates the distribution 4× tighter!
 
-### Deep-Dive Explanation: Four Checks Before Assuming Normality (Read Slowly)
+### Explanation: Four Checks Before Assuming Normality
 
 1. **Check whether the mechanism is additive or multiplicative:** Additive noise $$	o$$ Normal; multiplicative percentages $$	o$$ model $$\log Y$$ as Normal.
 2. **Watch for heavy tails and outliers:** Extreme outliers (Cauchy-like or financial crashes) break Gaussian assumptions—in Bayesian modeling, swap Normal likelihoods for a heavy-tailed **Student-$$t$$** likelihood for instant robustness!

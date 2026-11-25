@@ -12,7 +12,7 @@ lesson_type: required
 
 Conjugate priors feel like magic—until the first time your real-world problem refuses to cooperate. The moment you impose a truncated prior, a multimodal prior, or a non-standard likelihood, the neat algebraic shortcut vanishes and you are staring at an integral in the denominator of Bayes' rule that has no closed-form antiderivative. Before we ever touch fancy MCMC samplers, there is a disarmingly simple, transparent weapon that lets you compute *any* 1D or 2D posterior with nothing more than arithmetic: **grid approximation**.
 
-**Lesson Roadmap:** Why closed-form conjugacy breaks → Background Knowledge Map (Riemann sums, non-conjugate inference, curse of dimensionality) → Hand-worked 5-point grid check → Finer grids, non-conjugate priors, posterior summaries, and exercises.
+**Lesson Roadmap:** Why closed-form conjugacy breaks → Key ideas (Riemann sums, non-conjugate inference, curse of dimensionality) → Hand-worked 5-point grid check → Finer grids, non-conjugate priors, posterior summaries, and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you should understand grid approximation as the bridge from h
 >
 > **Quick check.** If you increase the grid from 5 points to 100 or 1000 points, what do you expect to improve?
 
-## Background Knowledge Map: What Grid Approximation Really Is
+## Key ideas: What Grid Approximation Really Is
 
 ### 1. Discrete Quadrature for Bayes' Denominator
 - **What it is:** Replacing the continuous marginal-likelihood integral $$P(D) = \int p(D \mid \theta)p(\theta)\,d\theta$$ with a finite Riemann sum over $$M$$ evenly spaced grid points $$\theta_1, \dots, \theta_M$$.
@@ -36,7 +36,7 @@ After this lesson, you should understand grid approximation as the bridge from h
 - **What it is:** The exponential explosion of grid size $$M^d$$ as the number of parameters $$d$$ grows.
 - **What it studies:** The exact boundary where grid approximation shines ($$d \le 2$$, teaching, sanity-checking MCMC) versus where it collapses ($$d \ge 4$$), motivating Hamiltonian Monte Carlo and NUTS in Chapter 4.
 
-## Deep-Dive Explanation: A 5-Point Grid Posterior Checked by Hand (Read Slowly)
+## Explanation: A 5-Point Grid Posterior Checked by Hand
 
 Suppose you flip a coin $$n = 3$$ times and observe $$k = 2$$ heads, with a flat uniform prior over $$\theta \in [0, 1]$$. Analytically, we know the exact posterior is $$\mathrm{Beta}(3, 2)$$ with mean $$\frac{3}{3+2} = 0.600$$. Now pretend you forgot the Beta formula and evaluate only 5 evenly spaced grid points $$\theta \in \{0.1, 0.3, 0.5, 0.7, 0.9\}$$ (each with prior weight $$1/5$$). Ignoring the constant $$\binom{3}{2} = 3$$ (which cancels on normalization), the unnormalized likelihood is $$L(\theta) = \theta^2(1 - \theta)$$:
 

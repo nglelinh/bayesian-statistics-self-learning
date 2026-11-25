@@ -17,7 +17,7 @@ Trong gần nửa thế kỷ sau khi Metropolis–Hastings ra đời, thống k�
 Sau bài tùy chọn này, bạn sẽ hiểu Hamiltonian Monte Carlo (HMC) và NUTS không phải phần phụ kỹ thuật đứng sau hồi quy tuyến tính Bayes, mà là giải pháp tất yếu khi phân phối hậu nghiệm không còn công thức dạng đóng. Bạn cũng sẽ biết cách đọc kết quả lấy mẫu từ Stan, PyMC hay NumPyro như một xấp xỉ số có kiểm soát cho đúng mô hình sinh dữ liệu đã thiết lập ở Chương 4.
 
 
-## Bản đồ kiến thức nền: Tập điển hình nhiều chiều, Tích phân Leapfrog và Suy luận lai
+## Kiến thức cần nhớ: Tập điển hình nhiều chiều, Tích phân Leapfrog và Suy luận lai
 
 Để hiểu vì sao các bộ lấy mẫu giai đoạn 2022–2026 lại có hình hài như ngày nay, cần nhìn rõ ba trụ cột toán học:
 
@@ -60,7 +60,7 @@ Cabezas et al. (2024) xây dựng BlackJAX như một tập hợp các khối th
 
 Izmailov, Vikram, Hoffman và Wilson (2021) khảo sát hình dạng thực sự của phân phối hậu nghiệm trong mạng nơ-ron Bayes khi chạy HMC quy mô lớn, thay vì mặc định tin vào dropout hay xấp xỉ Gaussian đường chéo. Kết quả cho thấy các phương pháp xấp xỉ phổ biến thường không tái tạo được đầy đủ phân phối hậu nghiệm thực, dù dự báo thu được vẫn có thể hữu ích. Bài học rút ra cho người học hồi quy tuyến tính rất rõ ràng: nếu HMC đã gặp thách thức hình học ngay trên vài chục hệ số có tương quan, thì MCMC cho học sâu chính là cùng một bài toán hình học đó ở quy mô lớn hơn. Chương 7 sẽ trình bày các phương pháp xấp xỉ nhẹ hơn cho bối cảnh này.
 
-### Khung giải thích (nên đọc chậm): Chạy tay 1 bước tích phân Leapfrog trong HMC
+### Giải thích: Chạy tay 1 bước tích phân Leapfrog trong HMC
 
 Vì sao HMC có thể đi một quãng đường dài mà xác suất chấp nhận vẫn gần bằng 1? Hãy tự tay tính đúng một bước leapfrog trên phân phối chuẩn hóa 1 chiều $$p(\theta \mid y) \propto \exp(-\theta^2/2)$$:
 

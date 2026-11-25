@@ -16,7 +16,7 @@ This lesson builds complete mastery over log-link Poisson GLMs, **exposure offse
 
 ---
 
-## Background Knowledge Map: Log Links, Exposure Offsets, and Overdispersion
+## Key ideas: Log Links, Exposure Offsets, and Overdispersion
 
 1. **Log Link Guarantees $$\lambda_i > 0$$:** Writing $$\lambda_i = \exp(\alpha + \beta x_i)$$ makes +1 unit of $$x$$ multiply the expected count by $$e^\beta$$ (Incidence Rate Ratio — IRR).
 2. **Why Priors Must Be Tight on the Log Scale:** Because $$e^{10} \approx 22{,}026$$ and $$e^{20} \approx 4.85\times 10^8$$, a careless $$\beta \sim \mathcal{N}(0, 10^2)$$ prior predicts billions of events per second! Weakly informative priors like $$\beta \sim \mathcal{N}(0, 0.5)$$ keep prior predictive counts realistic.
@@ -345,7 +345,7 @@ Suppose a website’s daily bug count follows $$\ln\lambda = 1.0 + 0.5 x + \ln(T
    - At $$x = 2$$: $$\lambda = e^{2.0} \approx \mathbf{7.39}$$ bugs/day (multiplied by $$1.649\times$$ again!).
 2. **For $$T = 7$$ days at $$x = 0$$:** Adding offset $$\ln(7)$$ gives $$\lambda = e^{1.0 + \ln 7} = 7 \times 2.72 = \mathbf{19.03}$$ bugs/week—scaling linearly with exposure time!
 
-### Deep-Dive Explanation: Four Rules for Bayesian Count Regression (Read Slowly)
+### Explanation: Four Rules for Bayesian Count Regression
 
 1. **Always check prior predictive counts *before* running MCMC:** An exponential link explodes fast—verify your prior doesn’t simulate $$10^{12}$$ events!
 2. **Never divide counts by exposure and feed the ratio into Poisson:** Poisson requires *integer* counts; keep raw integer $$y_i$$ as the outcome and put `np.log(exposure)` on the right-hand side as an offset!

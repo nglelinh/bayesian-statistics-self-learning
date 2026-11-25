@@ -21,7 +21,7 @@ Bài tổng kết Chương 8 này minh họa cách bốn mảnh ghép ấy phố
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận PPC, LOO/WAIC và phân tích quyết định như một quy trình vận hành thực tế, thay vì phần phụ lục sau khi khớp mô hình. Bạn sẽ kết nối được kiểm tra hậu nghiệm với hiệu chuẩn dựa trên mô phỏng (simulation-based calibration), so sánh mô hình với độ bất định của chính hiệu chênh LOO, và quy tắc hành động Bayes với tối ưu hóa Bayes (Bayesian optimization) cùng bài toán bandit.
 
 
-## Bản đồ kiến thức nền: Bayesian Workflow trong MLOps, Thử nghiệm A/B và Quản trị Rủi ro
+## Kiến thức cần nhớ: Bayesian Workflow trong MLOps, Thử nghiệm A/B và Quản trị Rủi ro
 
 Ba trụ cột ứng dụng khép lại Chương 8:
 
@@ -80,7 +80,7 @@ Kiểm thử mô hình trước khi đưa vào vận hành, lựa chọn mô hì
 SBC đòi hỏi khớp lại mô hình rất nhiều lần nên tốn chi phí tính toán. LOO giả định đóng góp của các quan sát có thể tách tích gần như độc lập. Tối ưu hóa Bayes phụ thuộc mạnh vào tiên nghiệm trên hàm $$f$$ và dễ đưa ra lựa chọn thiếu thận trọng nếu mô hình nhiễu bị đặc tả sai. Khóa học không có chương riêng về quá trình Gauss, nên bài này chỉ sử dụng GP như một phân phối hậu nghiệm phục vụ ra quyết định; khi mở rộng sang thống kê phi tham số, bạn sẽ thấy hạt nhân của tối ưu hóa Bayes chính là mô hình này.
 
 
-## Khung giải thích (nên đọc chậm): Tính "Tổn thất kỳ vọng khi chọn sai" (Expected Loss) trong A/B Testing Bayes
+## Giải thích: Tính "Tổn thất kỳ vọng khi chọn sai" (Expected Loss) trong A/B Testing Bayes
 
 Một trong những ứng dụng thực chiến phổ biến nhất của Chương 8 là quy tắc dừng A/B testing dựa trên **Expected Loss**. Hãy đọc chậm 3 bước tính trên $$S$$ mẫu hậu nghiệm $$(p_A^{(s)}, p_B^{(s)})$$:
 
@@ -88,7 +88,7 @@ Một trong những ứng dụng thực chiến phổ biến nhất của Chươ
 2. **Lấy trung bình trên toàn bộ $$S$$ mẫu hậu nghiệm:** $$\mathrm{EL}(B) = \frac{1}{S}\sum_{s=1}^S \max(0,\; p_A^{(s)} - p_B^{(s)})$$.
 3. **So sánh $$\mathrm{EL}(B)$$ với ngưỡng rủi ro kinh doanh $$\varepsilon$$:** Nếu $$\mathrm{EL}(B) < \varepsilon$$, ta có thể tự tin tung ra phương án B ngay cả khi $$P(p_B > p_A \mid y)$$ chưa đạt 99%, vì *ngay cả nếu B thua A, mức thiệt hại kỳ vọng cũng không đáng kể*.
 
-### Ví dụ tính toán cầm tay chỉ việc: Tính Expected Loss trên 4 mẫu hậu nghiệm A/B
+### Ví dụ tính toán làm từng bước: Tính Expected Loss trên 4 mẫu hậu nghiệm A/B
 
 Giả sử ta có 4 mẫu hậu nghiệm rút từ tỷ lệ chuyển đổi của giao diện cũ (A) và giao diện mới (B), với ngưỡng rủi ro chấp nhận $$\varepsilon = 0.005$$ (0.5 điểm phần trăm):
 

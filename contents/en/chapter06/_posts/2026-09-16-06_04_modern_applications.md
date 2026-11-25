@@ -16,7 +16,7 @@ This optional bridge connects Chapter 6’s Logistic and Poisson GLMs to real-wo
 
 ---
 
-## Background Knowledge Map: Three High-Stakes Production Uses of Bayesian GLMs
+## Key ideas: Three High-Stakes Production Uses of Bayesian GLMs
 
 1. **Ad-Auction CTR & Conversion Modeling (Logistic GLMs):** Expected value of showing an ad is $$\text{bid} \times P(\text{click}\mid x)$$; calibrated Bayesian posteriors directly power Thompson Sampling and risk-aware bidding.
 2. **Actuarial Pricing (Poisson Frequency $$\times$$ Gamma Severity):** Insurance models separate *how many claims* (Poisson/NegBin GLM with exposure offset) from *how costly each claim is* (Gamma/Log-Normal GLM)—requiring full regulatory interpretability.
@@ -85,7 +85,7 @@ Suppose the league average scoring rate is **1.40 goals/game** (prior $$\mathrm{
 - **Bayesian Conjugate Posterior:** $$\mathrm{Gamma}(7 + 4,\; 5 + 1) = \mathrm{Gamma}(11,\; 6) \implies \hat{\lambda}_{\text{post}} = \frac{11}{6} \approx \mathbf{1.83}$$ goals/game!
   The Bayesian GLM gives genuine credit for the strong opener (lifting the team from $$1.40 \to 1.83$$) while refusing to overreact to a 1-game fluke!
 
-### Deep-Dive Explanation: Four Reasons Bayesian GLMs Still Thrive Alongside Deep Learning (Read Slowly)
+### Explanation: Four Reasons Bayesian GLMs Still Thrive Alongside Deep Learning
 
 1. **Tabular & sparse-group data favors structured hierarchical priors:** Deep nets struggle with 500 small groups of 3 rows each; hierarchical GLMs borrow strength across groups automatically.
 2. **Auditability and regulatory compliance:** Insurance, healthcare, and credit teams must explain *why* a rate changed—log-odds and rate ratios provide transparent audits.

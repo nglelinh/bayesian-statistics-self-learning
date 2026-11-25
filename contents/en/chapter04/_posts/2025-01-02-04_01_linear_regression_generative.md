@@ -12,7 +12,7 @@ lesson_type: required
 
 In an introductory statistics class, linear regression is often reduced to a geometric chore: drop a single straight line through a cloud of dots by minimizing squared vertical errors. Yet the moment you ask *"How confident should I be in a prediction for someone 195 cm tall?"* or *"Could this data realistically have come from a flat line?"*, a single best-fit line falls silent. Bayesian linear regression flips the script completely: instead of hunting for one line, we write down a **generative story** for how the data came to be, and let Bayes' rule hand us an entire probability distribution of plausible lines.
 
-**Lesson Roadmap:** From one OLS line to a full generative model → Background Knowledge Map (Generative likelihoods, Posterior over parameters, Epistemic vs. Aleatoric uncertainty) → Hand-worked exact Bayesian regression on 4 points → Full model specification, real examples, and exercises.
+**Lesson Roadmap:** From one OLS line to a full generative model → Key ideas (Generative likelihoods, Posterior over parameters, Epistemic vs. Aleatoric uncertainty) → Hand-worked exact Bayesian regression on 4 points → Full model specification, real examples, and exercises.
 
 ## Learning objectives
 
@@ -22,7 +22,7 @@ After this lesson, you need to see Bayesian linear regression as a **data-genera
 >
 > **Quick check.** Why shouldn't Bayesian-style regression be understood simply as finding a single straight line?
 
-## Background Knowledge Map: The Architecture of Bayesian Linear Regression
+## Key ideas: The Architecture of Bayesian Linear Regression
 
 ### 1. Generative Modeling (Forward Data-Generating Process)
 - **What it is:** Specifying a complete probability machine $$y_i \sim \mathrm{Normal}(\mu_i, \sigma)$$, $$\mu_i = \alpha + \beta x_i$$, together with prior distributions on $$(\alpha, \beta, \sigma)$$.
@@ -36,7 +36,7 @@ After this lesson, you need to see Bayesian linear regression as a **data-genera
 - **What it is:** Decomposing total predictive variance $$\mathrm{Var}(y^* \mid x^*, D) = \underbrace{\sigma^2}_{\text{aleatoric}} + \underbrace{\mathrm{Var}(\alpha + \beta x^* \mid D)}_{\text{epistemic}}$$.
 - **What it studies:** Separating irreducible observation noise ($$\sigma^2$$, which never shrinks even with infinite data) from parameter uncertainty (which shrinks as $$1/n$$ and flares outward as $$x^*$$ moves away from $$\bar{x}$$).
 
-## Deep-Dive Explanation: Exact Bayesian Slope & Prediction on 4 Points (Read Slowly)
+## Explanation: Exact Bayesian Slope & Prediction on 4 Points
 
 Consider 4 centered observations: $$x = [-2, -1, 1, 2]$$ (so $$\sum x_i = 0$$ and $$\sum x_i^2 = 10$$) and $$y = [1, 3, 7, 9]$$ (so $$\bar{y} = 5$$ and $$\sum x_i y_i = -2 - 3 + 7 + 18 = 20$$). Assume known observation noise $$\sigma = 1$$, known intercept $$\alpha = 5$$, and a Gaussian prior on the slope $$\beta \sim \mathrm{Normal}(0, 1^2)$$ (prior precision $$1/\tau_0^2 = 1$$).
 

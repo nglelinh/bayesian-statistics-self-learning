@@ -16,13 +16,14 @@ This lesson turns linearity of expectation, the variance sum law, and covariance
 
 ---
 
-## Background Knowledge Map: Moments, Linearity, and Correlated Uncertainty
+## Key ideas: Moments, Linearity, and Correlated Uncertainty
 
 Four identities do 90% of the algebraic heavy lifting in probability and Bayesian inference:
 
 1. **Linearity of Expectation (Always True!):** $$\mathbb{E}[aX + bY + c] = a\mathbb{E}[X] + b\mathbb{E}[Y] + c$$ holds **even when $$X$$ and $$Y$$ are strongly dependent**!
 2. **Variance Scaling & Sum Law:** $$\mathrm{Var}(aX + b) = a^2\mathrm{Var}(X)$$ (constants vanish, scales square!), and for two variables: $$\mathrm{Var}(X + Y) = \mathrm{Var}(X) + \mathrm{Var}(Y) + 2\mathrm{Cov}(X, Y)$$.
-3. **Covariance & Dimensionless Correlation:** $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$$ depends on units; dividing by $$\sigma_X\sigma_Y$$ gives correlation $$ho \in [-1, 1]$$.
+3. **Covariance & Dimensionless Correlation:** $$\mathrm{Cov}(X, Y) = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y]$$ depends on units; dividing by $$\sigma_X\sigma_Y$$ gives correlation $$
+ho \in [-1, 1]$$.
 4. **Law of Total Expectation & Variance (Hierarchical Bayes Engine):** $$\mathrm{Var}(Y) = \mathbb{E}[\mathrm{Var}(Y\mid	heta)] + \mathrm{Var}(\mathbb{E}[Y\mid	heta])$$ decomposes total predictive uncertainty into *within-model noise* plus *parameter uncertainty*!
 
 ---
@@ -151,14 +152,15 @@ Suppose two investments $$(X, Y)$$ have 3 equally likely market scenarios (each 
    - Via formula: $$\mathrm{Var}(X+Y) = 24 + rac{8}{3} + 2(-8) = 8 + rac{8}{3} = rac{32}{3} pprox \mathbf{10.67}$$.
    - Directly from column $$X+Y = (+4, 0, -4)$$: $$rac{16 + 0 + 16}{3} = rac{32}{3} pprox \mathbf{10.67}$$ — exact match! Negative covariance cut the variance of $$X$$ by more than half!
 
-### Deep-Dive Explanation: Four Rules for Working With Expectations and Covariance (Read Slowly)
+### Explanation: Four Rules for Working With Expectations and Covariance
 
 1. **Zero covariance does NOT prove independence:** If $$X \in \{-1, 0, 1\}$$ symmetrically and $$Y = X^2$$, then $$\mathrm{Cov}(X, Y) = 0$$ even though $$Y$$ is 100% determined by $$X$$!
 2. **Never add standard deviations—add *variances* (plus $$2\mathrm{Cov}$$):** Adding $$\sigma_X + \sigma_Y$$ overestimates uncertainty whenever variables are independent or negatively correlated.
 3. **In Bayesian regression, slope $$eta_1$$ and intercept $$eta_0$$ are almost always negatively correlated:** Shifting the regression line up forces it to tilt flatter unless you **center** predictors ($$x_i - ar{x}$$), which drives $$\mathrm{Cov}(eta_0, eta_1) 	o 0$$!
 4. **Monte Carlo turns any expectation into a simple average:** Once you have $$S$$ posterior draws $$	heta^{(1)},\dots,	heta^{(S)}$$, $$\mathbb{E}[g(	heta)\mid y] pprox rac{1}{S}\sum g(	heta^{(s)})$$ works for *any* nonlinear function $$g$$!
 
-**Quick check.** In the 3-scenario example above, what is the exact correlation $$ho(X, Y) = rac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}$$?
+**Quick check.** In the 3-scenario example above, what is the exact correlation $$
+ho(X, Y) = rac{\mathrm{Cov}(X,Y)}{\sqrt{\mathrm{Var}(X)\mathrm{Var}(Y)}}$$?
 
 ---
 

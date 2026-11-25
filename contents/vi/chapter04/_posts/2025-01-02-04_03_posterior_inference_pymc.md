@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ biết cách chuyển một mô hình hồi quy tuyế
 > **Câu hỏi tự kiểm tra.** Khi PyMC đã chạy xong và trả về mẫu hậu nghiệm, vì sao ta vẫn phải kiểm tra các chỉ số chẩn đoán trước khi diễn giải kết quả?
 
 
-## Bản đồ kiến thức nền: Lập trình xác suất, Vi phân tự động và Sai số Monte Carlo
+## Kiến thức cần nhớ: Lập trình xác suất, Vi phân tự động và Sai số Monte Carlo
 
 Bài học này nối liền lý thuyết xác suất trên giấy với thực hành tính toán hiện đại qua ba trụ cột:
 
@@ -251,7 +251,7 @@ $$
 
 Khoảng này nằm hoàn toàn phía trên 0, cho thấy bằng chứng hậu nghiệm ủng hộ rõ rệt mối quan hệ dương.
 
-### Khung giải thích (nên đọc chậm): Kiểm tra độ chính xác MCSE và quy đổi ngược hệ số về thang đo gốc
+### Giải thích: Kiểm tra độ chính xác MCSE và quy đổi ngược hệ số về thang đo gốc
 
 Sau khi PyMC in ra bảng `az.summary`, hai phép tính tay ngắn gọn sau sẽ giúp bạn kiểm soát hoàn toàn chất lượng và ý nghĩa thực tế của kết quả:
 

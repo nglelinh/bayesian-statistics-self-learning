@@ -25,7 +25,7 @@ Sau bài này, bạn cần nắm được ba nội dung chính. Thứ nhất, v�
 > **Câu hỏi tự kiểm tra.** Một p-value nhỏ có thực sự đồng nghĩa với việc giả thuyết nghiên cứu là đúng không?
 
 
-## Bản đồ kiến thức nền: Kiểm định giả thuyết, Dương tính giả và Khủng hoảng tái lập
+## Kiến thức cần nhớ: Kiểm định giả thuyết, Dương tính giả và Khủng hoảng tái lập
 
 Để hiểu sâu cơ chế toán học đứng sau khủng hoảng tái lập, cần liên kết ba trụ cột:
 
@@ -152,7 +152,7 @@ Thống kê Bayes hấp dẫn không phải vì phủ nhận p-value, mà vì h�
 > **3 ý cần nhớ.** Khủng hoảng tái lập không chỉ là lỗi cá nhân của từng nhà nghiên cứu mà còn là vấn đề của cả hệ thống suy luận và cơ chế khuyến khích công bố; p-value dễ bị hiểu sai vì nó trả lời một câu hỏi khác với câu hỏi khoa học cốt lõi; và khi p-value trở thành mục tiêu phải đạt, p-hacking cùng thiên lệch công bố gần như chắc chắn sẽ xuất hiện.
 
 
-## Khung giải thích (nên đọc chậm): Tại sao $$p < 0.05$$ không có nghĩa là xác suất sai chỉ 5%?
+## Giải thích: Tại sao $$p < 0.05$$ không có nghĩa là xác suất sai chỉ 5%?
 
 Hãy đọc chậm bốn bước sau để giải mã nghịch lý lớn nhất của kiểm định thống kê truyền thống:
 
@@ -161,7 +161,7 @@ Hãy đọc chậm bốn bước sau để giải mã nghịch lý lớn nhất 
 3. **Tính cả lực kiểm định (Power = $$1 - \beta$$):** Với cỡ mẫu nhỏ, ngay cả khi hiệu ứng có thật, xác suất phát hiện ra nó có thể chỉ đạt 50%–80%.
 4. **Áp dụng định lý Bayes cho 1.000 nghiên cứu:** So sánh số ca dương tính thật và dương tính giả để thấy tỷ lệ phát hiện giả thực sự cao đến mức nào.
 
-### Ví dụ tính toán cầm tay chỉ việc: 1.000 thí nghiệm với ngưỡng $$\alpha = 0.05$$
+### Ví dụ tính toán làm từng bước: 1.000 thí nghiệm với ngưỡng $$\alpha = 0.05$$
 
 Giả sử trong một lĩnh vực khám phá mới, có 1.000 giả thuyết được kiểm định độc lập với tỷ lệ giả thuyết thật là $$10\%$$ ($$100$$ giả thuyết thật, $$900$$ giả thuyết sai), ngưỡng ý nghĩa $$\alpha = 0.05$$ và lực kiểm định $$1 - \beta = 0.80$$:
 

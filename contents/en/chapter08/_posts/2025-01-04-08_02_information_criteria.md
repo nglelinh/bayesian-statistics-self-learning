@@ -16,7 +16,7 @@ This lesson builds crystal-clear intuition for **lppd**, the **effective number 
 
 ---
 
-## Background Knowledge Map: Estimating Out-of-Sample Predictive Accuracy From One MCMC Run
+## Key ideas: Estimating Out-of-Sample Predictive Accuracy From One MCMC Run
 
 1. **Log Pointwise Predictive Density ($$\mathrm{lppd}$$):** Averages likelihood across posterior draws *first*, then takes the log: $$\mathrm{lppd} = \sum_{i=1}^n \ln\!\left(\frac{1}{S}\sum_{s=1}^S p(y_i \mid \theta^{(s)})\right)$$. Measures in-sample predictive fit using the *entire* posterior!
 2. **Effective Number of Parameters ($$p_{\text{WAIC}}$$):** Penalizes overfitting by summing the posterior *variance* of log-likelihood at every data point: $$p_{\text{WAIC}} = \sum_{i=1}^n \mathrm{Var}_s\!\bigl(\ln p(y_i \mid \theta^{(s)})\bigr)$$. Notice that hierarchical shrinkage can make $$p_{\text{WAIC}}$$ *far smaller* than the raw parameter count!
@@ -124,7 +124,7 @@ Sum across both data points:
 2. **Effective parameters $$p_{\text{WAIC}} = 0.000 + 0.961 = \mathbf{0.961}$$.** *(Notice observation 2 varies wildly across draws, contributing the entire overfitting penalty!)*
 3. **$$\widehat{\mathrm{elpd}}_{\text{WAIC}} = -1.386 - 0.961 = \mathbf{-2.347}$$** $$\implies \mathrm{WAIC} = -2(-2.347) = \mathbf{4.694}$$!
 
-### Deep-Dive Explanation: Four Rules for Using WAIC & PSIS-LOO Correctly (Read Slowly)
+### Explanation: Four Rules for Using WAIC & PSIS-LOO Correctly
 
 1. **Prefer `az.loo` (PSIS-LOO) over WAIC as your default:** Both target exact LOO-CV, yet PSIS-LOO gives you the **Pareto-$$k$$** diagnostic warning whenever an observation has extreme leverage ($$k > 0.7$$).
 2. **Only compare models fitted to the *exact same* observed outcome vector $$y$$:** You cannot compare WAIC/LOO between a model on $$y$$ and a model on $$\log(y)$$ without adding the Jacobian correction, nor between datasets with different dropped missing rows!

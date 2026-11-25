@@ -17,7 +17,7 @@ Trong kỷ nguyên dữ liệu lớn, nhiều đội ngũ kỹ thuật tin vào 
 Sau bài tùy chọn này, bạn sẽ biết cách đọc hệ số trong mô hình nhiều biến dự báo như một phát biểu nhân quả có điều kiện, thay vì đánh giá tầm quan trọng chỉ dựa vào dấu sao ý nghĩa thống kê trên bảng kết quả. Bạn cũng sẽ thấy hiện tượng gây nhiễu (confounding), đa cộng tuyến và hiệu ứng tương tác không phải là "lỗi" của hồi quy, mà là đặc trưng tự nhiên của dữ liệu ứng dụng hiện đại như thử nghiệm A/B trên nền tảng thị trường (marketplace), hệ gợi ý và hồ sơ y tế dọc theo thời gian.
 
 
-## Bản đồ kiến thức nền: Biến kiểm soát tốt/xấu, Học cấu trúc đồ thị và Gây nhiễu theo thời gian
+## Kiến thức cần nhớ: Biến kiểm soát tốt/xấu, Học cấu trúc đồ thị và Gây nhiễu theo thời gian
 
 Ba chủ đề hiện đại của bài học là sự mở rộng trực tiếp các khái niệm Chương 5 lên hệ thống dữ liệu quy mô lớn:
 
@@ -60,7 +60,7 @@ Melnychuk, Frauen và Feuerriegel (2022) đề xuất kiến trúc *Causal Trans
 
 Trong hệ gợi ý, phát biểu "hiệu quả của mã giảm giá phụ thuộc vào mức độ gắn bó của người dùng" chính là một hiệu ứng tương tác. Trong khi đó, hai vector nhúng (embedding) gần cộng tuyến sẽ tạo ra phân phối hậu nghiệm rất rộng cho từng hệ số riêng lẻ dù dự báo tổng thể vẫn chính xác — đúng như hiện tượng đã phân tích ở Bài 5.3. Về mặt thực hành sản phẩm, không nên cố diễn giải từng tọa độ embedding như một cơ chế độc lập, mà nên tập trung vào chất lượng dự báo và các tương tác giữa những khái niệm có ý nghĩa nghiệp vụ rõ ràng.
 
-### Khung giải thích (nên đọc chậm): Tính tay thiệt hại khi đưa biến trung gian (bad control) vào phân tích A/B test
+### Giải thích: Tính tay thiệt hại khi đưa biến trung gian (bad control) vào phân tích A/B test
 
 Hãy kiểm chứng bằng hai dòng đại số lý do Cinelli et al. (2022) cảnh báo việc "kiểm soát mọi cột có sẵn" trong thử nghiệm sản phẩm:
 

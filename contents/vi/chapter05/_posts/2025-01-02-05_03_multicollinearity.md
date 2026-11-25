@@ -21,7 +21,7 @@ Sau bài này, bạn sẽ hiểu đa cộng tuyến (multicollinearity) là gì,
 > **Câu hỏi tự kiểm tra.** Khi hai biến dự báo gần như đo lường cùng một đặc trưng, mô hình hồi quy sẽ gặp trở ngại gì trong việc tách riêng ảnh hưởng của từng biến?
 
 
-## Bản đồ kiến thức nền: Ma trận thiết kế suy biến, Hệ số phóng đại phương sai (VIF) và Hình học hậu nghiệm
+## Kiến thức cần nhớ: Ma trận thiết kế suy biến, Hệ số phóng đại phương sai (VIF) và Hình học hậu nghiệm
 
 Bản chất của đa cộng tuyến nằm trọn trong giao điểm giữa đại số tuyến tính và phân phối hậu nghiệm nhiều chiều:
 
@@ -104,7 +104,7 @@ Tăng hệ số tương quan $$\rho$$ giữa hai biến dự báo để quan sá
 </div>
 <script src="{{ '/public/js/explainers/bayes-explainer.js' | relative_url }}"></script>
 
-### Khung giải thích (nên đọc chậm): Chứng minh bằng tay vì sao $$\beta_1, \beta_2$$ bất ổn nhưng tổng $$\beta_1 + \beta_2$$ lại siêu ổn định
+### Giải thích: Chứng minh bằng tay vì sao $$\beta_1, \beta_2$$ bất ổn nhưng tổng $$\beta_1 + \beta_2$$ lại siêu ổn định
 
 Hãy xét mô hình hai biến chuẩn hóa $$x_1, x_2$$ có hệ số tương quan $$\rho$$, cỡ mẫu $$n = 100$$ và nhiễu $$\sigma = 1$$. Với tiên nghiệm phẳng, ma trận hiệp phương sai hậu nghiệm của $$(b_1, b_2)$$ có công thức đóng rất gọn:
 

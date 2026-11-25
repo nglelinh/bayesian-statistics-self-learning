@@ -21,11 +21,11 @@ Bài học này trang bị bộ công cụ đánh giá chuyên biệt cho GLM Ba
 Sau khi hoàn thành bài học này, bạn sẽ nắm cách đánh giá các **mô hình GLM** như hồi quy logistic và hồi quy Poisson trong thực tế. Trọng tâm của bài là chọn đúng tiêu chí đánh giá theo bản chất của biến kết quả: từ các **thước đo phân lớp (classification metrics)** như accuracy, sensitivity, specificity và đường cong ROC, đến **đồ thị hiệu chỉnh xác suất (calibration plot)**, **độ lệch mô hình (deviance)** và **kiểm tra dự báo hậu nghiệm (posterior predictive checks)**. Một mô hình chỉ thực sự hữu ích khi ta biết rõ nó làm tốt ở điểm nào, hạn chế ở đâu và còn tồn tại những sai lệch nào.
 
 
-## Bản đồ kiến thức nền: Phân biệt, Hiệu chỉnh và Phản biện mô hình GLM Bayes
+## Kiến thức cần nhớ: Phân biệt, Hiệu chỉnh và Phản biện mô hình GLM Bayes
 
 Đánh giá đúng một mô hình GLM đòi hỏi kết hợp ba trụ cột độc lập:
 
-- **Khả năng phân biệt vs. Độ hiệu chỉnh (Discrimination vs. Calibration):** AUC-ROC chỉ đo xem mô hình có xếp hạng ca dương tính cao hơn ca âm tính hay không (bất biến nếu nhân đôi mọi xác suất miễn giữ thứ tự). Trong khi đó, **Calibration** kiểm tra xem nhóm có dự báo $$p = 0.70$$ có thực sự xảy ra khoảng $$70\%$$ hay không — yếu tố sống còn cho ra quyết định dựa trên chi phí.
+- **Khả năng phân biệt vs. Độ hiệu chỉnh (Discrimination vs. Calibration):** AUC-ROC chỉ đo xem mô hình có xếp hạng ca dương tính cao hơn ca âm tính hay không (bất biến nếu nhân đôi mọi xác suất miễn giữ thứ tự). Trong khi đó, **Calibration** kiểm tra xem nhóm có dự báo $$p = 0.70$$ có thực sự xảy ra khoảng $$70\%$$ hay không — yếu tố quan trọng cho ra quyết định dựa trên chi phí.
 - **Thước đo xác suất nghiêm ngặt (Proper Scoring Rules):** Brier score $$\frac{1}{n}\sum (y_i - \hat p_i)^2$$ và Log-loss (tương ứng Deviance / ELPD) đánh giá đồng thời cả khả năng phân biệt lẫn độ hiệu chỉnh.
 - **Chẩn đoán riêng cho GLM (Deviance Residuals & PPC):** Đối với Poisson/Negative Binomial, phần dư Pearson $$r_i = (y_i - \hat\lambda_i)/\sqrt{\hat\lambda_i}$$ và Posterior Predictive Checks (kiểm tra tỷ lệ số 0, phương sai/trung bình, giá trị cực đại) giúp phát hiện chính xác quá phân tán hoặc thừa số 0 (*zero-inflation*).
 
@@ -475,7 +475,7 @@ Mỗi loại biến kết quả đòi hỏi bộ tiêu chí đánh giá tương 
 Kết thúc Chương 06 về các mô hình tuyến tính tổng quát (GLMs): hồi quy logistic, hồi quy Poisson và đánh giá mô hình.
 
 
-## Khung giải thích (nên đọc chậm): Đọc Brier Score, Calibration và Phần dư Pearson bằng tay
+## Giải thích: Đọc Brier Score, Calibration và Phần dư Pearson bằng tay
 
 Để không bao giờ bị đánh lừa bởi một chỉ số đơn lẻ (như accuracy hay AUC), hãy kiểm tra theo 4 bước sau:
 
@@ -484,7 +484,7 @@ Kết thúc Chương 06 về các mô hình tuyến tính tổng quát (GLMs): h
 3. **Tính thước đo tổng hợp (Brier Score / Log-Loss / LOO):** So sánh khách quan giữa các mô hình GLM cạnh tranh.
 4. **Chạy PPC cho đặc trưng miền dữ liệu:** Với Poisson, luôn kiểm tra tỷ lệ quan sát bằng 0 và tỷ số phương sai/trung bình.
 
-### Ví dụ tính toán cầm tay chỉ việc: Brier Score và Độ hiệu chỉnh trên 4 dự báo nhị phân
+### Ví dụ tính toán làm từng bước: Brier Score và Độ hiệu chỉnh trên 4 dự báo nhị phân
 
 Xét 4 ca dự báo xác suất của hai mô hình logistic trên cùng tập nhãn thật $$y = (1, 1, 0, 0)$$:
 - **Mô hình A (Hiệu chỉnh tốt):** $$\hat p_A = (0.8, 0.7, 0.3, 0.2)$$.

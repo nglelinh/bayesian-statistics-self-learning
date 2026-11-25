@@ -16,7 +16,7 @@ This optional bridge shows how PPC, LOO-CV, and Bayesian Expected Loss operate i
 
 ---
 
-## Background Knowledge Map: Three Production Applications of Chapter 8
+## Key ideas: Three Production Applications of Chapter 8
 
 1. **Bayesian A/B Testing via Expected Loss (VWO / GrowthBook):** Instead of p-values, compute $$\mathbb{E}[\max(\theta_A - \theta_B,\; 0) \mid \text{data}]$$—the expected conversion loss if you ship Variant B and it turns out worse than A—and ship as soon as expected loss drops below your business threshold (e.g., `0.1%`)!
 2. **Bayesian Inventory Optimization (Newsvendor Quantile):** Given a posterior predictive demand distribution $$p(\tilde{y}\mid y)$$, stock the exact **critical fractile** $$q^* = \frac{c_{\text{under}}}{c_{\text{under}} + c_{\text{over}}}$$ rather than the mean demand!
@@ -87,7 +87,7 @@ A bakery earns **$$c_{\text{under}} = \$6$$** profit per croissant sold (lost pr
    $$Q^* = 100 + 0.674(20) \approx \mathbf{113.5 \to 114\text{ croissants}}!$$
    Stocking the *mean* (100 croissants) leaves money on the table every busy morning; stocking the **75th posterior predictive percentile (114)** maximizes expected daily profit!
 
-### Deep-Dive Explanation: Four Rules for Shipping Bayesian Decision Systems (Read Slowly)
+### Explanation: Four Rules for Shipping Bayesian Decision Systems
 
 1. **Always evaluate decisions on *posterior predictive* draws $$\tilde{y}^{(s)}$$, not just parameter draws:** Real-world profit depends on noisy future outcomes $$\tilde{y}$$, not just the noiseless mean $$\mu$$!
 2. **Expected Loss stopping rules are intuitive for executives:** Saying *"if we ship B today, our expected downside risk is under 0.05% conversion"* beats explaining Type I error every time.

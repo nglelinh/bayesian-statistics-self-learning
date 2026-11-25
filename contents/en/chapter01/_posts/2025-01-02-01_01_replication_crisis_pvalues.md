@@ -16,7 +16,7 @@ The culprit wasn’t bad arithmetic—it was **base-rate neglect, low statistica
 
 ---
 
-## Background Knowledge Map: Why `p < 0.05` Fails Without Base Rates and Power
+## Key ideas: Why `p < 0.05` Fails Without Base Rates and Power
 
 1. **Positive Predictive Value (PPV) vs. p-value:** Even when $$\alpha = 0.05$$ is obeyed honestly, if only 10% of tested hypotheses are actually true (low base rate) and power is 50%, **almost half of all `p < 0.05` discoveries are false positives!**
 2. **The Garden of Forking Paths (p-hacking & Optional Stopping):** Testing multiple subgroups, dropping outliers after seeing results, or peeking early inflates effective $$\alpha$$ from 5% to 30%+.
@@ -203,7 +203,7 @@ Compute the probability that a published `p < 0.05` finding is actually a **fals
 $$\mathrm{FDR} = \frac{45}{50 + 45} = \frac{45}{95} \approx \mathbf{47.4\%}!$$
 Nearly **half** of all "statistically significant" findings are false—even with zero cheating!
 
-### Deep-Dive Explanation: Four Scientific Habits That Prevent False Discoveries (Read Slowly)
+### Explanation: Four Scientific Habits That Prevent False Discoveries
 
 1. **Always ask "what was the prior base rate?"** Extraordinary claims (e.g., 1% base rate) require far stronger evidence than `p = 0.04` to become credible.
 2. **Pre-register hypotheses and report effect sizes with uncertainty:** Replacing binary `p < 0.05` headlines with posterior intervals prevents cliff-chasing.

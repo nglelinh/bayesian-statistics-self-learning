@@ -16,7 +16,7 @@ This lesson builds intuitive command over Poisson counts and Exponential waiting
 
 ---
 
-## Background Knowledge Map: The Duality of Counts and Waiting Times
+## Key ideas: The Duality of Counts and Waiting Times
 
 Four structural facts link Poisson, Exponential, and Bayesian rate modeling:
 
@@ -177,7 +177,7 @@ Suppose a microservice logs errors as a Poisson process with rate $$\lambda = 2$
    $$P(T > 0.5) = e^{-\lambda t} = e^{-2(0.5)} = e^{-1} pprox 0.3679 \quad (36.8\%).$$
 4. **Check the duality:** Probability of 0 errors in 30 minutes (effective rate $$\lambda_{	ext{half}} = 2 	imes 0.5 = 1$$) is $$e^{-1} pprox 0.3679$$—identical to $$P(T > 0.5)$$!
 
-### Deep-Dive Explanation: Four Modeling Checks Before Choosing Poisson/Exponential (Read Slowly)
+### Explanation: Four Modeling Checks Before Choosing Poisson/Exponential
 
 1. **Always check $$\mathrm{Var}(N)$$ vs. $$\mathbb{E}[N]$$:** If your real-world click or error counts have sample variance $$3	imes$$ larger than the mean, Poisson will understate tail risk—upgrade to a **Gamma–Poisson (Negative Binomial)** mixture.
 2. **Scale $$\lambda$$ proportionally to exposure time:** If rate is $$\lambda = 2$$ per hour, over $$t = 3$$ hours the count is $$\mathrm{Poisson}(6)$$, never $$\mathrm{Poisson}(2)$$.

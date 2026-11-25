@@ -21,7 +21,7 @@ Bài tổng kết Chương 6 này trình bày cách GLM Bayes vận hành trong 
 Sau bài học tùy chọn này, bạn sẽ biết cách lựa chọn một mô hình GLM Bayes xuất phát từ *câu chuyện sinh dữ liệu của biến kết quả*, thay vì mặc định áp dụng hồi quy tuyến tính cho mọi bài toán. Bạn cũng sẽ nhận ra cách hồi quy logistic, hồi quy Poisson và các họ mô hình liên quan đang được triển khai trong tín dụng, dịch tễ học và đo lường marketing, đồng thời hiểu rằng phân phối hậu nghiệm của xác suất hay cường độ đếm cần được kết hợp với chi phí quyết định.
 
 
-## Bản đồ kiến thức nền: GLM Bayes trong Định phí, Dịch tễ và Hệ thống Quảng cáo
+## Kiến thức cần nhớ: GLM Bayes trong Định phí, Dịch tễ và Hệ thống Quảng cáo
 
 Ba trụ cột ứng dụng cho thấy sức mạnh thực tiễn của GLM Bayes:
 
@@ -80,7 +80,7 @@ Phê duyệt tín dụng, phát hiện gian lận, dự báo nhu cầu, nowcasti
 Meridian lưu ý rằng hiệu năng dự báo tốt trên tập hold-out không chứng minh ước lượng hiệu ứng truyền thông là đúng. Hồi quy Poisson sẽ kém phù hợp khi dữ liệu có quá nhiều giá trị 0 (zero-inflation). Hồi quy logistic tuyến tính cũng không tự nắm bắt được các tương tác phức tạp nếu ta không chủ động đưa chúng vào mô hình. Chương 7 sẽ tiếp tục đặt câu hỏi nên chọn phân phối tiên nghiệm nào để giữ mô hình GLM khỏi quá khớp khi số lượng biến giải thích tăng lên.
 
 
-## Khung giải thích (nên đọc chậm): Tính lợi ích kỳ vọng từ một dự báo GLM Bayes trong bài toán thực tế
+## Giải thích: Tính lợi ích kỳ vọng từ một dự báo GLM Bayes trong bài toán thực tế
 
 Trong ứng dụng sản phẩm, đầu ra của GLM Bayes hiếm khi dừng ở bảng hệ số; nó được đưa thẳng vào phương trình kỳ vọng giá trị theo 3 bước:
 
@@ -88,7 +88,7 @@ Trong ứng dụng sản phẩm, đầu ra của GLM Bayes hiếm khi dừng ở
 2. **Tính giá trị kỳ vọng có điều kiện** $$\mathbb{E}[\text{Giá trị}] = p_i \cdot v_i$$ trên từng mẫu hậu nghiệm.
 3. **So sánh với chi phí hành động $$C$$** và chỉ hành động khi lợi ích ròng kỳ vọng dương (hoặc xác suất sinh lời vượt ngưỡng an toàn).
 
-### Ví dụ tính toán cầm tay chỉ việc: Mô hình hai phần (Logistic + Poisson) ước lượng doanh thu kỳ vọng
+### Ví dụ tính toán làm từng bước: Mô hình hai phần (Logistic + Poisson) ước lượng doanh thu kỳ vọng
 
 Một sàn thương mại điện tử dùng GLM hai phần để ước lượng số đơn hàng kỳ vọng trong tháng tới của một phân khúc khách hàng mới:
 - Thành phần Logistic ước lượng xác suất khách hàng có mua ít nhất 1 đơn là $$p_{\text{mua}} = 0.35$$ (với khoảng tin cậy 95%: $$[0.25, 0.45]$$).

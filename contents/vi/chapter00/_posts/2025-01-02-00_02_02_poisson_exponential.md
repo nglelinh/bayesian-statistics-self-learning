@@ -20,7 +20,7 @@ Trong thực hành Bayes hiện đại — từ đếm số cuộc gọi tổng 
 
 Sau bài này, bạn sẽ biết cách mô hình hóa dữ liệu đếm bằng phân phối Poisson, mô hình hóa thời gian chờ bằng phân phối Exponential, và hiểu vì sao hai phân phối này là hai góc nhìn của cùng một quá trình sự kiện ngẫu nhiên theo thời gian.
 
-## Bản đồ kiến thức nền: Quá trình điểm Poisson, Tính không nhớ và Cặp liên hợp Gamma–Poisson
+## Kiến thức cần nhớ: Quá trình điểm Poisson, Tính không nhớ và Cặp liên hợp Gamma–Poisson
 
 Ba trụ cột toán học đằng sau bài học này gồm:
 
@@ -145,7 +145,7 @@ Trong thống kê Bayesian, việc kết hợp phân phối tiên nghiệm Gamma
 
 *Bài học tiếp theo: [0.4 Normal và trực giác CLT]({{ site.baseurl }}/contents/vi/chapter00/00_02_03_normal_clt_intuition/)*
 
-## Khung giải thích (nên đọc chậm): Hai mặt của cùng một đồng xu và cập nhật Gamma–Poisson bằng tay
+## Giải thích: Hai mặt của cùng một đồng xu và cập nhật Gamma–Poisson bằng tay
 
 Hãy đọc chậm mối liên hệ toán học giữa đếm sự kiện (Poisson) và thời gian chờ (Exponential):
 
@@ -154,7 +154,7 @@ Hãy đọc chậm mối liên hệ toán học giữa đếm sự kiện (Poiss
 3. **Lấy đạo hàm để ra mật độ Exponential:** $$F(t) = 1 - e^{-\lambda t} \implies f(t) = \lambda e^{-\lambda t}$$ với $$t \ge 0$$.
 4. **Đưa vào cập nhật Bayes:** Nhân prior $$	ext{Gamma}(lpha, eta) \propto \lambda^{lpha-1} e^{-eta \lambda}$$ với likelihood Poisson $$\prod_{i=1}^n rac{\lambda^{y_i} e^{-\lambda}}{y_i!} \propto \lambda^{\sum y_i} e^{-n\lambda}$$, số mũ của $$\lambda$$ và hệ số trên $$e$$ tự động cộng dồn!
 
-### Ví dụ tính toán cầm tay chỉ việc: Ước lượng tốc độ lỗi máy chủ $$\lambda$$ (lỗi/giờ)
+### Ví dụ tính toán làm từng bước: Ước lượng tốc độ lỗi máy chủ $$\lambda$$ (lỗi/giờ)
 
 Trước khi triển khai bản cập nhật phần mềm, đội vận hành tin tốc độ lỗi quanh mức 2 lỗi/giờ với độ bất định vừa phải, mã hóa bằng prior $$\lambda \sim 	ext{Gamma}(lpha=4, eta=2)$$ (trung bình tiên nghiệm $$lpha/eta = 4/2 = 2.0$$ lỗi/giờ, tương đương kinh nghiệm 2 giờ quan sát thấy 4 lỗi).
 

@@ -16,7 +16,7 @@ This lesson builds a fast, practical **model-assumption diagnostic toolkit**—r
 
 ---
 
-## Background Knowledge Map: Four Diagnostics That Catch Broken Models Early
+## Key ideas: Four Diagnostics That Catch Broken Models Early
 
 Before trusting any posterior or confidence interval, check four core assumptions:
 
@@ -352,7 +352,7 @@ $$e = [+2,\; +1,\; +1,\; -1,\; -1,\; -2].$$
    - $$r_1 pprox rac{5}{12} pprox \mathbf{+0.417}$$!
    Because positive residuals stick together on days 1–3 and negative residuals stick together on days 4–6, the errors are **not independent**—an i.i.d. model will underestimate parameter uncertainty!
 
-### Deep-Dive Explanation: Four Rules for Model Diagnostics Without Overreacting (Read Slowly)
+### Explanation: Four Rules for Model Diagnostics Without Overreacting
 
 1. **Prioritize *independence* and *functional form* above exact Gaussianity:** Mild non-normality rarely ruins inferences on means at moderate $$n$$, whereas unmodeled dependence or missing nonlinearity wrecks everything!
 2. **Always plot residuals against *time order* and *group ID*, not just $$\hat{y}$$:** Drift over time or clustering by user/store shows up instantly on an index plot.

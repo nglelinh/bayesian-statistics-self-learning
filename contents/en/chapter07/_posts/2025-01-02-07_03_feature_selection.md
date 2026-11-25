@@ -16,7 +16,7 @@ When a dataset arrives with 40 candidate predictors, the traditional textbook re
 
 ---
 
-## Background Knowledge Map: Four Bayesian Approaches to Feature Selection
+## Key ideas: Four Bayesian Approaches to Feature Selection
 
 1. **Continuous Shrinkage (Horseshoe / Regularized Horseshoe):** Keeps all predictors in the model while shrinking irrelevant noise slopes aggressively toward `0`, avoiding brittle discrete include/exclude cliffs.
 2. **Spike-and-Slab (Posterior Inclusion Probabilities — PIP):** Places a mixture prior on each $$\beta_j$$ (a point-mass "spike" at 0 + a wide "slab"), directly estimating $$P(\beta_j \neq 0 \mid y)$$ for every feature!
@@ -323,7 +323,7 @@ Suppose you fit a Bayesian Spike-and-Slab / Horseshoe model on 3 standardized ca
 
 Notice how much richer this is than a binary stepwise cutoff: instead of falsely claiming `X2` is "0% important" just because its CI barely touches `0`, Bayesian selection transparently reports 64% inclusion probability and averages over model uncertainty!
 
-### Deep-Dive Explanation: Four Rules for Responsible Bayesian Feature Selection (Read Slowly)
+### Explanation: Four Rules for Responsible Bayesian Feature Selection
 
 1. **Never use stepwise p-value elimination:** It destroys post-selection uncertainty intervals and overfits heavily when predictors correlate.
 2. **Separate your *causal* adjustment set from *predictive* feature pruning:** Use a DAG to lock in confounders first; only prune remaining optional predictors for parsimony/cost.

@@ -16,7 +16,7 @@ Here is one of the most famous traps in data science: a hospital records data on
 
 ---
 
-## Background Knowledge Map: The Four Elemental Causal Structures in DAGs
+## Key ideas: The Four Elemental Causal Structures in DAGs
 
 Every complex causal web reduces to combinations of four 3-node junctions:
 
@@ -287,7 +287,7 @@ Suppose **Acting Talent ($$X \in \{0,1\}$$)** and **Looks ($$Y \in \{0,1\}$$)** 
   - If a famous actor has Low Looks ($$Y=0$$, row 2 only!): $$P(X=1 \mid Y=0, Z=1) = \mathbf{100\%}$$!
   Conditioning on the collider $$Z$$ created a **strong negative correlation** between Talent and Looks where none existed in reality!
 
-### Deep-Dive Explanation: Four Causal Rules Before Running Any Observational Regression (Read Slowly)
+### Explanation: Four Causal Rules Before Running Any Observational Regression
 
 1. **Draw the DAG *before* choosing regression predictors:** Data alone cannot tell a Fork from a Pipe or a Collider—causal structure comes from domain science!
 2. **Stop calling every regression coefficient a "causal effect":** Only variables whose backdoor paths are properly closed have causal interpretations (avoid the *Table 2 Fallacy* of reading all covariates in one model as causal!).

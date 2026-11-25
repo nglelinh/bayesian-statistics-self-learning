@@ -20,7 +20,7 @@ Trong thống kê Bayes hiện đại, phân phối Student-$$t$$ còn có một
 
 Sau khi hoàn thành bài học này, bạn sẽ hiểu rõ bản chất của **thống kê t (t-statistic)**, **phân phối t** và **kiểm định t (t-test)** — một trong những công cụ thống kê được dùng phổ biến nhất trong nghiên cứu. Bạn sẽ nắm được vì sao cần dùng phân phối t thay cho phân phối chuẩn, cách tính và diễn giải giá trị t, cách phân biệt các dạng t-test, cũng như các giả định và hạn chế của chúng để chuẩn bị đối chiếu với cách tiếp cận Bayesian ở các chương sau.
 
-## Bản đồ kiến thức nền: Bất định của phương sai, Phân phối đuôi nặng và Hậu nghiệm biên Student-$$t$$
+## Kiến thức cần nhớ: Bất định của phương sai, Phân phối đuôi nặng và Hậu nghiệm biên Student-$$t$$
 
 Ba trụ cột kết nối bài T-test cổ điển với tư duy Bayes chuyên sâu:
 
@@ -257,7 +257,7 @@ T-test kế thừa các giới hạn cốt lõi của p-value: nó chỉ trả v
 
 Trong các chương tiếp theo, bạn sẽ thấy thống kê Bayesian khắc phục những điểm này như thế nào: **ước lượng Bayesian** cung cấp toàn bộ phân phối hậu nghiệm của tham số thay vì chỉ một giá trị t; **khoảng credible** có diễn giải xác suất trực tiếp; **Bayes factor** so sánh định lượng mức độ ủng hộ của dữ liệu giữa các giả thuyết; và **phân phối tiên nghiệm (prior)** cho phép đưa hiểu biết nền vào mô hình một cách minh bạch.
 
-## Khung giải thích (nên đọc chậm): Tính tay một phép kiểm định $$t$$ và nhìn thấy hậu nghiệm biên Student-$$t$$
+## Giải thích: Tính tay một phép kiểm định $$t$$ và nhìn thấy hậu nghiệm biên Student-$$t$$
 
 Hãy đi chậm qua 4 bước để vừa làm chủ phép tính tay T-test cổ điển, vừa nhìn thấy bản chất Bayes ẩn bên trong:
 
@@ -270,7 +270,7 @@ u = 3$$ là $$3.182$$, lớn hơn hẳn mốc $$1.96$$ của phân phối Chuẩ
 4. **Góc nhìn Bayes tương ứng:** Với prior không thông tin chuẩn hóa $$p(\mu, \sigma^2) \propto 1/\sigma^2$$, phân phối hậu nghiệm chính xác của $$\mu$$ sau khi tích phân hóa $$\sigma^2$$ chính là phân phối Student-$$t$$ dịch chuyển:
    $$rac{\mu - ar{x}}{s/\sqrt{n}} \;\Bigert\; 	ext{data} \;\sim\; t_{n-1}.$$
 
-### Ví dụ tính toán cầm tay chỉ việc: 4 mẻ thí nghiệm nhỏ kiểm tra hàm lượng chuẩn $$\mu_0 = 100$$
+### Ví dụ tính toán làm từng bước: 4 mẻ thí nghiệm nhỏ kiểm tra hàm lượng chuẩn $$\mu_0 = 100$$
 
 Bạn đo hàm lượng hoạt chất trên $$n = 4$$ mẫu thử độc lập và thu được: $$x = \{104, 108, 102, 106\}$$.
 

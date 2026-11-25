@@ -21,7 +21,7 @@ Bài tổng kết Chương 2 này kết nối các khái niệm cốt lõi — p
 Sau bài học tùy chọn này, bạn sẽ nhìn nhận prior liên hợp (conjugate prior) và xấp xỉ lưới (grid approximation) như những lựa chọn thiết kế hệ thống thực tế chứ không chỉ là kỹ thuật làm bài tập. Bạn có thể quan sát một hệ thống đang vận hành — như quảng cáo, xếp hạng hay giám sát sự cố — và chỉ ra likelihood đang giả định điều gì, họ prior nào giữ chi phí cập nhật ở mức thấp, và khi nào phép tính giải tích phải nhường chỗ cho mô phỏng.
 
 
-## Bản đồ kiến thức nền: Cập nhật liên hợp trong hệ thống trực tuyến và Thử nghiệm thích nghi
+## Kiến thức cần nhớ: Cập nhật liên hợp trong hệ thống trực tuyến và Thử nghiệm thích nghi
 
 Ba trụ cột ứng dụng dưới đây giải thích vì sao kiến thức Chương 2 có sức sống bền bỉ trong kỹ thuật hiện đại:
 
@@ -86,7 +86,7 @@ Quảng cáo, hệ xếp hạng, giám sát độ tin cậy hệ thống và th�
 Empirical Bayes chỉ ước lượng điểm các siêu tham số nên thường đánh giá thấp độ bất định của chính prior. Cách tiếp cận Bayes phân cấp đầy đủ — được mở ra qua tư duy đa mức ở Chương 5 — đặt phân phối hậu nghiệm lên chính $$(\alpha,\beta)$$. Trong khi đó, xấp xỉ lưới nhanh chóng mất khả thi khi số chiều vượt quá vài tham số. Bước tiến trung thực tiếp theo không phải là mở rộng bảng công thức liên hợp mà là sử dụng bộ lấy mẫu — trọng tâm của Chương 4.
 
 
-## Khung giải thích (nên đọc chậm): Giải bài toán "5 sao nhưng chỉ có 1 lượt đánh giá" bằng co cụm Bayes
+## Giải thích: Giải bài toán "5 sao nhưng chỉ có 1 lượt đánh giá" bằng co cụm Bayes
 
 Trong thương mại điện tử, một sản phẩm có 1/1 đánh giá tốt (100%) có thực sự đáng tin hơn sản phẩm có 90/100 đánh giá tốt (90%) không? Hãy đi qua 3 bước xử lý bằng prior liên hợp:
 
@@ -94,7 +94,7 @@ Trong thương mại điện tử, một sản phẩm có 1/1 đánh giá tốt 
 2. **Cập nhật hậu nghiệm cho từng sản phẩm:** Cộng số đánh giá tốt vào $$\alpha = 8$$ và số đánh giá xấu vào $$\beta = 2$$.
 3. **Xếp hạng theo kỳ vọng hậu nghiệm (hoặc cận dưới 5% của hậu nghiệm):** Sản phẩm ít dữ liệu bị kéo về mức nền toàn sàn, còn sản phẩm nhiều dữ liệu giữ sát tỷ lệ thực tế của chính nó.
 
-### Ví dụ tính toán cầm tay chỉ việc: Xếp hạng 2 sản phẩm với Prior $$\text{Beta}(8, 2)$$
+### Ví dụ tính toán làm từng bước: Xếp hạng 2 sản phẩm với Prior $$\text{Beta}(8, 2)$$
 
 | Sản phẩm | Dữ liệu $$(k / n)$$ | Tỷ lệ thô (MLE) | Hậu nghiệm | Kỳ vọng hậu nghiệm $$\mathbb{E}[p \vert y]$$ |
 | --- | --- | --- | --- | --- |

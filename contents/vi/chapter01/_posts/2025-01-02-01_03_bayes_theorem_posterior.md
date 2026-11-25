@@ -25,7 +25,7 @@ Sau bài này, bạn cần hiểu định lý Bayes như một quy tắc cập n
 > **Câu hỏi tự kiểm tra.** Nếu prior là điều bạn tin trước khi thấy dữ liệu, còn likelihood là mức độ dữ liệu phù hợp với từng giả thuyết, thì posterior nên được hiểu là gì?
 
 
-## Bản đồ kiến thức nền: Bốn thành phần của Định lý Bayes và Cơ chế cập nhật tuần tự
+## Kiến thức cần nhớ: Bốn thành phần của Định lý Bayes và Cơ chế cập nhật tuần tự
 
 Để làm chủ hoàn toàn công thức $$P(\theta \mid y) = \frac{P(y \mid \theta)P(\theta)}{P(y)}$$, hãy nhìn rõ ba trụ cột cấu thành nó:
 
@@ -299,7 +299,7 @@ Cùng một bộ dữ liệu nhưng posterior khác nhau vì prior đưa thông 
 > **3 ý cần nhớ.** Định lý Bayes là quy tắc cập nhật niềm tin khi có thêm bằng chứng mới; prior, likelihood và posterior không phải ba khái niệm tách rời mà là ba mắt xích của cùng một quy trình suy luận; và giá trị của Bayes nằm ở việc kết hợp kiến thức sẵn có với dữ liệu mới một cách minh bạch.
 
 
-## Khung giải thích (nên đọc chậm): Tính hậu nghiệm bằng bảng Bayes 4 cột và kiểm chứng cập nhật tuần tự
+## Giải thích: Tính hậu nghiệm bằng bảng Bayes 4 cột và kiểm chứng cập nhật tuần tự
 
 Thay vì cố nhẩm mẫu số $$P(y)$$ ngay từ đầu, cách làm ít sai nhất khi tính tay là lập **bảng Bayes 4 cột**:
 
@@ -308,7 +308,7 @@ Thay vì cố nhẩm mẫu số $$P(y)$$ ngay từ đầu, cách làm ít sai nh
 3. **Cột 3 (Likelihood $$P(y \mid \theta)$$):** Tính xác suất quan sát đúng dữ liệu $$y$$ dưới từng giả thuyết.
 4. **Cột 4 (Tích chưa chuẩn hóa & Chuẩn hóa):** Nhân Cột 2 với Cột 3, cộng tổng để thu $$P(y)$$, rồi chia từng dòng cho tổng đó để ra Posterior.
 
-### Ví dụ tính toán cầm tay chỉ việc: Phân biệt đồng xu công bằng và đồng xu thiên lệch
+### Ví dụ tính toán làm từng bước: Phân biệt đồng xu công bằng và đồng xu thiên lệch
 
 Trong túi có 2 đồng xu: $$H_0$$ công bằng ($$p = 0.5$$) với prior $$0.7$$, và $$H_1$$ thiên lệch ($$p = 0.8$$) với prior $$0.3$$. Ta chọn ngẫu nhiên một đồng xu, tung 2 lần độc lập và cả 2 lần đều ra Ngửa ($$y = \text{NN}$$).
 
